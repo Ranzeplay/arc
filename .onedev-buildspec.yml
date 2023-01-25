@@ -1,0 +1,35 @@
+version: 18
+jobs:
+- name: CI
+  jobExecutor: Local
+  steps:
+  - !CommandStep
+    name: Restore project
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands:
+      - dotnet restore
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Build all targets
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands:
+      - dotnet build
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  - !CommandStep
+    name: Test
+    runInContainer: false
+    interpreter: !DefaultInterpreter
+      commands:
+      - dotnet test
+    useTTY: false
+    condition: ALL_PREVIOUS_STEPS_WERE_SUCCESSFUL
+  retryCondition: never
+  maxRetries: 3
+  retryDelay: 30
+  cpuRequirement: 250
+  memoryRequirement: 256
+  timeout: 3600
