@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.LexicalAnalysis
 {
-    public class TokenConstants
+    public partial class TokenConstants
     {
         public static readonly Dictionary<KeywordToken, string> KeywordMappings = new()
         {
@@ -87,5 +88,18 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
             { LogicalOperatorType.Or,  "||" },
             { LogicalOperatorType.Not, "!" },
         };
+
+        public static readonly char SemicolonToken = ';';
+
+        public static readonly string CommentLeadingSequence = "//";
+
+        // Just follow the suggestion from compiler
+        [GeneratedRegex("^([_a-zA-Z][_a-zA-Z0-9]{0,80})")]
+        private static partial Regex IdentifierRegexGen();
+        public static readonly Regex IdentifierRegex = IdentifierRegexGen();
+
+        [GeneratedRegex("^([+-]?\\d+(\\.?\\d+)?)")]
+        private static partial Regex NumberRegexGen();
+        public static readonly Regex NumberRegex = NumberRegexGen();
     }
 }

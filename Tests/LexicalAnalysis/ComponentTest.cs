@@ -173,5 +173,124 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
                 }
             });
         }
+
+        [Test]
+        public void IdentifierTest()
+        {
+            var text = $"arc 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Identifier.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Identifier));
+                        Assert.That(result.Section.GetIdentifier(), Has.Length.EqualTo(3));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
+
+        [Test]
+        public void NumberTest()
+        {
+            var text = $"-433.24 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Number.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Number));
+                        Assert.That(result.Section.GetNumber(), Is.EqualTo("-433.24"));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
+
+        [Test]
+        public void SemicolonTest()
+        {
+            var text = $"-433.24 ; 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Semicolon.Build(source, text.IndexOf(';'));
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Semicolon));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
+
+        [Test]
+        public void CommentTest()
+        {
+            var text = $"7890 // open port 37413";
+            var source = new SourceFile("test", text);
+            var result = Comment.Build(source, 5);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Comment));
+                        Assert.That(result.Section.Position, Has.Length.EqualTo(18));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
     }
 }
