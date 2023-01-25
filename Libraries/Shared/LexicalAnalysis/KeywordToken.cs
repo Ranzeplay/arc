@@ -8,37 +8,37 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
 {
     public enum KeywordToken
     {
-        KwNumber,       // number
-        KwChar,         // char
-        KwStr,          // str
-        KwBool,         // bool
-        KwDeclare,      // decl
-        KwVar,          // var
-        KwConst,        // const
-        KwExport,       // export
-        KwFunc,         // func
-        KwIf,           // if
-        KwElseIf,       // elif
-        KwElse,         // else
-        KwWhile,        // while
-        KwLoop,         // loop
-        KwContinue,     // continue
-        KwBreak,        // break
-        KwReturn,       // return
-        KwCall,         // call
-        KwLink,         // link
-        KwNone,         // none
-        KwAny,          // any
-        KwTrue,         // true
-        KwFalse,        // false
-        KwGroup,        // group
-        KwImplement,    // implement
-        KwGet,          // get
-        KwSet,          // set
-        KwMethod,       // method
-        KwField,        // field
-        KwDefault,      // default
-        KwSelf,         // self
+        Number,       // number
+        Char,         // char
+        String,       // str
+        Bool,         // bool
+        Declare,      // decl
+        Var,          // var
+        Const,        // const
+        Export,       // export
+        Func,         // func
+        If,           // if
+        ElseIf,       // elif
+        Else,         // else
+        While,        // while
+        Loop,         // loop
+        Continue,     // continue
+        Break,        // break
+        Return,       // return
+        Call,         // call
+        Link,         // link
+        None,         // none
+        Any,          // any
+        True,         // true
+        False,        // false
+        Group,        // group
+        Implement,    // implement
+        Get,          // get
+        Set,          // set
+        Method,       // method
+        Field,        // field
+        Default,      // default
+        Self,         // self
         Invalid
     }
 }

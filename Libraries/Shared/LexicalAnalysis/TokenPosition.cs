@@ -15,7 +15,7 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
 
         public int Length { get; }
 
-        public TokenPosition(ref SourceFile sourceFile, int position, int length)
+        public TokenPosition(SourceFile sourceFile, int position, int length)
         {
             SourceFile = sourceFile;
             Position = position;

@@ -16,4 +16,9 @@
     <PackageReference Include="coverlet.collector" Version="3.1.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Libraries\Lexer\Arc.Compiler.Lexer.csproj" />
+    <ProjectReference Include="..\Libraries\Shared\Arc.Compiler.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
