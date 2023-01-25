@@ -22,17 +22,27 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
             var source = new SourceFile("test", text);
             var result = Keyword.Build(source, 0);
 
-            Assert.That(result, Is.Not.EqualTo(null));
-
-            if (result.Section is not null)
+            Assert.Multiple(() =>
             {
-                Assert.Multiple(() =>
+                if (result is not null)
                 {
-                    Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Keyword));
+                    Assert.That(result, Is.Not.EqualTo(null));
 
-                    Assert.That(result.Section.GetKeyword(), Is.EqualTo(KeywordToken.Implement));
-                });
-            }
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Keyword));
+                        Assert.That(result.Section.GetKeyword(), Is.EqualTo(KeywordToken.Implement));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
         }
 
         [Test]
@@ -42,17 +52,96 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
             var source = new SourceFile("test", text);
             var result = Container.Build(source, 0);
 
-            Assert.That(result, Is.Not.EqualTo(null));
 
-            if (result.Section is not null)
+            Assert.Multiple(() =>
             {
-                Assert.Multiple(() =>
+                if (result is not null)
                 {
-                    Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Container));
+                    Assert.That(result, Is.Not.EqualTo(null));
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Container));
+                        Assert.That(result.Section.GetContainer(), Is.EqualTo(ContainerToken.AntiBrace));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
 
-                    Assert.That(result.Section.GetContainer(), Is.EqualTo(ContainerToken.AntiBrace));
-                });
-            }
+        [Test]
+        public void RootOperatorTest()
+        {
+            var text = $"{TokenConstants.RootOperatorMappings[OperatorTokenType.Scope]} 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Operator.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Operator));
+
+                        var operatorToken = result.Section.GetOperator();
+                        if (operatorToken is not null)
+                        {
+                            Assert.That(operatorToken.Type, Is.EqualTo(OperatorTokenType.Scope));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
+
+        [Test]
+        public void SubOperatorTest()
+        {
+            var text = $"{TokenConstants.RelationOperatorMappings[RelationOperatorType.Greater]} 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Operator.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Operator));
+
+                        var operatorToken = result.Section.GetOperator();
+                        if (operatorToken is not null)
+                        {
+                            Assert.That(operatorToken.RelationOperator, Is.EqualTo(RelationOperatorType.Greater));
+                            Assert.That(operatorToken.CalculationOperator, Is.EqualTo(CalculationOperatorType.Invalid));
+                        }
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
         }
     }
 }

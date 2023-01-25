@@ -52,5 +52,40 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
             { ContainerToken.Index, "["},
             { ContainerToken.AntiIndex, "]" },
         };
+
+        public static readonly Dictionary<OperatorTokenType, string> RootOperatorMappings = new()
+        {
+            { OperatorTokenType.Assignment, "=" },
+            { OperatorTokenType.Scope,      "::" },
+            { OperatorTokenType.Comma,      "," },
+            { OperatorTokenType.Dot,        "." },
+        };
+
+        public static readonly Dictionary<CalculationOperatorType, string> CalculationOperatorMappings = new()
+        {
+            { CalculationOperatorType.Addition,       "+" },
+            { CalculationOperatorType.Subtraction,    "-" },
+            { CalculationOperatorType.Multiply, "*" },
+            { CalculationOperatorType.Division,       "/" },
+            { CalculationOperatorType.Modulo,         "+" },
+            { CalculationOperatorType.Invalid,        "+" },
+        };
+
+        public static readonly Dictionary<RelationOperatorType, string> RelationOperatorMappings = new()
+        {
+            { RelationOperatorType.GreaterOrEqual, ">=" },
+            { RelationOperatorType.LessOrEqual,    "<=" },
+            { RelationOperatorType.NotEqual,       "<>" },
+            { RelationOperatorType.Equal,          "==" },
+            { RelationOperatorType.Greater,        ">" },
+            { RelationOperatorType.Less,           "<" },
+        };
+
+        public static readonly Dictionary<LogicalOperatorType, string> LogicalOperatorMappings = new()
+        {
+            { LogicalOperatorType.And, "&&" },
+            { LogicalOperatorType.Or,  "||" },
+            { LogicalOperatorType.Not, "!" },
+        };
     }
 }
