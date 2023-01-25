@@ -93,6 +93,8 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
 
         public static readonly string CommentLeadingSequence = "//";
 
+        public static readonly char QuoteContainer = '\"';
+
         // Just follow the suggestion from compiler
         [GeneratedRegex("^([_a-zA-Z][_a-zA-Z0-9]{0,80})")]
         private static partial Regex IdentifierRegexGen();

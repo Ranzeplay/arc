@@ -292,5 +292,35 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
                 }
             });
         }
+
+        [Test]
+        public void StringTest()
+        {
+            var text = $"\"Welcome to \\\"The Arc Programming Language\\\"!\"";
+            var source = new SourceFile("test", text);
+            var result = Str.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.String));
+                        Assert.That(result.Section.Position, Has.Length.EqualTo(46));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
     }
 }
