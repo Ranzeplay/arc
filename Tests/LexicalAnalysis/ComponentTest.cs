@@ -143,5 +143,35 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
                 }
             });
         }
+
+        [Test]
+        public void WhitespaceTest()
+        {
+            var text = $"\t\r\n   37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Whitespace.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Whitespace));
+                        Assert.That(result.Section.Position, Has.Length.EqualTo(6));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
     }
 }
