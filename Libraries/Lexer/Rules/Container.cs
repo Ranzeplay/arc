@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Lexer.Rules
 {
-    public class Keyword
+    public class Container
     {
         public static SectionBuildResult<Token>? Build(SourceFile source, int baseIndex)
         {
-            var result = TokenConstants.KeywordMappings
-                .FirstOrDefault(k => source.Content[baseIndex..].StartsWith(k.Value), new(KeywordToken.Invalid, string.Empty));
+            var result = TokenConstants.ContainerMappings
+                .FirstOrDefault(k => source.Content[baseIndex..].StartsWith(k.Value), new(ContainerToken.Invalid, string.Empty));
 
-            if (result.Key == KeywordToken.Invalid)
+            if (result.Key == ContainerToken.Invalid)
             {
                 return null;
             }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.LexicalAnalysis
 {
-    public class Constants
+    public class TokenConstants
     {
         public static readonly Dictionary<KeywordToken, string> KeywordMappings = new()
         {
@@ -41,6 +41,16 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
             { KeywordToken.Field,     "field" },
             { KeywordToken.Default,   "default" },
             { KeywordToken.Self,      "self" }
+        };
+
+        public static readonly Dictionary<ContainerToken, string> ContainerMappings = new()
+        {
+            { ContainerToken.Brace, "{" },
+            { ContainerToken.AntiBrace, "}" },
+            { ContainerToken.Bracket, "(" },
+            { ContainerToken.AntiBracket, ")" },
+            { ContainerToken.Index, "["},
+            { ContainerToken.AntiIndex, "]" },
         };
     }
 }
