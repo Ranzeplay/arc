@@ -20,6 +20,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(comment.Section);
                         currentIndex += comment.Length;
+                        continue;
                     }
                 }
 
@@ -30,6 +31,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(semicolon.Section);
                         currentIndex += semicolon.Length;
+                        continue;
                     }
                 }
 
@@ -40,6 +42,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(keyword.Section);
                         currentIndex += keyword.Length;
+                        continue;
                     }
                 }
 
@@ -50,6 +53,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(identifier.Section);
                         currentIndex += identifier.Length;
+                        continue;
                     }
                 }
 
@@ -60,6 +64,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(op.Section);
                         currentIndex += op.Length;
+                        continue;
                     }
                 }
 
@@ -70,6 +75,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(number.Section);
                         currentIndex += number.Length;
+                        continue;
                     }
                 }
 
@@ -80,6 +86,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(str.Section);
                         currentIndex += str.Length;
+                        continue;
                     }
                 }
 
@@ -90,6 +97,7 @@ namespace Arc.Compiler.Lexer
                     {
                         tokens.Add(container.Section);
                         currentIndex += container.Length;
+                        continue;
                     }
                 }
 
@@ -104,6 +112,7 @@ namespace Arc.Compiler.Lexer
                         }
 
                         currentIndex += whitespace.Length;
+                        continue;
                     }
                 }
 
