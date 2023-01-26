@@ -9,11 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Executables", "Executables"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.Shared", "Libraries\Shared\Arc.Compiler.Shared.csproj", "{09CEE000-9CDB-44F2-8511-161629C2A43D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Shared", "Libraries\Shared\Arc.Compiler.Shared.csproj", "{09CEE000-9CDB-44F2-8511-161629C2A43D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.Circle", "Executables\Circle\Arc.Compiler.Circle.csproj", "{8D67ED94-235A-4137-8AE4-107B2B288085}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Circle", "Executables\Circle\Arc.Compiler.Circle.csproj", "{8D67ED94-235A-4137-8AE4-107B2B288085}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.Lexer", "Libraries\Lexer\Arc.Compiler.Lexer.csproj", "{384090F1-3CF2-45A0-BFB4-59AFA655BF96}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Lexer", "Libraries\Lexer\Arc.Compiler.Lexer.csproj", "{384090F1-3CF2-45A0-BFB4-59AFA655BF96}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.Parser", "Libraries\Parser\Arc.Compiler.Parser.csproj", "{5146567B-1D3C-432A-9863-973F93901AC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,6 +39,10 @@ Global
 		{384090F1-3CF2-45A0-BFB4-59AFA655BF96}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{384090F1-3CF2-45A0-BFB4-59AFA655BF96}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{384090F1-3CF2-45A0-BFB4-59AFA655BF96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5146567B-1D3C-432A-9863-973F93901AC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5146567B-1D3C-432A-9863-973F93901AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5146567B-1D3C-432A-9863-973F93901AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5146567B-1D3C-432A-9863-973F93901AC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -45,6 +51,7 @@ Global
 		{09CEE000-9CDB-44F2-8511-161629C2A43D} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 		{8D67ED94-235A-4137-8AE4-107B2B288085} = {B67C39F8-73B0-47E5-93F7-343CF1A0E760}
 		{384090F1-3CF2-45A0-BFB4-59AFA655BF96} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
+		{5146567B-1D3C-432A-9863-973F93901AC1} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA5884FA-BD85-4C3F-ADF6-E530035424C3}
