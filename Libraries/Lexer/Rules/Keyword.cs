@@ -13,17 +13,19 @@ namespace Arc.Compiler.Lexer.Rules
     {
         public static SectionBuildResult<Token>? Build(SourceFile source, int baseIndex)
         {
-            var result = TokenConstants.KeywordMappings
-                .FirstOrDefault(k => source.Content[baseIndex..].StartsWith(k.Value), new(KeywordToken.Invalid, string.Empty));
+            var identifier = Identifier.Build(source, baseIndex);
+            if (identifier != null)
+            {
+                var result = TokenConstants.KeywordMappings
+                    .FirstOrDefault(k => identifier.Section.GetIdentifier() == k.Value, new(KeywordToken.Invalid, string.Empty));
 
-            if (result.Key == KeywordToken.Invalid)
-            {
-                return null;
+                if (result.Key != KeywordToken.Invalid)
+                {
+                    return new(new Token(result.Key, new TokenPosition(source, baseIndex, result.Value.Length)), result.Value.Length);
+                }
             }
-            else
-            {
-                return new(new Token(result.Key, new TokenPosition(source, baseIndex, result.Value.Length)), result.Value.Length);
-            }
+
+            return null;
         }
     }
 }

@@ -205,6 +205,36 @@ namespace Arc.Compiler.Tests.LexicalAnalysis
         }
 
         [Test]
+        public void IdentifierToleranceTest()
+        {
+            var text = $"implement 37413.cc";
+            var source = new SourceFile("test", text);
+            var result = Identifier.Build(source, 0);
+
+            Assert.Multiple(() =>
+            {
+                if (result is not null)
+                {
+                    Assert.That(result, Is.Not.EqualTo(null));
+
+                    if (result.Section is not null)
+                    {
+                        Assert.That(result.Section.TokenType, Is.EqualTo(TokenType.Identifier));
+                        Assert.That(result.Section.GetIdentifier(), Is.EqualTo("implement"));
+                    }
+                    else
+                    {
+                        Assert.Fail();
+                    }
+                }
+                else
+                {
+                    Assert.Fail();
+                }
+            });
+        }
+
+        [Test]
         public void NumberTest()
         {
             var text = $"-433.24 37413.cc";
