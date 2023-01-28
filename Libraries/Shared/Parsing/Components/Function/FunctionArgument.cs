@@ -10,11 +10,11 @@ namespace Arc.Compiler.Shared.Parsing.Components.Function
 {
     public class FunctionArgument
     {
-        public DataDeclarator Declarator { get; }
+        public FunctionParameter Declarator { get; }
 
         public SimpleExpression EvaluateExpression { get; }
 
-        public FunctionArgument(DataDeclarator declarator, SimpleExpression evaluateExpression)
+        public FunctionArgument(FunctionParameter declarator, SimpleExpression evaluateExpression)
         {
             Declarator = declarator;
             EvaluateExpression = evaluateExpression;

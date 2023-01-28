@@ -8,11 +8,11 @@ namespace Arc.Compiler.Shared.Utils
 {
     public class SectionBuildResult<TSection>
     {
-        public TSection? Section { get; }
+        public TSection Section { get; }
 
         public int Length { get; }
 
-        public SectionBuildResult(TSection? section, int length)
+        public SectionBuildResult(TSection section, int length)
         {
             Section = section;
             Length = length;

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Arc.Compiler.Shared.Parsing.AST;
+using Arc.Compiler.Shared.Parsing.Components.Function;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +10,10 @@ namespace Arc.Compiler.Shared.Compilation
 {
     public class CompilationUnit
     {
-        public TokenizedFile[] TokenizedFiles { get; }
+        public List<TokenizedFile> TokenizedFiles { get; set; } = new();
 
-        public CompilationUnit(TokenizedFile[] tokenizedFiles)
-        {
-            TokenizedFiles = tokenizedFiles;
-        }
+        public List<ASTNode> ASTNodes { get; set; } = new();
+
+        public List<FunctionDeclarator> DeclaredFunctions { get; set; } = new();
     }
 }

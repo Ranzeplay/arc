@@ -17,5 +17,22 @@ namespace Arc.Compiler.Shared.Parsing.Components
             Scope = scope;
             Name = name;
         }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj is not Identifier ident)
+            {
+                return false;
+            }
+            else
+            {
+                return ident.Scope == Scope && ident.Name == Name;
+            }
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
     }
 }

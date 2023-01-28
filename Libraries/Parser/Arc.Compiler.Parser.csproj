@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Lexer\Arc.Compiler.Lexer.csproj" />
+    <ProjectReference Include="..\Shared\Arc.Compiler.Shared.csproj" />
   </ItemGroup>
 
 </Project>
