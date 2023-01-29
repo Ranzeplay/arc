@@ -33,15 +33,25 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
                     {
                         if (model.Tokens[arrayElementExpressionBeginIndex].GetContainer().GetValueOrDefault() == ContainerToken.Index)
                         {
-                            // Build expression
-                            var expressionResult = ExpressionBuilder.BuildSimpleExpression(model.SkipTokens(arrayElementExpressionBeginIndex + 1));
-                            if (expressionResult is not null)
+                            var indexExpressionZone = Utils.PairContainer(model.Tokens[arrayElementExpressionBeginIndex..]);
+                            if (indexExpressionZone is not null)
                             {
-                                // Check format
-                                var endIndex = arrayElementExpressionBeginIndex + expressionResult.Length - 1;
-                                if (model.Tokens[endIndex].GetContainer().GetValueOrDefault() == ContainerToken.AntiIndex)
+                                // Tokens inside the index container can be built into an expression
+                                var tokenList = indexExpressionZone
+                                    .Skip(1)
+                                    .SkipLast(1)
+                                    .ToArray();
+
+                                // Build expression
+                                var expressionResult = ExpressionBuilder.BuildSimpleExpression(new(tokenList, model.DeclaredData, model.DeclaredFunctions));
+                                if (expressionResult is not null)
                                 {
-                                    return new(new(targetDeclarator, expressionResult.Section), endIndex + 1);
+                                    // Check format
+                                    var endIndex = arrayElementExpressionBeginIndex + expressionResult.Length - 1;
+                                    if (model.Tokens[endIndex].GetContainer().GetValueOrDefault() == ContainerToken.AntiIndex)
+                                    {
+                                        return new(new(targetDeclarator, expressionResult.Section), endIndex + 1);
+                                    }
                                 }
                             }
                         }
