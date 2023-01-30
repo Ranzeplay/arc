@@ -35,7 +35,7 @@ namespace Arc.Compiler.Parser
 
                     // If this is the top layer from the start of the array
                     // Return at first couldn't happen because containerLevel had been added by 1 at the beginning
-                    if(containerLevel == 0)
+                    if (containerLevel == 0)
                     {
                         return tokens[..(i + 1)];
                     }
@@ -71,15 +71,16 @@ namespace Arc.Compiler.Parser
         {
             var result = new List<List<Token>>
             {
+                // With 1 expression at first
                 new()
             };
 
             foreach (var token in tokens)
             {
                 var op = token.GetOperator();
-                if(op is not null)
+                if (op is not null)
                 {
-                    if(op.Type == OperatorTokenType.Comma)
+                    if (op.Type == OperatorTokenType.Comma)
                     {
                         // Add new list when encountered comma operator token
                         result.Add(new());
@@ -92,6 +93,19 @@ namespace Arc.Compiler.Parser
             }
 
             return result;
+        }
+
+        internal static int GetNextSemicolonPos(Token[] tokens, int defaultPos = -1)
+        {
+            var first = tokens.FirstOrDefault(t => t.TokenType == TokenType.Semicolon);
+            if (first != null)
+            {
+                return Array.IndexOf(tokens, first);
+            }
+            else
+            {
+                return defaultPos;
+            }
         }
     }
 }
