@@ -24,7 +24,7 @@ namespace Arc.Compiler.Tests.Parsing
             var source = new SourceFile("test", text);
             var tokens = Tokenizer.Tokenize(source, true);
 
-            var result = DataDeclaratorBuilder.Build(tokens.Tokens);
+            var result = DataDeclarationBuilder.Build(tokens.Tokens);
 
             Assert.That(result, Is.Not.Null);
         }
