@@ -13,7 +13,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
 {
     public class DataAssignmentBuilder
     {
-        public static SectionBuildResult<AssignmentBlock>? Build(ExpressionBuildModel model)
+        public static SectionBuildResult<DataAssignmentBlock>? Build(ExpressionBuildModel model)
         {
             var accessor = DataAccessorBuilder.Build(model);
 

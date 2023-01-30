@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class AssignmentBlock
+    public class DataAssignmentBlock
     {
         public DataAccessor LhsTargetData { get; }
 
         public SimpleExpression RhsEvalExpression { get; }
 
-        public AssignmentBlock(DataAccessor lhsTargetData, SimpleExpression rhsEvalExpression)
+        public DataAssignmentBlock(DataAccessor lhsTargetData, SimpleExpression rhsEvalExpression)
         {
             LhsTargetData = lhsTargetData;
             RhsEvalExpression = rhsEvalExpression;

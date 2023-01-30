@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.Parser.Builders.Components;
 using Arc.Compiler.Parser.Builders.Components.Data;
 using Arc.Compiler.Shared.LexicalAnalysis;
+using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Utils;
@@ -12,9 +13,9 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class DataDeclaratorBuilder
+    public class DataDeclarationBuilder
     {
-        public static SectionBuildResult<DataDeclarator>? Build(Token[] tokens)
+        public static SectionBuildResult<DataDeclarationBlock>? Build(Token[] tokens)
         {
             if (tokens[0].GetKeyword() is not null)
             {
