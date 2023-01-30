@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Tests.Parsing
 {
+    [Category("Parsing")]
     internal class BlockTest
     {
         [SetUp]
