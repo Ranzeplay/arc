@@ -44,7 +44,7 @@ namespace Arc.Compiler.Tests.Parsing
             var result = DataAssignmentBuilder.Build(new(tokens.Tokens, definedData, Array.Empty<FunctionDeclarator>()));
 
             Assert.That(result, Is.Not.Null);
-            if(result is not null)
+            if (result is not null)
             {
                 Assert.That(result, Has.Length.EqualTo(6));
             }
@@ -69,7 +69,7 @@ namespace Arc.Compiler.Tests.Parsing
                     new(new(Array.Empty<string>(), "retType1"), false),
                     new FunctionParameter[]
                     {
-                    new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "param1"), false)
+                        new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "param1"), false)
                     })
             };
 
@@ -79,6 +79,31 @@ namespace Arc.Compiler.Tests.Parsing
             if (result is not null)
             {
                 Assert.That(result, Has.Length.EqualTo(6));
+            }
+        }
+
+        [Test]
+        public void FunctionReturnTest()
+        {
+            var text = "return x + y;";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var definedData = new DataDeclarator[]
+            {
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "x"), false),
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "y"), false)
+            };
+
+            var result = FunctionReturnBuilder.Build(new(tokens.Tokens, definedData, Array.Empty<FunctionDeclarator>()));
+            Assert.That(result, Is.Not.Null);
+            if (result is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.Section.Expression, Is.Not.Null);
+                    Assert.That(result, Has.Length.EqualTo(5));
+                });
             }
         }
     }
