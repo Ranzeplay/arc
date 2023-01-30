@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components
 {
-    public class FunctionCallBuilder
+    public class FunctionCallBaseBuilder
     {
         public static SectionBuildResult<FunctionCallBase>? Build(ExpressionBuildModel model)
         {

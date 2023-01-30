@@ -83,7 +83,7 @@ namespace Arc.Compiler.Parser.Builders.Components.Expression
 
         private static SectionBuildResult<ExpressionDataTerm>? BuildExpressionDataTerm(ExpressionBuildModel model)
         {
-            var funcResult = FunctionCallBuilder.Build(model);
+            var funcResult = FunctionCallBaseBuilder.Build(model);
             if (funcResult is not null)
             {
                 return new(new(funcResult.Section), funcResult.Length);
