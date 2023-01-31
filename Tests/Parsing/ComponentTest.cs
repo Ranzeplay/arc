@@ -2,6 +2,7 @@
 using Arc.Compiler.Parser.Builders.Components;
 using Arc.Compiler.Parser.Builders.Components.Expression;
 using Arc.Compiler.Shared.Compilation;
+using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
@@ -38,7 +39,7 @@ namespace Arc.Compiler.Tests.Parsing
         }
 
         [Test]
-        public void ExpressionTest()
+        public void SimpleExpressionTest()
         {
             var text = "2 + (var1 * func1(var2))";
             var source = new SourceFile("test", text);
@@ -73,6 +74,26 @@ namespace Arc.Compiler.Tests.Parsing
                 {
                     Assert.That(data.DataTermType, Is.EqualTo(ExpressionDataTermType.FunctionCall));
                 }
+            }
+        }
+
+        [Test]
+        public void RelationalExpressionTest()
+        {
+            var text = "3 > 4 * 2";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = ExpressionBuilder.BuildRelationalExpression(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+            Assert.That(result, Is.Not.EqualTo(null));
+            if (result is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.Section.Relation, Is.EqualTo(RelationOperatorType.Greater));
+                    Assert.That(result.Section.LhsExpression.Terms, Has.Length.EqualTo(1));
+                    Assert.That(result.Section.RhsExpression.Terms, Has.Length.EqualTo(3));
+                });
             }
         }
     }
