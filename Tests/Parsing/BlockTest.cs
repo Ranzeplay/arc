@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.Lexer;
 using Arc.Compiler.Parser.Builders.Blocks;
 using Arc.Compiler.Shared.Compilation;
+using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 using System;
@@ -96,6 +97,7 @@ namespace Arc.Compiler.Tests.Parsing
             };
 
             var result = FunctionReturnBuilder.Build(new(tokens.Tokens, definedData, Array.Empty<FunctionDeclarator>()));
+
             Assert.That(result, Is.Not.Null);
             if (result is not null)
             {
@@ -103,6 +105,26 @@ namespace Arc.Compiler.Tests.Parsing
                 {
                     Assert.That(result.Section.Expression, Is.Not.Null);
                     Assert.That(result, Has.Length.EqualTo(5));
+                });
+            }
+        }
+
+        [Test]
+        public void ConditionalExecTest()
+        {
+            var text = "while (3 > 2) { decl var number a; }";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = ConditionalExecBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+
+            Assert.That(result, Is.Not.Null);
+            if(result is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.Section.Condition.Relation, Is.EqualTo(RelationOperatorType.Greater));
+                    Assert.That(result.Section.ActionBlock.ASTNodes.Length, Is.EqualTo(1));
                 });
             }
         }
