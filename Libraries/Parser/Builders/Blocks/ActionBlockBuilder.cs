@@ -23,6 +23,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 {
                     result.Add(new(assignment.Section));
                     index += assignment.Length;
+                    continue;
                 }
 
                 var declaration = DataDeclarationBuilder.Build(model.SkipTokens(index).Tokens);
@@ -30,6 +31,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 {
                     result.Add(new(declaration.Section));
                     index += declaration.Length;
+                    continue;
                 }
 
                 var functionCall = FunctionCallBuilder.Build(model.SkipTokens(index));
@@ -37,6 +39,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 {
                     result.Add(new(functionCall.Section));
                     index += functionCall.Length;
+                    continue;
                 }
 
                 var functionReturn = FunctionReturnBuilder.Build(model);
@@ -44,10 +47,11 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 {
                     result.Add(new(functionReturn.Section));
                     index += functionReturn.Length;
+                    continue;
                 }
             }
 
-            return null;
+            return new(new(result.ToArray()), model.Tokens.Length);
         }
     }
 }
