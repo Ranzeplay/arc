@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class ConditionalExecBlockBuilder
+    public class ConditionalLoopBlockBuilder
     {
-        public static SectionBuildResult<ConditionalExecBlock>? Build(ExpressionBuildModel model)
+        public static SectionBuildResult<ConditionalLoopBlock>? Build(ExpressionBuildModel model)
         {
             var leadingKeyword = model.Tokens[0].GetKeyword();
             if (leadingKeyword != null)

@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class ConditionalExecBlock
+    public class ConditionalLoopBlock
     {
         public RelationalExpression Condition { get; }
 
         public ActionBlock ActionBlock { get; }
 
-        public ConditionalExecBlock(RelationalExpression condition, ActionBlock actionBlock)
+        public ConditionalLoopBlock(RelationalExpression condition, ActionBlock actionBlock)
         {
             Condition = condition;
             ActionBlock = actionBlock;

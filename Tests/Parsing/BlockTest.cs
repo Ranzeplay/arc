@@ -110,13 +110,13 @@ namespace Arc.Compiler.Tests.Parsing
         }
 
         [Test]
-        public void ConditionalExecTest()
+        public void ConditionalLoopTest()
         {
             var text = "while (3 > 2) { decl var number a; }";
             var source = new SourceFile("test", text);
             var tokens = Tokenizer.Tokenize(source, true);
 
-            var result = ConditionalExecBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+            var result = ConditionalLoopBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
 
             Assert.That(result, Is.Not.Null);
             if(result is not null)
