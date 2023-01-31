@@ -12,6 +12,7 @@ namespace Arc.Compiler.Shared.Parsing.AST
         DataAssignment,
         DataDeclaration,
         FunctionCall,
-        FunctionReturn
+        FunctionReturn,
+        ConditionalLoop
     }
 }

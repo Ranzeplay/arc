@@ -49,6 +49,14 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     index += functionReturn.Length;
                     continue;
                 }
+
+                var conditionalLoop = ConditionalLoopBlockBuilder.Build(model);
+                if(conditionalLoop!= null)
+                {
+                    result.Add(new(conditionalLoop.Section));
+                    index += conditionalLoop.Length;
+                    continue;
+                }
             }
 
             return new(new(result.ToArray()), model.Tokens.Length);

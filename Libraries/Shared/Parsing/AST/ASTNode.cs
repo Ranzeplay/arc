@@ -75,9 +75,27 @@ namespace Arc.Compiler.Shared.Parsing.AST
 
         public FunctionReturnBlock? GetFunctionReturnBlock()
         {
-            if (NodeType == ASTNodeType.FunctionCall)
+            if (NodeType == ASTNodeType.ConditionalLoop)
             {
                 return Target as FunctionReturnBlock;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public ASTNode(ConditionalLoopBlock conditionalLoopBlock)
+        {
+            NodeType = ASTNodeType.ConditionalLoop;
+            Target = conditionalLoopBlock;
+        }
+
+        public ConditionalLoopBlock? GetConditionalLoopBlock()
+        {
+            if (NodeType == ASTNodeType.ConditionalLoop)
+            {
+                return Target as ConditionalLoopBlock;
             }
             else
             {
