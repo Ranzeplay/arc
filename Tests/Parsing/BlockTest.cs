@@ -139,5 +139,26 @@ namespace Arc.Compiler.Tests.Parsing
             var result = ConditionalExecBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
             Assert.That(result, Is.Not.Null);
         }
+
+        [Test]
+        public void FunctionBlockTest()
+        {
+            var text = "decl func alpha(var number a)[number] { decl var string b; }";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = FunctionBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+
+            Assert.That(result, Is.Not.Null);
+            if (result is not null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result, Has.Length.EqualTo(18));
+                    Assert.That(result.Section.Actions.ASTNodes, Has.Length.EqualTo(1));
+                    Assert.That(result.Section.Declarator.Parameters, Has.Length.EqualTo(1));
+                });
+            }
+        }
     }
 }

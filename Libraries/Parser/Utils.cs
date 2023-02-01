@@ -69,6 +69,11 @@ namespace Arc.Compiler.Parser
 
         internal static List<List<Token>> SplitCommaExpression(Token[] tokens)
         {
+            if (tokens.Length == 0)
+            {
+                return new List<List<Token>>();
+            }
+
             var result = new List<List<Token>>
             {
                 // With 1 expression at first

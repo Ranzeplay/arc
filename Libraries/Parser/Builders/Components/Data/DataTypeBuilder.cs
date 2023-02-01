@@ -17,7 +17,7 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
             // Keyword such as number, str and bool are types
             if (tokens[0].TokenType == TokenType.Keyword)
             {
-                var isArray = CheckArray(tokens[1..]);
+                var isArray = tokens.Length > 1 ? CheckArray(tokens[1..]) : false;
                 var keyword = tokens[0].GetKeyword();
                 if (keyword != null)
                 {
@@ -32,7 +32,8 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
                     else if (keyword == KeywordToken.Bool)
                     {
                         return new(new(new(Array.Empty<string>(), "bool"), isArray), isArray ? 3 : 1);
-                    } else
+                    }
+                    else
                     {
                         return null;
                     }
