@@ -8,6 +8,7 @@ using Arc.Compiler.Shared.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,44 +23,14 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 var keyword = tokens[0].GetKeyword();
                 if (keyword == KeywordToken.Declare)
                 {
-                    // Detect whether it is a variable or constant
-                    if (tokens[1].GetKeyword() is not null)
+                    var declaratorResult = DataDeclaratorBuilder.Build(tokens[1..]);
+                    if(declaratorResult != null)
                     {
-                        bool isConstant;
-                        var vc = tokens[1].GetKeyword();
-                        if (vc == KeywordToken.Var)
+                        // This is a statement
+                        if (tokens[1 + declaratorResult.Length].TokenType == TokenType.Semicolon)
                         {
-                            isConstant = false;
-                        }
-                        else if (vc == KeywordToken.Const)
-                        {
-                            isConstant = true;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Modifier must be var or const");
-                            // return null;
-                        }
-
-                        var currentIndex = 2;
-                        var dataTypeSection = DataTypeBuilder.Build(tokens[currentIndex..]);
-                        if (dataTypeSection is not null)
-                        {
-                            currentIndex += dataTypeSection.Length;
-
-                            // Build identifier
-                            var identifierResult = IdentifierBuilder.Build(tokens[currentIndex..]);
-                            if (identifierResult is not null)
-                            {
-                                currentIndex += identifierResult.Length;
-
-                                // This is a statement
-                                if (tokens[currentIndex].TokenType == TokenType.Semicolon)
-                                {
-                                    currentIndex++;
-                                    return new(new(dataTypeSection.Section, identifierResult.Section, isConstant), currentIndex);
-                                }
-                            }
+                            var declarator = declaratorResult.Section;
+                            return new(new(declarator.DataType, declarator.Identifier, declarator.IsConstant), declaratorResult.Length + 2);
                         }
                     }
                 }
