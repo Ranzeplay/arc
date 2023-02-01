@@ -47,7 +47,7 @@ namespace Arc.Compiler.Parser.Builders.Components
 
                                         if (block != null)
                                         {
-                                            return new(new(expr.Section, block.Section), 0);
+                                            return new(new(expr.Section, block.Section), 1 + (actionBlockZone.Length + 2) + (exprZone.Length + 2));
                                         }
                                     }
                                 }
