@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.Lexer;
+using Arc.Compiler.Parser.Builders.Blocks;
 using Arc.Compiler.Parser.Builders.Components;
 using Arc.Compiler.Parser.Builders.Components.Expression;
 using Arc.Compiler.Shared.Compilation;
@@ -95,6 +96,28 @@ namespace Arc.Compiler.Tests.Parsing
                     Assert.That(result.Section.RhsExpression.Terms, Has.Length.EqualTo(3));
                 });
             }
+        }
+
+        [Test]
+        public void LoopBreakTest()
+        {
+            var text = "break;";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = LoopBreakActionBuilder.Build(tokens.Tokens);
+            Assert.That(result, Is.Not.EqualTo(null));
+        }
+
+        [Test]
+        public void LoopContinueTest()
+        {
+            var text = "continue;";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = LoopContinueActionBuilder.Build(tokens.Tokens);
+            Assert.That(result, Is.Not.EqualTo(null));
         }
     }
 }

@@ -11,7 +11,13 @@ namespace Arc.Compiler.Shared.Parsing.AST
     {
         public ASTNodeType NodeType { get; }
 
-        private object Target { get; }
+        private object? Target { get; }
+
+        public ASTNode(ASTNodeType nodeType)
+        {
+            NodeType = nodeType;
+            Target = null;
+        }
 
         public ASTNode(DataDeclarationBlock declarationBlock)
         {
