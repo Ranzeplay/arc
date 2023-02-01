@@ -15,11 +15,12 @@ namespace Arc.Compiler.Parser.Builders.Blocks
         {
             var result = new List<ASTNode>();
 
+            // Try to build each one every iteration
             int index = 0;
-            while(index < model.Tokens.Length)
+            while (index < model.Tokens.Length)
             {
                 var assignment = DataAssignmentBuilder.Build(model.SkipTokens(index));
-                if(assignment != null)
+                if (assignment != null)
                 {
                     result.Add(new(assignment.Section));
                     index += assignment.Length;
@@ -27,7 +28,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 }
 
                 var declaration = DataDeclarationBuilder.Build(model.SkipTokens(index).Tokens);
-                if(declaration != null)
+                if (declaration != null)
                 {
                     result.Add(new(declaration.Section));
                     index += declaration.Length;
@@ -35,7 +36,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 }
 
                 var functionCall = FunctionCallBuilder.Build(model.SkipTokens(index));
-                if(functionCall != null)
+                if (functionCall != null)
                 {
                     result.Add(new(functionCall.Section));
                     index += functionCall.Length;
@@ -43,7 +44,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 }
 
                 var functionReturn = FunctionReturnBuilder.Build(model);
-                if(functionReturn != null)
+                if (functionReturn != null)
                 {
                     result.Add(new(functionReturn.Section));
                     index += functionReturn.Length;
@@ -51,10 +52,18 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 }
 
                 var conditionalLoop = ConditionalLoopBlockBuilder.Build(model);
-                if(conditionalLoop!= null)
+                if (conditionalLoop != null)
                 {
                     result.Add(new(conditionalLoop.Section));
                     index += conditionalLoop.Length;
+                    continue;
+                }
+
+                var conditionalExec = ConditionalExecBlockBuilder.Build(model);
+                if (conditionalExec != null)
+                {
+                    result.Add(new(conditionalExec.Section));
+                    index += conditionalExec.Length;
                     continue;
                 }
             }

@@ -119,7 +119,7 @@ namespace Arc.Compiler.Tests.Parsing
             var result = ConditionalLoopBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
 
             Assert.That(result, Is.Not.Null);
-            if(result is not null)
+            if (result is not null)
             {
                 Assert.Multiple(() =>
                 {
@@ -127,6 +127,17 @@ namespace Arc.Compiler.Tests.Parsing
                     Assert.That(result.Section.ActionBlock.ASTNodes, Has.Length.EqualTo(1));
                 });
             }
+        }
+
+        [Test]
+        public void ConditionalExecTest()
+        {
+            var text = "if (3 > 2) { decl var number a; } elif (1 < 4) { decl var string b; } else { }";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = ConditionalExecBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+            Assert.That(result, Is.Not.Null);
         }
     }
 }

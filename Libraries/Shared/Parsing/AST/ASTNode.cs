@@ -102,5 +102,23 @@ namespace Arc.Compiler.Shared.Parsing.AST
                 return null;
             }
         }
+
+        public ASTNode(ConditionalExecBlock conditionalExecBlock)
+        {
+            NodeType = ASTNodeType.ConditionalExec;
+            Target = conditionalExecBlock;
+        }
+
+        public ConditionalExecBlock? GetConditionalExecBlock()
+        {
+            if (NodeType == ASTNodeType.ConditionalLoop)
+            {
+                return Target as ConditionalExecBlock;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }
