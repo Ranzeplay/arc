@@ -60,15 +60,8 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
 
         private static bool CheckArray(Token[] tokens)
         {
-            if (tokens[0].GetContainer() is not null && tokens[1].GetContainer() is not null)
-            {
-                if (tokens[0].GetContainer() == ContainerToken.Index && tokens[1].GetContainer() == ContainerToken.AntiBracket)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return tokens[0].GetContainer().GetValueOrDefault() == ContainerToken.Index
+                && tokens[1].GetContainer().GetValueOrDefault() == ContainerToken.AntiIndex;
         }
     }
 }
