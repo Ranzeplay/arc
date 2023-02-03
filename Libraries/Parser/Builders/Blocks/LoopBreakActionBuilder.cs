@@ -14,14 +14,9 @@ namespace Arc.Compiler.Parser.Builders.Blocks
         public static SectionBuildResult<ASTNode>? Build(Token[] tokens)
         {
             var leadingKeyword = tokens[0].GetKeyword().GetValueOrDefault();
-            if (leadingKeyword == KeywordToken.Break && tokens[1].TokenType == TokenType.Semicolon)
-            {
-                return new(new(ASTNodeType.LoopBreak), 2);
-            }
-            else
-            {
-                return null;
-            }
+            return leadingKeyword == KeywordToken.Break && tokens[1].TokenType == TokenType.Semicolon
+                ? (new(new(ASTNodeType.LoopBreak), 2))
+                : null;
         }
     }
 }

@@ -16,29 +16,32 @@ namespace Arc.Compiler.Parser
         /// <returns>The return array contains the container on both sides</returns>
         internal static Token[]? PairContainer(Token[] tokens)
         {
+            // First token must be container token
             var container = tokens[0].GetContainer().GetValueOrDefault();
-            if (container != ContainerToken.Invalid)
+            if (container == ContainerToken.Invalid)
             {
-                var antiContainer = GetAntiContainer(container);
-                int containerLevel = 0;
-                for (int i = 0; i < tokens.Length; i++)
-                {
-                    var currentContainer = tokens[i].GetContainer().GetValueOrDefault();
-                    if (currentContainer == container)
-                    {
-                        containerLevel++;
-                    }
-                    else if (currentContainer == antiContainer)
-                    {
-                        containerLevel--;
-                    }
+                return null;
+            }
 
-                    // If this is the top layer from the start of the array
-                    // Return at first couldn't happen because containerLevel had been added by 1 at the beginning
-                    if (containerLevel == 0)
-                    {
-                        return tokens[..(i + 1)];
-                    }
+            var antiContainer = GetAntiContainer(container);
+            int containerLevel = 0;
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                var currentContainer = tokens[i].GetContainer().GetValueOrDefault();
+                if (currentContainer == container)
+                {
+                    containerLevel++;
+                }
+                else if (currentContainer == antiContainer)
+                {
+                    containerLevel--;
+                }
+
+                // If this is the top layer from the start of the array
+                // Return at first couldn't happen because containerLevel had been added by 1 at the beginning
+                if (containerLevel == 0)
+                {
+                    return tokens[..(i + 1)];
                 }
             }
 
@@ -47,22 +50,13 @@ namespace Arc.Compiler.Parser
 
         internal static ContainerToken GetAntiContainer(ContainerToken container)
         {
-            ContainerToken antiContainer;
-            switch (container)
+            var antiContainer = container switch
             {
-                case ContainerToken.Brace:
-                    antiContainer = ContainerToken.AntiBrace;
-                    break;
-                case ContainerToken.Bracket:
-                    antiContainer = ContainerToken.AntiBracket;
-                    break;
-                case ContainerToken.Index:
-                    antiContainer = ContainerToken.AntiIndex;
-                    break;
-                default:
-                    antiContainer = ContainerToken.Invalid;
-                    break;
-            }
+                ContainerToken.Brace => ContainerToken.AntiBrace,
+                ContainerToken.Bracket => ContainerToken.AntiBracket,
+                ContainerToken.Index => ContainerToken.AntiIndex,
+                _ => ContainerToken.Invalid,
+            };
 
             return antiContainer;
         }
@@ -103,14 +97,9 @@ namespace Arc.Compiler.Parser
         internal static int GetNextSemicolonPos(Token[] tokens, int defaultPos = -1)
         {
             var first = tokens.FirstOrDefault(t => t.TokenType == TokenType.Semicolon);
-            if (first != null)
-            {
-                return Array.IndexOf(tokens, first);
-            }
-            else
-            {
-                return defaultPos;
-            }
+            return first != null
+                ? Array.IndexOf(tokens, first)
+                : defaultPos;
         }
     }
 }

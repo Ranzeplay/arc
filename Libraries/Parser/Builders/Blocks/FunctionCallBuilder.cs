@@ -15,22 +15,23 @@ namespace Arc.Compiler.Parser.Builders.Blocks
     {
         public static SectionBuildResult<FunctionCallBlock>? Build(ExpressionBuildModel model)
         {
-            var keyword = model.Tokens[0].GetKeyword();
-            if(keyword != null)
+            if (model.Tokens[0].GetKeyword().GetValueOrDefault() == KeywordToken.Call)
             {
-                if(keyword == KeywordToken.Call)
+                var funcBaseResult = FunctionCallBaseBuilder.Build(model.SkipTokens(1));
+                if (funcBaseResult == null)
                 {
-                    var funcBaseResult = FunctionCallBaseBuilder.Build(model.SkipTokens(1));
-                    if(funcBaseResult != null)
-                    {
-                        var semicolonIndex = Utils.GetNextSemicolonPos(model.Tokens);
-                        if(semicolonIndex == funcBaseResult.Length + 1)
-                        {
-                            var funcBase = funcBaseResult.Section;
-                            return new(new(funcBase.TargetFunctionIdentifier, funcBase.Arguments), funcBaseResult.Length + 2);
-                        }
-                    }
+                    return null;
                 }
+
+                // This is a statement
+                var semicolonIndex = Utils.GetNextSemicolonPos(model.Tokens);
+                if (semicolonIndex == funcBaseResult.Length + 1)
+                {
+                    var funcBase = funcBaseResult.Section;
+                    return new(new(funcBase.TargetFunctionIdentifier, funcBase.Arguments), funcBaseResult.Length + 2);
+                }
+
+                return null;
             }
 
             return null;

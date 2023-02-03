@@ -17,39 +17,32 @@ namespace Arc.Compiler.Parser.Builders.Components
             var scope = new List<string>();
             // Tokens at odd(1, 3, 5, 7...) indexes are Operator::Scope
             // Tokens at even(0, 2, 4, 6...) indexes are Identifiers
-            for(index = 0; index < tokens.Length; index++)
+            for (index = 0; index < tokens.Length; index++)
             {
-                if(index % 2 == 0)
+                if (index % 2 == 0)
                 {
                     var current = tokens[index].GetIdentifier();
                     if (current is not null)
                     {
                         scope.Add(current);
-                    } else
+                    }
+                    else
                     {
                         break;
                     }
                 }
                 else
                 {
-                    bool match = false;
-                    var op = tokens[index].GetOperator();
-                    if(op is not null)
-                    {
-                        if(op.Type == OperatorTokenType.Scope)
-                        {
-                            match = true;
-                        }
-                    }
-
-                    if (!match)
+                    if (tokens[index].GetOperator()?.Type != OperatorTokenType.Scope)
                     {
                         break;
                     }
                 }
             }
 
-            if(scope.Count > 0)
+            // Name and scope are in the Scope array for now.
+            // If Scope is empty, then they are even no valid identifier.
+            if (scope.Count > 0)
             {
                 return new(new(scope.SkipLast(1).ToArray(), scope.Last()), index);
             }

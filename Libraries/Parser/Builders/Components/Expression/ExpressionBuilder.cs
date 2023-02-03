@@ -21,7 +21,7 @@ namespace Arc.Compiler.Parser.Builders.Components.Expression
             var relationOperatorIndex = Array.FindIndex(model.Tokens, t =>
             {
                 var op = t.GetOperator();
-                if(op != null)
+                if (op != null)
                 {
                     return op.Type == OperatorTokenType.Relation;
                 }
@@ -35,10 +35,10 @@ namespace Arc.Compiler.Parser.Builders.Components.Expression
             var lhsExpression = BuildSimpleExpression(new(lhsTokens, model.DeclaredData, model.DeclaredFunctions));
             var rhsExpression = BuildSimpleExpression(new(rhsTokens, model.DeclaredData, model.DeclaredFunctions));
 
-            if(lhsExpression != null && rhsExpression != null)
+            if (lhsExpression != null && rhsExpression != null)
             {
                 var op = model.Tokens[relationOperatorIndex].GetOperator();
-                if(op != null)
+                if (op != null)
                 {
                     return new(new(lhsExpression.Section, op.RelationOperator, rhsExpression.Section), model.Tokens.Length);
                 }
@@ -64,6 +64,10 @@ namespace Arc.Compiler.Parser.Builders.Components.Expression
                 {
                     terms.Add(iterationResult.Section);
                     index += iterationResult.Length;
+                }
+                else
+                {
+                    throw new ArgumentException("Invalid token stream");
                 }
             }
 

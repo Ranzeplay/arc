@@ -34,21 +34,22 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
 
             var currentIndex = 1;
             var dataTypeSection = DataTypeBuilder.Build(tokens[currentIndex..]);
-            if (dataTypeSection is not null)
+            if (dataTypeSection is null)
             {
-                currentIndex += dataTypeSection.Length;
-
-                // Build identifier
-                var identifierResult = IdentifierBuilder.Build(tokens[currentIndex..]);
-                if (identifierResult is not null)
-                {
-                    currentIndex += identifierResult.Length;
-
-                    return new(new(dataTypeSection.Section, identifierResult.Section, isConstant), currentIndex);
-                }
+                return null;
             }
 
-            return null;
+            currentIndex += dataTypeSection.Length;
+
+            // Build identifier
+            var identifierResult = IdentifierBuilder.Build(tokens[currentIndex..]);
+            if (identifierResult is null)
+            {
+                return null;
+            }
+
+            currentIndex += identifierResult.Length;
+            return new(new(dataTypeSection.Section, identifierResult.Section, isConstant), currentIndex);
         }
     }
 }
