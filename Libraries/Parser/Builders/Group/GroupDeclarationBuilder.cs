@@ -46,7 +46,43 @@ namespace Arc.Compiler.Parser.Builders.Group
             var declaratorZone = Utils.PairContainer(model.Tokens[currentIndex..]);
             if (declaratorZone != null)
             {
-                var field = BuildGroupField(model.SkipTokens(currentIndex));
+                currentIndex += declaratorZone.Length;
+                declaratorZone = declaratorZone[1..^1];
+
+                var fields = new List<GroupField>();
+                var methods = new List<GroupMethod>();
+                var functions = new List<GroupFunction>();
+
+                var zoneIndex = 0;
+                var zoneModel = new ExpressionBuildModel(declaratorZone, model.DeclaredData, model.DeclaredFunctions);
+                while (zoneIndex < declaratorZone.Length)
+                {
+                    var field = BuildGroupField(zoneModel.SkipTokens(zoneIndex));
+                    if (field != null)
+                    {
+                        fields.Add(field.Section);
+                        zoneIndex += field.Length;
+                        continue;
+                    }
+
+                    var method = BuildGroupMethod(zoneModel.SkipTokens(zoneIndex));
+                    if(method != null)
+                    {
+                        methods.Add(method.Section);
+                        zoneIndex += method.Length;
+                        continue;
+                    }
+
+                    var func = BuildGroupFunction(zoneModel.SkipTokens(zoneIndex));
+                    if (func != null)
+                    {
+                        functions.Add(func.Section);
+                        zoneIndex += func.Length;
+                        continue;
+                    }
+                }
+
+                return new(new(identifier.Section, fields.ToArray(), methods.ToArray(), functions.ToArray()), currentIndex);
             }
 
             return null;
@@ -170,7 +206,7 @@ namespace Arc.Compiler.Parser.Builders.Group
                     }
 
 
-                    return new(new(declarator.Section, getter, setter), currentIndex);
+                    return new(new(declarator.Section, getter, setter), currentIndex + 1);
                 }
             }
 
@@ -209,6 +245,40 @@ namespace Arc.Compiler.Parser.Builders.Group
                 // Doesn't customize getter or setter
                 return new(new(model.Tokens[0].GetKeyword().GetValueOrDefault(), new(true)), 1);
             }
+        }
+
+        private static SectionBuildResult<GroupMethod>? BuildGroupMethod(ExpressionBuildModel model)
+        {
+            // Validate leading tokens
+            if (model.Tokens[0].GetKeyword().GetValueOrDefault() != KeywordToken.Method)
+            {
+                return null;
+            }
+
+            var result = FunctionBlockBaseBuilder.Build(model.SkipTokens(1));
+            if (result != null)
+            {
+                return new(new(result.Section.Declarator, result.Section.Actions), result.Length + 1);
+            }
+
+            return null;
+        }
+
+        private static SectionBuildResult<GroupFunction>? BuildGroupFunction(ExpressionBuildModel model)
+        {
+            // Validate leading tokens
+            if (model.Tokens[0].GetKeyword().GetValueOrDefault() != KeywordToken.Func)
+            {
+                return null;
+            }
+
+            var result = FunctionBlockBaseBuilder.Build(model.SkipTokens(1));
+            if (result != null)
+            {
+                return new(new(result.Section.Declarator, result.Section.Actions), result.Length + 1);
+            }
+
+            return null;
         }
     }
 }

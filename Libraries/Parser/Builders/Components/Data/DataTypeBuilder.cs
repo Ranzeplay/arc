@@ -60,8 +60,15 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
 
         private static bool CheckArray(Token[] tokens)
         {
-            return tokens[0].GetContainer().GetValueOrDefault() == ContainerToken.Index
+            if (tokens.Length < 2)
+            {
+                return false;
+            }
+            else
+            {
+                return tokens[0].GetContainer().GetValueOrDefault() == ContainerToken.Index
                 && tokens[1].GetContainer().GetValueOrDefault() == ContainerToken.AntiIndex;
+            }
         }
     }
 }
