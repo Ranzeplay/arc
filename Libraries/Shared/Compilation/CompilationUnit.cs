@@ -12,8 +12,6 @@ namespace Arc.Compiler.Shared.Compilation
     {
         public List<TokenizedFile> TokenizedFiles { get; set; } = new();
 
-        public List<ASTNode> ASTNodes { get; set; } = new();
-
-        public List<FunctionDeclarator> DeclaredFunctions { get; set; } = new();
+        public List<PartialParsingResult> Partials { get; set; } = new();
     }
 }
