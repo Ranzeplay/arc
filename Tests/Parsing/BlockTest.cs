@@ -161,7 +161,7 @@ namespace Arc.Compiler.Tests.Parsing
             }
         }
 
-        [TestCase("link std::io;")]
+        [TestCase("link std;")]
         [TestCase("link \"path.als\";")]
         public void LinkBlockTest(string text)
         {
@@ -170,6 +170,10 @@ namespace Arc.Compiler.Tests.Parsing
 
             var result = LinkBlockBuilder.Build(tokens.Tokens);
             Assert.That(result, Is.Not.Null);
+            if(result != null)
+            {
+                Assert.That(result, Has.Length.EqualTo(3));
+            }
         }
     }
 }
