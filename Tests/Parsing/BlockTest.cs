@@ -160,5 +160,16 @@ namespace Arc.Compiler.Tests.Parsing
                 });
             }
         }
+
+        [TestCase("link std::io;")]
+        [TestCase("link \"path.als\";")]
+        public void LinkBlockTest(string text)
+        {
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var result = LinkBlockBuilder.Build(tokens.Tokens);
+            Assert.That(result, Is.Not.Null);
+        }
     }
 }
