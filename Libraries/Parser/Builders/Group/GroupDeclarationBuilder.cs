@@ -66,7 +66,7 @@ namespace Arc.Compiler.Parser.Builders.Group
                     }
 
                     var method = BuildGroupMethod(zoneModel.SkipTokens(zoneIndex));
-                    if(method != null)
+                    if (method != null)
                     {
                         methods.Add(method.Section);
                         zoneIndex += method.Length;
@@ -126,21 +126,26 @@ namespace Arc.Compiler.Parser.Builders.Group
                     gsIndex += firstGS.Length;
                 }
 
-                // Splited by comma token
-                if (gsZone[gsIndex].GetOperator()?.Type == OperatorTokenType.Comma)
+                SectionBuildResult<GSBlockBuildResult>? secondGS = null;
+                if (gsZone.Length > gsIndex)
                 {
-                    gsIndex++;
-                }
-                else
-                {
-                    throw new Exception("Getter and setter should be splited by a comma token");
+                    // Splited by comma token
+                    if (gsZone[gsIndex].GetOperator()?.Type == OperatorTokenType.Comma)
+                    {
+                        gsIndex++;
+                    }
+                    else
+                    {
+                        throw new Exception("Getter and setter should be splited by a comma token");
+                    }
+
+                    secondGS = BuildGSBlock(new(gsZone[gsIndex..], model.DeclaredData, model.DeclaredFunctions));
+                    if (secondGS != null)
+                    {
+                        gsIndex += secondGS.Length;
+                    }
                 }
 
-                var secondGS = BuildGSBlock(new(gsZone[gsIndex..], model.DeclaredData, model.DeclaredFunctions));
-                if (secondGS != null)
-                {
-                    gsIndex += secondGS.Length;
-                }
 
                 if (gsIndex != gsZone.Length)
                 {
