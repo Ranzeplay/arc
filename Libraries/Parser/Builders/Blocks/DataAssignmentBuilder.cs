@@ -34,16 +34,18 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 return null;
             }
 
-            if (op.Type == Shared.LexicalAnalysis.OperatorTokenType.Assignment)
+            if (op.Type != Shared.LexicalAnalysis.OperatorTokenType.Assignment)
             {
-                // Build expression after that
-                var nextSemicolonPos = Utils.GetNextSemicolonPos(model.Tokens);
-                var expr = ExpressionBuilder.BuildSimpleExpression(new(model.Tokens[(accessor.Length + 1)..nextSemicolonPos], model.DeclaredData, model.DeclaredFunctions));
+                return null;
+            }
 
-                if (expr != null)
-                {
-                    return new(new(accessor.Section, expr.Section), nextSemicolonPos + 1);
-                }
+            // Build expression after that
+            var nextSemicolonPos = Utils.GetNextSemicolonPos(model.Tokens);
+            var expr = ExpressionBuilder.BuildSimpleExpression(new(model.Tokens[(accessor.Length + 1)..nextSemicolonPos], model.DeclaredData, model.DeclaredFunctions));
+
+            if (expr != null)
+            {
+                return new(new(accessor.Section, expr.Section), nextSemicolonPos + 1);
             }
 
             return null;
