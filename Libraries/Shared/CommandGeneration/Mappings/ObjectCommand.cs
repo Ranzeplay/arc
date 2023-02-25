@@ -12,6 +12,6 @@ namespace Arc.Compiler.Shared.CommandGeneration
         CreateLocal = 0x1,
         CreateGlobal = 0x2,
         DeleteLocal = 0x3,
-        DeleteInternal = 0x4,
+        DeleteGlobal = 0x4,
     }
 }
