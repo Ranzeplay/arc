@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Group
 {
-    public class GroupDeclarationBuilder
+    internal class GroupDeclarationBuilder
     {
         public static SectionBuildResult<GroupBlock>? BuildGroupBlock(ExpressionBuildModel model)
         {

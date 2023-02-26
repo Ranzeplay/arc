@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Lexer.Rules
 {
-    public class Container
+    internal class Container
     {
         public static SectionBuildResult<Token>? Build(SourceFile source, int baseIndex)
         {

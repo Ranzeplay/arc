@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components
 {
-    public class ConditionalBlockBuilder
+    internal class ConditionalBlockBuilder
     {
         public static SectionBuildResult<ConditionalLoopBlock>? Build(KeywordToken leadingKeywordType, ExpressionBuildModel model)
         {

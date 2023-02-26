@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Lexer.Rules
 {
-    public class Comment
+    internal class Comment
     {
         /// <summary>
         /// Try to match comment token from source code.

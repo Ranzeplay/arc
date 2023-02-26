@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class DataAssignmentBuilder
+    internal class DataAssignmentBuilder
     {
         public static SectionBuildResult<DataAssignmentBlock>? Build(ExpressionBuildModel model)
         {

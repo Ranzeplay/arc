@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components
 {
-    public class IdentifierBuilder
+    internal class IdentifierBuilder
     {
         public static SectionBuildResult<Identifier>? Build(Token[] tokens)
         {

@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class DataDeclarationBuilder
+    internal class DataDeclarationBuilder
     {
         public static SectionBuildResult<DataDeclarationBlock>? Build(Token[] tokens)
         {

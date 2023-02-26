@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components.Expression
 {
-    public class ExpressionBuilder
+    internal class ExpressionBuilder
     {
         public static SectionBuildResult<RelationalExpression>? BuildRelationalExpression(ExpressionBuildModel model)
         {

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class LoopBreakActionBuilder
+    internal class LoopBreakActionBuilder
     {
         public static SectionBuildResult<ASTNode>? Build(Token[] tokens)
         {

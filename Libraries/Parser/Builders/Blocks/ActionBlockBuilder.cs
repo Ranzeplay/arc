@@ -11,7 +11,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
 {
     public class ActionBlockBuilder
     {
-        public static SectionBuildResult<ActionBlock>? Build(ExpressionBuildModel model)
+        internal static SectionBuildResult<ActionBlock>? Build(ExpressionBuildModel model)
         {
             var result = new List<ASTNode>();
 

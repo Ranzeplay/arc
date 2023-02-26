@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components
 {
-    public class FunctionBlockBaseBuilder
+    internal class FunctionBlockBaseBuilder
     {
         public static SectionBuildResult<FunctionBlock>? Build(ExpressionBuildModel model)
         {

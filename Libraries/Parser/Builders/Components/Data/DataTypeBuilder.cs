@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components.Data
 {
-    public class DataTypeBuilder
+    internal class DataTypeBuilder
     {
         public static SectionBuildResult<DataType>? Build(Token[] tokens)
         {

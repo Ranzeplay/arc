@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Lexer.Rules
 {
-    public class Whitespace
+    internal class Whitespace
     {
         public static SectionBuildResult<Token>? Build(SourceFile source, int baseIndex)
         {

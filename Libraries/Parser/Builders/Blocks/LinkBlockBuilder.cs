@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class LinkBlockBuilder
+    internal class LinkBlockBuilder
     {
         public static SectionBuildResult<LinkBlock>? Build(Token[] tokens)
         {

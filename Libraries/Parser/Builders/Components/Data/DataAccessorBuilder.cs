@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components.Data
 {
-    public class DataAccessorBuilder
+    internal class DataAccessorBuilder
     {
         public static SectionBuildResult<DataAccessor>? Build(ExpressionBuildModel model)
         {

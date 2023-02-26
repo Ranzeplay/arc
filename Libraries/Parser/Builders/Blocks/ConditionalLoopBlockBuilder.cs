@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class ConditionalLoopBlockBuilder
+    internal class ConditionalLoopBlockBuilder
     {
         public static SectionBuildResult<ConditionalLoopBlock>? Build(ExpressionBuildModel model)
         {

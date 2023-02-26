@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class ConditionalExecBlockBuilder
+    internal class ConditionalExecBlockBuilder
     {
         public static SectionBuildResult<ConditionalExecBlock>? Build(ExpressionBuildModel model)
         {

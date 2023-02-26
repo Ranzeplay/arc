@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {
-    public class FunctionReturnBuilder
+    internal class FunctionReturnBuilder
     {
         public static SectionBuildResult<FunctionReturnBlock>? Build(ExpressionBuildModel model)
         {
