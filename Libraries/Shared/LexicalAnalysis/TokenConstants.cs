@@ -66,10 +66,9 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
         {
             { CalculationOperatorType.Addition,       "+" },
             { CalculationOperatorType.Subtraction,    "-" },
-            { CalculationOperatorType.Multiply, "*" },
+            { CalculationOperatorType.Multiply,       "*" },
             { CalculationOperatorType.Division,       "/" },
-            { CalculationOperatorType.Modulo,         "+" },
-            { CalculationOperatorType.Invalid,        "+" },
+            { CalculationOperatorType.Modulo,         "%" },
         };
 
         public static readonly Dictionary<RelationOperatorType, string> RelationOperatorMappings = new()
