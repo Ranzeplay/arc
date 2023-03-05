@@ -88,6 +88,15 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
             { LogicalOperatorType.Not, "!" },
         };
 
+        public static readonly Dictionary<CalculationOperatorType, int> CalculationOperatorPriority = new()
+        {
+            { CalculationOperatorType.Addition,       1 },
+            { CalculationOperatorType.Subtraction,    1 },
+            { CalculationOperatorType.Multiply,       2 },
+            { CalculationOperatorType.Division,       2 },
+            { CalculationOperatorType.Modulo,         2 },
+        };
+
         public static readonly char SemicolonToken = ';';
 
         public static readonly string CommentLeadingSequence = "//";
