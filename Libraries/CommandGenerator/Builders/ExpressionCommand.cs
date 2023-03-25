@@ -21,7 +21,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var commands = new List<byte>();
 
-            var postfixExpression = Utils.ExpressionInfixToPostfix(source.ActionBlock);
+            var postfixExpression = Utils.ExpressionInfixToPostfix(source.Component);
 
             foreach (var term in postfixExpression.Terms)
             {
@@ -53,12 +53,12 @@ namespace Arc.CompilerCommandGenerator.Builders
 
         private static PartialGenerationResult? BuildExpressionDataTerm(GenerationSource<ExpressionDataTerm> source)
         {
-            switch (source.ActionBlock.DataTermType)
+            switch (source.Component.DataTermType)
             {
                 case ExpressionDataTermType.Number:
-                    return BuildNumberCommand(GenerationSource<string>.MigrateGenerationSource(source.ActionBlock.GetNumber()!, source));
+                    return BuildNumberCommand(GenerationSource<string>.MigrateGenerationSource(source.Component.GetNumber()!, source));
                 case ExpressionDataTermType.String:
-                    return BuildStringCommand(GenerationSource<string>.MigrateGenerationSource(source.ActionBlock.GetString()!, source));
+                    return BuildStringCommand(GenerationSource<string>.MigrateGenerationSource(source.Component.GetString()!, source));
                 case ExpressionDataTermType.DataAccessor:
                     throw new NotImplementedException();
                 case ExpressionDataTermType.FunctionCall:
@@ -73,7 +73,7 @@ namespace Arc.CompilerCommandGenerator.Builders
         private static PartialGenerationResult BuildNumberCommand(GenerationSource<string> source)
         {
             // Get number
-            var numberObj = new NumberObject(source.ActionBlock);
+            var numberObj = new NumberObject(source.Component);
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
             var slot = Utils.GenerateSlotData(source.ConstantBeginIndex, source.PackageMetadata);
@@ -93,7 +93,7 @@ namespace Arc.CompilerCommandGenerator.Builders
         private static PartialGenerationResult BuildStringCommand(GenerationSource<string> source)
         {
             // Generate string data
-            var stringBytes = Encoding.UTF8.GetBytes(source.ActionBlock);
+            var stringBytes = Encoding.UTF8.GetBytes(source.Component);
             var encodedString = Utils.BuildDataBlock(stringBytes, source.PackageMetadata);
 
             // Generate string length

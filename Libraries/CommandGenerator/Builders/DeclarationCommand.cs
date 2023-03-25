@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Builders
 {
-    public class DeclarationCommand
+    internal class DeclarationCommand
     {
         public static PartialGenerationResult? Build(GenerationSource<DataDeclarationBlock> source)
         {
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Object, (byte)ObjectCommand.CreateLocal).ToList();
 
-            commands.Add((byte)(source.ActionBlock.DataType.IsArray ? 0x01 : 0x00));
+            commands.Add((byte)(source.Component.DataType.IsArray ? 0x01 : 0x00));
 
-            return new(commands.ToArray(), source.ActionBlock);
+            return new(commands.ToArray(), source.Component);
         }
     }
 }

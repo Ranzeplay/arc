@@ -10,7 +10,7 @@ namespace Arc.CompilerCommandGenerator.Models
 {
     public class GenerationSource<T>
     {
-        public T ActionBlock { get; }
+        public T Component { get; }
 
         public IEnumerable<DataDeclarator> LocalData { get; }
 
@@ -20,9 +20,9 @@ namespace Arc.CompilerCommandGenerator.Models
 
         public long ConstantBeginIndex { get; }
 
-        public GenerationSource(T actionBlock, IEnumerable<DataDeclarator> localData, IEnumerable<DataDeclarator> globalData, PackageMetadata packageMetadata, long constantBeginIndex = 0)
+        public GenerationSource(T component, IEnumerable<DataDeclarator> localData, IEnumerable<DataDeclarator> globalData, PackageMetadata packageMetadata, long constantBeginIndex = 0)
         {
-            ActionBlock = actionBlock;
+            Component = component;
             LocalData = localData;
             GlobalData = globalData;
             PackageMetadata = packageMetadata;
