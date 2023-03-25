@@ -18,13 +18,16 @@ namespace Arc.Compiler.Shared.CommandGeneration
 
         public byte EntryFunctionId { get; }
 
-        public PackageMetadata(byte packageType, byte dataAlignment, byte dataSlotAlignment, byte addressAlignment, byte entryFunctionId)
+        public byte DataSectionSize { get; }
+
+        public PackageMetadata(byte packageType, byte dataAlignment, byte dataSlotAlignment, byte addressAlignment, byte entryFunctionId, byte dataSectionSize)
         {
             PackageType = packageType;
             DataAlignment = dataAlignment;
             DataSlotAlignment = dataSlotAlignment;
             AddressAlignment = addressAlignment;
             EntryFunctionId = entryFunctionId;
+            DataSectionSize = dataSectionSize;
         }
     }
 }
