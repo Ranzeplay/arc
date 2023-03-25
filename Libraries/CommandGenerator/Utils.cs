@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.Shared.LexicalAnalysis;
+﻿using Arc.Compiler.Shared.CommandGeneration;
+using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
 
 namespace Arc.CompilerCommandGenerator
@@ -93,6 +94,21 @@ namespace Arc.CompilerCommandGenerator
             result.AddRange(operatorStack.ToArray());
 
             return new(result.ToArray(), expression.OutputDataType);
+        }
+
+        public static byte[] BuildDataBlock(List<byte> encodedData, PackageMetadata metadata)
+        {
+            var result = new List<byte>();
+
+            if (encodedData.Count % metadata.DataSectionSize > 0)
+            {
+                encodedData.InsertRange(0, new byte[encodedData.Count % metadata.DataSectionSize]);
+            }
+
+            result.Add((byte)(encodedData.Count / metadata.DataSectionSize));
+            result.AddRange(encodedData);
+
+            return result.ToArray();
         }
     }
 }

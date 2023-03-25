@@ -27,23 +27,11 @@ namespace Arc.CompilerCommandGenerator.Extensions
             };
 
             // Build numbers
-            var number = IntegerPart.ToByteArray().ToList();
-            if(number.Count % metadata.DataSectionSize > 0) {
-                number.InsertRange(0, new byte[number.Count % metadata.DataSectionSize]);
-            }
+            var integerPart = Utils.BuildDataBlock(IntegerPart.ToByteArray().ToList(), metadata);
+            var decimalPart = Utils.BuildDataBlock(DecimalPart.ToByteArray().ToList(), metadata);
 
-            result.Add((byte)(number.Count / metadata.DataSectionSize));
-            result.AddRange(number);
-
-            // Add decimal point position
-            var decimalPointPosition = DecimalPart.ToByteArray().ToList();
-            if (decimalPointPosition.Count % metadata.DataSectionSize > 0)
-            {
-                decimalPointPosition.InsertRange(0, new byte[decimalPointPosition.Count % metadata.DataSectionSize]);
-            }
-
-            result.Add((byte)(decimalPointPosition.Count / metadata.DataSectionSize));
-            result.AddRange(decimalPointPosition);
+            result.AddRange(integerPart);
+            result.AddRange(decimalPart);
 
             return result.ToArray();
         }
