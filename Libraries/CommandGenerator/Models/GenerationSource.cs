@@ -18,12 +18,20 @@ namespace Arc.CompilerCommandGenerator.Models
 
         public PackageMetadata PackageMetadata { get; }
 
-        public GenerationSource(T actionBlock, IEnumerable<DataDeclarator> localData, IEnumerable<DataDeclarator> globalData, PackageMetadata packageMetadata)
+        public long ConstantBeginIndex { get; }
+
+        public GenerationSource(T actionBlock, IEnumerable<DataDeclarator> localData, IEnumerable<DataDeclarator> globalData, PackageMetadata packageMetadata, long constantBeginIndex = 0)
         {
             ActionBlock = actionBlock;
             LocalData = localData;
             GlobalData = globalData;
             PackageMetadata = packageMetadata;
+            ConstantBeginIndex = constantBeginIndex;
+        }
+
+        public static GenerationSource<Ta> MigrateGenerationSource<Ta, To>(Ta actionBlock, GenerationSource<To> originalSource)
+        {
+            return new GenerationSource<Ta>(actionBlock, originalSource.LocalData, originalSource.GlobalData, originalSource.PackageMetadata, originalSource.ConstantBeginIndex);
         }
     }
 }

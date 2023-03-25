@@ -1,9 +1,11 @@
 ﻿using Arc.Compiler.Lexer;
 using Arc.Compiler.Parser.Builders.Components.Expression;
+using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 using Arc.CompilerCommandGenerator;
+using Arc.CompilerCommandGenerator.Builders;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +49,31 @@ namespace Arc.Compiler.Tests.CommandGeneration
             if(result != null)
             {
                 Assert.That(result.Terms, Has.Length.EqualTo(11));
+            }
+        }
+
+        [Test]
+        public void SimpleCommandGeneration()
+        {
+            var text = "2 + 8 - 3 * \"Hello\"";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+
+            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+
+            var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, Array.Empty<DataDeclarator>(), Array.Empty<DataDeclarator>(), metadata));
+
+            Assert.That(result, Is.Not.EqualTo(null));
+            if(result != null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.GeneratedConstants.Count(), Is.EqualTo(4));
+                    Assert.That(result.Commands, Has.Length.EqualTo(18));
+                });
             }
         }
     }
