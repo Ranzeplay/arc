@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.CommandGeneration.Math;
+using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.CompilerCommandGenerator.Models;
 using System;
@@ -12,42 +13,100 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class MathCommand
     {
-        public static byte[]? MathCalcAdd()
+        public static byte[]? FromOperator(OperatorToken op)
+        {
+            switch (op.Type)
+            {
+                case OperatorTokenType.Calculation:
+                    {
+                        switch (op.CalculationOperator)
+                        {
+                            case CalculationOperatorType.Addition:
+                                {
+                                    return MathCalcAdd();
+                                }
+                            case CalculationOperatorType.Subtraction:
+                                {
+                                    return MathCalcSubtract();
+                                }
+                            case CalculationOperatorType.Division:
+                                {
+                                    return MathCalcDivide();
+                                }
+                            case CalculationOperatorType.Multiply:
+                                {
+                                    return MathCalcMultiply();
+                                }
+                            case CalculationOperatorType.Modulo:
+                                {
+                                    return MathCalcModulo();
+                                }
+                        }
+
+                        break;
+                    }
+                case OperatorTokenType.Relation:
+                    {
+                        switch (op.LogicalOperator)
+                        {
+                            case LogicalOperatorType.And:
+                                {
+                                    return MathLogicalAnd();
+                                }
+                            case LogicalOperatorType.Or:
+                                {
+                                    return MathLogicalOr();
+                                }
+                            case LogicalOperatorType.Not:
+                                {
+                                    return MathLogicalNot();
+                                }
+                        }
+
+                        break;
+                    }
+
+            }
+
+            return null;
+        }
+
+        private static byte[] MathCalcAdd()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Calculation, (byte)CalculationCommand.Add);
         }
 
-        public static byte[]? MathCalcSubtract()
+        private static byte[] MathCalcSubtract()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Calculation, (byte)CalculationCommand.Subtract);
         }
 
-        public static byte[]? MathCalcMultiply()
+        private static byte[] MathCalcMultiply()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Calculation, (byte)CalculationCommand.Multiply);
         }
 
-        public static byte[]? MathCalcDivide()
+        private static byte[] MathCalcDivide()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Calculation, (byte)CalculationCommand.Divide);
         }
 
-        public static byte[]? MathCalcModulo()
+        private static byte[] MathCalcModulo()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Calculation, (byte)CalculationCommand.Modulo);
         }
 
-        public static byte[]? MathLogicalAnd()
+        private static byte[] MathLogicalAnd()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Logical, (byte)LogicalCommand.And);
         }
 
-        public static byte[]? MathLogicalOr()
+        private static byte[] MathLogicalOr()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Logical, (byte)LogicalCommand.Or);
         }
 
-        public static byte[]? MathLogicalNot()
+        private static byte[] MathLogicalNot()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Logical, (byte)LogicalCommand.Not);
         }
