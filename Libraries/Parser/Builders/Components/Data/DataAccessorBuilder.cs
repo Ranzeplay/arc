@@ -54,7 +54,7 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
                         if (expressionResult is not null)
                         {
                             // Check format
-                            var endIndex = arrayElementExpressionBeginIndex + expressionResult.Length - 1;
+                            var endIndex = arrayElementExpressionBeginIndex + expressionResult.Length + 1;
                             if (model.Tokens[endIndex].GetContainer().GetValueOrDefault() == ContainerToken.AntiIndex)
                             {
                                 return new(new(targetDeclarator, expressionResult.Section), endIndex + 1);

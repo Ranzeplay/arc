@@ -12,15 +12,15 @@ namespace Arc.CompilerCommandGenerator.Models
     {
         public T Component { get; }
 
-        public IEnumerable<DataDeclarator> LocalData { get; }
+        public List<DataDeclarator> LocalData { get; }
 
-        public IEnumerable<DataDeclarator> GlobalData { get; }
+        public List<DataDeclarator> GlobalData { get; }
 
         public PackageMetadata PackageMetadata { get; }
 
         public long ConstantBeginIndex { get; }
 
-        public GenerationSource(T component, IEnumerable<DataDeclarator> localData, IEnumerable<DataDeclarator> globalData, PackageMetadata packageMetadata, long constantBeginIndex = 0)
+        public GenerationSource(T component, List<DataDeclarator> localData, List<DataDeclarator> globalData, PackageMetadata packageMetadata, long constantBeginIndex = 0)
         {
             Component = component;
             LocalData = localData;
@@ -29,9 +29,9 @@ namespace Arc.CompilerCommandGenerator.Models
             ConstantBeginIndex = constantBeginIndex;
         }
 
-        public static GenerationSource<Ta> MigrateGenerationSource<Ta, To>(Ta actionBlock, GenerationSource<To> originalSource)
+        public static GenerationSource<Tc> MigrateGenerationSource<Tc, To>(Tc component, GenerationSource<To> originalSource)
         {
-            return new GenerationSource<Ta>(actionBlock, originalSource.LocalData, originalSource.GlobalData, originalSource.PackageMetadata, originalSource.ConstantBeginIndex);
+            return new GenerationSource<Tc>(component, originalSource.LocalData, originalSource.GlobalData, originalSource.PackageMetadata, originalSource.ConstantBeginIndex);
         }
     }
 }

@@ -36,7 +36,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                         {
                             var partialResult = BuildExpressionDataTerm(new GenerationSource<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.PackageMetadata, result.GeneratedConstants.Count()));
 
-                            if(partialResult != null)
+                            if (partialResult != null)
                             {
                                 commands.AddRange(partialResult.Commands);
                                 result.GeneratedConstants = Enumerable.Concat(result.GeneratedConstants, partialResult.GeneratedConstants);
@@ -60,7 +60,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 case ExpressionDataTermType.String:
                     return BuildStringCommand(GenerationSource<string>.MigrateGenerationSource(source.Component.GetString()!, source));
                 case ExpressionDataTermType.DataAccessor:
-                    throw new NotImplementedException();
+                    return BuildDataAccessorCommand(GenerationSource<DataAccessorSource>.MigrateGenerationSource<DataAccessorSource, ExpressionDataTerm>(new(GenerationSource<DataAccessor>.MigrateGenerationSource(source.Component.GetDataAccessor()!, source)), source));
                 case ExpressionDataTermType.FunctionCall:
                     throw new NotImplementedException();
                 default:
@@ -115,6 +115,38 @@ namespace Arc.CompilerCommandGenerator.Builders
                                           new DataType(new Identifier(Array.Empty<string>(), "string"), false),
                                                        constantData.ToArray())
                 });
+        }
+
+        private static PartialGenerationResult BuildDataAccessorCommand(GenerationSource<DataAccessorSource> source)
+        {
+            var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromObject).ToList();
+
+            // Evaluate index expression first and put it to the top of the stack
+            if (source.Component.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
+            {
+                var indexExpression = BuildSimpleExpression(GenerationSource<SimpleExpression>.MigrateGenerationSource(source.Component.DataAccessor.IndexEvalExpression!, source));
+                if (indexExpression != null)
+                {
+                    commands.AddRange(indexExpression.Commands);
+                }
+            }
+
+            switch (source.Component.Origin)
+            {
+                case DataAccessorSource.AccessorOrigin.Local:
+                    commands.Add(0x00);
+                    break;
+                case DataAccessorSource.AccessorOrigin.Global:
+                    commands.Add(0x01);
+                    break;
+            }
+
+            var slot = Utils.GenerateSlotData(source.Component.Slot, source.PackageMetadata);
+            commands.AddRange(slot);
+
+            // TODO: Check whether the the object is singleton or array element
+
+            return new PartialGenerationResult(commands.ToArray());
         }
     }
 }

@@ -53,6 +53,37 @@ namespace Arc.Compiler.Tests.CommandGeneration
         }
 
         [Test]
+        public void CommandWithDataAccessor()
+        {
+            var text = "2 + var1 * var2[136]";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var definedData = new List<DataDeclarator>
+            {
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "var1"), false),
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "var2"), true)
+            };
+
+            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData.ToArray(), Array.Empty<FunctionDeclarator>()));
+
+            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+
+            var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), metadata));
+
+            Assert.That(result, Is.Not.Null);
+            if(result != null)
+            {
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.GeneratedConstants.Count(), Is.EqualTo(1));
+                    Assert.That(result.Commands, Has.Length.EqualTo(18));
+                });
+            }
+        }
+
+        [Test]
         public void SimpleCommandGeneration()
         {
             var text = "2 + 8 - 3 * \"Hello\"";
@@ -64,10 +95,10 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, Array.Empty<DataDeclarator>(), Array.Empty<DataDeclarator>(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), metadata));
 
             Assert.That(result, Is.Not.EqualTo(null));
-            if(result != null)
+            if (result != null)
             {
                 Assert.Multiple(() =>
                 {
