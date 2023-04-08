@@ -70,7 +70,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if(result != null)
@@ -95,9 +95,9 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), new(), metadata));
 
-            Assert.That(result, Is.Not.EqualTo(null));
+            Assert.That(result, Is.Not.Null);
             if (result != null)
             {
                 Assert.Multiple(() =>
@@ -105,6 +105,43 @@ namespace Arc.Compiler.Tests.CommandGeneration
                     Assert.That(result.GeneratedConstants.Count(), Is.EqualTo(4));
                     Assert.That(result.Commands, Has.Length.EqualTo(18));
                 });
+            }
+        }
+
+        [Test]
+        public void ExpressionWithFunction()
+        {
+            var text = "2 + (var1 * func1(var2))";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var definedData = new DataDeclarator[]
+            {
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "var1"), false),
+                new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "var2"), false)
+            };
+
+            var definedFunctions = new FunctionDeclarator[]
+            {
+                new(
+                    new(Array.Empty<string>(), "func1"),
+                    new(new(Array.Empty<string>(), "retType1"), false),
+                    new FunctionParameter[]
+                    {
+                        new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "param1"), false)
+                    })
+            };
+
+            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
+            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+
+            var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), metadata));
+
+            Assert.That(result, Is.Not.Null);
+            if (result != null)
+            {
+                Assert.That(result.Commands, Has.Length.EqualTo(18));
             }
         }
     }

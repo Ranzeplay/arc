@@ -120,5 +120,14 @@ namespace Arc.CompilerCommandGenerator
 
             return slotBytes;
         }
+
+        internal static byte[] GenerateFunctionIdData(long slot, PackageMetadata metadata)
+        {
+            var slotBytes = BitConverter.GetBytes(slot).ToArray();
+            Array.Resize(ref slotBytes, metadata.AddressAlignment);
+            Array.Reverse(slotBytes);
+
+            return slotBytes;
+        }
     }
 }

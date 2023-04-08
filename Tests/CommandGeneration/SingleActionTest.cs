@@ -22,7 +22,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var tokens = Tokenizer.Tokenize(source, true);
             var action = DataDeclarationBuilder.Build(tokens.Tokens);
 
-            var result = DeclarationCommand.Build(new(action!.Section, new(), new(), null!));
+            var result = DeclarationCommand.Build(new(action!.Section, new(), new(), new(), null!));
 
             Assert.That(result, Is.Not.Null);
         }

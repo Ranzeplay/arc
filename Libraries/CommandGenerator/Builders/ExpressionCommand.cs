@@ -1,8 +1,8 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
+using Arc.Compiler.Shared.Parsing.Components.Function;
 using Arc.CompilerCommandGenerator.Extensions;
 using Arc.CompilerCommandGenerator.Models;
 using System;
@@ -34,7 +34,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                         }
                     case ExpressionTermType.Data:
                         {
-                            var partialResult = BuildExpressionDataTerm(new GenerationSource<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.PackageMetadata, result.GeneratedConstants.Count()));
+                            var partialResult = BuildExpressionDataTerm(new GenerationSource<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.AvailableFunctions, source.PackageMetadata, result.GeneratedConstants.Count()));
 
                             if (partialResult != null)
                             {
@@ -62,7 +62,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 case ExpressionDataTermType.DataAccessor:
                     return BuildDataAccessorCommand(GenerationSource<DataAccessorSource>.MigrateGenerationSource<DataAccessorSource, ExpressionDataTerm>(new(GenerationSource<DataAccessor>.MigrateGenerationSource(source.Component.GetDataAccessor()!, source)), source));
                 case ExpressionDataTermType.FunctionCall:
-                    throw new NotImplementedException();
+                    return BuildFunctionCallCommand(GenerationSource<DataAccessorSource>.MigrateGenerationSource(source.Component.GetFunctionCall()!, source));
                 default:
                     break;
             }
@@ -147,6 +147,39 @@ namespace Arc.CompilerCommandGenerator.Builders
             // TODO: Check whether the the object is singleton or array element
 
             return new PartialGenerationResult(commands.ToArray());
+        }
+
+        private static PartialGenerationResult? BuildFunctionCallCommand(GenerationSource<FunctionCallBase> source)
+        {
+            var commands = new List<byte>();
+
+            var targetFunction = source.AvailableFunctions.FirstOrDefault(f => f.Identifier.Equals(source.Component.TargetFunctionIdentifier)) ?? throw new InvalidDataException("Target function not found!");
+            var functionId = source.AvailableFunctions.IndexOf(targetFunction);
+
+            // Evaluate each parameter
+            // TODO: Add checks
+            // The first argument goes to the top of the stack
+            foreach (var callArg in source.Component.Arguments.Reverse())
+            {
+                var expr = BuildSimpleExpression(GenerationSource<SimpleExpression>.MigrateGenerationSource(callArg.EvaluateExpression, source));
+                if (expr != null)
+                {
+                    commands.AddRange(expr.Commands);
+                }
+                else
+                {
+                    throw new InvalidDataException("Encountered an expression that is not evaluable");
+                }
+            }
+
+            // Push leading command
+            commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Function, (byte)FunctionCommand.Enter));
+
+            // Add function id
+            var slot = Utils.GenerateFunctionIdData(functionId, source.PackageMetadata);
+            commands.AddRange(slot);
+
+            return new(commands.ToArray());
         }
     }
 }
