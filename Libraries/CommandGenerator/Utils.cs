@@ -95,39 +95,5 @@ namespace Arc.CompilerCommandGenerator
 
             return new(result.ToArray(), expression.OutputDataType);
         }
-
-        internal static byte[] BuildDataBlock(byte[] encodedData, PackageMetadata metadata)
-        {
-            var result = new List<byte>();
-
-            var data = encodedData.ToList();
-            if (data.Count % metadata.DataSectionSize > 0)
-            {
-                data.InsertRange(0, new byte[data.Count % metadata.DataSectionSize]);
-            }
-
-            result.Add((byte)(data.Count / metadata.DataSectionSize));
-            result.AddRange(data);
-
-            return result.ToArray();
-        }
-
-        internal static byte[] GenerateSlotData(long slot, PackageMetadata metadata)
-        {
-            var slotBytes = BitConverter.GetBytes(slot).ToArray();
-            Array.Resize(ref slotBytes, metadata.DataSlotAlignment);
-            Array.Reverse(slotBytes);
-
-            return slotBytes;
-        }
-
-        internal static byte[] GenerateFunctionIdData(long slot, PackageMetadata metadata)
-        {
-            var slotBytes = BitConverter.GetBytes(slot).ToArray();
-            Array.Resize(ref slotBytes, metadata.AddressAlignment);
-            Array.Reverse(slotBytes);
-
-            return slotBytes;
-        }
     }
 }

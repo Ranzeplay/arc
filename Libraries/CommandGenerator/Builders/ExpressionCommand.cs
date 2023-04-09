@@ -76,7 +76,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var numberObj = new NumberObject(source.Component);
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
-            var slot = Utils.GenerateSlotData(source.ConstantBeginIndex, source.PackageMetadata);
+            var slot = source.PackageMetadata.GenerateSlotData(source.ConstantBeginIndex);
             commands.AddRange(slot);
 
             return new PartialGenerationResult(
@@ -94,16 +94,16 @@ namespace Arc.CompilerCommandGenerator.Builders
         {
             // Generate string data
             var stringBytes = Encoding.UTF8.GetBytes(source.Component);
-            var encodedString = Utils.BuildDataBlock(stringBytes, source.PackageMetadata);
+            var encodedString = source.PackageMetadata.BuildDataBlock(stringBytes);
 
             // Generate string length
             var stringLen = stringBytes.Length;
-            var encodedLen = Utils.BuildDataBlock(BitConverter.GetBytes(stringLen), source.PackageMetadata);
+            var encodedLen = source.PackageMetadata.BuildDataBlock(BitConverter.GetBytes(stringLen));
 
             var constantData = encodedLen.Concat(encodedString);
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
-            var slot = Utils.GenerateSlotData(source.ConstantBeginIndex, source.PackageMetadata);
+            var slot = source.PackageMetadata.GenerateSlotData(source.ConstantBeginIndex);
             commands.AddRange(slot);
 
             return new PartialGenerationResult(
@@ -141,7 +141,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                     break;
             }
 
-            var slot = Utils.GenerateSlotData(source.Component.Slot, source.PackageMetadata);
+            var slot = source.PackageMetadata.GenerateSlotData(source.Component.Slot);
             commands.AddRange(slot);
 
             // TODO: Check whether the the object is singleton or array element
@@ -176,7 +176,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Function, (byte)FunctionCommand.Enter));
 
             // Add function id
-            var slot = Utils.GenerateFunctionIdData(functionId, source.PackageMetadata);
+            var slot = source.PackageMetadata.GenerateFunctionIdData(functionId);
             commands.AddRange(slot);
 
             return new(commands.ToArray());

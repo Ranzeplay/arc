@@ -27,8 +27,8 @@ namespace Arc.CompilerCommandGenerator.Extensions
             };
 
             // Build numbers
-            var integerPart = Utils.BuildDataBlock(IntegerPart.ToByteArray(), metadata);
-            var decimalPart = Utils.BuildDataBlock(DecimalPart.ToByteArray(), metadata);
+            var integerPart = metadata.BuildDataBlock(IntegerPart.ToByteArray());
+            var decimalPart = metadata.BuildDataBlock(DecimalPart.ToByteArray());
 
             result.AddRange(integerPart);
             result.AddRange(decimalPart);
