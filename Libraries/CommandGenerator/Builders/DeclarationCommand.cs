@@ -11,7 +11,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class DeclarationCommand
     {
-        public static PartialGenerationResult? Build(GenerationSource<DataDeclarationBlock> source)
+        public static PartialGenerationResult? Build(GenerationContext<DataDeclarationBlock> source)
         {
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Object, (byte)ObjectCommand.CreateLocal).ToList();
 

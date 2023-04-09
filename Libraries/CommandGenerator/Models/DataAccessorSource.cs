@@ -28,7 +28,7 @@ namespace Arc.CompilerCommandGenerator.Models
             Slot = slot;
         }
 
-        public DataAccessorSource(GenerationSource<DataAccessor> source)
+        public DataAccessorSource(GenerationContext<DataAccessor> source)
         {
             DataAccessor = source.Component;
 

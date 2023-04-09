@@ -15,7 +15,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class ExpressionCommand
     {
-        public static PartialGenerationResult? BuildSimpleExpression(GenerationSource<SimpleExpression> source)
+        public static PartialGenerationResult? BuildSimpleExpression(GenerationContext<SimpleExpression> source)
         {
             var result = new PartialGenerationResult();
 
@@ -34,7 +34,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                         }
                     case ExpressionTermType.Data:
                         {
-                            var partialResult = BuildExpressionDataTerm(new GenerationSource<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.AvailableFunctions, source.PackageMetadata, result.GeneratedConstants.Count()));
+                            var partialResult = BuildExpressionDataTerm(new GenerationContext<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.AvailableFunctions, source.PackageMetadata, result.GeneratedConstants.Count()));
 
                             if (partialResult != null)
                             {
@@ -51,7 +51,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             return result;
         }
 
-        private static PartialGenerationResult? BuildExpressionDataTerm(GenerationSource<ExpressionDataTerm> source)
+        private static PartialGenerationResult? BuildExpressionDataTerm(GenerationContext<ExpressionDataTerm> source)
         {
             switch (source.Component.DataTermType)
             {
@@ -72,7 +72,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             return null;
         }
 
-        private static PartialGenerationResult BuildNumberCommand(GenerationSource<string> source)
+        private static PartialGenerationResult BuildNumberCommand(GenerationContext<string> source)
         {
             // Get number
             var numberObj = new NumberObject(source.Component);
@@ -92,7 +92,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 });
         }
 
-        private static PartialGenerationResult BuildStringCommand(GenerationSource<string> source)
+        private static PartialGenerationResult BuildStringCommand(GenerationContext<string> source)
         {
             // Generate string data
             var stringBytes = Encoding.UTF8.GetBytes(source.Component);
@@ -119,7 +119,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 });
         }
 
-        private static PartialGenerationResult BuildDataAccessorCommand(GenerationSource<DataAccessorSource> source)
+        private static PartialGenerationResult BuildDataAccessorCommand(GenerationContext<DataAccessorSource> source)
         {
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromObject).ToList();
 
@@ -151,7 +151,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             return new PartialGenerationResult(commands.ToArray());
         }
 
-        private static PartialGenerationResult? BuildFunctionCallCommand(GenerationSource<FunctionCallBase> source)
+        private static PartialGenerationResult? BuildFunctionCallCommand(GenerationContext<FunctionCallBase> source)
         {
             var commands = new List<byte>();
 
