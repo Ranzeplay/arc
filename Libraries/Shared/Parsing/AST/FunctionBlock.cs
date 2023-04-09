@@ -7,16 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class FunctionBlock
+    public record FunctionBlock(FunctionDeclarator Declarator, ActionBlock Actions)
     {
-        public FunctionDeclarator Declarator { get; }
-
-        public ActionBlock Actions { get; }
-
-        public FunctionBlock(FunctionDeclarator declarator, ActionBlock actions)
-        {
-            Declarator = declarator;
-            Actions = actions;
-        }
     }
 }

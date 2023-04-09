@@ -3,19 +3,7 @@ using Arc.Compiler.Shared.Parsing.Components.Data;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Group
 {
-    public class GroupField
+    public record GroupField(DataDeclarator Declarator, GSBlock? Getter, GSBlock? Setter)
     {
-        public DataDeclarator Declarator { get; }
-
-        public GSBlock? Getter { get; }
-
-        public GSBlock? Setter { get; }
-
-        public GroupField(DataDeclarator declarator, GSBlock? getter, GSBlock? setter)
-        {
-            Declarator = declarator;
-            Getter = getter;
-            Setter = setter;
-        }
     }
-} 
+}

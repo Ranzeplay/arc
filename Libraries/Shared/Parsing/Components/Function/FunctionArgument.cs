@@ -8,16 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Function
 {
-    public class FunctionArgument
+    public record FunctionArgument(FunctionParameter Declarator, SimpleExpression EvaluateExpression)
     {
-        public FunctionParameter Declarator { get; }
-
-        public SimpleExpression EvaluateExpression { get; }
-
-        public FunctionArgument(FunctionParameter declarator, SimpleExpression evaluateExpression)
-        {
-            Declarator = declarator;
-            EvaluateExpression = evaluateExpression;
-        }
     }
 }

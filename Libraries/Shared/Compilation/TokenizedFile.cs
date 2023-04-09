@@ -7,16 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Compilation
 {
-    public class TokenizedFile
+    public record TokenizedFile(SourceFile SourceFile, Token[] Tokens)
     {
-        public SourceFile SourceFile { get; }
-
-        public Token[] Tokens { get; }
-
-        public TokenizedFile(SourceFile sourceFile, Token[] tokens)
-        {
-            SourceFile = sourceFile;
-            Tokens = tokens;
-        }
     }
 }

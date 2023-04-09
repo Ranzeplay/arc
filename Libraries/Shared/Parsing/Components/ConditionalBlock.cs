@@ -8,16 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components
 {
-    public class ConditionalBlock
+    public record ConditionalBlock(RelationalExpression Condition, ActionBlock Actions)
     {
-        public RelationalExpression Condition { get; }
-
-        public ActionBlock ActionBlock { get; }
-
-        public ConditionalBlock(RelationalExpression condition, ActionBlock actionBlock)
-        {
-            Condition = condition;
-            ActionBlock = actionBlock;
-        }
     }
 }

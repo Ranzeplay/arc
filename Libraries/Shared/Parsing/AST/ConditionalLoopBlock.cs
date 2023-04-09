@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class ConditionalLoopBlock : ConditionalBlock
+    public record ConditionalLoopBlock : ConditionalBlock
     {
-        public ConditionalLoopBlock(RelationalExpression condition, ActionBlock actionBlock)
-            : base(condition, actionBlock)
+        public ConditionalLoopBlock(RelationalExpression Condition, ActionBlock Actions)
+            : base(Condition, Actions)
         {
         }
     }

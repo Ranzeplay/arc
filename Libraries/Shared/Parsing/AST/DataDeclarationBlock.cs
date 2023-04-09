@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class DataDeclarationBlock : DataDeclarator
+    public record DataDeclarationBlock : DataDeclarator
     {
         public DataDeclarationBlock(DataType dataType, Identifier identifier, bool isConstant)
             : base(dataType, identifier, isConstant)

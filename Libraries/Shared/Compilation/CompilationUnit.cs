@@ -8,10 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Compilation
 {
-    public class CompilationUnit
+    public record CompilationUnit(List<TokenizedFile> TokenizedFiles, List<PartialParsingResult> Partials)
     {
-        public List<TokenizedFile> TokenizedFiles { get; set; } = new();
-
-        public List<PartialParsingResult> Partials { get; set; } = new();
     }
 }

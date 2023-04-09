@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class FunctionCallBlock : FunctionCallBase
+    public record FunctionCallBlock : FunctionCallBase
     {
         public FunctionCallBlock(Identifier targetFunctionIdentifier, FunctionArgument[] arguments)
             : base(targetFunctionIdentifier, arguments)

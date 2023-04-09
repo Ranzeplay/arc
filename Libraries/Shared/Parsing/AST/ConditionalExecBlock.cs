@@ -7,16 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class ConditionalExecBlock
+    public record ConditionalExecBlock(ConditionalBlock[] ConditionalBlocks, ActionBlock? OtherwiseBlock)
     {
-        public ConditionalBlock[] ConditionalBlocks { get; }
-
-        public ActionBlock? OtherwiseBlock { get; }
-
-        public ConditionalExecBlock(ConditionalBlock[] conditionalBlocks, ActionBlock? otherwiseBlock)
-        {
-            ConditionalBlocks = conditionalBlocks;
-            OtherwiseBlock = otherwiseBlock;
-        }
     }
 }

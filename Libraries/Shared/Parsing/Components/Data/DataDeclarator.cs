@@ -6,19 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Data
 {
-    public class DataDeclarator
+    public record DataDeclarator(DataType DataType, Identifier Identifier, bool IsConstant)
     {
-        public DataType DataType { get; }
-
-        public Identifier Identifier { get; }
-
-        public bool IsConstant { get; }
-
-        public DataDeclarator(DataType dataType, Identifier identifier, bool isConstant)
-        {
-            DataType = dataType;
-            Identifier = identifier;
-            IsConstant = isConstant;
-        }
     }
 }

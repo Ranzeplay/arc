@@ -8,19 +8,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Compilation
 {
-    public class PartialParsingResult
+    public record PartialParsingResult(List<LinkBlock> Links, List<GroupBlock> DeclaredGroups, List<FunctionBlock> DeclaredFunctions)
     {
-        public List<LinkBlock> Links { get; set; } = new();
-
-        public List<GroupBlock> DeclaredGroups { get; set; } = new();
-
-        public List<FunctionBlock> DeclaredFunctions { get; set; } = new();
-
-        public PartialParsingResult(List<LinkBlock> links, List<GroupBlock> declaredGroups, List<FunctionBlock> declaredFunctions)
-        {
-            Links = links;
-            DeclaredGroups = declaredGroups;
-            DeclaredFunctions = declaredFunctions;
-        }
     }
 }

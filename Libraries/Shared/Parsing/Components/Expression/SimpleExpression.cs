@@ -24,7 +24,7 @@ namespace Arc.Compiler.Shared.Parsing.Components.Expression
 
         public void AssignOutputDataType(DataType dataType)
         {
-            this.OutputDataType = dataType;
+            OutputDataType = dataType;
         }
     }
 }

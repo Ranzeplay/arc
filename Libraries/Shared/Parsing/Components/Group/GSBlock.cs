@@ -7,16 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Group
 {
-    public class GSBlock
+    public record GSBlock(bool IsExist, ActionBlock? Actions)
     {
-        public bool IsExist { get; }
-
-        public ActionBlock? ActionBlock { get; }
-
-        public GSBlock(bool isExist, ActionBlock? actionBlock = null)
-        {
-            IsExist = isExist;
-            ActionBlock = actionBlock;
-        }
     }
 }

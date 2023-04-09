@@ -6,13 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class ActionBlock
+    public record ActionBlock(ASTNode[] ASTNodes)
     {
-        public ASTNode[] ASTNodes { get; }
-
-        public ActionBlock(ASTNode[] aSTNodes)
-        {
-            ASTNodes = aSTNodes;
-        }
     }
 }

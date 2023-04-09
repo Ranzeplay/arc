@@ -6,16 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Function
 {
-    public class FunctionCallBase
+    public record FunctionCallBase(Identifier TargetFunctionIdentifier, FunctionArgument[] Arguments)
     {
-        public Identifier TargetFunctionIdentifier { get; }
-
-        public FunctionArgument[] Arguments { get; }
-
-        public FunctionCallBase(Identifier targetFunctionIdentifier, FunctionArgument[] arguments)
-        {
-            TargetFunctionIdentifier = targetFunctionIdentifier;
-            Arguments = arguments;
-        }
     }
 }

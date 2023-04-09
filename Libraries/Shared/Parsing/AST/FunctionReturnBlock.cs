@@ -7,13 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.AST
 {
-    public class FunctionReturnBlock
+    public record FunctionReturnBlock(SimpleExpression? Expression = null)
     {
-        public SimpleExpression? Expression { get; }
-
-        public FunctionReturnBlock(SimpleExpression? expression = null)
-        {
-            Expression = expression;
-        }
     }
 }

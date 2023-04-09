@@ -124,7 +124,7 @@ namespace Arc.Compiler.Tests.Parsing
                 Assert.Multiple(() =>
                 {
                     Assert.That(result.Section.Condition.Relation, Is.EqualTo(RelationOperatorType.Greater));
-                    Assert.That(result.Section.ActionBlock.ASTNodes, Has.Length.EqualTo(1));
+                    Assert.That(result.Section.Actions.ASTNodes, Has.Length.EqualTo(1));
                 });
             }
         }

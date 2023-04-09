@@ -7,19 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.CommandGeneration
 {
-    public class GeneratedConstant
+    public record GeneratedConstant(long Id, DataType DataType, byte[] GeneratedBytes)
     {
-        public long Id { get; }
-
-        public DataType DataType { get; }
-
-        public byte[] GeneratedBytes { get; }
-
-        public GeneratedConstant(long id, DataType dataType, byte[] generatedBytes)
-        {
-            Id = id;
-            DataType = dataType;
-            GeneratedBytes = generatedBytes;
-        }
     }
 }

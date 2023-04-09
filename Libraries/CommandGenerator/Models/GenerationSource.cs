@@ -9,30 +9,8 @@ using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Models
 {
-    public class GenerationSource<T>
+    public record GenerationSource<T>(T Component, List<DataDeclarator> LocalData, List<DataDeclarator> GlobalData, List<FunctionDeclarator> AvailableFunctions, PackageMetadata PackageMetadata, long ConstantBeginIndex = 0)
     {
-        public T Component { get; }
-
-        public List<DataDeclarator> LocalData { get; }
-
-        public List<DataDeclarator> GlobalData { get; }
-
-        public List<FunctionDeclarator> AvailableFunctions { get; }
-
-        public PackageMetadata PackageMetadata { get; }
-
-        public long ConstantBeginIndex { get; }
-
-        public GenerationSource(T component, List<DataDeclarator> localData, List<DataDeclarator> globalData, List<FunctionDeclarator> availableFunctions, PackageMetadata packageMetadata, long constantBeginIndex = 0)
-        {
-            Component = component;
-            LocalData = localData;
-            GlobalData = globalData;
-            AvailableFunctions = availableFunctions;
-            PackageMetadata = packageMetadata;
-            ConstantBeginIndex = constantBeginIndex;
-        }
-
         public static GenerationSource<Tc> MigrateGenerationSource<Tc, To>(Tc component, GenerationSource<To> originalSource)
         {
             return new GenerationSource<Tc>(component, originalSource.LocalData, originalSource.GlobalData, originalSource.AvailableFunctions, originalSource.PackageMetadata, originalSource.ConstantBeginIndex);

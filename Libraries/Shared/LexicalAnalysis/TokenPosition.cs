@@ -7,24 +7,14 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.LexicalAnalysis
 {
-    public class TokenPosition
+    public record TokenPosition(SourceFile SourceFile, int Position, int Length)
     {
-        public SourceFile SourceFile { get; }
-
-        public int Position { get; }
-
-        public int Length { get; }
-
-        public TokenPosition(SourceFile sourceFile, int position, int length)
+        public string RawText
         {
-            SourceFile = sourceFile;
-            Position = position;
-            Length = length;
-        }
-
-        public string getRaw()
-        {
-            return SourceFile.Content.Substring(Position, Length);
+            get
+            {
+                return SourceFile.Content.Substring(Position, Length);
+            }
         }
     }
 }

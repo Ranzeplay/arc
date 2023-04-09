@@ -10,27 +10,11 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Models
 {
-    public class ExpressionBuildModel
+    public record ExpressionBuildModel(Token[] Tokens, DataDeclarator[] DeclaredData, FunctionDeclarator[] DeclaredFunctions)
     {
-        public Token[] Tokens { get; private set; } = Array.Empty<Token>();
-
-        public DataDeclarator[] DeclaredData { get; }
-
-        public FunctionDeclarator[] DeclaredFunctions { get; }
-
-        public ExpressionBuildModel(Token[] tokens, DataDeclarator[] dataDeclarators, FunctionDeclarator[] functionDeclarators)
-        {
-            Tokens = tokens;
-            DeclaredData = dataDeclarators;
-            DeclaredFunctions = functionDeclarators;
-        }
-
         public ExpressionBuildModel SkipTokens(int count)
         {
-            var clone = (ExpressionBuildModel)MemberwiseClone();
-            clone.Tokens = clone.Tokens[count..];
-
-            return clone;
+            return new(Tokens[count..], DeclaredData, DeclaredFunctions);
         }
     }
 }

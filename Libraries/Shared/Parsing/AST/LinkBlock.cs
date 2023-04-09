@@ -22,7 +22,7 @@ namespace Arc.Compiler.Shared.Parsing.AST
 
         public LinkBlock(string path)
         {
-            TargetType= LinkTargetType.Path;
+            TargetType = LinkTargetType.Path;
             Path = path;
         }
     }

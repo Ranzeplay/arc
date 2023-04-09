@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Function
 {
-    public class FunctionParameter : DataDeclarator
+    public record FunctionParameter : DataDeclarator
     {
-        public FunctionParameter(DataType dataType, Identifier identifier, bool isConstant) : base(dataType, identifier, isConstant)
+        public FunctionParameter(DataType dataType, Identifier identifier, bool isConstant)
+            : base(dataType, identifier, isConstant)
         {
         }
     }

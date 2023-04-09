@@ -7,19 +7,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Expression
 {
-    public class RelationalExpression
+    public record RelationalExpression(SimpleExpression LhsExpression, RelationOperatorType Relation, SimpleExpression RhsExpression)
     {
-        public SimpleExpression LhsExpression { get; }
-
-        public RelationOperatorType Relation { get; }
-
-        public SimpleExpression RhsExpression { get; }
-
-        public RelationalExpression(SimpleExpression lhsExpression, RelationOperatorType relation, SimpleExpression rhsExpression)
-        {
-            LhsExpression = lhsExpression;
-            Relation = relation;
-            RhsExpression = rhsExpression;
-        }
     }
 }

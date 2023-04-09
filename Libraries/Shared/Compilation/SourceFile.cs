@@ -6,16 +6,7 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.Shared.Compilation
 {
-    public class SourceFile
+    public record SourceFile(string FilePath, string Content)
     {
-        public string FilePath { get; }
-
-        public string Content { get; }
-
-        public SourceFile(string path, string content)
-        {
-            FilePath = path;
-            Content = content;
-        }
     }
 }

@@ -248,7 +248,7 @@ namespace Arc.Compiler.Parser.Builders.Group
             else
             {
                 // Doesn't customize getter or setter
-                return new(new(model.Tokens[0].GetKeyword().GetValueOrDefault(), new(true)), 1);
+                return new(new(model.Tokens[0].GetKeyword().GetValueOrDefault(), new(true, null)), 1);
             }
         }
 
