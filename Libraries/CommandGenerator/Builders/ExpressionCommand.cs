@@ -56,13 +56,15 @@ namespace Arc.CompilerCommandGenerator.Builders
             switch (source.Component.DataTermType)
             {
                 case ExpressionDataTermType.Number:
-                    return BuildNumberCommand(GenerationSource<string>.MigrateGenerationSource(source.Component.GetNumber()!, source));
+                    return BuildNumberCommand(source.TransferToNewComponent(source.Component.GetNumber()!));
                 case ExpressionDataTermType.String:
-                    return BuildStringCommand(GenerationSource<string>.MigrateGenerationSource(source.Component.GetString()!, source));
+                    return BuildStringCommand(source.TransferToNewComponent(source.Component.GetString()!));
                 case ExpressionDataTermType.DataAccessor:
-                    return BuildDataAccessorCommand(GenerationSource<DataAccessorSource>.MigrateGenerationSource<DataAccessorSource, ExpressionDataTerm>(new(GenerationSource<DataAccessor>.MigrateGenerationSource(source.Component.GetDataAccessor()!, source)), source));
+                    var accessorGenerationSource = source.TransferToNewComponent(source.Component.GetDataAccessor()!);
+                    var accessorSource = new DataAccessorSource(accessorGenerationSource);
+                    return BuildDataAccessorCommand(source.TransferToNewComponent(accessorSource));
                 case ExpressionDataTermType.FunctionCall:
-                    return BuildFunctionCallCommand(GenerationSource<DataAccessorSource>.MigrateGenerationSource(source.Component.GetFunctionCall()!, source));
+                    return BuildFunctionCallCommand(source.TransferToNewComponent(source.Component.GetFunctionCall()!));
                 default:
                     break;
             }
@@ -124,7 +126,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             // Evaluate index expression first and put it to the top of the stack
             if (source.Component.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
             {
-                var indexExpression = BuildSimpleExpression(GenerationSource<SimpleExpression>.MigrateGenerationSource(source.Component.DataAccessor.IndexEvalExpression!, source));
+                var indexExpression = BuildSimpleExpression(source.TransferToNewComponent(source.Component.DataAccessor.IndexEvalExpression!));
                 if (indexExpression != null)
                 {
                     commands.AddRange(indexExpression.Commands);
@@ -161,7 +163,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             // The first argument goes to the top of the stack
             foreach (var callArg in source.Component.Arguments.Reverse())
             {
-                var expr = BuildSimpleExpression(GenerationSource<SimpleExpression>.MigrateGenerationSource(callArg.EvaluateExpression, source));
+                var expr = BuildSimpleExpression(source.TransferToNewComponent(callArg.EvaluateExpression));
                 if (expr != null)
                 {
                     commands.AddRange(expr.Commands);

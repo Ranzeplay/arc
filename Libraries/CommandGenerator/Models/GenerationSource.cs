@@ -11,9 +11,9 @@ namespace Arc.CompilerCommandGenerator.Models
 {
     public record GenerationSource<T>(T Component, List<DataDeclarator> LocalData, List<DataDeclarator> GlobalData, List<FunctionDeclarator> AvailableFunctions, PackageMetadata PackageMetadata, long ConstantBeginIndex = 0)
     {
-        public static GenerationSource<Tc> MigrateGenerationSource<Tc, To>(Tc component, GenerationSource<To> originalSource)
+        public GenerationSource<Tc> TransferToNewComponent<Tc>(Tc component)
         {
-            return new GenerationSource<Tc>(component, originalSource.LocalData, originalSource.GlobalData, originalSource.AvailableFunctions, originalSource.PackageMetadata, originalSource.ConstantBeginIndex);
+            return new GenerationSource<Tc>(component, LocalData, GlobalData, AvailableFunctions, PackageMetadata, ConstantBeginIndex);
         }
     }
 }
