@@ -43,7 +43,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
 
-            var result = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+            var result = expressionBlock!.Section.ToPostfixExpression();
 
             Assert.That(result, Is.Not.Null);
             if(result != null)
@@ -67,7 +67,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData.ToArray(), Array.Empty<FunctionDeclarator>()));
 
-            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+            var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
             var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), new(), metadata));
@@ -92,7 +92,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
 
-            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+            var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
             var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), new(), metadata));
@@ -133,7 +133,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             };
 
             var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
-            var postfixExpression = Utils.ExpressionInfixToPostfix(expressionBlock!.Section);
+            var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
             var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), metadata));

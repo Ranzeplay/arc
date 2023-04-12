@@ -21,7 +21,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var commands = new List<byte>();
 
-            var postfixExpression = Utils.ExpressionInfixToPostfix(source.Component);
+            var postfixExpression = source.Component.ToPostfixExpression();
 
             foreach (var term in postfixExpression.Terms)
             {
