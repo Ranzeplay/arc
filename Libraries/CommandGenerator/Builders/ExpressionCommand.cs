@@ -15,6 +15,11 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class ExpressionCommand
     {
+        public static PartialGenerationResult? BuildRelationalExpression(GenerationContext<RelationalExpression> source)
+        {
+            return null!;
+        }
+
         public static PartialGenerationResult? BuildSimpleExpression(GenerationContext<SimpleExpression> source)
         {
             var result = new PartialGenerationResult();
@@ -124,27 +129,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromObject).ToList();
 
             // Evaluate index expression first and put it to the top of the stack
-            if (source.Component.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
-            {
-                var indexExpression = BuildSimpleExpression(source.TransferToNewComponent(source.Component.DataAccessor.IndexEvalExpression!));
-                if (indexExpression != null)
-                {
-                    commands.AddRange(indexExpression.Commands);
-                }
-            }
-
-            switch (source.Component.Origin)
-            {
-                case DataAccessorSource.AccessorOrigin.Local:
-                    commands.Add(0x00);
-                    break;
-                case DataAccessorSource.AccessorOrigin.Global:
-                    commands.Add(0x01);
-                    break;
-            }
-
-            var slot = source.PackageMetadata.GenerateSlotData(source.Component.Slot);
-            commands.AddRange(slot);
+            commands.AddRange(DataAccessorCommandFragment.Build(source.TransferToNewComponent(source.Component.DataAccessor))!.Commands);
 
             // TODO: Check whether the the object is singleton or array element
 
