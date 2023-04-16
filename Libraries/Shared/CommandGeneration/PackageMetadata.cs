@@ -30,23 +30,18 @@ namespace Arc.Compiler.Shared.CommandGeneration
             DataSectionSize = dataSectionSize;
         }
 
-        public byte[] GenerateFunctionIdData(long slot)
+        private static byte[] GenerateDataAligned(long data, byte width)
         {
-            var slotBytes = BitConverter.GetBytes(slot).ToArray();
-            Array.Resize(ref slotBytes, AddressAlignment);
-            Array.Reverse(slotBytes);
+            var result = BitConverter.GetBytes(data).ToArray();
+            Array.Resize(ref result, width);
+            Array.Reverse(result);
 
-            return slotBytes;
+            return result;
         }
 
-        public byte[] GenerateSlotData(long slot)
-        {
-            var slotBytes = BitConverter.GetBytes(slot).ToArray();
-            Array.Resize(ref slotBytes, DataSlotAlignment);
-            Array.Reverse(slotBytes);
+        public byte[] GenerateFunctionIdData(long slot) => GenerateDataAligned(slot, AddressAlignment);
 
-            return slotBytes;
-        }
+        public byte[] GenerateSlotData(long slot) => GenerateDataAligned((short)slot, DataSlotAlignment);
 
         public byte[] BuildDataBlock(byte[] encodedData)
         {
