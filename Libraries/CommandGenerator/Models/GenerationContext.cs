@@ -9,7 +9,12 @@ using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Models
 {
-    public record GenerationContext<T>(T Component, List<DataDeclarator> LocalData, List<DataDeclarator> GlobalData, List<FunctionDeclarator> AvailableFunctions, PackageMetadata PackageMetadata, long ConstantBeginIndex = 0)
+    public record GenerationContext<T>(T Component,
+                                       List<DataDeclarator> LocalData,
+                                       List<DataDeclarator> GlobalData,
+                                       List<FunctionDeclarator> AvailableFunctions,
+                                       PackageMetadata PackageMetadata,
+                                       long ConstantBeginIndex = 0)
     {
         public GenerationContext<Tc> TransferToNewComponent<Tc>(Tc component)
         {

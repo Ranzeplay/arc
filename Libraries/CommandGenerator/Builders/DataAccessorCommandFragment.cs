@@ -19,6 +19,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             if (targetDataAccessor.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
             {
+                // Evaluate index first
                 var indexExpression = ExpressionCommand.BuildSimpleExpression(source.TransferToNewComponent(targetDataAccessor.DataAccessor.IndexEvalExpression!));
                 if (indexExpression != null)
                 {
@@ -39,7 +40,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var slot = source.PackageMetadata.GenerateSlotData(targetDataAccessor.Slot);
             commands.AddRange(slot);
 
-            return new(commands.ToArray());
+            return new(commands);
         }
     }
 }

@@ -24,8 +24,6 @@ namespace Arc.CompilerCommandGenerator.Builders
         {
             var result = new PartialGenerationResult();
 
-            var commands = new List<byte>();
-
             var postfixExpression = source.Component.ToPostfixExpression();
 
             foreach (var term in postfixExpression.Terms)
@@ -34,7 +32,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 {
                     case ExpressionTermType.Operator:
                         {
-                            commands.AddRange(MathCommand.FromOperator(term.GetOperator()!)!);
+                            result.Commands.AddRange(MathCommand.FromOperator(term.GetOperator()!)!);
                             break;
                         }
                     case ExpressionTermType.Data:
@@ -43,8 +41,8 @@ namespace Arc.CompilerCommandGenerator.Builders
 
                             if (partialResult != null)
                             {
-                                commands.AddRange(partialResult.Commands);
-                                result.GeneratedConstants = Enumerable.Concat(result.GeneratedConstants, partialResult.GeneratedConstants);
+                                result.Commands.AddRange(partialResult.Commands);
+                                result.Combine(partialResult);
                             }
 
                             break;
@@ -52,7 +50,6 @@ namespace Arc.CompilerCommandGenerator.Builders
                 }
             }
 
-            result.Commands = commands.ToArray();
             return result;
         }
 
@@ -87,14 +84,13 @@ namespace Arc.CompilerCommandGenerator.Builders
             commands.AddRange(slot);
 
             return new PartialGenerationResult(
-                commands.ToArray(),
+                commands,
                 null,
                 new GeneratedConstant[1]
                 {
-                    new GeneratedConstant(source.ConstantBeginIndex,
-                                          new DataType(new Identifier(Array.Empty<string>(), "number"), false),
+                    new GeneratedConstant(new DataType(new Identifier(Array.Empty<string>(), "number"), false),
                                                        numberObj.ToPackageEncoding(source.PackageMetadata))
-                });
+                }.ToList());
         }
 
         private static PartialGenerationResult BuildStringCommand(GenerationContext<string> source)
@@ -114,12 +110,11 @@ namespace Arc.CompilerCommandGenerator.Builders
             commands.AddRange(slot);
 
             return new PartialGenerationResult(
-                commands.ToArray(),
+                commands,
                 null,
                 new GeneratedConstant[1]
                 {
-                    new GeneratedConstant(source.ConstantBeginIndex,
-                                          new DataType(new Identifier(Array.Empty<string>(), "string"), false),
+                    new GeneratedConstant(new DataType(new Identifier(Array.Empty<string>(), "string"), false),
                                                        constantData.ToArray())
                 });
         }
@@ -133,7 +128,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             // TODO: Check whether the the object is singleton or array element
 
-            return new PartialGenerationResult(commands.ToArray());
+            return new PartialGenerationResult(commands);
         }
 
         private static PartialGenerationResult? BuildFunctionCallCommand(GenerationContext<FunctionCallBase> source)
@@ -166,7 +161,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var slot = source.PackageMetadata.GenerateFunctionIdData(functionId);
             commands.AddRange(slot);
 
-            return new(commands.ToArray());
+            return new(commands);
         }
     }
 }

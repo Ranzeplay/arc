@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.Parsing.AST;
+using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.CompilerCommandGenerator.Models;
 using System;
 using System.Collections.Generic;
@@ -17,7 +18,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             commands.Add((byte)(source.Component.DataType.IsArray ? 0x01 : 0x00));
 
-            return new(commands.ToArray(), source.Component);
+            return new(commands, Enumerable.Empty<DataDeclarator>().Append(source.Component));
         }
     }
 }
