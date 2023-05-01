@@ -20,31 +20,28 @@ namespace Arc.Compiler.Shared.CommandGeneration.Relocation
 
         private FunctionDeclarator? Function { get; set; }
 
-        public RelocationDescriptor(long commandLocation, long relativeLocation)
+        public static RelocationDescriptor NewRelativeLocation(long commandLocation, long relativeLocation)
+        {
+            return new(RelocationType.RelativeLocation, commandLocation, relativeLocation, 0, null);
+        }
+
+        public static RelocationDescriptor NewConstant(long commandLocation, int constantId)
+        {
+            return new(RelocationType.Constant, commandLocation, 0, constantId, null);
+        }
+
+        public RelocationDescriptor NewFunction(long commandLocation, FunctionDeclarator functionDeclarator)
+        {
+            return new(RelocationType.Function, commandLocation, 0, 0, functionDeclarator);
+        }
+
+        private RelocationDescriptor(RelocationType relocationType, long commandLocation, long relativeLocation, int constantId, FunctionDeclarator? function)
         {
             CommandLocation = commandLocation;
-
+            RelocationType = relocationType;
             RelativeLocation = relativeLocation;
-            ConstantId = 0;
-            Function = null;
-        }
-
-        public RelocationDescriptor(long commandLocation, int constantId)
-        {
-            CommandLocation = commandLocation;
-
-            RelativeLocation = 0;
             ConstantId = constantId;
-            Function = null;
-        }
-
-        public RelocationDescriptor(long commandLocation, FunctionDeclarator functionDeclarator)
-        {
-            CommandLocation = commandLocation;
-
-            RelativeLocation = 0;
-            ConstantId = 0;
-            Function = functionDeclarator;
+            Function = function;
         }
 
         public long? GetRelativeLocation()

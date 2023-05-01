@@ -33,7 +33,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
         [Test]
         public void AssignmentActionTest()
         {
-            var text = "a[5] = 2 + 3;";
+            var text = "a[3] = 2 + 3;";
             var source = new SourceFile("test", text);
             var tokens = Tokenizer.Tokenize(source, true);
 

@@ -43,6 +43,8 @@ namespace Arc.Compiler.Shared.CommandGeneration
 
         public byte[] GenerateSlotData(long slot) => GenerateDataAligned((short)slot, DataSlotAlignment);
 
+        public byte[] GenerateEmptyDataSlot() => GenerateDataAligned(0, DataSlotAlignment);
+
         public byte[] BuildDataBlock(byte[] encodedData)
         {
             var result = new List<byte>();

@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
+using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
@@ -80,17 +81,24 @@ namespace Arc.CompilerCommandGenerator.Builders
             var numberObj = new NumberObject(source.Component);
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
-            var slot = source.PackageMetadata.GenerateSlotData(source.ConstantBeginIndex);
-            commands.AddRange(slot);
+
+            var constant = new GeneratedConstant(
+                new DataType(
+                    new Identifier(
+                        Array.Empty<string>(),
+                        "number"),
+                    false),
+                numberObj.ToPackageEncoding(source.PackageMetadata));
+
+            var relocationDescriptor = RelocationDescriptor.NewConstant(commands.Count, 0);
+
+            commands.AddRange(source.PackageMetadata.GenerateEmptyDataSlot());
 
             return new PartialGenerationResult(
                 commands,
                 null,
-                new GeneratedConstant[1]
-                {
-                    new GeneratedConstant(new DataType(new Identifier(Array.Empty<string>(), "number"), false),
-                                                       numberObj.ToPackageEncoding(source.PackageMetadata))
-                }.ToList());
+                new GeneratedConstant[1] { constant },
+                new RelocationDescriptor[1] { relocationDescriptor });
         }
 
         private static PartialGenerationResult BuildStringCommand(GenerationContext<string> source)
@@ -105,6 +113,11 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var constantData = encodedLen.Concat(encodedString);
 
+            var constant = new GeneratedConstant(new DataType(
+                new Identifier(Array.Empty<string>(), "string"),
+                false),
+                                                       constantData.ToArray());
+
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
             var slot = source.PackageMetadata.GenerateSlotData(source.ConstantBeginIndex);
             commands.AddRange(slot);
@@ -114,8 +127,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 null,
                 new GeneratedConstant[1]
                 {
-                    new GeneratedConstant(new DataType(new Identifier(Array.Empty<string>(), "string"), false),
-                                                       constantData.ToArray())
+                    
                 });
         }
 

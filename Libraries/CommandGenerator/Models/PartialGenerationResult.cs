@@ -26,7 +26,7 @@ namespace Arc.CompilerCommandGenerator.Models
             GeneratedConstants = generatedConstants == null ? new() : generatedConstants.ToList();
             RelocationDescriptors = relocationDescriptors == null ? new() : relocationDescriptors.ToList();
         }
-        
+
         public PartialGenerationResult()
         {
             Commands = new();
@@ -40,18 +40,29 @@ namespace Arc.CompilerCommandGenerator.Models
             Commands.AddRange(other.Commands);
             DataDeclarators.AddRange(other.DataDeclarators);
 
-            GeneratedConstants.AddRange(other.GeneratedConstants);
-
-            RelocationDescriptors.AddRange(other.RelocationDescriptors);
-            RelocationDescriptors.ForEach(r => 
+            for (int i = 0; i < other.RelocationDescriptors.Count; i++)
             {
+                var r = other.RelocationDescriptors[i];
                 if (r.RelocationType == RelocationType.Constant)
                 {
-                    r.ConstantId = GeneratedConstants.IndexOf(GeneratedConstants[r.ConstantId]);
+                    // Example: constant 2 and 2, we need to change the current ConstantId to the ConstantId of first "2"
+                    var existingConstant = GeneratedConstants.FindIndex(d => d.GeneratedBytes.Equals(other.GeneratedConstants[r.ConstantId].GeneratedBytes));
+                    if (existingConstant != -1)
+                    {
+                        r.ConstantId = existingConstant;
+                    }
+                    else
+                    {
+                        r.ConstantId += GeneratedConstants.Count;
+                    }
                 }
-            });
+            }
 
-            GeneratedConstants = GeneratedConstants.Distinct().ToList();
+            RelocationDescriptors.AddRange(other.RelocationDescriptors);
+
+            // Remove duplicated constants, stay it clean
+            GeneratedConstants.AddRange(other.GeneratedConstants);
+            GeneratedConstants = GeneratedConstants.DistinctBy(d => d.GeneratedBytes).ToList();
         }
     }
 }
