@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.Lexer.Rules;
 using Arc.Compiler.Shared.Compilation;
+using Arc.Compiler.Shared.CompilerException;
 using Arc.Compiler.Shared.LexicalAnalysis;
 
 namespace Arc.Compiler.Lexer
@@ -116,6 +117,7 @@ namespace Arc.Compiler.Lexer
                     }
                 }
 
+                throw new InvalidTokenException(new TokenPosition(source, currentIndex, 0));
             }
 
             return new(source, tokens.ToArray());
