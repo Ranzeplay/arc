@@ -120,16 +120,16 @@ namespace Arc.CompilerCommandGenerator.Builders
                                                        constantData.ToArray());
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
-            var slot = source.PackageMetadata.GenerateSlotData(source.ConstantBeginIndex);
-            commands.AddRange(slot);
+
+            var relocationDescriptor = RelocationDescriptor.NewConstant(commands.Count, 0);
+
+            commands.AddRange(source.PackageMetadata.GenerateEmptyDataSlot());
 
             return new PartialGenerationResult(
                 commands,
                 null,
-                new GeneratedConstant[1]
-                {
-                    
-                });
+                new GeneratedConstant[1] { constant },
+                new RelocationDescriptor[1] { relocationDescriptor });
         }
 
         private static PartialGenerationResult BuildDataAccessorCommand(GenerationContext<DataAccessorSource> source)
