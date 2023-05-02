@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
