@@ -1,5 +1,5 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.Compiler.Shared.CommandGeneration.Math;
+﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+using Arc.Compiler.Shared.CommandGeneration.Mappings.Math;
 using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.CompilerCommandGenerator.Models;

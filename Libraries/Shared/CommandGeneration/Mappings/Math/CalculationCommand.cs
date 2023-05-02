@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Arc.Compiler.Shared.CommandGeneration.Math
+namespace Arc.Compiler.Shared.CommandGeneration.Mappings.Math
 {
     public enum CalculationCommand
     {
