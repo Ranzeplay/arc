@@ -53,5 +53,21 @@ namespace Arc.Compiler.Tests.CommandGeneration
                 Assert.That(result.GeneratedConstants, Has.Count.EqualTo(3));
             }
         }
+
+        [Test]
+        public void LoopActionTest()
+        {
+            var text = "loop { decl var std::dynamic num1; }";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var block = LoopBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()))!;
+
+            var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
+
+            var result = LoopCommand.Build(new(block!.Section, new(), new(), new(), metadata));
+
+            Assert.That(result, Is.Not.Null);
+        }
     }
 }

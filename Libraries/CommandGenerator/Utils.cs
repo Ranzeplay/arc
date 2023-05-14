@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
+using System.Runtime.CompilerServices;
 
 namespace Arc.CompilerCommandGenerator
 {
@@ -27,6 +28,15 @@ namespace Arc.CompilerCommandGenerator
             }
 
             return result.ToArray();
+        }
+
+        internal static byte[] GenerateDataAligned(long data, byte width)
+        {
+            var result = BitConverter.GetBytes(data).ToArray();
+            Array.Resize(ref result, width);
+            Array.Reverse(result);
+
+            return result;
         }
     }
 }

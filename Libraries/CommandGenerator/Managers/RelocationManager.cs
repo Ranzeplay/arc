@@ -1,0 +1,27 @@
+﻿using Arc.Compiler.Shared.CommandGeneration;
+using Arc.Compiler.Shared.CommandGeneration.Relocation;
+using Arc.CompilerCommandGenerator.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Arc.CompilerCommandGenerator.Managers
+{
+    internal class RelocationManager
+    {
+        public static void ApplyRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
+        {
+            var addressRelocators = unrelocatedCode.RelocationDescriptors.Where(r => r.RelocationType == RelocationType.RelativeLocation);
+            foreach (var addressRelocator in addressRelocators)
+            {
+                var addrBytes = Utils.GenerateDataAligned(addressRelocator.RelativeLocation, metadata.AddressAlignment);
+
+                unrelocatedCode.Commands[(int)addressRelocator.CommandLocation] = (byte)(addressRelocator.RelativeLocation >= 0 ? 0x00 : 0xff);
+                unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
+            }
+            unrelocatedCode.RelocationDescriptors.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
+        }
+    }
+}

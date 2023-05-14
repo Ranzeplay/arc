@@ -45,6 +45,9 @@ namespace Arc.Compiler.Shared.CommandGeneration
 
         public byte[] GenerateEmptyDataSlot() => GenerateDataAligned(0, DataSlotAlignment);
 
+        // Leave 1 byte to indicate direction (foreard/backward)
+        public byte[] GenerateEmptyAddress() => GenerateDataAligned(0, (byte)(AddressAlignment + 1));
+
         public byte[] BuildDataBlock(byte[] encodedData)
         {
             var result = new List<byte>();

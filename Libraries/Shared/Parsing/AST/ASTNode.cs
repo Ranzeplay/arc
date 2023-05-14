@@ -126,5 +126,23 @@ namespace Arc.Compiler.Shared.Parsing.AST
                 return null;
             }
         }
+
+        public ASTNode(LoopBlock loopBlock)
+        {
+            NodeType = ASTNodeType.ConditionalExec;
+            Target = loopBlock;
+        }
+
+        public LoopBlock? GetLoopBlock()
+        {
+            if (NodeType == ASTNodeType.UnconditionalLoop)
+            {
+                return Target as LoopBlock;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

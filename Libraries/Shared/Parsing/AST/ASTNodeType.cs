@@ -15,6 +15,7 @@ namespace Arc.Compiler.Shared.Parsing.AST
         FunctionReturn,
         ConditionalLoop,
         ConditionalExec,
+        UnconditionalLoop,
         LoopContinue,
         LoopBreak
     }

@@ -24,6 +24,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                         break;
                     case ASTNodeType.DataDeclaration:
                         var declaration = DeclarationCommand.Build(source.TransferToNewComponent(action.GetDeclarationBlock()!))!;
+                        result.Combine(declaration);
                         break;
                     case ASTNodeType.Invalid:
                     case ASTNodeType.FunctionCall:
