@@ -8,6 +8,12 @@ namespace Arc.CompilerCommandGenerator.Managers
     {
         public static void ApplyRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
         {
+            ApplyAddressRelocation(ref unrelocatedCode, metadata);
+            ApplyConstantRelocation(ref unrelocatedCode, metadata);
+        }
+
+        internal static void ApplyAddressRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
+        {
             var addressRelocators = unrelocatedCode.RelocationDescriptors.Where(r => r.RelocationType == RelocationType.RelativeLocation);
             foreach (var addressRelocator in addressRelocators)
             {
@@ -17,6 +23,18 @@ namespace Arc.CompilerCommandGenerator.Managers
                 unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
             }
             unrelocatedCode.RelocationDescriptors.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
+        }
+
+        internal static void ApplyConstantRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
+        {
+            var addressRelocators = unrelocatedCode.RelocationDescriptors.Where(r => r.RelocationType == RelocationType.Constant);
+            foreach (var addressRelocator in addressRelocators)
+            {
+                var constantBytes = Utils.GenerateDataAligned(addressRelocator.ConstantId, metadata.DataSlotAlignment);
+
+                unrelocatedCode.Commands.ReplaceRange(constantBytes, (int)addressRelocator.CommandLocation);
+            }
+            unrelocatedCode.RelocationDescriptors.RemoveAll(r => r.RelocationType == RelocationType.Constant);
         }
     }
 }
