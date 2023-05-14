@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.Shared.Parsing.AST;
-using Arc.Compiler.Shared.Parsing.Components.Data;
+﻿using Arc.Compiler.Shared.Parsing.Components.Data;
 
 namespace Arc.Compiler.Shared.Parsing.Components.Group
 {

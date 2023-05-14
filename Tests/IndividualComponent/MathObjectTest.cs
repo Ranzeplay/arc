@@ -1,10 +1,5 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 using Arc.CompilerCommandGenerator.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.Tests.IndividualComponent
 {

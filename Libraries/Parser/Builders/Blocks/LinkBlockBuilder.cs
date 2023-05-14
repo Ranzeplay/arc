@@ -2,11 +2,6 @@
 using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Blocks
 {

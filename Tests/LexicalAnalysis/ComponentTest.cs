@@ -1,11 +1,6 @@
 ﻿using Arc.Compiler.Lexer.Rules;
 using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.LexicalAnalysis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.Tests.LexicalAnalysis
 {

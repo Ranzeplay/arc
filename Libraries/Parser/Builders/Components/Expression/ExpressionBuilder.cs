@@ -1,16 +1,8 @@
 ﻿using Arc.Compiler.Parser.Builders.Components.Data;
 using Arc.Compiler.Parser.Models;
-using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.LexicalAnalysis;
-using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
-using Arc.Compiler.Shared.Parsing.Components.Function;
 using Arc.Compiler.Shared.Utils;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.Parser.Builders.Components.Expression
 {

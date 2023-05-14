@@ -1,13 +1,6 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Mappings.Math;
 using Arc.Compiler.Shared.LexicalAnalysis;
-using Arc.Compiler.Shared.Parsing.AST;
-using Arc.CompilerCommandGenerator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Builders
 {

@@ -7,11 +7,7 @@ using Arc.Compiler.Shared.Parsing.Components.Expression;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 using Arc.CompilerCommandGenerator.Extensions;
 using Arc.CompilerCommandGenerator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Builders
 {

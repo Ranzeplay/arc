@@ -2,11 +2,6 @@
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.CompilerCommandGenerator.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.CompilerCommandGenerator.Builders
 {

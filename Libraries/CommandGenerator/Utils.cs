@@ -1,9 +1,4 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.Compiler.Shared.LexicalAnalysis;
-using Arc.Compiler.Shared.Parsing.Components.Expression;
-using System.Runtime.CompilerServices;
-
-namespace Arc.CompilerCommandGenerator
+﻿namespace Arc.CompilerCommandGenerator
 {
     internal class Utils
     {
