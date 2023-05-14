@@ -14,7 +14,7 @@ namespace Arc.CompilerCommandGenerator.Managers
 
         internal static void ApplyAddressRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
         {
-            var addressRelocators = unrelocatedCode.RelocationDescriptors.Where(r => r.RelocationType == RelocationType.RelativeLocation);
+            var addressRelocators = unrelocatedCode.RelocationTargets.Where(r => r.RelocationType == RelocationType.RelativeLocation);
             foreach (var addressRelocator in addressRelocators)
             {
                 var addrBytes = Utils.GenerateDataAligned(addressRelocator.RelativeLocation, metadata.AddressAlignment);
@@ -22,19 +22,19 @@ namespace Arc.CompilerCommandGenerator.Managers
                 unrelocatedCode.Commands[(int)addressRelocator.CommandLocation] = (byte)(addressRelocator.RelativeLocation >= 0 ? 0x00 : 0xff);
                 unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
             }
-            unrelocatedCode.RelocationDescriptors.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
+            unrelocatedCode.RelocationTargets.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
         }
 
         internal static void ApplyConstantRelocation(ref PartialGenerationResult unrelocatedCode, PackageMetadata metadata)
         {
-            var addressRelocators = unrelocatedCode.RelocationDescriptors.Where(r => r.RelocationType == RelocationType.Constant);
+            var addressRelocators = unrelocatedCode.RelocationTargets.Where(r => r.RelocationType == RelocationType.Constant);
             foreach (var addressRelocator in addressRelocators)
             {
                 var constantBytes = Utils.GenerateDataAligned(addressRelocator.ConstantId, metadata.DataSlotAlignment);
 
                 unrelocatedCode.Commands.ReplaceRange(constantBytes, (int)addressRelocator.CommandLocation);
             }
-            unrelocatedCode.RelocationDescriptors.RemoveAll(r => r.RelocationType == RelocationType.Constant);
+            unrelocatedCode.RelocationTargets.RemoveAll(r => r.RelocationType == RelocationType.Constant);
         }
     }
 }

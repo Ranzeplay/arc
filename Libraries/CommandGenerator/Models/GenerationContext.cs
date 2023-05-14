@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
+using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 
@@ -8,12 +9,13 @@ namespace Arc.CompilerCommandGenerator.Models
                                        List<DataDeclarator> LocalData,
                                        List<DataDeclarator> GlobalData,
                                        List<FunctionDeclarator> AvailableFunctions,
+                                       List<RelocationReference> RelocationReferences,
                                        PackageMetadata PackageMetadata,
                                        long ConstantBeginIndex = 0)
     {
         public GenerationContext<Tc> TransferToNewComponent<Tc>(Tc component)
         {
-            return new GenerationContext<Tc>(component, LocalData, GlobalData, AvailableFunctions, PackageMetadata, ConstantBeginIndex);
+            return new GenerationContext<Tc>(component, LocalData, GlobalData, AvailableFunctions, RelocationReferences, PackageMetadata, ConstantBeginIndex);
         }
     }
 }

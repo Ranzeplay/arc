@@ -12,17 +12,21 @@ namespace Arc.CompilerCommandGenerator.Builders
             var body = ActionBlockCommand.Build(source.TransferToNewComponent(source.Component.Block))!;
 
             // Jump to start
+            var currentLoc = body.Commands.Count;
             var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.ToRelative).ToList();
+
+            var reloc = RelocationTarget.NewRelativeLocation(currentLoc, jump.Count, -currentLoc);
+
             var placeholder = source.PackageMetadata.GenerateEmptyAddress();
             jump.AddRange(placeholder);
 
-            var currentLoc = body.Commands.Count;
-            var reloc = RelocationDescriptor.NewRelativeLocation(currentLoc, -currentLoc);
-
             body.Commands.AddRange(jump);
-            body.RelocationDescriptors.Add(reloc);
+            body.RelocationTargets.Add(reloc);
+
+            body.RelocationReferences.Add(new(0, RelocationReferenceType.LoopEntrance));
+            body.RelocationReferences.Add(new(body.Commands.Count, RelocationReferenceType.LoopEntrance));
 
             return body;
         }
-    } 
+    }
 }

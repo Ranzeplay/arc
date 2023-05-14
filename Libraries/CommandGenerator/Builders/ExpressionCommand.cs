@@ -35,7 +35,13 @@ namespace Arc.CompilerCommandGenerator.Builders
                         }
                     case ExpressionTermType.Data:
                         {
-                            var partialResult = BuildExpressionDataTerm(new GenerationContext<ExpressionDataTerm>(term.GetDataTerm()!, source.LocalData, source.GlobalData, source.AvailableFunctions, source.PackageMetadata, result.GeneratedConstants.Count()));
+                            var partialResult = BuildExpressionDataTerm(new GenerationContext<ExpressionDataTerm>(term.GetDataTerm()!,
+                                source.LocalData,
+                                source.GlobalData,
+                                source.AvailableFunctions,
+                                source.RelocationReferences,
+                                source.PackageMetadata,
+                                result.GeneratedConstants.Count));
 
                             if (partialResult != null)
                             {
@@ -87,7 +93,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                     false),
                 numberObj.ToPackageEncoding(source.PackageMetadata));
 
-            var relocationDescriptor = RelocationDescriptor.NewConstant(commands.Count, 0);
+            var relocationDescriptor = RelocationTarget.NewConstant(0, commands.Count, 0);
 
             commands.AddRange(source.PackageMetadata.GenerateEmptyDataSlot());
 
@@ -95,7 +101,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 commands,
                 null,
                 new GeneratedConstant[1] { constant },
-                new RelocationDescriptor[1] { relocationDescriptor });
+                new RelocationTarget[1] { relocationDescriptor });
         }
 
         private static PartialGenerationResult BuildStringCommand(GenerationContext<string> source)
@@ -117,7 +123,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
 
-            var relocationDescriptor = RelocationDescriptor.NewConstant(commands.Count, 0);
+            var relocationDescriptor = RelocationTarget.NewConstant(0, commands.Count, 0);
 
             commands.AddRange(source.PackageMetadata.GenerateEmptyDataSlot());
 
@@ -125,7 +131,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 commands,
                 null,
                 new GeneratedConstant[1] { constant },
-                new RelocationDescriptor[1] { relocationDescriptor });
+                new RelocationTarget[1] { relocationDescriptor });
         }
 
         private static PartialGenerationResult BuildDataAccessorCommand(GenerationContext<DataAccessorSource> source)

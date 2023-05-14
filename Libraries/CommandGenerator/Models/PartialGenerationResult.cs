@@ -12,22 +12,26 @@ namespace Arc.CompilerCommandGenerator.Models
 
         public List<GeneratedConstant> GeneratedConstants { get; set; }
 
-        public List<RelocationDescriptor> RelocationDescriptors { get; set; }
+        public List<RelocationTarget> RelocationTargets { get; set; }
 
-        public PartialGenerationResult(List<byte> commands, IEnumerable<DataDeclarator>? dataDeclarators = null, IEnumerable<GeneratedConstant>? generatedConstants = null, IEnumerable<RelocationDescriptor>? relocationDescriptors = null)
+        public List<RelocationReference> RelocationReferences { get; set; }
+
+        public PartialGenerationResult(List<byte> commands, IEnumerable<DataDeclarator>? dataDeclarators = null, IEnumerable<GeneratedConstant>? generatedConstants = null, IEnumerable<RelocationTarget>? relocationDescriptors = null, IEnumerable<RelocationReference>? relocationReferences = null)
         {
             Commands = commands;
             DataDeclarators = dataDeclarators == null ? new() : dataDeclarators.ToList();
             GeneratedConstants = generatedConstants == null ? new() : generatedConstants.ToList();
-            RelocationDescriptors = relocationDescriptors == null ? new() : relocationDescriptors.ToList();
+            RelocationTargets = relocationDescriptors == null ? new() : relocationDescriptors.ToList();
+            RelocationReferences = relocationReferences == null ? new() : relocationReferences.ToList();
         }
 
         public PartialGenerationResult()
         {
             Commands = new();
             GeneratedConstants = new();
-            RelocationDescriptors = new();
+            RelocationTargets = new();
             DataDeclarators = new();
+            RelocationReferences = new();
         }
 
         public void Combine(PartialGenerationResult other)
@@ -35,9 +39,9 @@ namespace Arc.CompilerCommandGenerator.Models
             Commands.AddRange(other.Commands);
             DataDeclarators.AddRange(other.DataDeclarators);
 
-            for (int i = 0; i < other.RelocationDescriptors.Count; i++)
+            for (int i = 0; i < other.RelocationTargets.Count; i++)
             {
-                var r = other.RelocationDescriptors[i];
+                var r = other.RelocationTargets[i];
                 if (r.RelocationType == RelocationType.Constant)
                 {
                     // Example: constant 2 and 2, we need to change the current ConstantId to the ConstantId of first "2"
@@ -53,11 +57,17 @@ namespace Arc.CompilerCommandGenerator.Models
                 }
             }
 
-            RelocationDescriptors.AddRange(other.RelocationDescriptors);
+            RelocationTargets.AddRange(other.RelocationTargets);
 
             // Remove duplicated constants, stay it clean
             GeneratedConstants.AddRange(other.GeneratedConstants);
             GeneratedConstants = GeneratedConstants.DistinctBy(d => d.GeneratedBytes).ToList();
+
+            // Process RelocationReferences
+            foreach (var r in other.RelocationReferences)
+            {
+                RelocationReferences.Add(new(r.CommandLocation + Commands.Count, r.ReferenceType));
+            }
         }
     }
 }

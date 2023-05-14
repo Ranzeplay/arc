@@ -2,9 +2,11 @@
 
 namespace Arc.Compiler.Shared.CommandGeneration.Relocation
 {
-    public class RelocationDescriptor
+    public class RelocationTarget
     {
         public long CommandLocation { get; set; }
+
+        public int PlaceholderOffset { get; set; }
 
         public RelocationType RelocationType { get; set; }
 
@@ -14,24 +16,25 @@ namespace Arc.Compiler.Shared.CommandGeneration.Relocation
 
         private FunctionDeclarator? Function { get; set; }
 
-        public static RelocationDescriptor NewRelativeLocation(long commandLocation, long relativeLocation)
+        public static RelocationTarget NewRelativeLocation(long commandLocation, int placeholderOffset, long relativeLocation)
         {
-            return new(RelocationType.RelativeLocation, commandLocation, relativeLocation, 0, null);
+            return new(RelocationType.RelativeLocation, commandLocation, placeholderOffset, relativeLocation, 0, null);
         }
 
-        public static RelocationDescriptor NewConstant(long commandLocation, int constantId)
+        public static RelocationTarget NewConstant(long commandLocation, int placeholderOffset, int constantId)
         {
-            return new(RelocationType.Constant, commandLocation, 0, constantId, null);
+            return new(RelocationType.Constant, commandLocation, placeholderOffset, 0, constantId, null);
         }
 
-        public RelocationDescriptor NewFunction(long commandLocation, FunctionDeclarator functionDeclarator)
+        public static RelocationTarget NewFunction(long commandLocation, int placeHolderOffset, FunctionDeclarator functionDeclarator)
         {
-            return new(RelocationType.Function, commandLocation, 0, 0, functionDeclarator);
+            return new(RelocationType.Function, commandLocation, placeHolderOffset, 0, 0, functionDeclarator);
         }
 
-        private RelocationDescriptor(RelocationType relocationType, long commandLocation, long relativeLocation, int constantId, FunctionDeclarator? function)
+        private RelocationTarget(RelocationType relocationType, long commandLocation, int placeHolderOffset, long relativeLocation, int constantId, FunctionDeclarator? function)
         {
             CommandLocation = commandLocation;
+            PlaceholderOffset = placeHolderOffset;
             RelocationType = relocationType;
             RelativeLocation = relativeLocation;
             ConstantId = constantId;
