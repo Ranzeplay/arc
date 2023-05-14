@@ -24,7 +24,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             body.RelocationTargets.Add(reloc);
 
             body.RelocationReferences.Add(new(0, RelocationReferenceType.LoopEntrance));
-            body.RelocationReferences.Add(new(body.Commands.Count, RelocationReferenceType.LoopEntrance));
+            body.RelocationReferences.Add(new(body.Commands.Count, RelocationReferenceType.EndLoop));
 
             return body;
         }
