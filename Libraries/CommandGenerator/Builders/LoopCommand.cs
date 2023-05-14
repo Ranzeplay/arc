@@ -15,7 +15,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var currentLoc = body.Commands.Count;
             var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.ToRelative).ToList();
 
-            var reloc = RelocationTarget.NewRelativeLocation(currentLoc, jump.Count, -currentLoc);
+            var reloc = RelocationTarget.NewRelativeLocation(currentLoc, jump.Count, new RelativeRelocator(RelativeRelocatorType.Address, -currentLoc));
 
             var placeholder = source.PackageMetadata.GenerateEmptyAddress();
             jump.AddRange(placeholder);

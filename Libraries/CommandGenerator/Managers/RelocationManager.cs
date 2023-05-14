@@ -17,10 +17,14 @@ namespace Arc.CompilerCommandGenerator.Managers
             var addressRelocators = unrelocatedCode.RelocationTargets.Where(r => r.RelocationType == RelocationType.RelativeLocation);
             foreach (var addressRelocator in addressRelocators)
             {
-                var addrBytes = Utils.GenerateDataAligned(addressRelocator.RelativeLocation, metadata.AddressAlignment);
+                var relativeRelocator = addressRelocator.GetRelativeLocation()!;
+                if (relativeRelocator.RelocatorType == RelativeRelocatorType.Address) {
+                    var addrBytes = Utils.GenerateDataAligned(relativeRelocator.Parameter, metadata.AddressAlignment);
 
-                unrelocatedCode.Commands[(int)addressRelocator.CommandLocation] = (byte)(addressRelocator.RelativeLocation >= 0 ? 0x00 : 0xff);
-                unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
+                    unrelocatedCode.Commands[(int)addressRelocator.CommandLocation] = (byte)(relativeRelocator.Parameter >= 0 ? 0x00 : 0xff);
+                    unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
+                }
+                
             }
             unrelocatedCode.RelocationTargets.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
         }

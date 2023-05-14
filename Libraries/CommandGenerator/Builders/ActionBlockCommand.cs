@@ -21,13 +21,19 @@ namespace Arc.CompilerCommandGenerator.Builders
                         var declaration = DeclarationCommand.Build(source.TransferToNewComponent(action.GetDeclarationBlock()!))!;
                         result.Combine(declaration);
                         break;
-                    case ASTNodeType.Invalid:
+                    case ASTNodeType.LoopContinue:
+                        var @continue = LoopControlCommand.BuildContinueCommand(source.PackageMetadata)!;
+                        result.Combine(@continue);
+                        break;
+                    case ASTNodeType.LoopBreak:
+                        var @break = LoopControlCommand.BuildBreakCommand(source.PackageMetadata)!;
+                        result.Combine(@break);
+                        break;
                     case ASTNodeType.FunctionCall:
                     case ASTNodeType.FunctionReturn:
                     case ASTNodeType.ConditionalLoop:
                     case ASTNodeType.ConditionalExec:
-                    case ASTNodeType.LoopContinue:
-                    case ASTNodeType.LoopBreak:
+                    case ASTNodeType.Invalid:
                         throw new NotImplementedException();
                 }
             }

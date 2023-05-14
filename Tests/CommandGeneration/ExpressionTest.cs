@@ -40,7 +40,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var result = expressionBlock!.Section.ToPostfixExpression();
 
             Assert.That(result, Is.Not.Null);
-            if(result != null)
+            if (result != null)
             {
                 Assert.That(result.Terms, Has.Length.EqualTo(11));
             }
@@ -64,10 +64,10 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), new(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
-            if(result != null)
+            if (result != null)
             {
                 Assert.Multiple(() =>
                 {
@@ -89,7 +89,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), new(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)
@@ -130,7 +130,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), metadata));
+            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)

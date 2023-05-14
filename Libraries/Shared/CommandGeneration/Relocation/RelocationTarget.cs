@@ -10,40 +10,40 @@ namespace Arc.Compiler.Shared.CommandGeneration.Relocation
 
         public RelocationType RelocationType { get; set; }
 
-        public long RelativeLocation { get; set; }
+        public RelativeRelocator? Relative { get; set; }
 
         public int ConstantId { get; set; }
 
         private FunctionDeclarator? Function { get; set; }
 
-        public static RelocationTarget NewRelativeLocation(long commandLocation, int placeholderOffset, long relativeLocation)
+        public static RelocationTarget NewRelativeLocation(long commandLocation, int placeholderOffset, RelativeRelocator relative)
         {
-            return new(RelocationType.RelativeLocation, commandLocation, placeholderOffset, relativeLocation, 0, null);
+            return new(RelocationType.RelativeLocation, commandLocation, placeholderOffset, relative, 0, null);
         }
 
         public static RelocationTarget NewConstant(long commandLocation, int placeholderOffset, int constantId)
         {
-            return new(RelocationType.Constant, commandLocation, placeholderOffset, 0, constantId, null);
+            return new(RelocationType.Constant, commandLocation, placeholderOffset, null, constantId, null);
         }
 
         public static RelocationTarget NewFunction(long commandLocation, int placeHolderOffset, FunctionDeclarator functionDeclarator)
         {
-            return new(RelocationType.Function, commandLocation, placeHolderOffset, 0, 0, functionDeclarator);
+            return new(RelocationType.Function, commandLocation, placeHolderOffset, null, 0, functionDeclarator);
         }
 
-        private RelocationTarget(RelocationType relocationType, long commandLocation, int placeHolderOffset, long relativeLocation, int constantId, FunctionDeclarator? function)
+        private RelocationTarget(RelocationType relocationType, long commandLocation, int placeHolderOffset, RelativeRelocator? relative, int constantId, FunctionDeclarator? function)
         {
             CommandLocation = commandLocation;
             PlaceholderOffset = placeHolderOffset;
             RelocationType = relocationType;
-            RelativeLocation = relativeLocation;
+            Relative = relative;
             ConstantId = constantId;
             Function = function;
         }
 
-        public long? GetRelativeLocation()
+        public RelativeRelocator? GetRelativeLocation()
         {
-            return RelocationType == RelocationType.RelativeLocation ? RelativeLocation : null;
+            return RelocationType == RelocationType.RelativeLocation ? Relative : null;
         }
 
         public int? GetConstantId()
