@@ -58,7 +58,26 @@ namespace Arc.CompilerCommandGenerator.Builders
 
                         break;
                     }
+                case OperatorTokenType.Relation:
+                    {
+                        switch (op.RelationOperator)
+                        {
+                            case RelationOperatorType.Greater:
+                                return MathRelationGreater();
+                            case RelationOperatorType.GreaterOrEqual:
+                                return MathRelationGreaterOrEqual();
+                            case RelationOperatorType.Less:
+                                return MathRelationLess();
+                            case RelationOperatorType.LessOrEqual:
+                                return MathRelationLessOrEqual();
+                            case RelationOperatorType.NotEqual:
+                                return MathRelationNotEqual();
+                            case RelationOperatorType.Equal:
+                                return MathRelationEqual();
+                        }
 
+                        break;
+                    }
             }
 
             return null;
@@ -102,6 +121,36 @@ namespace Arc.CompilerCommandGenerator.Builders
         private static byte[] MathLogicalNot()
         {
             return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Logical, (byte)LogicalCommand.Not);
+        }
+
+        private static byte[] MathRelationGreater()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.Greater);
+        }
+
+        private static byte[] MathRelationGreaterOrEqual()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.GreaterOrEqual);
+        }
+
+        private static byte[] MathRelationLess()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.Less);
+        }
+
+        private static byte[] MathRelationLessOrEqual()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.LessOrEqual);
+        }
+
+        private static byte[] MathRelationNotEqual()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.NotEqual);
+        }
+
+        private static byte[] MathRelationEqual()
+        {
+            return Utils.CombineLeadingCommand((byte)RootCommand.Math, (byte)MathRootCommand.Relation, (byte)RelationCommand.Equal);
         }
     }
 }
