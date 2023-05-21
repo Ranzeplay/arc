@@ -38,7 +38,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
                         break;
                     }
-                case OperatorTokenType.Relation:
+                case OperatorTokenType.Logical:
                     {
                         switch (op.LogicalOperator)
                         {
