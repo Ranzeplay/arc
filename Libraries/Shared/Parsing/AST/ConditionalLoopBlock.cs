@@ -5,7 +5,7 @@ namespace Arc.Compiler.Shared.Parsing.AST
 {
     public record ConditionalLoopBlock : ConditionalBlock
     {
-        public ConditionalLoopBlock(RelationalExpression Condition, ActionBlock Actions)
+        public ConditionalLoopBlock(SimpleExpression Condition, ActionBlock Actions)
             : base(Condition, Actions)
         {
         }

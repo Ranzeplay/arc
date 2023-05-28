@@ -44,7 +44,7 @@ namespace Arc.Compiler.Parser.Builders.Components.Data
                             .ToArray();
 
                         // Build expression
-                        var expressionResult = ExpressionBuilder.BuildSimpleExpression(new(tokenList, model.DeclaredData, model.DeclaredFunctions));
+                        var expressionResult = ExpressionBuilder.Build(new(tokenList, model.DeclaredData, model.DeclaredFunctions));
                         if (expressionResult is not null)
                         {
                             // Check format

@@ -15,7 +15,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             if (targetDataAccessor.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
             {
                 // Evaluate index first
-                var indexExpression = ExpressionCommand.BuildSimpleExpression(source.TransferToNewComponent(targetDataAccessor.DataAccessor.IndexEvalExpression!));
+                var indexExpression = ExpressionCommand.Build(source.TransferToNewComponent(targetDataAccessor.DataAccessor.IndexEvalExpression!));
                 if (indexExpression != null)
                 {
                     commands.AddRange(indexExpression.Commands);

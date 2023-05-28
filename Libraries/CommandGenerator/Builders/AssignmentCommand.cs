@@ -10,7 +10,7 @@ namespace Arc.CompilerCommandGenerator.Builders
         public static PartialGenerationResult? Build(GenerationContext<DataAssignmentBlock> source)
         {
             // Build evaluate expression on rhs
-            var result = ExpressionCommand.BuildSimpleExpression(source.TransferToNewComponent(source.Component.RhsEvalExpression))!;
+            var result = ExpressionCommand.Build(source.TransferToNewComponent(source.Component.RhsEvalExpression))!;
 
             // Build data accessor command
             var accessorGenerationSource = source.TransferToNewComponent(source.Component.LhsTargetData);
@@ -19,7 +19,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             if (targetDataAccessor.DataAccessor.AccessorType == DataAccessorType.ArrayElement)
             {
                 // Evaluate index first if exists
-                var indexExpression = ExpressionCommand.BuildSimpleExpression(source.TransferToNewComponent(source.Component.LhsTargetData.IndexEvalExpression!));
+                var indexExpression = ExpressionCommand.Build(source.TransferToNewComponent(source.Component.LhsTargetData.IndexEvalExpression!));
                 if (indexExpression != null)
                 {
                     result.Combine(indexExpression);

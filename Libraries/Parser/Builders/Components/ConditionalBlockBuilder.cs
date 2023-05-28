@@ -31,7 +31,7 @@ namespace Arc.Compiler.Parser.Builders.Components
             // Remove bracket on the side
             exprZone = exprZone[1..^1];
             // Build expression
-            var expr = ExpressionBuilder.BuildRelationalExpression(new(exprZone, model.DeclaredData, model.DeclaredFunctions));
+            var expr = ExpressionBuilder.Build(new(exprZone, model.DeclaredData, model.DeclaredFunctions));
             if (expr == null)
             {
                 return null;

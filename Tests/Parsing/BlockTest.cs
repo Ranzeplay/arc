@@ -116,11 +116,7 @@ namespace Arc.Compiler.Tests.Parsing
             Assert.That(result, Is.Not.Null);
             if (result is not null)
             {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(result.Section.Condition.Relation, Is.EqualTo(RelationOperatorType.Greater));
-                    Assert.That(result.Section.Actions.ASTNodes, Has.Length.EqualTo(1));
-                });
+                Assert.That(result.Section.Actions.ASTNodes, Has.Length.EqualTo(1));
             }
         }
 

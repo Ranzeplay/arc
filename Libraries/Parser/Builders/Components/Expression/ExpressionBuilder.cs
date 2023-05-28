@@ -8,43 +8,12 @@ namespace Arc.Compiler.Parser.Builders.Components.Expression
 {
     internal class ExpressionBuilder
     {
-        public static SectionBuildResult<RelationalExpression>? BuildRelationalExpression(ExpressionBuildModel model)
-        {
-            var relationOperatorIndex = Array.FindIndex(model.Tokens, t =>
-            {
-                var op = t.GetOperator();
-                if (op != null)
-                {
-                    return op.Type == OperatorTokenType.Relation;
-                }
-
-                return false;
-            });
-
-            var lhsTokens = model.Tokens[..relationOperatorIndex];
-            var rhsTokens = model.Tokens[(relationOperatorIndex + 1)..];
-
-            var lhsExpression = BuildSimpleExpression(new(lhsTokens, model.DeclaredData, model.DeclaredFunctions));
-            var rhsExpression = BuildSimpleExpression(new(rhsTokens, model.DeclaredData, model.DeclaredFunctions));
-
-            if (lhsExpression != null && rhsExpression != null)
-            {
-                var op = model.Tokens[relationOperatorIndex].GetOperator();
-                if (op != null)
-                {
-                    return new(new(lhsExpression.Section, op.RelationOperator, rhsExpression.Section), model.Tokens.Length);
-                }
-            }
-
-            return null;
-        }
-
         /// <summary>
         /// Build original tokens into a simple expression
         /// </summary>
         /// <param name="model">All the tokens inside the model.Tokens array joins the operation of the construction of the expression</param>
         /// <returns>The expression if built successfully</returns>
-        public static SectionBuildResult<SimpleExpression>? BuildSimpleExpression(ExpressionBuildModel model)
+        public static SectionBuildResult<SimpleExpression>? Build(ExpressionBuildModel model)
         {
             // Convert to Expression term;
             var index = 0;

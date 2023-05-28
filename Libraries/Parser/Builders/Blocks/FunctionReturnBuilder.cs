@@ -25,7 +25,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
             else
             {
                 // Return with value
-                var expressionResult = ExpressionBuilder.BuildSimpleExpression(new(model.Tokens[1..semicolonIndex], model.DeclaredData, model.DeclaredFunctions));
+                var expressionResult = ExpressionBuilder.Build(new(model.Tokens[1..semicolonIndex], model.DeclaredData, model.DeclaredFunctions));
                 if (expressionResult != null)
                 {
                     return new(new FunctionReturnBlock(expressionResult.Section), semicolonIndex + 1);

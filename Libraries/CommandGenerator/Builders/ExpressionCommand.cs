@@ -13,12 +13,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class ExpressionCommand
     {
-        public static PartialGenerationResult? BuildRelationalExpression(GenerationContext<RelationalExpression> source)
-        {
-            return null!;
-        }
-
-        public static PartialGenerationResult? BuildSimpleExpression(GenerationContext<SimpleExpression> source)
+        public static PartialGenerationResult? Build(GenerationContext<SimpleExpression> source)
         {
             var result = new PartialGenerationResult();
 
@@ -158,7 +153,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             // The first argument goes to the top of the stack
             foreach (var callArg in source.Component.Arguments.Reverse())
             {
-                var expr = BuildSimpleExpression(source.TransferToNewComponent(callArg.EvaluateExpression));
+                var expr = Build(source.TransferToNewComponent(callArg.EvaluateExpression));
                 if (expr != null)
                 {
                     commands.AddRange(expr.Commands);

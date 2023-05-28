@@ -35,7 +35,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
                     })
             };
 
-            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
+            var expressionBlock = ExpressionBuilder.Build(new(tokens.Tokens, definedData, definedFunctions));
 
             var result = expressionBlock!.Section.ToPostfixExpression();
 
@@ -59,12 +59,12 @@ namespace Arc.Compiler.Tests.CommandGeneration
                 new(new(new(Array.Empty<string>(), "type1"), false), new(Array.Empty<string>(), "var2"), true)
             };
 
-            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData.ToArray(), Array.Empty<FunctionDeclarator>()));
+            var expressionBlock = ExpressionBuilder.Build(new(tokens.Tokens, definedData.ToArray(), Array.Empty<FunctionDeclarator>()));
 
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData, new(), new(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, definedData, new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)
@@ -84,12 +84,12 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var source = new SourceFile("test", text);
             var tokens = Tokenizer.Tokenize(source, true);
 
-            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
+            var expressionBlock = ExpressionBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
 
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, new(), new(), new(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)
@@ -126,11 +126,11 @@ namespace Arc.Compiler.Tests.CommandGeneration
                     })
             };
 
-            var expressionBlock = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
+            var expressionBlock = ExpressionBuilder.Build(new(tokens.Tokens, definedData, definedFunctions));
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.BuildSimpleExpression(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)

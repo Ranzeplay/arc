@@ -36,7 +36,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
 
             // Build expression after that
             var nextSemicolonPos = Utils.GetNextSemicolonPos(model.Tokens);
-            var expr = ExpressionBuilder.BuildSimpleExpression(new(model.Tokens[(accessor.Length + 1)..nextSemicolonPos], model.DeclaredData, model.DeclaredFunctions));
+            var expr = ExpressionBuilder.Build(new(model.Tokens[(accessor.Length + 1)..nextSemicolonPos], model.DeclaredData, model.DeclaredFunctions));
 
             if (expr != null)
             {

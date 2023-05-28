@@ -57,7 +57,7 @@ namespace Arc.Compiler.Tests.Parsing
                     })
             };
 
-            var result = ExpressionBuilder.BuildSimpleExpression(new(tokens.Tokens, definedData, definedFunctions));
+            var result = ExpressionBuilder.Build(new(tokens.Tokens, definedData, definedFunctions));
 
             Assert.That(result, Is.Not.EqualTo(null));
             if (result is not null)
@@ -69,26 +69,6 @@ namespace Arc.Compiler.Tests.Parsing
                 {
                     Assert.That(data.DataTermType, Is.EqualTo(ExpressionDataTermType.FunctionCall));
                 }
-            }
-        }
-
-        [Test]
-        public void RelationalExpressionTest()
-        {
-            var text = "3 > 4 * 2";
-            var source = new SourceFile("test", text);
-            var tokens = Tokenizer.Tokenize(source, true);
-
-            var result = ExpressionBuilder.BuildRelationalExpression(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()));
-            Assert.That(result, Is.Not.EqualTo(null));
-            if (result is not null)
-            {
-                Assert.Multiple(() =>
-                {
-                    Assert.That(result.Section.Relation, Is.EqualTo(RelationOperatorType.Greater));
-                    Assert.That(result.Section.LhsExpression.Terms, Has.Length.EqualTo(1));
-                    Assert.That(result.Section.RhsExpression.Terms, Has.Length.EqualTo(3));
-                });
             }
         }
 

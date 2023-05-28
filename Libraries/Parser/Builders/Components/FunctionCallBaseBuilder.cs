@@ -68,7 +68,7 @@ namespace Arc.Compiler.Parser.Builders.Components
                     // Function arguments and function parameters have the same order
                     for (int i = 0; i < len; i++)
                     {
-                        var expressionResult = ExpressionBuilder.BuildSimpleExpression(new(argumentTokenList[i].ToArray(), model.DeclaredData, model.DeclaredFunctions));
+                        var expressionResult = ExpressionBuilder.Build(new(argumentTokenList[i].ToArray(), model.DeclaredData, model.DeclaredFunctions));
 
                         if (expressionResult is not null)
                         {
