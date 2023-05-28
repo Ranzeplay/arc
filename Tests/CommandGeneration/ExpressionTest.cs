@@ -3,6 +3,7 @@ using Arc.Compiler.Parser.Builders.Components.Expression;
 using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.Parsing.Components.Data;
+using Arc.Compiler.Shared.Parsing.Components.Expression;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 using Arc.CompilerCommandGenerator.Builders;
 
