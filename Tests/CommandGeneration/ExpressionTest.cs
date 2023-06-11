@@ -72,7 +72,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(result.GeneratedConstants.Count(), Is.EqualTo(1));
+                    Assert.That(result.GeneratedConstants, Has.Count.EqualTo(1));
                     Assert.That(result.Commands, Has.Count.EqualTo(38));
                 });
             }
@@ -97,7 +97,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(result.GeneratedConstants.Count(), Is.EqualTo(4));
+                    Assert.That(result.GeneratedConstants, Has.Count.EqualTo(4));
                     Assert.That(result.Commands, Has.Count.EqualTo(30));
                 });
             }
