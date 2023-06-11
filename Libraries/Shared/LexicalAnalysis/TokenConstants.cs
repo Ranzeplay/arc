@@ -41,12 +41,12 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
 
         public static readonly Dictionary<ContainerToken, string> ContainerMappings = new()
         {
-            { ContainerToken.Brace, "{" },
-            { ContainerToken.AntiBrace, "}" },
-            { ContainerToken.Bracket, "(" },
-            { ContainerToken.AntiBracket, ")" },
-            { ContainerToken.Index, "["},
-            { ContainerToken.AntiIndex, "]" },
+            { ContainerToken.Brace,         "{" },
+            { ContainerToken.AntiBrace,     "}" },
+            { ContainerToken.Bracket,       "(" },
+            { ContainerToken.AntiBracket,   ")" },
+            { ContainerToken.Index,         "["},
+            { ContainerToken.AntiIndex,     "]" },
         };
 
         public static readonly Dictionary<OperatorTokenType, string> RootOperatorMappings = new()
