@@ -92,6 +92,13 @@ namespace Arc.Compiler.Shared.LexicalAnalysis
             { CalculationOperatorType.Modulo,         2 },
         };
 
+        public static readonly Dictionary<OperatorTokenType, int> OperatorPriority = new()
+        {
+            { OperatorTokenType.Calculation, 3 },
+            { OperatorTokenType.Relation, 2 },
+            { OperatorTokenType.Logical, 1 },
+        };
+
         public static readonly char SemicolonToken = ';';
 
         public static readonly string CommentLeadingSequence = "//";

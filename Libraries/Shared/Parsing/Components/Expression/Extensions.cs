@@ -30,7 +30,7 @@ namespace Arc.Compiler.Shared.Parsing.Components.Expression
                             while (operatorStack.TryPeek(out var r) && r.TermType == ExpressionTermType.Operator)
                             {
                                 // Pop if operator priority is higher than current operator
-                                if (TokenConstants.CalculationOperatorPriority[r.GetOperator()!.CalculationOperator] > TokenConstants.CalculationOperatorPriority[term.GetOperator()!.CalculationOperator])
+                                if (ExpressionUtils.ComparePriority(r.GetOperator()!, term.GetOperator()!) == RelationOperatorType.Greater)
                                 {
                                     result.Add(operatorStack.Pop());
                                 }
