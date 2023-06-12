@@ -16,7 +16,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             // Conditional jump command
             var conditionalJumpCommand = new PartialGenerationResult();
-            conditionalJumpCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.Conditioal));
+            conditionalJumpCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.Conditional));
             // True condition
             conditionalJumpCommand.RelocationTargets.Add(RelocationTarget.NewRelativeLocation(0, conditionalJumpCommand.Commands.Count, new(RelativeRelocatorType.Address, source.PackageMetadata.ConditionalJumpCommandLength())));
             conditionalJumpCommand.Commands.AddRange(source.PackageMetadata.GenerateEmptyAddress());
