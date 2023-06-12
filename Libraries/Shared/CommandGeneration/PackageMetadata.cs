@@ -39,7 +39,7 @@
 
         public byte[] GenerateEmptyDataSlot() => GenerateDataAligned(0, DataSlotAlignment);
 
-        // Leave 1 byte to indicate direction (foreard/backward)
+        // Leave 1 byte to indicate direction (forward/backward)
         public byte[] GenerateEmptyAddress() => GenerateDataAligned(0, (byte)(AddressAlignment + 1));
 
         public byte[] BuildDataBlock(byte[] encodedData)
@@ -57,5 +57,7 @@
 
             return result.ToArray();
         }
+
+        public int ConditionalJumpCommandLength() => 1 + (2 * AddressAlignment);
     }
 }

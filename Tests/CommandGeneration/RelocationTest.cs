@@ -34,5 +34,26 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             Console.WriteLine(result.Commands);
         }
+
+        [Test]
+        public void ConditionalLoopRelocationTest()
+        {
+            var text = "while (3 > 2) { decl var std::dynamic num1; }";
+            var source = new SourceFile("test", text);
+            var tokens = Tokenizer.Tokenize(source, true);
+
+            var block = ConditionalLoopBlockBuilder.Build(new(tokens.Tokens, Array.Empty<DataDeclarator>(), Array.Empty<FunctionDeclarator>()))!;
+
+            var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
+
+            var result = ConditionalLoopCommand.Build(new(block!.Section, new(), new(), new(), new(), metadata));
+            if (result == null)
+            {
+                Assert.Fail();
+                return;
+            }
+
+            RelocationManager.ApplyRelocation(ref result, metadata);
+        }
     }
 }
