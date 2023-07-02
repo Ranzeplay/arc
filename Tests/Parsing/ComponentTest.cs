@@ -3,7 +3,6 @@ using Arc.Compiler.Parser.Builders.Blocks;
 using Arc.Compiler.Parser.Builders.Components;
 using Arc.Compiler.Parser.Builders.Components.Expression;
 using Arc.Compiler.Shared.Compilation;
-using Arc.Compiler.Shared.LexicalAnalysis;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
 using Arc.Compiler.Shared.Parsing.Components.Function;
