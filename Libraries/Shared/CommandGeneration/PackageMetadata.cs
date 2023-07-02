@@ -26,7 +26,7 @@
 
         private static byte[] GenerateDataAligned(long data, byte width)
         {
-            var result = BitConverter.GetBytes(data).ToArray();
+            var result = BitConverter.GetBytes(data);
             Array.Resize(ref result, width);
             Array.Reverse(result);
 

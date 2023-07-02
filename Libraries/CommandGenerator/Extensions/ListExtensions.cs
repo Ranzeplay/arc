@@ -1,4 +1,4 @@
-﻿namespace System.Collections.Generic
+﻿namespace Arc.CompilerCommandGenerator.Extensions
 {
     internal static class Extensions
     {
