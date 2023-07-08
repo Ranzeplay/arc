@@ -26,7 +26,7 @@ namespace Arc.Cmdec
                     rawData += str + ' ';
                 }
 
-                table.Rows.Add($"0x{Convert.ToString(command.Location, 16).PadLeft(8, '0')}", rawData, command.Description);
+                table.Rows.Add($"0x{Convert.ToString(command.Location, 16).PadLeft(Memory.Package.Metadata.AddressAlignment, '0')}", rawData, command.Description);
             }
 
             // Create table
