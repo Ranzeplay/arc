@@ -5,6 +5,7 @@ using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
 using Arc.Compiler.Shared.Parsing.Components.Function;
+using Arc.CompilerCommandGenerator.Builders.Fragments;
 using Arc.CompilerCommandGenerator.Extensions;
 using Arc.CompilerCommandGenerator.Models;
 using System.Text;
@@ -134,7 +135,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromObject).ToList();
 
             // Evaluate index expression first and put it to the top of the stack
-            commands.AddRange(DataAccessorCommandFragment.Build(source.TransferToNewComponent(source.Component.DataAccessor))!.Commands);
+            commands.AddRange(DataAccessorCommand.Build(source.TransferToNewComponent(source.Component.DataAccessor))!.Commands);
 
             // TODO: Check whether the the object is singleton or array element
 

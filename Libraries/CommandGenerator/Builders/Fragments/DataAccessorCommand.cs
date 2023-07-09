@@ -1,9 +1,9 @@
 ﻿using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.CompilerCommandGenerator.Builders.Fragments
 {
-    internal class DataAccessorCommandFragment
+    internal class DataAccessorCommand
     {
         public static PartialGenerationResult? Build(GenerationContext<DataAccessor> source)
         {
