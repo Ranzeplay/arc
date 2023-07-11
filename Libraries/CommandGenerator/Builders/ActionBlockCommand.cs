@@ -32,7 +32,13 @@ namespace Arc.CompilerCommandGenerator.Builders
                     case ASTNodeType.FunctionCall:
                     case ASTNodeType.FunctionReturn:
                     case ASTNodeType.ConditionalLoop:
+                        var loop = ConditionalLoopCommand.Build(source.TransferToNewComponent(action.GetConditionalLoopBlock()!))!;
+                        result.Combine(loop);
+                        break;
                     case ASTNodeType.ConditionalExec:
+                        var exec = ConditionalExecCommand.Build(source.TransferToNewComponent(@action.GetConditionalExecBlock()!))!;
+                        result.Combine(exec);
+                        break;
                     case ASTNodeType.Invalid:
                         throw new NotImplementedException();
                 }

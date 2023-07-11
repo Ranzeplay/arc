@@ -16,7 +16,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             // Conditional jump command
             var conditionalJumpCommand = new PartialGenerationResult();
-            conditionalJumpCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.Conditional));
+            conditionalJumpCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.Conditional));
             // True condition
             conditionalJumpCommand.RelocationTargets.Add(RelocationTarget.NewRelativeLocation(0, conditionalJumpCommand.Commands.Count, new(RelativeRelocatorType.Address, source.PackageMetadata.ConditionalJumpCommandLength())));
             conditionalJumpCommand.Commands.AddRange(source.PackageMetadata.GenerateEmptyAddress());
@@ -30,7 +30,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             
             // Jump back to start (unconditional)
             var jumpToStartCommand = new PartialGenerationResult();
-            jumpToStartCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.ToRelative));
+            jumpToStartCommand.Commands.AddRange(Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.ToRelative));
             conditionalJumpCommand.RelocationTargets.Add(RelocationTarget.NewRelativeLocation(0, conditionalJumpCommand.Commands.Count, new(RelativeRelocatorType.IterationEntry)));
 
             // Merge them all

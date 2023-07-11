@@ -7,13 +7,13 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class LoopCommand
     {
-        public static PartialGenerationResult? Build(GenerationContext<LoopBlock> source)
+        public static PartialGenerationResult Build(GenerationContext<LoopBlock> source)
         {
             var body = ActionBlockCommand.Build(source.TransferToNewComponent(source.Component.Block))!;
 
             // Jump to start
             var currentLoc = body.Commands.Count;
-            var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)JumpCommand.ToRelative).ToList();
+            var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.ToRelative).ToList();
 
             var reloc = RelocationTarget.NewRelativeLocation(currentLoc, jump.Count, new RelativeRelocator(RelativeRelocatorType.Address, -currentLoc));
 

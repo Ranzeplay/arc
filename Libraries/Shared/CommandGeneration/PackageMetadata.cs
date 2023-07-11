@@ -24,7 +24,7 @@
             DataSectionSize = dataSectionSize;
         }
 
-        private static byte[] GenerateDataAligned(long data, byte width)
+        public static byte[] GenerateDataAligned(long data, byte width)
         {
             var result = BitConverter.GetBytes(data);
             Array.Resize(ref result, width);
