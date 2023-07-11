@@ -42,7 +42,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                 var endRef = new RelocationReference(current.Commands.Count, RelocationReferenceType.EndIf);
                 current.RelocationReferences.Add(endRef);
 
-                result.Combine(jumpOutCommand);
+                result.Combine(current);
                 remainingBlocks -= 1;
             }
 
