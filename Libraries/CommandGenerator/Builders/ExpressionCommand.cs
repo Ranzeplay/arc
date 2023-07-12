@@ -14,7 +14,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class ExpressionCommand
     {
-        public static PartialGenerationResult? Build(GenerationContext<SimpleExpression> source)
+        public static PartialGenerationResult Build(GenerationContext<SimpleExpression> source)
         {
             var result = new PartialGenerationResult();
 

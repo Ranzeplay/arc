@@ -5,7 +5,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 {
     internal class ActionBlockCommand
     {
-        public static PartialGenerationResult? Build(GenerationContext<ActionBlock> source)
+        public static PartialGenerationResult Build(GenerationContext<ActionBlock> source)
         {
             var result = new PartialGenerationResult();
 
@@ -31,6 +31,9 @@ namespace Arc.CompilerCommandGenerator.Builders
                         break;
                     case ASTNodeType.FunctionCall:
                     case ASTNodeType.FunctionReturn:
+                        var funcRet = FunctionReturnCommand.Build(source.TransferToNewComponent(action.GetFunctionReturnBlock()!));
+                        result.Combine(funcRet);
+                        break;
                     case ASTNodeType.ConditionalLoop:
                         var loop = ConditionalLoopCommand.Build(source.TransferToNewComponent(action.GetConditionalLoopBlock()!))!;
                         result.Combine(loop);
