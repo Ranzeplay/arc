@@ -30,6 +30,9 @@ namespace Arc.CompilerCommandGenerator.Builders
                         result.Combine(@break);
                         break;
                     case ASTNodeType.FunctionCall:
+                        var funcCall = FunctionCallCommand.Build(source.TransferToNewComponent(action.GetFunctionCallBlock()!))!;
+                        result.Combine(funcCall);
+                        break;
                     case ASTNodeType.FunctionReturn:
                         var funcRet = FunctionReturnCommand.Build(source.TransferToNewComponent(action.GetFunctionReturnBlock()!));
                         result.Combine(funcRet);
@@ -39,7 +42,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                         result.Combine(loop);
                         break;
                     case ASTNodeType.ConditionalExec:
-                        var exec = ConditionalExecCommand.Build(source.TransferToNewComponent(@action.GetConditionalExecBlock()!))!;
+                        var exec = ConditionalExecCommand.Build(source.TransferToNewComponent(action.GetConditionalExecBlock()!))!;
                         result.Combine(exec);
                         break;
                     case ASTNodeType.Invalid:
