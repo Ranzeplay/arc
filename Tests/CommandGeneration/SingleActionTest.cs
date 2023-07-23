@@ -19,7 +19,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var tokens = Tokenizer.Tokenize(source, true);
             var action = DataDeclarationBuilder.Build(tokens.Tokens);
 
-            var result = DeclarationCommand.Build(new(action!.Section, new(), new(), new(), new(), null!));
+            var result = DeclarationCommand.Build(new(action!.Section, new(), new(), new(), new(), new(), null!));
 
             Assert.That(result, Is.Not.Null);
         }
@@ -39,7 +39,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var action = DataAssignmentBuilder.Build(new(tokens.Tokens, definedData.ToArray(), Array.Empty<FunctionDeclarator>()));
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
 
-            var result = AssignmentCommand.Build(new(action!.Section, new(), new(), new(), new(), metadata));
+            var result = AssignmentCommand.Build(new(action!.Section, new(), new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if(result is not null)
@@ -59,7 +59,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
 
-            var result = LoopCommand.Build(new(block!.Section, new(), new(), new(), new(), metadata));
+            var result = LoopCommand.Build(new(block!.Section, new(), new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
         }

@@ -9,13 +9,14 @@ namespace Arc.CompilerCommandGenerator.Models
                                        List<DataDeclarator> LocalData,
                                        List<DataDeclarator> GlobalData,
                                        List<FunctionDeclarator> AvailableFunctions,
+                                       List<GeneratedConstant> GeneratedConstants,
                                        List<RelocationReference> RelocationReferences,
                                        PackageMetadata PackageMetadata,
                                        long ConstantBeginIndex = 0)
     {
         public GenerationContext<Tc> TransferToNewComponent<Tc>(Tc component)
         {
-            return new GenerationContext<Tc>(component, LocalData, GlobalData, AvailableFunctions, RelocationReferences, PackageMetadata, ConstantBeginIndex);
+            return new GenerationContext<Tc>(component, LocalData, GlobalData, AvailableFunctions, GeneratedConstants, RelocationReferences, PackageMetadata, ConstantBeginIndex);
         }
     }
 }

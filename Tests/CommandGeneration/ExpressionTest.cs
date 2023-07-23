@@ -65,7 +65,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.Build(new(postfixExpression, definedData, new(), new(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, definedData, new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)
@@ -90,7 +90,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.Build(new(postfixExpression, new(), new(), new(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, new(), new(), new(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)
@@ -131,7 +131,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
             var postfixExpression = expressionBlock!.Section.ToPostfixExpression();
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
-            var result = ExpressionCommand.Build(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), new(), metadata));
+            var result = ExpressionCommand.Build(new(postfixExpression, definedData.ToList(), new(), definedFunctions.ToList(), new(), new(), metadata));
 
             Assert.That(result, Is.Not.Null);
             if (result != null)

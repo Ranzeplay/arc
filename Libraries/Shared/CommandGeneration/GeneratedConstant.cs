@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.Shared.CommandGeneration
 {
-    public record GeneratedConstant(DataType DataType, byte[] GeneratedBytes)
+    public record GeneratedConstant(long Slot, DataType DataType, byte[] GeneratedBytes)
     {
     }
 }

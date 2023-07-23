@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.Shared.CommandGeneration.Relocation
 {
-    public record RelocationReference(long CommandLocation, RelocationReferenceType ReferenceType)
+    public record RelocationReference(long CommandLocation, RelocationReferenceType ReferenceType, long Parameter = 0)
     {
     }
 }

@@ -35,6 +35,7 @@ namespace Arc.CompilerCommandGenerator.Builders
                                 source.LocalData,
                                 source.GlobalData,
                                 source.AvailableFunctions,
+                                source.GeneratedConstants,
                                 source.RelocationReferences,
                                 source.PackageMetadata,
                                 result.GeneratedConstants.Count));
@@ -82,6 +83,7 @@ namespace Arc.CompilerCommandGenerator.Builders
             var commands = Utils.CombineLeadingCommand((byte)RootCommand.Stack, (byte)StackCommand.PushFromConstant).ToList();
 
             var constant = new GeneratedConstant(
+                source.ConstantBeginIndex,
                 new DataType(
                     new Identifier(
                         Array.Empty<string>(),
@@ -112,7 +114,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var constantData = encodedLen.Concat(encodedString);
 
-            var constant = new GeneratedConstant(new DataType(
+            var constant = new GeneratedConstant(source.ConstantBeginIndex, new DataType(
                 new Identifier(Array.Empty<string>(), "string"),
                 false),
                                                        constantData.ToArray());

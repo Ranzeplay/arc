@@ -24,7 +24,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
 
-            var result = LoopCommand.Build(new(block!.Section, new(), new(), new(), new(), metadata));
+            var result = LoopCommand.Build(new(block!.Section, new(), new(), new(), new(), new(), metadata));
             if(result == null)
             {
                 Assert.Fail();
@@ -47,7 +47,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
 
-            var result = ConditionalLoopCommand.Build(new(block!.Section, new(), new(), new(), new(), metadata));
+            var result = ConditionalLoopCommand.Build(new(block!.Section, new(), new(), new(), new(), new(), metadata));
             if (result == null)
             {
                 Assert.Fail();
@@ -68,7 +68,7 @@ namespace Arc.Compiler.Tests.CommandGeneration
 
             var metadata = new PackageMetadata(0, 2, 2, 2, 0, 2);
 
-            var result = ConditionalExecCommand.Build(new(block!.Section, new(), new(), new(), new(), metadata));
+            var result = ConditionalExecCommand.Build(new(block!.Section, new(), new(), new(), new(), new(), metadata));
             if (result == null)
             {
                 Assert.Fail();
