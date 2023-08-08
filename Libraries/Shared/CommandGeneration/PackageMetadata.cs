@@ -59,5 +59,29 @@
         }
 
         public int ConditionalJumpCommandLength() => 1 + (2 * AddressAlignment);
+
+        public byte[] GenerateJumpAddress(long relativeLocation)
+        {
+            var abs = System.Math.Abs(relativeLocation);
+            byte direction;
+            if (abs < 0)
+            {
+                direction = 0xB;
+            }
+            else
+            {
+                direction = 0xF;
+            }
+
+            var absLoc = GenerateDataAligned(abs, AddressAlignment);
+
+            var result = new List<byte>
+            {
+                direction
+            };
+            result.AddRange(absLoc);
+
+            return result.ToArray();
+        }
     }
 }

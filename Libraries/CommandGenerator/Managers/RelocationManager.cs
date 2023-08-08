@@ -1,6 +1,6 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
-using Arc.CompilerCommandGenerator.Extensions;
+using Arc.Compiler.Shared.Extensions;
 using Arc.CompilerCommandGenerator.Models;
 
 namespace Arc.CompilerCommandGenerator.Managers

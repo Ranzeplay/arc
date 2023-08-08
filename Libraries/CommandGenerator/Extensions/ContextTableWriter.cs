@@ -4,7 +4,7 @@ using Arc.CompilerCommandGenerator.Models;
 
 namespace Arc.CompilerCommandGenerator.Extensions
 {
-    public static class GenerationContextExtensions
+    public static class ContextTableWriter
     {
         public static byte[] WriteFunctionTable<T>(this GenerationContext<T> context)
         {

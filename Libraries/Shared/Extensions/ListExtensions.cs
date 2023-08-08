@@ -1,6 +1,6 @@
-﻿namespace Arc.CompilerCommandGenerator.Extensions
+﻿namespace Arc.Compiler.Shared.Extensions
 {
-    internal static class Extensions
+    public static class Extensions
     {
         public static void ReplaceRange<T>(this IList<T> target, IEnumerable<T> values, int beginIndex)
         {
