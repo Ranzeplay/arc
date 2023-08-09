@@ -125,5 +125,50 @@ namespace Arc.Compiler.Shared.CommandGeneration.Relocation
                     Commands.ReplaceRange(PackageMetadata.GenerateJumpAddress(r.Relative!.Parameter), (int)placeLocation);
                 });
         }
+
+        public byte[] WriteFunctionTable()
+        {
+            var result = new List<byte>();
+
+            var count = PackageMetadata.GenerateFunctionIdData(GeneratedFunctions.Length);
+            result.AddRange(count);
+
+            for (var i = 0; i < GeneratedFunctions.Length; i++)
+            {
+                var func = GeneratedFunctions[i];
+                var funcEntryRef = RelocationReferences.FirstOrDefault(r => r.ReferenceType == RelocationReferenceType.FunctionEntrance && r.Parameter == i);
+                if (funcEntryRef == null)
+                {
+                    throw new Exception("Couldn't find the function to be written to function table");
+                }
+
+                var currentIterResult = new List<byte>();
+                currentIterResult.AddRange(PackageMetadata.GenerateFunctionIdData(funcEntryRef.Parameter));
+                currentIterResult.AddRange(PackageMetadata.GenerateDataAligned(funcEntryRef.CommandLocation, PackageMetadata.AddressAlignment));
+
+                result.AddRange(currentIterResult);
+            }
+
+            return result.ToArray();
+        }
+
+        public byte[] WriteConstantsTable()
+        {
+            var result = new List<byte>();
+
+            var count = PackageMetadata.GenerateSlotData(GeneratedConstants.Length);
+            result.AddRange(count);
+
+            foreach (var constant in GeneratedConstants)
+            {
+                var slot = PackageMetadata.GenerateSlotData(constant.Slot);
+                var data = PackageMetadata.BuildDataBlock(constant.GeneratedBytes);
+
+                result.AddRange(slot);
+                result.AddRange(data);
+            }
+
+            return result.ToArray();
+        }
     }
 }
