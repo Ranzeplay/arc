@@ -1,8 +1,4 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.Compiler.Shared.CommandGeneration.Relocation;
-using Arc.CompilerCommandGenerator.Models;
-
-namespace Arc.CompilerCommandGenerator
+﻿namespace Arc.CompilerCommandGenerator
 {
     internal class Utils
     {
