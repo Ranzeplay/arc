@@ -41,7 +41,7 @@ namespace Arc.Compiler.Parser.Builders.Components
                 currentIndex++;
                 if (model.Tokens[currentIndex].GetContainer().GetValueOrDefault() == ContainerToken.AntiBracket)
                 {
-                    return new(new(targetFunction.Identifier, arguments.ToArray()), currentIndex);
+                    return new(new(targetFunction.Identifier, arguments.ToArray()), currentIndex + 1);
                 }
             }
             else
