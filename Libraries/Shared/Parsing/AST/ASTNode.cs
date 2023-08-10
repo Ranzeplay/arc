@@ -74,7 +74,7 @@
 
         public FunctionReturnBlock? GetFunctionReturnBlock()
         {
-            if (NodeType == ASTNodeType.ConditionalLoop)
+            if (NodeType == ASTNodeType.FunctionReturn)
             {
                 return Target as FunctionReturnBlock;
             }
@@ -110,7 +110,7 @@
 
         public ConditionalExecBlock? GetConditionalExecBlock()
         {
-            if (NodeType == ASTNodeType.ConditionalLoop)
+            if (NodeType == ASTNodeType.ConditionalExec)
             {
                 return Target as ConditionalExecBlock;
             }
@@ -122,7 +122,7 @@
 
         public ASTNode(LoopBlock loopBlock)
         {
-            NodeType = ASTNodeType.ConditionalExec;
+            NodeType = ASTNodeType.UnconditionalLoop;
             Target = loopBlock;
         }
 
