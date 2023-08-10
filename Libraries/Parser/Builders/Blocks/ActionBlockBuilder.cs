@@ -38,7 +38,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     continue;
                 }
 
-                var functionReturn = FunctionReturnBuilder.Build(model);
+                var functionReturn = FunctionReturnBuilder.Build(model.SkipTokens(index));
                 if (functionReturn != null)
                 {
                     result.Add(new(functionReturn.Section));
@@ -46,7 +46,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     continue;
                 }
 
-                var conditionalLoop = ConditionalLoopBlockBuilder.Build(model);
+                var conditionalLoop = ConditionalLoopBlockBuilder.Build(model.SkipTokens(index));
                 if (conditionalLoop != null)
                 {
                     result.Add(new(conditionalLoop.Section));
@@ -54,7 +54,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     continue;
                 }
 
-                var conditionalExec = ConditionalExecBlockBuilder.Build(model);
+                var conditionalExec = ConditionalExecBlockBuilder.Build(model.SkipTokens(index));
                 if (conditionalExec != null)
                 {
                     result.Add(new(conditionalExec.Section));
@@ -62,7 +62,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     continue;
                 }
 
-                var loopBlock = LoopBlockBuilder.Build(model);
+                var loopBlock = LoopBlockBuilder.Build(model.SkipTokens(index));
                 if (loopBlock != null)
                 {
                     result.Add(new(loopBlock.Section));
