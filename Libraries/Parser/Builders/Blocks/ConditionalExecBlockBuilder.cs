@@ -45,7 +45,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 builtLength += otherwiseBlock.Length;
             }
 
-            return new(new(conditionalBlocks.ToArray(), otherwiseBlock?.Section), builtLength);
+            return new(new(conditionalBlocks.ToArray(), otherwiseBlock?.Section), builtLength + 1);
         }
 
         private static SectionBuildResult<ActionBlock>? BuildOtherwiseBlock(ExpressionBuildModel model)
@@ -70,7 +70,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
 
             if (block != null)
             {
-                return new(block.Section, block.Length);
+                return new(block.Section, block.Length + 2);
             }
             else
             {

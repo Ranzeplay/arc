@@ -27,6 +27,7 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                 {
                     result.Add(new(declaration.Section));
                     index += declaration.Length;
+                    model.DeclaredData = Enumerable.Append(model.DeclaredData, declaration.Section).ToArray();
                     continue;
                 }
 
