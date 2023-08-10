@@ -69,6 +69,8 @@ namespace Arc.Compiler.Parser.Builders.Blocks
                     index += loopBlock.Length;
                     continue;
                 }
+
+                throw new Exception($"Invalid Action type at index {index}");
             }
 
             return new(new(result.ToArray()), model.Tokens.Length);
