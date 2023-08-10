@@ -43,7 +43,7 @@ namespace Arc.Compiler.Parser.Builders.Components
             return null;
         }
 
-        private static SectionBuildResult<FunctionDeclarator>? BuildFunctionDeclarator(ExpressionBuildModel model)
+        public static SectionBuildResult<FunctionDeclarator>? BuildFunctionDeclarator(ExpressionBuildModel model)
         {
             // Build function identifier
             #region FunctionIdentifier
