@@ -9,6 +9,7 @@ using Arc.CompilerCommandGenerator.Builders;
 
 namespace Arc.Compiler.Tests.CommandGeneration
 {
+    [Timeout(1000)]
     [Category("PackageGeneration")]
     internal class ExpressionTest
     {

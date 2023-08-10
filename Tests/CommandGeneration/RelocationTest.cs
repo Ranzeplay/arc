@@ -10,6 +10,7 @@ using Arc.CompilerCommandGenerator.Managers;
 
 namespace Arc.Compiler.Tests.CommandGeneration
 {
+    [Timeout(1000)]
     [Category("PackageGeneration")]
     internal class RelocationTest
     {
