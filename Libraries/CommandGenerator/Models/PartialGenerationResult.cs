@@ -63,10 +63,12 @@ namespace Arc.CompilerCommandGenerator.Models
             GeneratedConstants.AddRange(other.GeneratedConstants);
             GeneratedConstants = GeneratedConstants.DistinctBy(d => d.GeneratedBytes).ToList();
 
+            var funcCount = RelocationReferences.Count(r => r.ReferenceType == RelocationReferenceType.FunctionEntrance);
+
             // Process RelocationReferences
             foreach (var r in other.RelocationReferences)
             {
-                RelocationReferences.Add(new(r.CommandLocation + Commands.Count, r.ReferenceType));
+                RelocationReferences.Add(new(r.CommandLocation + Commands.Count, r.ReferenceType, r.Parameter));
             }
         }
     }
