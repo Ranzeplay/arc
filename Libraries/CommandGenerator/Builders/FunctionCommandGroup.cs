@@ -5,7 +5,7 @@ using Arc.CompilerCommandGenerator.Models;
 
 namespace Arc.CompilerCommandGenerator.Builders
 {
-    internal class FunctionCommandGroup
+    public class FunctionCommandGroup
     {
         public static PartialGenerationResult Build(GenerationContext<FunctionBlock> source)
         {
@@ -23,7 +23,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             var actionBlockResult = ActionBlockCommand.Build(context);
 
-            var functionId = source.AvailableFunctions.FindIndex(f => f.Identifier == source.Component.Declarator.Identifier);
+            var functionId = source.AvailableFunctions.FindIndex(f => f.Identifier.Equals(source.Component.Declarator.Identifier));
             actionBlockResult.RelocationReferences.Insert(0, new(0, RelocationReferenceType.FunctionEntrance, functionId));
             actionBlockResult.RelocationReferences.Add(new(actionBlockResult.Commands.Count, RelocationReferenceType.EndFunction, functionId));
 
