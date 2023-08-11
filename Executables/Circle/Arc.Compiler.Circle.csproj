@@ -11,4 +11,11 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\CommandGenerator\Arc.CompilerCommandGenerator.csproj" />
+    <ProjectReference Include="..\..\Libraries\Lexer\Arc.Compiler.Lexer.csproj" />
+    <ProjectReference Include="..\..\Libraries\Parser\Arc.Compiler.Parser.csproj" />
+    <ProjectReference Include="..\..\Libraries\Shared\Arc.Compiler.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
