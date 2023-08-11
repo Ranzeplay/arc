@@ -24,6 +24,16 @@
             DataSectionSize = dataSectionSize;
         }
 
+        public byte[] Write() => new List<byte>
+        {
+            PackageType,
+            DataAlignment,
+            DataSlotAlignment,
+            AddressAlignment,
+            EntryFunctionId,
+            DataSectionSize
+        }.ToArray();
+
         public static byte[] GenerateDataAligned(long data, byte width)
         {
             var result = BitConverter.GetBytes(data);
