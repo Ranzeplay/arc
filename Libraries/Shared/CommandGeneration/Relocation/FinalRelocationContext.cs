@@ -136,11 +136,8 @@ namespace Arc.Compiler.Shared.CommandGeneration.Relocation
             for (var i = 0; i < GeneratedFunctions.Length; i++)
             {
                 var func = GeneratedFunctions[i];
-                var funcEntryRef = RelocationReferences.FirstOrDefault(r => r.ReferenceType == RelocationReferenceType.FunctionEntrance && r.Parameter == i);
-                if (funcEntryRef == null)
-                {
-                    throw new Exception("Couldn't find the function to be written to function table");
-                }
+                var funcEntryRef = RelocationReferences.FirstOrDefault(r => r.ReferenceType == RelocationReferenceType.FunctionEntrance && r.Parameter == i)
+                    ?? throw new Exception("Couldn't find the function to be written to function table");
 
                 var currentIterResult = new List<byte>();
                 currentIterResult.AddRange(PackageMetadata.GenerateFunctionIdData(funcEntryRef.Parameter));
