@@ -88,7 +88,6 @@ namespace Arc.Compiler.Tests.CommandGeneration
         }
 
         [Test]
-        [Timeout(-1)]
         public void MixedRelocationTest()
         {
             var text = """
