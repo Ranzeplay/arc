@@ -2,7 +2,7 @@
 
 namespace Arc.Cmdec
 {
-    internal record DecodedPackage(PackageMetadata Metadata, IEnumerable<DecodedCommand> Commands)
+    internal record DecodedPackage(PackageMetadata Metadata, IEnumerable<DecodedCommand> Commands, IEnumerable<DecodedFunctionEntry> FunctionTable, IEnumerable<DecodedConstant> ConstantTable)
     {
     }
 }
