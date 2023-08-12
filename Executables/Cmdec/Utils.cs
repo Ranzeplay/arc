@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
+﻿using Arc.Cmdec.Models;
+using Arc.Compiler.Shared.CommandGeneration;
 
 namespace Arc.Cmdec
 {

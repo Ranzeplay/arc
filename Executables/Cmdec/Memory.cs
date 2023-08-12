@@ -1,4 +1,6 @@
-﻿namespace Arc.Cmdec
+﻿using Arc.Cmdec.Models;
+
+namespace Arc.Cmdec
 {
     internal class Memory
     {

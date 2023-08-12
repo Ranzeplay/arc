@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings.Math;
+﻿using Arc.Cmdec.Models;
+using Arc.Compiler.Shared.CommandGeneration.Mappings.Math;
 
 namespace Arc.Cmdec.Commands
 {

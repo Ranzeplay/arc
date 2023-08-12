@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using Terminal.Gui;
 
-namespace Arc.Cmdec
+namespace Arc.Cmdec.UI
 {
     internal class CommandListWindow : Window
     {
