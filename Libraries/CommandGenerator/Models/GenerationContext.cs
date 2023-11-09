@@ -3,7 +3,7 @@ using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
 
-namespace Arc.CompilerCommandGenerator.Models
+namespace Arc.Compiler.CommandGenerator.Models
 {
     public record GenerationContext<T>(T Component,
                                        List<DataDeclarator> LocalData,

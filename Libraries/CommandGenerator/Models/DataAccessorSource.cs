@@ -1,6 +1,6 @@
 ﻿using Arc.Compiler.Shared.Parsing.Components.Data;
 
-namespace Arc.CompilerCommandGenerator.Models
+namespace Arc.Compiler.CommandGenerator.Models
 {
     internal class DataAccessorSource
     {

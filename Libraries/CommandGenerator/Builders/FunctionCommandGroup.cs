@@ -1,9 +1,9 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Relocation;
+﻿using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     public class FunctionCommandGroup
     {
@@ -15,10 +15,10 @@ namespace Arc.CompilerCommandGenerator.Builders
                 dataDeclaractors.Add(new DataDeclarator(param.DataType, param.Identifier, param.IsConstant));
             }
 
-            var context = new GenerationContext<ActionBlock>(source.Component.Actions, 
-                dataDeclaractors, 
-                source.GlobalData, 
-                source.AvailableFunctions, 
+            var context = new GenerationContext<ActionBlock>(source.Component.Actions,
+                dataDeclaractors,
+                source.GlobalData,
+                source.AvailableFunctions,
                 source.GeneratedConstants, new(), source.PackageMetadata);
 
             var actionBlockResult = ActionBlockCommand.Build(context);

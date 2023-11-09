@@ -1,9 +1,10 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+﻿using Arc.Compiler.CommandGenerator;
+using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.AST;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class LoopCommand
     {
@@ -13,7 +14,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
             // Jump to start
             var currentLoc = body.Commands.Count;
-            var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.ToRelative).ToList();
+            var jump = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Shared.CommandGeneration.Mappings.JumpCommand.ToRelative).ToList();
 
             var reloc = RelocationTarget.NewRelativeLocation(currentLoc, jump.Count, new RelativeRelocator(RelativeRelocatorType.Address, -currentLoc));
 

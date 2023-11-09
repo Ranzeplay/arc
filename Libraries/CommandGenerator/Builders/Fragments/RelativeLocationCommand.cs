@@ -1,7 +1,7 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.CompilerCommandGenerator.Models;
+﻿using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration;
 
-namespace Arc.CompilerCommandGenerator.Builders.Fragments
+namespace Arc.Compiler.CommandGenerator.Builders.Fragments
 {
     internal class RelativeLocationCommand
     {

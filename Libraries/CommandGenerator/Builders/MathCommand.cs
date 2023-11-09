@@ -1,8 +1,9 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+﻿using Arc.Compiler.CommandGenerator;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Mappings.Math;
 using Arc.Compiler.Shared.LexicalAnalysis;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class MathCommand
     {

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\CommandGenerator\Arc.CompilerCommandGenerator.csproj" />
+    <ProjectReference Include="..\..\Libraries\CommandGenerator\Arc.Compiler.CommandGenerator.csproj" />
     <ProjectReference Include="..\..\Libraries\Lexer\Arc.Compiler.Lexer.csproj" />
     <ProjectReference Include="..\..\Libraries\Parser\Arc.Compiler.Parser.csproj" />
     <ProjectReference Include="..\..\Libraries\Shared\Arc.Compiler.Shared.csproj" />

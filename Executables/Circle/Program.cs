@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Arc.Compiler.CommandGenerator.Builders;
 using Arc.Compiler.Lexer;
 using Arc.Compiler.Parser;
 using Arc.Compiler.Parser.Models;
@@ -8,7 +9,6 @@ using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
-using Arc.CompilerCommandGenerator.Builders;
 using Arc.CompilerCommandGenerator.Models;
 
 

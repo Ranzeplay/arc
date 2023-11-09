@@ -17,9 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Lexer", "Libra
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Parser", "Libraries\Parser\Arc.Compiler.Parser.csproj", "{5146567B-1D3C-432A-9863-973F93901AC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.CompilerCommandGenerator", "Libraries\CommandGenerator\Arc.CompilerCommandGenerator.csproj", "{8875CE1F-6928-46E6-B79B-DCD83FCD202A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.CommandGenerator", "Libraries\CommandGenerator\Arc.Compiler.CommandGenerator.csproj", "{8875CE1F-6928-46E6-B79B-DCD83FCD202A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Cmdec", "Executables\Cmdec\Arc.Cmdec.csproj", "{5933A38E-D758-43A4-8FDC-C0F743D646B2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Cmdec", "Executables\Cmdec\Arc.Cmdec.csproj", "{5933A38E-D758-43A4-8FDC-C0F743D646B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

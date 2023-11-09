@@ -1,7 +1,8 @@
-﻿using Arc.Compiler.Shared.Parsing.Components.Data;
-using Arc.CompilerCommandGenerator.Models;
+﻿using Arc.Compiler.CommandGenerator.Builders;
+using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.Parsing.Components.Data;
 
-namespace Arc.CompilerCommandGenerator.Builders.Fragments
+namespace Arc.Compiler.CommandGenerator.Builders.Fragments
 {
     internal class DataAccessorCommand
     {

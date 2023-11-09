@@ -1,4 +1,4 @@
-﻿namespace Arc.CompilerCommandGenerator
+﻿namespace Arc.Compiler.CommandGenerator
 {
     internal class Utils
     {

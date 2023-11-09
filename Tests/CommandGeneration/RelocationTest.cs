@@ -1,4 +1,6 @@
-﻿using Arc.Compiler.Lexer;
+﻿using Arc.Compiler.CommandGenerator.Builders;
+using Arc.Compiler.CommandGenerator.Managers;
+using Arc.Compiler.Lexer;
 using Arc.Compiler.Parser;
 using Arc.Compiler.Parser.Builders.Blocks;
 using Arc.Compiler.Parser.Models;
@@ -8,8 +10,6 @@ using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
-using Arc.CompilerCommandGenerator.Builders;
-using Arc.CompilerCommandGenerator.Managers;
 using Arc.CompilerCommandGenerator.Models;
 
 namespace Arc.Compiler.Tests.CommandGeneration

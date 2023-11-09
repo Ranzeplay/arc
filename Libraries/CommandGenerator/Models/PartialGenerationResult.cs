@@ -2,7 +2,7 @@
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 
-namespace Arc.CompilerCommandGenerator.Models
+namespace Arc.Compiler.CommandGenerator.Models
 {
     public class PartialGenerationResult
     {

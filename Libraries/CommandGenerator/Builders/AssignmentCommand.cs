@@ -1,9 +1,10 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+﻿using Arc.Compiler.CommandGenerator;
+using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class AssignmentCommand
     {

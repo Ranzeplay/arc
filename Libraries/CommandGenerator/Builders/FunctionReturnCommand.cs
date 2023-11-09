@@ -1,14 +1,14 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+﻿using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.Parsing.AST;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class FunctionReturnCommand
     {
         public static PartialGenerationResult Build(GenerationContext<FunctionReturnBlock> source)
         {
-            if(source.Component.Expression != null)
+            if (source.Component.Expression != null)
             {
                 var expr = ExpressionCommand.Build(source.TransferToNewComponent(source.Component.Expression));
 

@@ -1,9 +1,9 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
+﻿using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Extensions;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Managers
+namespace Arc.Compiler.CommandGenerator.Managers
 {
     internal class RelocationManager
     {
@@ -19,13 +19,14 @@ namespace Arc.CompilerCommandGenerator.Managers
             foreach (var addressRelocator in addressRelocators)
             {
                 var relativeRelocator = addressRelocator.GetRelativeLocation()!;
-                if (relativeRelocator.RelocatorType == RelativeRelocatorType.Address) {
+                if (relativeRelocator.RelocatorType == RelativeRelocatorType.Address)
+                {
                     var addrBytes = Utils.GenerateDataAligned(relativeRelocator.Parameter, metadata.AddressAlignment);
 
                     unrelocatedCode.Commands[(int)addressRelocator.CommandLocation] = (byte)(relativeRelocator.Parameter >= 0 ? 0x00 : 0xff);
                     unrelocatedCode.Commands.ReplaceRange(addrBytes, (int)addressRelocator.CommandLocation + 1);
                 }
-                
+
             }
             unrelocatedCode.RelocationTargets.RemoveAll(r => r.RelocationType == RelocationType.RelativeLocation);
         }

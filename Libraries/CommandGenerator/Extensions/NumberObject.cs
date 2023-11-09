@@ -1,8 +1,8 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
 
-namespace Arc.CompilerCommandGenerator.Extensions
+namespace Arc.Compiler.CommandGenerator.Extensions
 {
-    internal class NumberObject : Compiler.Shared.Math.NumberObject
+    internal class NumberObject : Shared.Math.NumberObject
     {
         public NumberObject(string number) : base(number)
         {

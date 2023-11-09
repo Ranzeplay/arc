@@ -1,16 +1,17 @@
-﻿using Arc.Compiler.Shared.CommandGeneration;
+﻿using Arc.Compiler.CommandGenerator;
+using Arc.Compiler.CommandGenerator.Builders.Fragments;
+using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration;
 using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.Components;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Expression;
 using Arc.Compiler.Shared.Parsing.Components.Function;
-using Arc.CompilerCommandGenerator.Builders.Fragments;
 using Arc.CompilerCommandGenerator.Extensions;
-using Arc.CompilerCommandGenerator.Models;
 using System.Text;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class ExpressionCommand
     {

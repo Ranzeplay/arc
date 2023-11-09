@@ -1,14 +1,15 @@
-﻿using Arc.Compiler.Shared.CommandGeneration.Mappings;
+﻿using Arc.Compiler.CommandGenerator;
+using Arc.Compiler.CommandGenerator.Models;
+using Arc.Compiler.Shared.CommandGeneration.Mappings;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
-using Arc.CompilerCommandGenerator.Models;
 
-namespace Arc.CompilerCommandGenerator.Builders
+namespace Arc.Compiler.CommandGenerator.Builders
 {
     internal class JumpCommand
     {
         public static PartialGenerationResult BuildRelative(GenerationContext<RelativeRelocator> source)
         {
-            var commands = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.ToRelative).ToList();
+            var commands = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Shared.CommandGeneration.Mappings.JumpCommand.ToRelative).ToList();
             commands.AddRange(source.PackageMetadata.GenerateEmptyAddress());
 
             var relocationTarget = RelocationTarget.NewRelativeLocation(0, commands.Count, source.Component);
@@ -18,7 +19,7 @@ namespace Arc.CompilerCommandGenerator.Builders
 
         public static PartialGenerationResult BuildConditional(GenerationContext<JumpRelativeCommandViewModel> source)
         {
-            var commands = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Compiler.Shared.CommandGeneration.Mappings.JumpCommand.Conditional).ToList();
+            var commands = Utils.CombineLeadingCommand((byte)RootCommand.Jump, (byte)Shared.CommandGeneration.Mappings.JumpCommand.Conditional).ToList();
             var relocationTargets = new List<RelocationTarget>();
 
             // True condition
