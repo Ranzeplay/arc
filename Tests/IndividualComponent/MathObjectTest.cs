@@ -1,5 +1,5 @@
 ﻿using Arc.Compiler.Shared.CommandGeneration;
-using Arc.CompilerCommandGenerator.Extensions;
+using Arc.Compiler.CommandGenerator.Extensions;
 
 namespace Arc.Compiler.Tests.IndividualComponent
 {

@@ -1,7 +1,6 @@
 ﻿using Arc.Compiler.CommandGenerator.Models;
 using Arc.Compiler.Shared.CommandGeneration.Relocation;
 using Arc.Compiler.Shared.Parsing.AST;
-using Arc.CompilerCommandGenerator.Models;
 
 namespace Arc.Compiler.CommandGenerator.Builders
 {

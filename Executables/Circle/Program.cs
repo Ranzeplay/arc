@@ -9,7 +9,7 @@ using Arc.Compiler.Shared.Compilation;
 using Arc.Compiler.Shared.Parsing.AST;
 using Arc.Compiler.Shared.Parsing.Components.Data;
 using Arc.Compiler.Shared.Parsing.Components.Function;
-using Arc.CompilerCommandGenerator.Models;
+using Arc.Compiler.CommandGenerator.Models;
 
 
 var startTime = DateTime.UtcNow;
