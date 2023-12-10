@@ -39,5 +39,14 @@ namespace Arc.Cmdec
 
             return result;
         }
+
+        public static (DecodedDataAccessor, int) DecodeDataAccessor(byte[] commands, PackageMetadata metadata)
+        {
+            var flag = commands[0] == 0x01;
+            var slot = commands.Skip(1).Take(metadata.DataSlotAlignment)
+                .ToArray();
+
+            return (new(flag, BytesToLong(slot)), 1 + metadata.DataSlotAlignment);
+        }
     }
 }
