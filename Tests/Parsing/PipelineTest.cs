@@ -6,7 +6,7 @@ using Arc.Compiler.Shared.Parsing.Components.Function;
 
 namespace Arc.Compiler.Tests.Parsing
 {
-    [Timeout(1000)]
+    [CancelAfter(1000)]
     [Category("Parsing")]
     public class PipelineTest
     {
