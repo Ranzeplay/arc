@@ -8,7 +8,7 @@ using Arc.Compiler.Shared.Parsing.Components.Function;
 
 namespace Arc.Compiler.Tests.CommandGeneration
 {
-    [Timeout(1000)]
+    [CancelAfter(1000)]
     [Category("CommandGeneration")]
     internal class SingleActionTest
     {

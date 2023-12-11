@@ -3,7 +3,7 @@ using Arc.Compiler.CommandGenerator.Extensions;
 
 namespace Arc.Compiler.Tests.IndividualComponent
 {
-    [Timeout(1000)]
+    [CancelAfter(1000)]
     [Category("IndividualComponent")]
     public class MathObjectTest
     {

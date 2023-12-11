@@ -36,11 +36,11 @@ namespace Arc.Cmdec.Commands
                 0xA3 => ObjectCommand.DeleteLocal(location, commands, metadata),
                 0xA4 => ObjectCommand.DeleteGlobal(location, commands, metadata),
 
-                0xB1 => StackCommand.PushInstant(location, commands, metadata),
-                0xB2 => StackCommand.PushFromObject(location, commands, metadata),
-                0xB3 => StackCommand.PushFromConstant(location, commands, metadata),
-                0xB4 => StackCommand.Pop(location, commands, metadata),
-                0xB5 => StackCommand.PopToObject(location, commands, metadata),
+                // 0xB1 => StackCommand.PushInstant(location, commands, metadata),
+                // 0xB2 => StackCommand.PushFromObject(location, commands, metadata),
+                // 0xB3 => StackCommand.PushFromConstant(location, commands, metadata),
+                // 0xB4 => StackCommand.Pop(location, commands, metadata),
+                // 0xB5 => StackCommand.PopToObject(location, commands, metadata),
 
                 0xC1 => JumpCommand.Relative(location, commands, metadata),
                 0xC2 => JumpCommand.Conditional(location, commands, metadata),

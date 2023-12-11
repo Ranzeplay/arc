@@ -3,7 +3,7 @@ using Arc.Compiler.Shared.Compilation;
 
 namespace Arc.Compiler.Tests.LexicalAnalysis
 {
-    [Timeout(1000)]
+    [CancelAfter(1000)]
     [Category("LexicalAnalysis")]
     public class TokenizerTest
     {

@@ -14,7 +14,7 @@ using Arc.Compiler.CommandGenerator.Models;
 
 namespace Arc.Compiler.Tests.CommandGeneration
 {
-    [Timeout(1000)]
+    [CancelAfter(1000)]
     [Category("PackageGeneration")]
     internal class RelocationTest
     {
