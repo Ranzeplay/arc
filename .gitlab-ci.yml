@@ -101,13 +101,12 @@ build:
 
 tests:
   stage: test
-  # ### Run the tests
-  #
-  # You can either run tests for all test projects that are defined in your solution
-  # with 'dotnet test' or run tests only for specific project by specifying
-  # a relative path to the directory where it is located (e.g. 'dotnet test ./test/UnitTests').
-  #
-  # You may want to define separate testing jobs for different types of testing
-  # (e.g. integration tests, unit tests etc).
+  # Run the tests and generate JUnit-style test report
   script:
-    - 'dotnet test --no-restore'
+    - 'dotnet add ./Tests package JUnitTestLogger'
+    - 'dotnet test --no-restore --logger "junit;LogFilePath=test-results.xml"'
+  # Save the JUnit-style test report as an artifact
+  artifacts:
+    when: always
+    paths:
+      - 'Tests/test-results.xml'
