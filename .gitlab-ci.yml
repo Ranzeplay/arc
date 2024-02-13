@@ -105,8 +105,9 @@ tests:
   script:
     - 'dotnet add ./Tests package JUnitTestLogger'
     - 'dotnet test --no-restore --logger "junit;LogFilePath=test-results.xml"'
+    - 'mv Tests/test-results.xml test-results.xml'
   # Save the JUnit-style test report as an artifact
   artifacts:
     when: always
     paths:
-      - 'Tests/test-results.xml'
+      - 'test-results.xml'
