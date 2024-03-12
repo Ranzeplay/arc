@@ -1,0 +1,32 @@
+link Arc.Interaction.Console;
+link Arc.Data.Access.{Getter, Accessor, Accessibility};
+
+namespace Arc.Example {
+	export internal group ArcExample {
+		@Getter(Accessibility.Public)
+		public field val foo: string;
+		@Accessor(Accessibility.Internal)
+		public field var bar: string;
+
+		private method eval(): bool {
+			return false;
+		}
+		export public func empty(): none {}
+		export protected frame func something();
+	}
+
+	export public function main(val var args: string[]): none {
+		var a: int = Console.readln();
+		var b: auto = 8;
+		a = 4;
+		b = 6;
+		val c: auto;
+		if (a > b) { c = a + b; }
+		elif (a < b) { c = a * b; }
+		else { c = a - b; }
+
+		call Console.println($"abc {c} {args[0]}");
+
+		return 0;
+	}
+}

@@ -1,0 +1,19 @@
+link Arc::Std;
+
+@Export
+@Entrypoint
+public function main(val var args: string[]): none {
+	val var a: int;
+	a = Console::readln();
+	val var b: auto;
+	a = 4;
+	b = 6;
+	val const c: auto;
+	if (a > b) { c = a + b; }
+	elif (a < b) { c = a * b; }
+	else { c = a - b; }
+
+	call Console::println($"abc {c} {args[0]}");
+
+	return 0;
+}
