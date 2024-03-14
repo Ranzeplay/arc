@@ -1,5 +1,10 @@
 lexer grammar ArcSourceCodeLexer;
 
+SYMBOL_AT : '@';
+SYMBOL_DOT : '.';
+SYMBOL_SEMICOLON : ';';
+SYMBOL_COLON : ':';
+
 // Keywords
 KEYWORD_NUMBER : 'number';
 KEYWORD_CHAR : 'char';
@@ -21,7 +26,7 @@ KEYWORD_DECLARE : 'declare';
 KEYWORD_FUNCTION : 'function';
 KEYWORD_METHOD : 'method';
 KEYWORD_GROUP : 'group';
-KEYWORD_FRAME : 'frame';
+// KEYWORD_FRAME : 'frame';
 KEYWORD_FIELD : 'field';
 KEYWORD_EXTENDS : 'extends';
 KEYWORD_IMPLEMENTS : 'implements';
@@ -73,8 +78,8 @@ OPERATOR_NOT : '!';
 OPERATOR_ASSIGN : '=';
 OPERATOR_DOLLAR : '$';
 OPERATOR_QUESTION_MARK : '?';
-OPERATOR_SCOPE : '::';
 OPERATOR_COMMA : ',';
+OPERATOR_SCOPE : '::';
 
 // Containers
 CONTAINER_OPEN_PAREN : '(';
@@ -86,11 +91,6 @@ CONTAINER_CLOSE_INDEXER : ']';
 // Also alternative for bigger and less operator
 CONTAINER_OPEN_SHARP_PAREN : '<';
 CONTAINER_CLOSE_SHARP_PAREN : '>';
-
-SYMBOL_AT : '@';
-SYMBOL_DOT : '.';
-SYMBOL_SEMICOLON : ';';
-SYMBOL_COLON : ':';
 
 // Flexible rules
 NUMBER : INTEGER | OCTAL | HEX | FLOAT | BINARY ;

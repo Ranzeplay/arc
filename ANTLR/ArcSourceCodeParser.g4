@@ -4,7 +4,7 @@ options {
 	tokenVocab = ArcSourceCodeLexer;
 }
 
-compilation_unit: stmt_link* function_block* EOF;
+compilation_unit: stmt_link* namespace EOF;
 
 qualified_identifier:	IDENTIFIER (SYMBOL_DOT IDENTIFIER)*;
 scoped_identifier:		IDENTIFIER (OPERATOR_SCOPE IDENTIFIER)*;
@@ -26,8 +26,8 @@ param_type: KEYWORD_REF | KEYWORD_VAL;
 function_block: function_declarator wrapped_body;
 
 function_declarator:
-	annotation* accessibility KEYWORD_FUNCTION single_identifier CONTAINER_OPEN_PAREN
-		function_args? CONTAINER_CLOSE_PAREN SYMBOL_COLON data_type;
+	annotation* accessibility KEYWORD_FUNCTION single_identifier CONTAINER_OPEN_PAREN function_args?
+		CONTAINER_CLOSE_PAREN SYMBOL_COLON data_type;
 
 function_args:
 	data_declaration (OPERATOR_COMMA data_declaration)*;
@@ -73,8 +73,9 @@ data_declaration:
 
 interpolation_string:	OPERATOR_DOLLAR LITERAL_STRING;
 string_values:			LITERAL_STRING | interpolation_string;
+bool_values: KEYWORD_TRUE | KEYWORD_FALSE;
 
-instant_value: NUMBER | string_values | KEYWORD_NONE;
+instant_value: NUMBER | string_values | bool_values | KEYWORD_NONE;
 
 value: instant_value | single_identifier | function_call;
 
@@ -122,3 +123,22 @@ expression:
 	| expression CONTAINER_CLOSE_SHARP_PAREN expression
 	| CONTAINER_OPEN_PAREN expression CONTAINER_CLOSE_PAREN;
 
+group_block:
+	annotation* accessibility KEYWORD_GROUP single_identifier CONTAINER_OPEN_BRACE group_member*
+		CONTAINER_CLOSE_BRACE;
+
+group_member: group_field | group_function | group_method;
+
+group_field:
+	annotation* accessibility KEYWORD_FIELD data_declaration SYMBOL_SEMICOLON;
+
+method_declarator:
+	annotation* accessibility KEYWORD_METHOD single_identifier CONTAINER_OPEN_PAREN function_args?
+		CONTAINER_CLOSE_PAREN SYMBOL_COLON data_type;
+
+group_method: method_declarator wrapped_body;
+
+group_function: function_block;
+
+namespace:
+	KEYWORD_NAMESPACE scoped_identifier CONTAINER_OPEN_BRACE (function_block | group_block)* CONTAINER_CLOSE_BRACE;
