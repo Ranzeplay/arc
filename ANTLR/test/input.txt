@@ -1,19 +1,35 @@
 link Arc::Std;
 
-@Export
-@Entrypoint
-public function main(val var args: string[]): none {
-	val var a: int;
-	a = Console::readln();
-	val var b: auto;
-	a = 4;
-	b = 6;
-	val const c: auto;
-	if (a > b) { c = a + b; }
-	elif (a < b) { c = a * b; }
-	else { c = a - b; }
+namespace Arc::Program {
+	@Export
+	public group ArcExample {
+		@Getter
+		public field val const foo: string;
+		@Accessor
+		public field val var bar: string;
 
-	call Console::println($"abc {c} {args[0]}");
+		private method eval(): bool {
+			return false;
+		}
 
-	return 0;
+		public function empty(): none {}
+	}
+
+	@Export
+	@Entrypoint
+	public function main(val var args: string[]): none {
+		val var a: int;
+		a = Console::readln();
+		val var b: auto;
+		a = 4;
+		b = 6;
+		val const c: auto;
+		if (a > b) { c = a + b; }
+		elif (a < b) { c = a * b; }
+		else { c = a - b; }
+
+		call Console::println($"abc {c} {args[0]}");
+
+		return 0;
+	}
 }
