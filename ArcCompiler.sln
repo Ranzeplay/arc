@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.CommandGenerat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Cmdec", "Executables\Cmdec\Arc.Cmdec.csproj", "{5933A38E-D758-43A4-8FDC-C0F743D646B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.SyntaxAnalyzer", "Libraries\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj", "{7174F8D1-6B00-4031-BFDB-B89D16A56C45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -66,6 +72,7 @@ Global
 		{5146567B-1D3C-432A-9863-973F93901AC1} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 		{8875CE1F-6928-46E6-B79B-DCD83FCD202A} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 		{5933A38E-D758-43A4-8FDC-C0F743D646B2} = {B67C39F8-73B0-47E5-93F7-343CF1A0E760}
+		{7174F8D1-6B00-4031-BFDB-B89D16A56C45} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FA5884FA-BD85-4C3F-ADF6-E530035424C3}
