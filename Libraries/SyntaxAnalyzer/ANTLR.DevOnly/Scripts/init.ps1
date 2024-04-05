@@ -6,7 +6,7 @@ Set-Location -Path $PSScriptRoot
 Set-Location -Path ".."
 
 # Define the URL of the ANTLR executable
-$antlrUrl = "https://www.antlr.org/download/antlr-4.8-complete.jar"
+$antlrUrl = "https://www.antlr.org/download/antlr-4.13.1-complete.jar"
 
 $downloadDir = "Downloads"
 

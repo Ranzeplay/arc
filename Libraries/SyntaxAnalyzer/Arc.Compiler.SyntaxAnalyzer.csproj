@@ -7,30 +7,28 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Antlr4" Version="4.6.6">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Antlr4.CodeGenerator" Version="4.6.6">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-		<PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+		<PackageReference Include="Antlr4BuildTasks" Version="12.8.0" PrivateAssets="all" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<Antlr4 Include="ANTLR/ArcSourceCodeLexer.g4">
+		<Antlr4 Include="ArcSourceCodeLexer.g4">
+			<Package>Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR</Package>
+			<Visitor>true</Visitor>
 			<Generator>MSBuild:Compile</Generator>
-			<Listener>True</Listener>
-			<Visitor>True</Visitor>
-			<CustomToolNamespace>Arc.Compiler.Generated.ANTLR</CustomToolNamespace>
+			<Listener>false</Listener>
+			<GAtn>true</GAtn>
 		</Antlr4>
-		<Antlr4 Include="ANTLR/ArcSourceCodeParser.g4">
+		<Antlr4 Include="ArcSourceCodeParser.g4">
+			<Package>Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR</Package>
+			<Visitor>true</Visitor>
 			<Generator>MSBuild:Compile</Generator>
-			<Listener>True</Listener>
-			<Visitor>True</Visitor>
-			<CustomToolNamespace>Arc.Compiler.Generated.ANTLR</CustomToolNamespace>
+			<Listener>false</Listener>
 		</Antlr4>
 	</ItemGroup>
+
+	<PropertyGroup>
+		<Antlr4UseCSharpGenerator>True</Antlr4UseCSharpGenerator>
+	</PropertyGroup>
 
 </Project>

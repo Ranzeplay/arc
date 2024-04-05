@@ -27,6 +27,7 @@
     <ProjectReference Include="..\Libraries\Lexer\Arc.Compiler.Lexer.csproj" />
     <ProjectReference Include="..\Libraries\Parser\Arc.Compiler.Parser.csproj" />
     <ProjectReference Include="..\Libraries\Shared\Arc.Compiler.Shared.csproj" />
+    <ProjectReference Include="..\Libraries\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
   </ItemGroup>
 
 </Project>

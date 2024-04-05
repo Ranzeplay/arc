@@ -2,7 +2,7 @@ using Antlr4.Runtime;
 
 namespace Arc.Compiler.SyntaxAnalyzer
 {
-    public class AntlrParserAdapter
+    public class ANTLRAdapter
     {
         public static ArcSourceCodeParser.Arc_compilation_unitContext ParseCompilationUnit(string text)
         {

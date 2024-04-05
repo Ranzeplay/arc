@@ -9,7 +9,8 @@ Set-Location -Path ".."
 $antlrPath = "Downloads/antlr.jar"
 
 # Define the path of the .g4 file
-$g4FilePath = "ArcSourceCodeParser.g4"
+$g4LexerFilePath = "../ArcSourceCodeLexer.g4"
+$g4ParserFilePath = "../ArcSourceCodeParser.g4"
 
 # Compile the .g4 file to a C# target
 # Define the output directory
@@ -20,7 +21,7 @@ if (-not (Test-Path $outputDir)) {
 }
 
 # Compile the .g4 file to a C# target and output to the specific directory
-java -jar $antlrPath -Dlanguage=CSharp $g4FilePath -o $outputDir
+java -jar $antlrPath -Dlanguage=CSharp $g4LexerFilePath $g4ParserFilePath -o $outputDir
 
 # Return to the directory where the script was invoked
 Set-Location -Path $invocationDir
