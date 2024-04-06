@@ -7,10 +7,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="ANTLR.DevOnly\**" />
+	  <EmbeddedResource Remove="ANTLR.DevOnly\**" />
+	  <None Remove="ANTLR.DevOnly\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
 		<PackageReference Include="Antlr4BuildTasks" Version="12.8.0" PrivateAssets="all" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<Antlr4 Include="ArcSourceCodeLexer.g4">
 			<Package>Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR</Package>
