@@ -9,10 +9,21 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
         [Test]
         public void Test()
         {
-            var text = "link anb::def;";
+            var text = "link arc::std; namespace Class {}";
             var compilationUnit = ANTLRAdapter.ParseCompilationUnit(text);
 
             Assert.That(compilationUnit, Is.Not.Null);
+
+            Assert.That(
+                compilationUnit
+                    .arc_stmt_link()
+                    .First()
+                    .arc_scoped_identifier()
+                    .IDENTIFIER()
+                    .First()
+                    .GetText(), 
+                Is.EqualTo("arc")
+            );
         }
     }
 }

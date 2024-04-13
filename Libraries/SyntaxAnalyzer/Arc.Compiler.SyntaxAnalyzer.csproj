@@ -32,6 +32,10 @@
 			<Listener>false</Listener>
 		</Antlr4>
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\Arc.Compiler.Shared.csproj" />
+	</ItemGroup>
 
 	<PropertyGroup>
 		<Antlr4UseCSharpGenerator>True</Antlr4UseCSharpGenerator>
