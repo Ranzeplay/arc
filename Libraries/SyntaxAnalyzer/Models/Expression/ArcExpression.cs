@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 {
-    internal class ArcExpression
+    internal class ArcExpression(ArcSourceCodeParser.Arc_expressionContext source)
     {
+        public IEnumerable<ArcExpressionTermBase> Terms { get; set; }
     }
 }

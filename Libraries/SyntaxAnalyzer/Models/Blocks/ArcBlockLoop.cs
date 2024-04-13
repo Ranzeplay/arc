@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockElse : ArcBlockConditionalBase
+    internal class ArcBlockLoop : ArcBlockSequentialExecution
     {
     }
 }

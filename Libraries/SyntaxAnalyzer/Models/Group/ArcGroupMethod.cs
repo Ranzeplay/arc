@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    internal class ArcGroupMethod
+    internal class ArcGroupMethod : ArcFunctionBase
     {
     }
 }

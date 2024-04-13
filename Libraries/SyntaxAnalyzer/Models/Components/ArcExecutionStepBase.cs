@@ -1,8 +1,6 @@
 ﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal enum ArcParameterType
+    internal abstract class ArcExecutionStepBase
     {
-        Reference,
-        Value
     }
 }

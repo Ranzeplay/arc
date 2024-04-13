@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
+﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcQualifiedIdentifier
+    internal class ArcQualifiedIdentifier : ArcScopedIdentifier
     {
     }
 }

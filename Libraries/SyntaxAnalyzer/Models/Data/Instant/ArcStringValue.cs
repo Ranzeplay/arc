@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
+﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
-    internal class ArcStringValue
+    internal class ArcStringValue : ArcInstantValueBase
     {
+        public string Value { get; set; }
+
+        public bool Interpolation { get; set; }
     }
 }

@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
+﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockElseIf
+    internal class ArcBlockElseIf : ArcBlockConditionalBase
     {
     }
 }

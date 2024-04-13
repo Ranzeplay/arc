@@ -11,7 +11,7 @@ arc_scoped_identifier:		IDENTIFIER (OPERATOR_SCOPE IDENTIFIER)*;
 arc_single_identifier:		IDENTIFIER;
 arc_stmt_link:				KEYWORD_LINK arc_scoped_identifier SYMBOL_SEMICOLON;
 
-arc_annotation: SYMBOL_AT arc_qualified_identifier arc_call_params?;
+arc_annotation: SYMBOL_AT arc_scoped_identifier arc_call_args?;
 
 arc_accessibility:
 	KEYWORD_PUBLIC
@@ -26,14 +26,17 @@ arc_param_type: KEYWORD_REF | KEYWORD_VAL;
 arc_function_block: arc_function_declarator arc_wrapped_body;
 
 arc_function_declarator:
-	arc_annotation* arc_accessibility KEYWORD_FUNCTION arc_single_identifier CONTAINER_OPEN_PAREN arc_function_args?
+	arc_annotation* arc_accessibility KEYWORD_FUNCTION arc_single_identifier CONTAINER_OPEN_PAREN arc_function_params?
 		CONTAINER_CLOSE_PAREN SYMBOL_COLON arc_data_type;
 
-arc_function_args:
+arc_function_params:
 	arc_data_declaration (OPERATOR_COMMA arc_data_declaration)*;
 
 arc_wrapped_body:
-	CONTAINER_OPEN_BRACE (arc_statement | arc_block)* CONTAINER_CLOSE_BRACE;
+	CONTAINER_OPEN_BRACE arc_exec_step* CONTAINER_CLOSE_BRACE;
+
+arc_exec_step:
+	arc_statement | arc_block;
 
 arc_statement: (
 		arc_call_stmt
@@ -79,14 +82,14 @@ arc_instant_value: NUMBER | arc_string_values | arc_bool_values | KEYWORD_NONE;
 
 arc_value: arc_instant_value | arc_single_identifier | arc_function_call;
 
-arc_call_params:
+arc_call_args:
 	CONTAINER_OPEN_PAREN (
 		arc_expression (OPERATOR_COMMA arc_expression)*
 	)? CONTAINER_CLOSE_PAREN;
 
-arc_function_call: arc_scoped_identifier arc_call_params;
+arc_function_call: arc_scoped_identifier arc_call_args;
 
-arc_data_type: arc_singleton_data_type | arc_array_data_type;
+arc_data_type: (arc_primitive_data_type | arc_derivative_data_type) arc_array_data_flag?;
 
 arc_primitive_data_type:
 	KEYWORD_NUMBER
@@ -97,10 +100,11 @@ arc_primitive_data_type:
 	| KEYWORD_ANY
 	| KEYWORD_AUTO;
 
-arc_singleton_data_type: arc_primitive_data_type | arc_single_identifier;
+arc_derivative_data_type:
+	arc_scoped_identifier;
 
-arc_array_data_type:
-	arc_singleton_data_type CONTAINER_OPEN_INDEXER CONTAINER_CLOSE_INDEXER;
+arc_array_data_flag:
+	CONTAINER_OPEN_INDEXER CONTAINER_CLOSE_INDEXER;
 
 arc_expression:
 	arc_value
@@ -133,7 +137,7 @@ arc_group_field:
 	arc_annotation* arc_accessibility KEYWORD_FIELD arc_data_declaration SYMBOL_SEMICOLON;
 
 arc_method_declarator:
-	arc_annotation* arc_accessibility KEYWORD_METHOD arc_single_identifier CONTAINER_OPEN_PAREN arc_function_args?
+	arc_annotation* arc_accessibility KEYWORD_METHOD arc_single_identifier CONTAINER_OPEN_PAREN arc_function_params?
 		CONTAINER_CLOSE_PAREN SYMBOL_COLON arc_data_type;
 
 arc_group_method: arc_method_declarator arc_wrapped_body;

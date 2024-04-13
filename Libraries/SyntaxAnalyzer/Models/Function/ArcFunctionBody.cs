@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionBody
+    internal class ArcFunctionBody : ArcBlockSequentialExecution
     {
+        public ArcFunctionBody(ArcSourceCodeParser.Arc_wrapped_bodyContext source)
+        {
+        }
     }
 }
