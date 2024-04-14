@@ -1,6 +1,8 @@
-﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
+﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+
+namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockElseIf : ArcBlockConditionalBase
+    internal class ArcBlockElseIf(ArcSourceCodeParser.Arc_elif_blockContext context) : ArcBlockConditionalBase(context.arc_conditional_block())
     {
     }
 }

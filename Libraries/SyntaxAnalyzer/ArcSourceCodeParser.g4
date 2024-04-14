@@ -63,7 +63,7 @@ arc_conditional_block:
 	CONTAINER_OPEN_PAREN arc_expression CONTAINER_CLOSE_PAREN arc_wrapped_body;
 
 arc_if_block:
-	KEYWORD_IF CONTAINER_OPEN_PAREN arc_expression CONTAINER_CLOSE_PAREN arc_wrapped_body;
+	KEYWORD_IF arc_conditional_block;
 arc_elif_block:	KEYWORD_ELSE_IF arc_conditional_block;
 arc_else_block:	KEYWORD_ELSE arc_wrapped_body;
 

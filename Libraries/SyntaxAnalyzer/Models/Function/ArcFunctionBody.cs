@@ -3,10 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionBody : ArcBlockSequentialExecution
+    internal class ArcFunctionBody(ArcSourceCodeParser.Arc_wrapped_bodyContext context) : ArcBlockSequentialExecution(context)
     {
-        public ArcFunctionBody(ArcSourceCodeParser.Arc_wrapped_bodyContext source)
-        {
-        }
     }
 }

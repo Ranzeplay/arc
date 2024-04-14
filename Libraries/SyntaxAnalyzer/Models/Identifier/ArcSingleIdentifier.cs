@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcSingleIdentifier : IdentifierBase
+    internal class ArcSingleIdentifier : ArcIdentifierBase
     {
         public ArcSingleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext source)
         {

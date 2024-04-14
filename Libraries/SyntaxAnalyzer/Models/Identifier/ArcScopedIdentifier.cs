@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcScopedIdentifier : IdentifierBase
+    internal class ArcScopedIdentifier : ArcIdentifierBase
     {
         public ArcScopedIdentifier(ArcSourceCodeParser.Arc_scoped_identifierContext source)
         {
