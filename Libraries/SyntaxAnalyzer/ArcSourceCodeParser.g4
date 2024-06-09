@@ -72,7 +72,7 @@ arc_conditional_loop_block:	KEYWORD_WHILE arc_conditional_block;
 arc_loop_block:				KEYWORD_LOOP arc_wrapped_body;
 
 arc_data_declaration:
-	arc_param_type arc_reassignability arc_single_identifier SYMBOL_COLON arc_data_type;
+	arc_reassignability arc_single_identifier SYMBOL_COLON arc_param_type arc_data_type;
 
 arc_interpolation_string:	OPERATOR_DOLLAR LITERAL_STRING;
 arc_string_values:			LITERAL_STRING | arc_interpolation_string;

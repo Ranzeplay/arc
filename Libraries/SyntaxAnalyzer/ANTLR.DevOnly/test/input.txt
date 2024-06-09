@@ -4,9 +4,9 @@ namespace Arc::Program {
 	@Export
 	public group ArcExample {
 		@Getter
-		public field val const foo: string;
+		public field const foo: val string;
 		@Accessor
-		public field val var bar: string;
+		public field var bar: val string;
 
 		private method eval(): bool {
 			return false;
@@ -17,18 +17,18 @@ namespace Arc::Program {
 
 	@Export
 	@Entrypoint
-	public function main(val var args: string[]): none {
-		val var a: int;
+	public function main(var args: val string[]): none {
+		var a: val int;
 		a = Console::readln();
-		val var b: auto;
+		var b: val auto;
 		a = 4;
 		b = 6;
-		val const c: auto;
+		const c: val auto;
 		if (a > b) { c = a + b; }
 		elif (a < b) { c = a * b; }
 		else { c = a - b; }
 
-		call Console::println($"abc {c} {args[0]}");
+		call Console::PrintLn($"abc {c} {args[0]}");
 
 		return 0;
 	}
