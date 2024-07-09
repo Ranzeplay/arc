@@ -81,3 +81,5 @@ var endTime = DateTime.UtcNow;
 var span = endTime - startTime;
 
 Console.WriteLine($"Operation completed in {span.TotalMilliseconds}ms");
+
+Console.WriteLine(BitConverter.ToString(outputContent.ToArray()).Replace("-", " "));
