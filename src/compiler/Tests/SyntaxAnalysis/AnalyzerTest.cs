@@ -18,7 +18,7 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
                 compilationUnit
                     .arc_stmt_link()
                     .First()
-                    .arc_scoped_identifier()
+                    .arc_namespace_identifier()
                     .IDENTIFIER()
                     .First()
                     .GetText(), 
