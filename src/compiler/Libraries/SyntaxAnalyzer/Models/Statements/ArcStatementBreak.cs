@@ -3,8 +3,8 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
-    internal class ArcStatementBreak(ArcSourceCodeParser.Arc_break_stmtContext context) : ArcExecutionStepBase
+    internal class ArcStatementBreak(ArcSourceCodeParser.Arc_stmt_breakContext context) : ArcExecutionStepBase
     {
-        public ArcSourceCodeParser.Arc_break_stmtContext Context { get; } = context;
+        public ArcSourceCodeParser.Arc_stmt_breakContext Context { get; } = context;
     }
 }

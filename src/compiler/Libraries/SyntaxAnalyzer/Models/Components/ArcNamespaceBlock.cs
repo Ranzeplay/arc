@@ -1,0 +1,23 @@
+﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
+using Arc.Compiler.SyntaxAnalyzer.Models.Group;
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
+
+namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
+{
+    internal class ArcNamespaceBlock
+    {
+        public ArcNamespaceIdentifier Identifier { get; set; }
+
+        public IEnumerable<ArcGroup> Groups { get; set; }
+
+        public IEnumerable<ArcBlockIndependentFunction> Functions { get; set; }
+
+        public ArcNamespaceBlock(ArcSourceCodeParser.Arc_namespace_blockContext source)
+        {
+            Identifier = new(source.arc_namespace_declarator().arc_namespace_identifier());
+            Functions = source.arc_namespace_member().ToList().FindAll(f => f.arc_function_block() != null).Select(f => new ArcBlockIndependentFunction(f.arc_function_block()));
+            Groups = source.arc_namespace_member().ToList().FindAll(g => g.arc_group_block() != null).Select(g => new ArcGroup(g.arc_group_block()));
+        }
+    }
+}

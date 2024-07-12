@@ -8,18 +8,14 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
     {
         public List<ArcExecutionStepBase> ExecutionSteps { get; set; } = [];
 
-        public ArcBlockSequentialExecution(ArcSourceCodeParser.Arc_wrapped_bodyContext context)
+        public ArcBlockSequentialExecution(ArcSourceCodeParser.Arc_wrapped_function_bodyContext context)
         {
-            foreach(var entry in context.arc_exec_step())
+            foreach(var entry in context.arc_statement())
             {
-                if(entry.arc_statement() != null)
-                {
-                    var statement = entry.arc_statement();
-                    if(statement.arc_break_stmt() != null)
+                    if(entry.arc_stmt_break() != null)
                     {
-                        ExecutionSteps.Add(new ArcStatementBreak(statement.arc_break_stmt()));
+                        ExecutionSteps.Add(new ArcStatementBreak(entry.arc_stmt_break()));
                     }
-                }
             }
         }
     }

@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
-    internal class ArcStatementCall(ArcSourceCodeParser.Arc_call_stmtContext context) : ArcFunctionCall(context.arc_function_call())
+    internal class ArcStatementCall(ArcSourceCodeParser.Arc_stmt_callContext context) : ArcFunctionCall(context.arc_function_call_base())
     {
     }
 }

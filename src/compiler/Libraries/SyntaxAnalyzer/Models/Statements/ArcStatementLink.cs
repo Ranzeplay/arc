@@ -5,6 +5,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
     internal class ArcStatementLink(ArcSourceCodeParser.Arc_stmt_linkContext source)
     {
-        public ArcScopedIdentifier Identifier { get; set; } = new ArcScopedIdentifier(source.arc_scoped_identifier());
+        public ArcNamespaceIdentifier Identifier { get; set; } = new(source.arc_namespace_identifier());
     }
 }

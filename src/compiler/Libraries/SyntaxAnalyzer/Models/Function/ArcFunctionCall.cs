@@ -3,10 +3,10 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionCall(ArcSourceCodeParser.Arc_function_callContext context)
+    internal class ArcFunctionCall(ArcSourceCodeParser.Arc_function_call_baseContext context)
     {
-        public ArcScopedIdentifier Identifier { get; set; } = new ArcScopedIdentifier(context.arc_scoped_identifier());
+        public ArcFlexibleIdentifier Identifier { get; set; } = new(context.arc_flexible_identifier());
 
-        public IEnumerable<ArcFunctionCallArgument> Arguments { get; set; } = context.arc_call_args().arc_expression().Select(arg => new ArcFunctionCallArgument(arg));
+        public IEnumerable<ArcFunctionCallArgument> Arguments { get; set; } = context.arc_wrapped_param_list().arc_param_list().arc_expression().Select(arg => new ArcFunctionCallArgument(arg));
     }
 }

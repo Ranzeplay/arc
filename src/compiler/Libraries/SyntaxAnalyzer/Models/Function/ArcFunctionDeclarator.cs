@@ -12,6 +12,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 
         public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(source.arc_single_identifier());
 
-        public IEnumerable<ArcFunctionParameter> Arguments { get; set; } = source.arc_function_params().arc_data_declaration().Select(p => new ArcFunctionParameter(p));
+        public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = source.arc_wrapped_arg_list().arc_arg_list().arc_data_declarator().Select(p => new ArcFunctionArgument(p));
     }
 }

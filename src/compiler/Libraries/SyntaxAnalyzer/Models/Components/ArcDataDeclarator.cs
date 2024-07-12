@@ -5,13 +5,13 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declarationContext context)
+    internal class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context)
     {
-        public ArcParameterType ParameterType { get; set; } = ArcParameterTypeUtils.FromToken(context.arc_param_type());
+        public ArcMemoryStorageType MemoryStorageType { get; set; } = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
 
-        public ArcReassignability Reassignability { get; set; } = ArcReassignabilityUtils.FromToken(context.arc_reassignability());
+        public ArcMutability Mutability { get; set; } = ArcMutabilityUtils.FromToken(context.arc_mutability());
 
-        public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(context.arc_single_identifier());
+        public ArcSingleIdentifier Identifier { get; set; } = new(context.arc_single_identifier());
 
         public ArcDataType DataType { get; set; } = new ArcDataType(context.arc_data_type());
     }

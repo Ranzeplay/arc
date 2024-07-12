@@ -3,8 +3,8 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    internal class ArcDerivativeDataType(ArcSourceCodeParser.Arc_derivative_data_typeContext context)
+    internal class ArcDerivativeDataType(ArcSourceCodeParser.Arc_flexible_identifierContext context)
     {
-        public ArcScopedIdentifier Identifier { get; set; } = new ArcScopedIdentifier(context.arc_scoped_identifier());
+        public ArcFlexibleIdentifier Identifier { get; set; } = new(context);
     }
 }

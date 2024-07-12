@@ -15,10 +15,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
     {
         public static ArcAccessibility FromToken(ArcSourceCodeParser.Arc_accessibilityContext context)
         {
-            if (context.KEYWORD_PUBLIC() != null) return ArcAccessibility.Public;
-            if (context.KEYWORD_INTERNAL() != null) return ArcAccessibility.Internal;
-            if (context.KEYWORD_PROTECTED() != null) return ArcAccessibility.Protected;
-            if (context.KEYWORD_PRIVATE() != null) return ArcAccessibility.Private;
+            if (context.KW_PUBLIC() != null) return ArcAccessibility.Public;
+            if (context.KW_INTERNAL() != null) return ArcAccessibility.Internal;
+            if (context.KW_PROTECTED() != null) return ArcAccessibility.Protected;
+            if (context.KW_PRIVATE() != null) return ArcAccessibility.Private;
             throw new InvalidConstraintException("Invalid accessibility token");
         }
     }

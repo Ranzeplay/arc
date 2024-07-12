@@ -8,6 +8,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models
     {
         public IEnumerable<ArcStatementLink> LinkedSymbols { get; set; } = source.arc_stmt_link().Select(stmt => new ArcStatementLink(stmt));
 
-        public ArcNamespace Namespace { get; set; } = new ArcNamespace(source.arc_namespace());
+        public ArcNamespaceBlock Namespace { get; set; } = new ArcNamespaceBlock(source.arc_namespace_block());
     }
 }

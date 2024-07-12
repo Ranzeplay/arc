@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionParameter(ArcSourceCodeParser.Arc_data_declarationContext source)
+    internal class ArcFunctionArgument(ArcSourceCodeParser.Arc_data_declaratorContext source)
     {
         public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(source.arc_single_identifier());
 

@@ -5,7 +5,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
     internal class ArcStatementReturn
     {
-        public ArcStatementReturn(ArcSourceCodeParser.Arc_return_stmtContext source)
+        public ArcStatementReturn(ArcSourceCodeParser.Arc_stmt_returnContext source)
         {
             if (source.arc_expression() != null)
             {

@@ -1,14 +1,19 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcSingleIdentifier : ArcIdentifierBase
+    internal class ArcSingleIdentifier
     {
-        public ArcSingleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext source)
-        {
-            Name = source.GetText();
-        }
+        public string Name { get; set; }
 
-        public string Name { get => Names.ElementAt(0); set => Names = [value]; }
+        public ArcSingleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext context)
+        {
+            Name = context.IDENTIFIER().GetText();
+        }
     }
 }
