@@ -1,1 +1,1 @@
-# Arc Compiler
+# The Arc Programming Language
