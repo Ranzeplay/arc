@@ -4,14 +4,14 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext source)
+    internal class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context)
     {
-        public IEnumerable<ArcAnnotation> Annotations { get; set; } = source.arc_annotation().Select(a => new ArcAnnotation(a));
+        public IEnumerable<ArcAnnotation> Annotations { get; set; } = context.arc_annotation().Select(a => new ArcAnnotation(a));
 
-        public ArcAccessibility Accessibility { get; set; } = ArcAccessibilityUtils.FromToken(source.arc_accessibility());
+        public ArcAccessibility Accessibility { get; set; } = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
 
-        public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(source.arc_single_identifier());
+        public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(context.arc_single_identifier());
 
-        public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = source.arc_wrapped_arg_list().arc_arg_list().arc_data_declarator().Select(p => new ArcFunctionArgument(p));
+        public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = context.arc_wrapped_arg_list().arc_arg_list().arc_data_declarator().Select(p => new ArcFunctionArgument(p));
     }
 }

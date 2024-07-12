@@ -14,12 +14,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 
         public IEnumerable<ArcGroupFunction> Functions { get; set; }
 
-        public ArcGroup(ArcSourceCodeParser.Arc_group_blockContext source)
+        public ArcGroup(ArcSourceCodeParser.Arc_group_blockContext context)
         {
-            Identifier = new(source.arc_single_identifier());
-            Annotations = source.arc_annotation().Select(a => new ArcAnnotation(a));
-            Fields = source.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_field() != null).Select(f => new ArcGroupField(f.arc_group_field()));
-            Functions = source.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_function() != null).Select(f => new ArcGroupFunction(f.arc_group_function()));
+            Identifier = new(context.arc_single_identifier());
+            Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));
+            Fields = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_field() != null).Select(f => new ArcGroupField(f.arc_group_field()));
+            Functions = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_function() != null).Select(f => new ArcGroupFunction(f.arc_group_function()));
         }
     }
 }

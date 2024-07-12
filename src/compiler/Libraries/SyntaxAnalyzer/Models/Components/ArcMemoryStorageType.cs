@@ -13,7 +13,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
     {
         public static ArcMemoryStorageType FromToken(ArcSourceCodeParser.Arc_mem_store_typeContext context)
         {
-            if(context.KW_REFERENCE != null) return ArcMemoryStorageType.Reference;
+            if (context.KW_REFERENCE != null) return ArcMemoryStorageType.Reference;
             if (context.KW_VALUE != null) return ArcMemoryStorageType.Value;
             throw new InvalidConstraintException("Invalid memory storage type");
         }

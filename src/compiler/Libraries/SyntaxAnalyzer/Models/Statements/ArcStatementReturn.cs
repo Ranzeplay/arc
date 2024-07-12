@@ -5,13 +5,13 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
     internal class ArcStatementReturn
     {
-        public ArcStatementReturn(ArcSourceCodeParser.Arc_stmt_returnContext source)
+        public ArcStatementReturn(ArcSourceCodeParser.Arc_stmt_returnContext context)
         {
-            if (source.arc_expression() != null)
+            if (context.arc_expression() != null)
             {
-                Expression = new ArcExpression(source.arc_expression());
+                Expression = new ArcExpression(context.arc_expression());
             }
-        }   
+        }
 
         public ArcExpression? Expression { get; set; }
     }

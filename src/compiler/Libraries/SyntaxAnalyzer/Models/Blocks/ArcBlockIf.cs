@@ -9,12 +9,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 
         public ArcFunctionBody? ElseBody { get; set; }
 
-        public ArcBlockIf(ArcSourceCodeParser.Arc_stmt_ifContext source)
+        public ArcBlockIf(ArcSourceCodeParser.Arc_stmt_ifContext context)
         {
             var list = new List<ArcBlockConditional>();
-            for(var i = 0; i < source.arc_expression().Length; i++)
+            for (var i = 0; i < context.arc_expression().Length; i++)
             {
-                list.Add(new(source.arc_expression()[i], source.arc_wrapped_function_body()[i]));
+                list.Add(new(context.arc_expression()[i], context.arc_wrapped_function_body()[i]));
             }
         }
     }

@@ -5,10 +5,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
     internal class ArcBlockIndependentFunction : ArcFunctionBase
     {
-        public ArcBlockIndependentFunction(ArcSourceCodeParser.Arc_function_blockContext source)
+        public ArcBlockIndependentFunction(ArcSourceCodeParser.Arc_function_blockContext context)
         {
-            Declarator = new ArcFunctionDeclarator(source.arc_function_declarator());
-            Body = new ArcFunctionBody(source.arc_wrapped_function_body());
+            Declarator = new ArcFunctionDeclarator(context.arc_function_declarator());
+            Body = new ArcFunctionBody(context.arc_wrapped_function_body());
         }
     }
 }

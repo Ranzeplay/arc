@@ -13,11 +13,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 
         public IEnumerable<ArcBlockIndependentFunction> Functions { get; set; }
 
-        public ArcNamespaceBlock(ArcSourceCodeParser.Arc_namespace_blockContext source)
+        public ArcNamespaceBlock(ArcSourceCodeParser.Arc_namespace_blockContext context)
         {
-            Identifier = new(source.arc_namespace_declarator().arc_namespace_identifier());
-            Functions = source.arc_namespace_member().ToList().FindAll(f => f.arc_function_block() != null).Select(f => new ArcBlockIndependentFunction(f.arc_function_block()));
-            Groups = source.arc_namespace_member().ToList().FindAll(g => g.arc_group_block() != null).Select(g => new ArcGroup(g.arc_group_block()));
+            Identifier = new(context.arc_namespace_declarator().arc_namespace_identifier());
+            Functions = context.arc_namespace_member().ToList().FindAll(f => f.arc_function_block() != null).Select(f => new ArcBlockIndependentFunction(f.arc_function_block()));
+            Groups = context.arc_namespace_member().ToList().FindAll(g => g.arc_group_block() != null).Select(g => new ArcGroup(g.arc_group_block()));
         }
     }
 }

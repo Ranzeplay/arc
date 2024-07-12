@@ -11,11 +11,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 
         public ArcDataDeclarator DataDeclarator { get; set; }
 
-        public ArcGroupField(ArcSourceCodeParser.Arc_group_fieldContext source)
+        public ArcGroupField(ArcSourceCodeParser.Arc_group_fieldContext context)
         {
-            Annotations = source.arc_annotation().Select(a => new ArcAnnotation(a));
-            Accessibility = ArcAccessibilityUtils.FromToken(source.arc_accessibility());
-            DataDeclarator = new(source.arc_data_declarator());
+            Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));
+            Accessibility = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
+            DataDeclarator = new(context.arc_data_declarator());
         }
     }
 }

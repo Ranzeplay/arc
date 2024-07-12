@@ -6,9 +6,9 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
     internal class ArcGroupFunction : ArcFunctionBase
     {
-        public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext source)
+        public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext context)
         {
-            var func = source.arc_function_block();
+            var func = context.arc_function_block();
             Declarator.Annotations = func.arc_function_declarator().arc_annotation().Select(a => new ArcAnnotation(a));
             Declarator.Accessibility = ArcAccessibilityUtils.FromToken(func.arc_function_declarator().arc_accessibility());
             Declarator.Identifier = new(func.arc_function_declarator().arc_single_identifier());
