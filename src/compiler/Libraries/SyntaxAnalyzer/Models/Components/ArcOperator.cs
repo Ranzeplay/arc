@@ -1,31 +1,35 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
-
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
+﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal class ArcOperator : ArcExpressionTermBase
+    internal enum ArcOperator
     {
-        public ArcOperatorType OperatorType { get; set; }
-
-        public enum ArcOperatorType
-        {
-            Plus,
-            Minus,
-            Multiply,
-            Divide,
-            Modulo,
-            And,
-            Or,
-            Not,
-            ValueEqual,
-            ReferenceEqual,
-            ValueNotEqual,
-            ReferenceNotEqual,
-            GreaterThan,
-            LessThan,
-            GreaterThanOrEqual,
-            LessThanOrEqual,
-            PriorityUp,
-            PriorityDown
-        }
+        Plus,
+        Minus,
+        Multiply,
+        Divide,
+        Modulus,
+        BitwiseAnd,
+        BitwiseOr,
+        BitwiseXor,
+        BitwiseNot,
+        LogicalAnd,
+        LogicalOr,
+        LogicalNot,
+        ObjectEquals,
+        ReferenceEquals,
+        ObjectNotEquals,
+        ReferenceNotEquals,
+        LessThan,
+        LessThanOrEqual,
+        GreaterThan,
+        GreaterThanOrEqual,
+        ShiftLeft,
+        ShiftRight,
+        SelfIncrement,
+        SelfDecrement,
+        IncreaseBy,
+        DecreaseBy,
+        MultiplyBy,
+        DivideBy,
+        ModulusBy,
     }
 }

@@ -1,7 +1,7 @@
 ﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
-    internal class ArcBooleanValue : ArcInstantValueBase
+    internal class ArcBooleanValue(bool value)
     {
-        public bool Value { get; set; }
+        public bool Value { get; set; } = value;
     }
 }

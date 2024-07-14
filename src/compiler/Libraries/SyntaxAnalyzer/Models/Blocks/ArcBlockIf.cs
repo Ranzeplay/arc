@@ -16,6 +16,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
             {
                 list.Add(new(context.arc_expression()[i], context.arc_wrapped_function_body()[i]));
             }
+            ConditionalBlocks = list;
+
+            if (context.arc_wrapped_function_body().Length > context.arc_expression().Length)
+            {
+                ElseBody = new(context.arc_wrapped_function_body()[^1]);
+            }
         }
     }
 }
