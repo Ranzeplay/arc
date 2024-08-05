@@ -45,7 +45,7 @@ arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
 arc_stmt_return: KW_RETURN arc_expression?;
 arc_stmt_decl: arc_data_declarator;
 // TODO: incremental
-arc_stmt_assign: arc_flexible_identifier ASSIGN arc_expression;
+arc_stmt_assign: arc_flexible_identifier (ASSIGN | ASSIGN_IF_NULL) arc_expression;
 arc_stmt_break: KW_BREAK;
 arc_stmt_continue: KW_CONTINUE;
 arc_stmt_call: KW_CALL arc_function_call_base;
