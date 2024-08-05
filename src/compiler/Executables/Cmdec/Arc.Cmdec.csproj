@@ -12,8 +12,4 @@
     <PackageReference Include="Terminal.Gui" Version="1.14.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Shared\Arc.Compiler.Shared.csproj" />
-  </ItemGroup>
-
 </Project>

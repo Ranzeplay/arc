@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 
 namespace Arc.Compiler.SyntaxAnalyzer
 {
-    public class ANTLRAdapter
+    public static class AntlrAdapter
     {
         public static ArcSourceCodeParser.Arc_compilation_unitContext ParseCompilationUnit(string text)
         {

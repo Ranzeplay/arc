@@ -11,7 +11,7 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
         public void AntlrParsing()
         {
             var text = Encoding.UTF8.GetString(Resource.test_script);
-            var compilationUnit = ANTLRAdapter.ParseCompilationUnit(text);
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
 
             Assert.That(compilationUnit, Is.Not.Null);
 
@@ -31,7 +31,7 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
         public void Transformation()
         {
             var text = Encoding.UTF8.GetString(Resource.test_script);
-            var compilationUnit = ANTLRAdapter.ParseCompilationUnit(text);
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
             var transformed = new SyntaxAnalyzer.Models.ArcCompilationUnit(compilationUnit);
 
             Assert.That(transformed, Is.Not.Null);
