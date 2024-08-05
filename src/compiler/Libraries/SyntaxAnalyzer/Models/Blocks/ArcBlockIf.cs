@@ -1,9 +1,10 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockIf
+    internal class ArcBlockIf : ArcExecutionStepBase
     {
         public IEnumerable<ArcBlockConditional> ConditionalBlocks { get; set; }
 

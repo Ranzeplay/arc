@@ -1,9 +1,10 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
-    internal class ArcStatementReturn
+    internal class ArcStatementReturn : ArcExecutionStepBase
     {
         public ArcStatementReturn(ArcSourceCodeParser.Arc_stmt_returnContext context)
         {
