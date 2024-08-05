@@ -37,6 +37,10 @@
 	  <ProjectReference Include="..\Shared\Arc.Compiler.Shared.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<InternalsVisibleTo Include="Arc.Compiler.Tests" />
+	</ItemGroup>
+
 	<PropertyGroup>
 		<Antlr4UseCSharpGenerator>True</Antlr4UseCSharpGenerator>
 	</PropertyGroup>

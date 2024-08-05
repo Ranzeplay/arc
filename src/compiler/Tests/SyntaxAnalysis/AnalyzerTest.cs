@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer;
+using System.Text;
 
 namespace Arc.Compiler.Tests.SyntaxAnalysis
 {
@@ -7,9 +8,9 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
     internal class AnalyzerTest
     {
         [Test]
-        public void Test()
+        public void AntlrParsing()
         {
-            var text = "link arc::std; namespace Class {}";
+            var text = Encoding.UTF8.GetString(Resource.test_script);
             var compilationUnit = ANTLRAdapter.ParseCompilationUnit(text);
 
             Assert.That(compilationUnit, Is.Not.Null);
@@ -21,9 +22,19 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
                     .arc_namespace_identifier()
                     .IDENTIFIER()
                     .First()
-                    .GetText(), 
-                Is.EqualTo("arc")
+                    .GetText(),
+                Is.EqualTo("Arc")
             );
+        }
+
+        [Test]
+        public void Transformation()
+        {
+            var text = Encoding.UTF8.GetString(Resource.test_script);
+            var compilationUnit = ANTLRAdapter.ParseCompilationUnit(text);
+            var transformed = new SyntaxAnalyzer.Models.ArcCompilationUnit(compilationUnit);
+
+            Assert.That(transformed, Is.Not.Null);
         }
     }
 }
