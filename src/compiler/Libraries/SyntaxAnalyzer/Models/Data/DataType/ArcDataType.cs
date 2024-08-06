@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    internal class ArcDataType
+    internal class ArcDataType : IArcTraceable<ArcSourceCodeParser.Arc_data_typeContext>
     {
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {
@@ -18,6 +18,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             {
                 DerivativeType = new ArcDerivativeDataType(context.arc_flexible_identifier());
             }
+            
+            Context = context;
         }
 
         public DataMemberType DataType { get; set; }
@@ -35,5 +37,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
         public bool IsArray { get; set; }
+        
+        public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
     }
 }

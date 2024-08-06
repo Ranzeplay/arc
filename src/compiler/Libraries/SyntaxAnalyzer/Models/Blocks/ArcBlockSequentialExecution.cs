@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockSequentialExecution
+    internal class ArcBlockSequentialExecution : IArcTraceable<ArcSourceCodeParser.Arc_wrapped_function_bodyContext>
     {
         public List<ArcExecutionStepBase> ExecutionSteps { get; set; } = [];
 
@@ -53,6 +53,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
                     throw new NotImplementedException();
                 }
             }
+            
+            Context = context;
         }
+
+        public ArcSourceCodeParser.Arc_wrapped_function_bodyContext Context { get; }
     }
 }

@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    internal class ArcGroup
+    internal class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>
     {
         public ArcSingleIdentifier Identifier { get; set; }
 
@@ -13,6 +13,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
         public IEnumerable<ArcGroupField> Fields { get; set; }
 
         public IEnumerable<ArcGroupFunction> Functions { get; set; }
+        
+        public ArcSourceCodeParser.Arc_group_blockContext Context { get; }
 
         public ArcGroup(ArcSourceCodeParser.Arc_group_blockContext context)
         {
@@ -20,6 +22,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
             Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));
             Fields = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_field() != null).Select(f => new ArcGroupField(f.arc_group_field()));
             Functions = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_function() != null).Select(f => new ArcGroupFunction(f.arc_group_function()));
+            Context = context;
         }
     }
 }

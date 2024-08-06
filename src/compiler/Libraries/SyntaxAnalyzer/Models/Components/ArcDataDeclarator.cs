@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context)
+    internal class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context) : IArcTraceable<ArcSourceCodeParser.Arc_data_declaratorContext>
     {
         public ArcMemoryStorageType MemoryStorageType { get; set; } = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
 
@@ -14,5 +14,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
         public ArcSingleIdentifier Identifier { get; set; } = new(context.arc_single_identifier());
 
         public ArcDataType DataType { get; set; } = new ArcDataType(context.arc_data_type());
+
+        public ArcSourceCodeParser.Arc_data_declaratorContext Context { get; } = context;
     }
 }

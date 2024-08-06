@@ -1,8 +1,9 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+﻿using Antlr4.Runtime;
+using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcFlexibleIdentifier
+    internal class ArcFlexibleIdentifier : IArcTraceable<ParserRuleContext>
     {
         public IEnumerable<string>? Namespace { get; set; }
 
@@ -19,11 +20,16 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             {
                 Name = context.arc_single_identifier().IDENTIFIER().GetText();
             }
+            
+            Context = context;
         }
 
         public ArcFlexibleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext context)
         {
             Name = context.IDENTIFIER().GetText();
+            Context = context;
         }
+
+        public ParserRuleContext Context { get; }
     }
 }

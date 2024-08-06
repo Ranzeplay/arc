@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockIf : ArcExecutionStepBase
+    internal class ArcBlockIf : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_ifContext>
     {
         public IEnumerable<ArcBlockConditional> ConditionalBlocks { get; set; }
 
@@ -23,6 +23,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
             {
                 ElseBody = new(context.arc_wrapped_function_body()[^1]);
             }
+
+            Context = context;
         }
+
+        public ArcSourceCodeParser.Arc_stmt_ifContext Context { get; }
     }
 }
