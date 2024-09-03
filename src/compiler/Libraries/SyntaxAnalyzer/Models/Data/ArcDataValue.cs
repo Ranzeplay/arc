@@ -6,7 +6,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
 {
-    internal class ArcDataValue
+    public class ArcDataValue
     {
         public enum ValueType
         {

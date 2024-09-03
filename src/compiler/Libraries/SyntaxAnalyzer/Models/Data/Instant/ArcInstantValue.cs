@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
-    internal class ArcInstantValue
+    public class ArcInstantValue
     {
         public enum ValueType
         {

@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 {
-    internal class ArcExpressionTerm
+    public class ArcExpressionTerm
     {
         public enum ExpressionTermType
         {

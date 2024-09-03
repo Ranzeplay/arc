@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcFullIdentifier(ArcSourceCodeParser.Arc_full_identifierContext context)
+    public class ArcFullIdentifier(ArcSourceCodeParser.Arc_full_identifierContext context)
         : IArcTraceable<ArcSourceCodeParser.Arc_full_identifierContext>
     {
         public ArcNamespaceIdentifier? Namespace { get; set; } = new(context.arc_namespace_limiter().arc_namespace_identifier());

@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    internal class ArcFlexibleIdentifier : IArcTraceable<ParserRuleContext>
+    public class ArcFlexibleIdentifier : IArcTraceable<ParserRuleContext>
     {
         public IEnumerable<string>? Namespace { get; set; }
 

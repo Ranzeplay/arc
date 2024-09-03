@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockSequentialExecution : IArcTraceable<ArcSourceCodeParser.Arc_wrapped_function_bodyContext>
+    public class ArcBlockSequentialExecution : IArcTraceable<ArcSourceCodeParser.Arc_wrapped_function_bodyContext>
     {
         public List<ArcExecutionStepBase> ExecutionSteps { get; set; } = [];
 

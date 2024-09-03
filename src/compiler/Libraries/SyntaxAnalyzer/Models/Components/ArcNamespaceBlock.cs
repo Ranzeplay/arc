@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal class ArcNamespaceBlock :IArcTraceable<ArcSourceCodeParser.Arc_namespace_blockContext>
+    public class ArcNamespaceBlock :IArcTraceable<ArcSourceCodeParser.Arc_namespace_blockContext>
     {
         public ArcNamespaceIdentifier Identifier { get; set; }
 

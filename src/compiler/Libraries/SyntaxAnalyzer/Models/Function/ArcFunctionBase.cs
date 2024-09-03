@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal abstract class ArcFunctionBase<T>: IArcTraceable<T> where T : ParserRuleContext
+    public abstract class ArcFunctionBase<T>: IArcTraceable<T> where T : ParserRuleContext
     {
         public ArcFunctionDeclarator Declarator { get; set; }
 

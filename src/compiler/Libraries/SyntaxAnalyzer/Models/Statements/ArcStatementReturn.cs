@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
-    internal class ArcStatementReturn : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_returnContext>
+    public class ArcStatementReturn : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_returnContext>
     {
         public ArcStatementReturn(ArcSourceCodeParser.Arc_stmt_returnContext context)
         {

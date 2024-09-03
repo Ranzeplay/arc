@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context)
+    public class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context)
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; } = context.arc_annotation().Select(a => new ArcAnnotation(a));
 

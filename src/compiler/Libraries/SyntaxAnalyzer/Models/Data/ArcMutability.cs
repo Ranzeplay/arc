@@ -3,13 +3,13 @@ using System.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
 {
-    internal enum ArcMutability
+    public enum ArcMutability
     {
         Constant,
         Variable
     }
 
-    internal static class ArcMutabilityUtils
+    public static class ArcMutabilityUtils
     {
         public static ArcMutability FromToken(ArcSourceCodeParser.Arc_mutabilityContext context)
         {

@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal enum ArcAccessibility
+    public enum ArcAccessibility
     {
         Public,
         Internal,
@@ -11,7 +11,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
         Private
     }
 
-    internal static class ArcAccessibilityUtils
+    public static class ArcAccessibilityUtils
     {
         public static ArcAccessibility FromToken(ArcSourceCodeParser.Arc_accessibilityContext context)
         {

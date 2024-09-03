@@ -3,7 +3,7 @@ using System.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    internal enum ArcPrimitiveDataType
+    public enum ArcPrimitiveDataType
     {
         Integer,
         Decimal,
@@ -15,7 +15,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         Infer
     }
 
-    internal static class ArcPrimitiveDataTypeUtils
+    public static class ArcPrimitiveDataTypeUtils
     {
         public static ArcPrimitiveDataType FromToken(ArcSourceCodeParser.Arc_primitive_data_typeContext context)
         {

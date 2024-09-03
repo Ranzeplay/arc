@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionCallArgument(ArcSourceCodeParser.Arc_expressionContext context)
+    public class ArcFunctionCallArgument(ArcSourceCodeParser.Arc_expressionContext context)
     {
         public ArcExpression Expression { get; set; } = new ArcExpression(context);
     }

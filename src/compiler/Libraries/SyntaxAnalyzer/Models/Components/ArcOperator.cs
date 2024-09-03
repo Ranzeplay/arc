@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal enum ArcOperator
+    public enum ArcOperator
     {
         Plus,
         Minus,

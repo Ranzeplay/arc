@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    internal class ArcDataType : IArcTraceable<ArcSourceCodeParser.Arc_data_typeContext>
+    public class ArcDataType : IArcTraceable<ArcSourceCodeParser.Arc_data_typeContext>
     {
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {

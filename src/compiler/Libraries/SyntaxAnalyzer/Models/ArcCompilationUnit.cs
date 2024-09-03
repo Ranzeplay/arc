@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models
 {
-    internal class ArcCompilationUnit(ArcSourceCodeParser.Arc_compilation_unitContext context) : IArcTraceable<ArcSourceCodeParser.Arc_compilation_unitContext>
+    public class ArcCompilationUnit(ArcSourceCodeParser.Arc_compilation_unitContext context) : IArcTraceable<ArcSourceCodeParser.Arc_compilation_unitContext>
     {
         public IEnumerable<ArcStatementLink> LinkedSymbols { get; set; } = context.arc_stmt_link().Select(stmt => new ArcStatementLink(stmt));
 

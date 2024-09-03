@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    internal class ArcGroupField : IArcTraceable<ArcSourceCodeParser.Arc_group_fieldContext>
+    public class ArcGroupField : IArcTraceable<ArcSourceCodeParser.Arc_group_fieldContext>
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; }
 

@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 {
-    internal class ArcExpression : IArcTraceable<ArcSourceCodeParser.Arc_expressionContext>
+    public class ArcExpression : IArcTraceable<ArcSourceCodeParser.Arc_expressionContext>
     {
         public IEnumerable<ArcExpressionTerm> Terms { get; set; }
 

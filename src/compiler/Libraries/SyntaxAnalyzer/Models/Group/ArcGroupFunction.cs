@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    internal class ArcGroupFunction : ArcFunctionBase<ArcSourceCodeParser.Arc_group_functionContext>
+    public class ArcGroupFunction : ArcFunctionBase<ArcSourceCodeParser.Arc_group_functionContext>
     {
         public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext context)
         {

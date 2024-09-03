@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    internal class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>
+    public class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>
     {
         public ArcSingleIdentifier Identifier { get; set; }
 

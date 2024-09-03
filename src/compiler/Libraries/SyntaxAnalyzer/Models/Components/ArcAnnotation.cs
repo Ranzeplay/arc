@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal class ArcAnnotation(ArcSourceCodeParser.Arc_annotationContext context) : IArcTraceable<ArcSourceCodeParser.Arc_annotationContext>
+    public class ArcAnnotation(ArcSourceCodeParser.Arc_annotationContext context) : IArcTraceable<ArcSourceCodeParser.Arc_annotationContext>
     {
         public ArcFlexibleIdentifier Identifier { get; set; } = new ArcFlexibleIdentifier(context.arc_flexible_identifier());
 

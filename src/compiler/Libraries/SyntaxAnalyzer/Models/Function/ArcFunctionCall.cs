@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    internal class ArcFunctionCall(ArcSourceCodeParser.Arc_function_call_baseContext context)
+    public class ArcFunctionCall(ArcSourceCodeParser.Arc_function_call_baseContext context)
     {
         public ArcFlexibleIdentifier Identifier { get; set; } = new(context.arc_flexible_identifier());
 

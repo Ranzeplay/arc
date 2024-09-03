@@ -3,13 +3,13 @@ using System.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    internal enum ArcMemoryStorageType
+    public enum ArcMemoryStorageType
     {
         Reference,
         Value
     }
 
-    internal static class ArcMemoryStorageTypeUtils
+    public static class ArcMemoryStorageTypeUtils
     {
         public static ArcMemoryStorageType FromToken(ArcSourceCodeParser.Arc_mem_store_typeContext context)
         {

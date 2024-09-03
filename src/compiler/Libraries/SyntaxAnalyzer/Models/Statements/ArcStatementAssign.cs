@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
-    internal class ArcStatementAssign(ArcSourceCodeParser.Arc_stmt_assignContext context) : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_assignContext>
+    public class ArcStatementAssign(ArcSourceCodeParser.Arc_stmt_assignContext context) : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_assignContext>
     {
         public ArcFlexibleIdentifier Identifier { get; set; } = new(context.arc_flexible_identifier());
 

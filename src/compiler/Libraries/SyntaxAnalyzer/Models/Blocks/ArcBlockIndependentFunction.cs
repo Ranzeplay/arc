@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
 {
-    internal class ArcBlockIndependentFunction : ArcFunctionBase<ArcSourceCodeParser.Arc_function_blockContext>
+    public class ArcBlockIndependentFunction : ArcFunctionBase<ArcSourceCodeParser.Arc_function_blockContext>
     {
         public ArcBlockIndependentFunction(ArcSourceCodeParser.Arc_function_blockContext context)
         {
