@@ -35,6 +35,7 @@ export default defineConfig({
           text: 'References',
           items: [
             { text: 'Index', link: '/reference/' },
+            { text: 'Instruction set', link: '/reference/instruction-set' },
           ]
         }
       ]
