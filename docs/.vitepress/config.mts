@@ -36,6 +36,7 @@ export default defineConfig({
           items: [
             { text: 'Index', link: '/reference/' },
             { text: 'Instruction set', link: '/reference/instruction-set' },
+            { text: 'Descriptor set', link: '/reference/descriptor-set' },
           ]
         }
       ]
