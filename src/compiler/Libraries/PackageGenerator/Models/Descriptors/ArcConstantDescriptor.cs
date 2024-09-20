@@ -1,0 +1,19 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+{
+    internal class ArcConstantDescriptor
+    {
+        public long Id { get; set; }
+
+        public string RawFullName { get; set; }
+
+        public ArcDataTypeDescriptor DataType { get; set; }
+
+        public IEnumerable<byte> Bytes { get; set; }
+    }
+}

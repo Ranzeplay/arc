@@ -38,7 +38,7 @@ This file contains the collection of descriptors used in an Arc package.
 
 - RegionId
 
-- RawName
+- RawFullName
 
 - FunctionTableEntryPos
 
@@ -50,7 +50,7 @@ This file contains the collection of descriptors used in an Arc package.
 
 - InternalId
 
-- RawName
+- RawFullName
 
 - ArgumentTypeList (array of DataType)
 
@@ -72,7 +72,7 @@ This file contains the collection of descriptors used in an Arc package.
 
 - InternalId
 
-- RawName
+- RawFullName
 
 - TypeDescriptor
 
@@ -84,7 +84,7 @@ This file contains the collection of descriptors used in an Arc package.
 
 - InternalId
 
-- RawName
+- RawFullName
 
 - Fields (FieldDescriptor)
 

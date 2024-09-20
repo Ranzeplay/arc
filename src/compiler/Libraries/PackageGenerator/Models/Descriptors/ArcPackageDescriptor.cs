@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+{
+    internal class ArcPackageDescriptor
+    {
+        public string Name { get; set; }
+
+        public string Version { get; set; }
+
+        public ArcPackageType Type { get; set; }
+
+        public long EntrypointFunctionId { get; set; }
+
+        public long DataAlignmentLength { get; set; }
+
+        public long RootFunctionTableEntryPos { get; set; }
+
+        public long RootConstantTableEntryPos { get; set; }
+
+        public long RootGroupTableEntryPos { get; set; }
+
+        public long RegionTableEntryPos { get; set; }
+    }
+}
