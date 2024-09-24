@@ -8,10 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\PrimitiveInstructions\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
 	</ItemGroup>
 
