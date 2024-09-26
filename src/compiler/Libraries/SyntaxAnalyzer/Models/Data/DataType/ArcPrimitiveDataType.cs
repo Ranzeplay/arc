@@ -29,5 +29,21 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             if (context.KW_NONE() != null) return ArcPrimitiveDataType.None;
             throw new InvalidConstraintException("Invalid primitive data type");
         }
+
+        public static string GetTypeName(this ArcPrimitiveDataType type)
+        {
+            return type switch
+            {
+                ArcPrimitiveDataType.Infer => "infer",
+                ArcPrimitiveDataType.Bool => "bool",
+                ArcPrimitiveDataType.Char => "char",
+                ArcPrimitiveDataType.Integer => "int",
+                ArcPrimitiveDataType.Decimal => "decimal",
+                ArcPrimitiveDataType.String => "str",
+                ArcPrimitiveDataType.Any => "any",
+                ArcPrimitiveDataType.None => "none",
+                _ => throw new InvalidConstraintException("Invalid primitive data type")
+            };
+        }
     }
 }

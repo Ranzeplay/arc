@@ -18,7 +18,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             {
                 DerivativeType = new ArcDerivativeDataType(context.arc_flexible_identifier());
             }
-            
+
             Context = context;
         }
 
@@ -37,7 +37,21 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
         public bool IsArray { get; set; }
-        
+
         public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
+
+        public string TypeName
+        {
+            get => DataType switch
+            {
+                DataMemberType.Primitive => PrimitiveType.ToString(),
+                DataMemberType.Derivative => DerivativeType?.Identifier.ToString(),
+            };
+        }
+
+        public override string? ToString()
+        {
+            return $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(IsArray ? "A" : "S")}{TypeName}";
+        }
     }
 }

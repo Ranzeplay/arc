@@ -14,5 +14,9 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             Context = context;
         }
 
+        public override string? ToString()
+        {
+            return string.Join("::", Namespace);
+        }
     }
 }

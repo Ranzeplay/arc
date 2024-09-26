@@ -31,5 +31,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
         }
 
         public ParserRuleContext Context { get; }
+
+        public override string? ToString()
+        {
+            return Namespace != null ? $"{string.Join("::", Namespace)}+{Name}" : Name;
+        }
     }
 }

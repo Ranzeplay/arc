@@ -23,6 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Libraries\PackageGenerator\Arc.Compiler.PackageGenerator.csproj" />
     <ProjectReference Include="..\Libraries\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
   </ItemGroup>
 

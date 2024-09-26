@@ -6,11 +6,11 @@ namespace Arc.Compiler.PackageGenerator.Interfaces
     {
         public byte[] Opcode { get; }
 
-        public ArcPartialEncodeResult Encode()
+        public ArcGeneratorContext Encode()
         {
-            return new ArcPartialEncodeResult
+            return new ArcGeneratorContext
             {
-                Bytes = Opcode,
+                GeneratedData = Opcode,
                 RelocationDescriptors = [],
                 Labels = []
             };

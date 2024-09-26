@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
@@ -10,8 +11,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 
         public ArcAccessibility Accessibility { get; set; } = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
 
-        public ArcSingleIdentifier Identifier { get; set; } = new ArcSingleIdentifier(context.arc_single_identifier());
+        public ArcSingleIdentifier Identifier { get; set; } = new(context.arc_single_identifier());
 
-        public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = context.arc_wrapped_arg_list().arc_arg_list().arc_data_declarator().Select(p => new ArcFunctionArgument(p));
+        public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = context.arc_wrapped_arg_list().arc_arg_list()?.arc_data_declarator().Select(p => new ArcFunctionArgument(p)) ?? [];
+
+        public ArcDataType ReturnType { get; set; } = new(context.arc_data_type());
     }
 }

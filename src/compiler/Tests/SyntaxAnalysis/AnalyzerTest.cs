@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer;
+using Arc.Compiler.SyntaxAnalyzer.Models;
 using System.Text;
 
 namespace Arc.Compiler.Tests.SyntaxAnalysis
@@ -32,7 +33,7 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
         {
             var text = Encoding.UTF8.GetString(Resource.test_script);
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
-            var transformed = new SyntaxAnalyzer.Models.ArcCompilationUnit(compilationUnit);
+            var transformed = new ArcCompilationUnit(compilationUnit, "test");
 
             Assert.That(transformed, Is.Not.Null);
         }
