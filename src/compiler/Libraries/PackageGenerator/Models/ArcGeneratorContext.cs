@@ -48,6 +48,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 Value = value,
                 Symbols = Symbols,
+                PackageDescriptor = PackageDescriptor
             };
         }
     }

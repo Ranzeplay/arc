@@ -2,11 +2,13 @@
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Primitives;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
+using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -31,33 +33,55 @@ namespace Arc.Compiler.PackageGenerator
             var func = source.Value.Item2;
 
             var signature = $"{ns.Identifier}+{func.Declarator.Identifier.Name}@{string.Join('&', func.Declarator.Arguments.Select(a => a.DataType))}";
+            var parameters = func.Declarator.Arguments.Select(a => new ArcParameterDescriptor
+            {
+                DataType = new ArcDataTypeDescriptor
+                {
+                    TypeId = source.Symbols.First(u =>
+                    {
+                        if (u.Value is ArcBaseType bt)
+                        {
+                            return bt.FullName == ArcPrimitiveDataTypeUtils.GetTypeName(a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer);
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }).Key,
+                    AllowNone = false,
+                    IsArray = a.DataType.IsArray,
+                    MemoryStorageType = a.DataType.MemoryStorageType,
+                },
+                RawFullName = a.Identifier.Name,
+            });
+            var returnValueType = new ArcDataTypeDescriptor
+            {
+                TypeId = source.Symbols
+                        .First(u =>
+                        {
+                            if (u.Value is ArcBaseType bt)
+                            {
+                                return bt.FullName == ArcPrimitiveDataTypeUtils.GetTypeName(func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer);
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }
+                        )
+                        .Key,
+                AllowNone = false,
+                IsArray = func.Declarator.ReturnType.IsArray,
+                MemoryStorageType = func.Declarator.ReturnType.MemoryStorageType,
+            };
+
             var descriptor = new ArcFunctionDescriptor
             {
                 Id = new Random().Next(),
                 RawFullName = signature,
-                ReturnValueType = new ArcDataTypeDescriptor
-                {
-                    TypeId = source.Symbols
-                        .First(u =>
-                            {
-                                if (u.Value is ArcBaseType bt)
-                                {
-                                    return bt.FullName == ArcPrimitiveDataTypeUtils.GetTypeName(func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer);
-                                }
-                                else
-                                {
-                                    return false;
-                                }
-                            }
-                        )
-                        .Key,
-                    AllowNone = false,
-                    IsArray = func.Declarator.ReturnType.IsArray,
-                    MemoryStorageType = func.Declarator.ReturnType.MemoryStorageType,
-                }
+                ReturnValueType = returnValueType,
+                Parameters = parameters,
             };
-
-            var body = GenerateFunctionBody(func.Declarator.Arguments, func.Body);
 
             var result = new ArcGenerationResult
             {
@@ -65,7 +89,17 @@ namespace Arc.Compiler.PackageGenerator
                 {
                     { descriptor.Id, descriptor },
                 },
-            }.Append(body);
+            };
+
+            var bodyGenSource = new ArcGenerationSource<ArcFunctionBody>
+            {
+                DataSlots = source.DataSlots,
+                PackageDescriptor = source.PackageDescriptor,
+                Symbols = source.Symbols,
+                Value = func.Body,
+            };
+            var body = GenerateFunctionBody(bodyGenSource);
+            result.Append(body);
 
             result.Labels = [
                 new() { Id = new Random().Next(), Name = descriptor.RawFullName, Type = ArcLabelType.BeginFunction, Position = 0 },
@@ -75,9 +109,21 @@ namespace Arc.Compiler.PackageGenerator
             return result;
         }
 
-        public static ArcGenerationResult GenerateFunctionBody(IEnumerable<ArcFunctionArgument> arguments, ArcFunctionBody body)
+        public static ArcGenerationResult GenerateFunctionBody(ArcGenerationSource<ArcFunctionBody> source)
         {
             var result = new ArcGenerationResult();
+
+            foreach (var step in source.Value.ExecutionSteps)
+            {
+                ArcGenerationResult stepResult = new ArcGenerationResult();
+                if (step is ArcStatementDeclaration decl)
+                {
+                    stepResult = new DeclarationInstruction(decl.DataDeclarator).Encode(source);
+                }
+
+                result.Append(stepResult);
+            }
+
             return result;
         }
     }

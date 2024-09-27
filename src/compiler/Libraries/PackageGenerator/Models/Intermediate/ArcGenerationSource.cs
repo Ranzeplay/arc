@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
@@ -11,5 +7,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
         public T Value { get; set; }
 
         public Dictionary<long, object> Symbols { get; set; } = [];
+
+        public ArcPackageDescriptor PackageDescriptor { get; set; }
+
+        public IEnumerable<ArcDataSlot> DataSlots { get; set; }
     }
 }

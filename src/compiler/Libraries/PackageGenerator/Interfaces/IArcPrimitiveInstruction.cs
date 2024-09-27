@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Models;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Interfaces
 {
@@ -6,13 +7,11 @@ namespace Arc.Compiler.PackageGenerator.Interfaces
     {
         public byte[] Opcode { get; }
 
-        public ArcGeneratorContext Encode()
+        public ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
         {
-            return new ArcGeneratorContext
+            return new ArcGenerationResult
             {
                 GeneratedData = Opcode,
-                RelocationDescriptors = [],
-                Labels = []
             };
         }
     }

@@ -16,7 +16,29 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(1));
+            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+        }
+
+        [Test]
+        public void FunctionWithArguments()
+        {
+            var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
+            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var result = Flow.GenerateUnit(unit);
+
+            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+        }
+
+        [Test]
+        public void FunctionWithLessStatements()
+        {
+            var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
+            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var result = Flow.GenerateUnit(unit);
+
+            Assert.That(result.Symbols, Has.Count.EqualTo(8));
         }
     }
 }

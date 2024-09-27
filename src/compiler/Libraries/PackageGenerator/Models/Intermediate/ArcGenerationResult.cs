@@ -14,6 +14,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 
         public ArcGenerationResult Append(ArcGenerationResult result)
         {
+            GeneratedData = GeneratedData.Concat(result.GeneratedData);
+            foreach (var item in result.Symbols)
+            {
+                Symbols.Add(item.Key, item.Value);
+            }
+            RelocationDescriptors = RelocationDescriptors.Concat(result.RelocationDescriptors);
+            Labels = Labels.Concat(result.Labels);
+
             return this;
         }
     }

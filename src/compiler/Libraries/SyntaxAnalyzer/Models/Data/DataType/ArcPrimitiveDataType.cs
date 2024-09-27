@@ -39,7 +39,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
                 ArcPrimitiveDataType.Char => "char",
                 ArcPrimitiveDataType.Integer => "int",
                 ArcPrimitiveDataType.Decimal => "decimal",
-                ArcPrimitiveDataType.String => "str",
+                ArcPrimitiveDataType.String => "string",
                 ArcPrimitiveDataType.Any => "any",
                 ArcPrimitiveDataType.None => "none",
                 _ => throw new InvalidConstraintException("Invalid primitive data type")
