@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class DestroyIsolatedRegionInstruction : IArcPrimitiveInstruction
+    internal class DestroyIsolatedRegionInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x29];
+        public override byte[] Opcode => [0x29];
     }
 }

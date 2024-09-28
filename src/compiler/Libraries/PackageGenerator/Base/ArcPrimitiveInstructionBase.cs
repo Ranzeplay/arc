@@ -3,9 +3,9 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Interfaces
 {
-    internal interface IArcPrimitiveInstruction
+    internal abstract class ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode { get; }
+        public abstract byte[] Opcode { get; }
 
         public ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
         {

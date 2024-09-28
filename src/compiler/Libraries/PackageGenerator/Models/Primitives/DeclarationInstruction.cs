@@ -4,9 +4,9 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class DeclarationInstruction(ArcDataDeclarator dataDecl) : IArcPrimitiveInstruction
+    internal class DeclarationInstruction(ArcDataDeclarator dataDecl) : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x01];
+        public override byte[] Opcode => [0x01];
 
         public ArcDataDeclarator DataDeclarator { get; } = dataDecl;
 

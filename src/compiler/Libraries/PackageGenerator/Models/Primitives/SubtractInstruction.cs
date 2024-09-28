@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class SubtractInstruction : IArcPrimitiveInstruction
+    internal class SubtractInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x08];
+        public override byte[] Opcode => [0x08];
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class LogicalNotInstruction : IArcPrimitiveInstruction
+    internal class LogicalNotInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x0e];
+        public override byte[] Opcode => [0x0e];
     }
 }

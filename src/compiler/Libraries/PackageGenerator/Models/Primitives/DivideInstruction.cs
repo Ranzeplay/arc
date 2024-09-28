@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class DivideInstruction : IArcPrimitiveInstruction
+    internal class DivideInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x0a];
+        public override byte[] Opcode => [0x0a];
     }
 }

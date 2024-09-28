@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class ModInstruction : IArcPrimitiveInstruction
+    internal class ModInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x0b];
+        public override byte[] Opcode => [0x0b];
     }
 }

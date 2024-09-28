@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class ComparisonLessThanInstruction : IArcPrimitiveInstruction
+    internal class ComparisonLessThanInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x17];
+        public override byte[] Opcode => [0x17];
     }
 }

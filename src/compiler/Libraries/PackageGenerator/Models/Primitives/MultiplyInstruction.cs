@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class MultiplyInstruction : IArcPrimitiveInstruction
+    internal class MultiplyInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x08];
+        public override byte[] Opcode => [0x08];
     }
 }

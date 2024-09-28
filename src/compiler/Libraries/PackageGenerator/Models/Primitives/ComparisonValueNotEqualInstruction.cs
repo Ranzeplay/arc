@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class ComparisonValueNotEqualInstruction : IArcPrimitiveInstruction
+    internal class ComparisonValueNotEqualInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x31];
+        public override byte[] Opcode => [0x31];
     }
 }

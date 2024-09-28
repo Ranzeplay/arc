@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class AddInstruction : IArcPrimitiveInstruction
+    internal class AddInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x07];
+        public override byte[] Opcode => [0x07];
     }
 }

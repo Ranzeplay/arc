@@ -2,8 +2,8 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class BitwiseNotInstruction : IArcPrimitiveInstruction
+    internal class BitwiseNotInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x11];
+        public override byte[] Opcode => [0x11];
     }
 }

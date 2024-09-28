@@ -1,8 +1,8 @@
 ﻿using Arc.Compiler.PackageGenerator.Interfaces;
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class InverseInstruction : IArcPrimitiveInstruction
+    internal class InverseInstruction : ArcPrimitiveInstructionBase
     {
-        public byte[] Opcode => [0x12];
+        public override byte[] Opcode => [0x12];
     }
 }
