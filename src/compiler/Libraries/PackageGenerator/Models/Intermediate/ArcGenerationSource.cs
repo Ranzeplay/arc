@@ -10,7 +10,29 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
-        public IEnumerable<ArcDataSlot> DataSlots { get; set; }
+        public IEnumerable<ArcDataSlot> DataSlots
+        {
+            get => Symbols.Values.Where(x => x is ArcDataSlot) as IEnumerable<ArcDataSlot>;
+            set
+            {
+                foreach(var key in Symbols.Where(x => x.Value is ArcDataSlot).Select(x => x.Key))
+                {
+                    Symbols.Remove(key);
+                }
+
+                foreach (var slot in value)
+                {
+                    if (Symbols.ContainsKey(slot.Id))
+                    {
+                        Symbols[slot.Id] = slot;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException();
+                    }
+                }
+            }
+        }
 
         public void Merge(ArcGenerationResult result)
         {
@@ -21,8 +43,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                     Symbols.Add(o.Key, o.Value);
                 }
             }
-
-            DataSlots = Symbols.Values.Where(x => x is ArcDataSlot).Select(x => x as ArcDataSlot);
         }
 
         public ArcGenerationSource<T> Migrate<T>(T value)
