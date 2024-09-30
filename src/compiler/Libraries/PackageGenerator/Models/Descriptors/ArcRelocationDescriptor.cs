@@ -8,7 +8,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 
         public ArcRelocationType Type { get; set; }
 
-        public long Offset { get; set; }
+        public long CommandBeginLocation { get; set; }
+
+        public long Location { get; set; }
 
         public WeakReference<object>? Target { get; set; }
     }

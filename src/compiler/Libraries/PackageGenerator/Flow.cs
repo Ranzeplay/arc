@@ -37,17 +37,7 @@ namespace Arc.Compiler.PackageGenerator
             {
                 DataType = new ArcDataTypeDescriptor
                 {
-                    TypeId = source.Symbols.First(u =>
-                    {
-                        if (u.Value is ArcBaseType bt)
-                        {
-                            return bt.FullName == ArcPrimitiveDataTypeUtils.GetTypeName(a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer);
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }).Key,
+                    TypeId = source.Symbols.First(u => u.Value is ArcBaseType bt && bt.FullName == (a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName()).Key,
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
@@ -57,18 +47,7 @@ namespace Arc.Compiler.PackageGenerator
             var returnValueType = new ArcDataTypeDescriptor
             {
                 TypeId = source.Symbols
-                        .First(u =>
-                        {
-                            if (u.Value is ArcBaseType bt)
-                            {
-                                return bt.FullName == ArcPrimitiveDataTypeUtils.GetTypeName(func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer);
-                            }
-                            else
-                            {
-                                return false;
-                            }
-                        }
-                        )
+                        .First(u => u.Value is ArcBaseType bt && bt.FullName == (func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
                         .Key,
                 AllowNone = false,
                 IsArray = func.Declarator.ReturnType.IsArray,
@@ -91,14 +70,7 @@ namespace Arc.Compiler.PackageGenerator
                 },
             };
 
-            var bodyGenSource = new ArcGenerationSource<ArcFunctionBody>
-            {
-                DataSlots = source.DataSlots,
-                PackageDescriptor = source.PackageDescriptor,
-                Symbols = source.Symbols,
-                Value = func.Body,
-            };
-            var body = GenerateFunctionBody(bodyGenSource);
+            var body = GenerateFunctionBody(source.Migrate(func.Body));
             result.Append(body);
 
             result.Labels = [
@@ -115,15 +87,33 @@ namespace Arc.Compiler.PackageGenerator
 
             foreach (var step in source.Value.ExecutionSteps)
             {
-                ArcGenerationResult stepResult = new ArcGenerationResult();
-                if (step is ArcStatementDeclaration decl)
+                var stepResult = new ArcGenerationResult();
+                switch (step)
                 {
-                    stepResult = new DeclarationInstruction(decl.DataDeclarator).Encode(source);
+                    case ArcStatementDeclaration decl:
+                        {
+                            stepResult = new DeclarationInstruction(decl.DataDeclarator).Encode(source);
+                            break;
+                        }
+                    case ArcStatementAssign assign:
+                        {
+                            var exprResult = ExpressionEvaluator.GenerateEvaluationCommand(source.Migrate(assign.Expression));
+                            stepResult.Append(exprResult);
+
+                            // Pop top element to the target
+                            var targetSymbol = source.Symbols.First(x => x.Value is ArcDataSlot ds && ds.Declarator.Identifier.Name == assign.Identifier.Name).Value as ArcDataSlot;
+                            stepResult.Append(new PopToSlotInstruction(targetSymbol).Encode(source));
+                            break;
+                        }
+                    default:
+                        throw new NotImplementedException();
                 }
 
+                source.Merge(stepResult);
                 result.Append(stepResult);
             }
 
+            result.ClearDataSlots();
             return result;
         }
     }

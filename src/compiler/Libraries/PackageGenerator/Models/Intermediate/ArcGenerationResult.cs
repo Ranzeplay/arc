@@ -19,10 +19,23 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
             {
                 Symbols.Add(item.Key, item.Value);
             }
-            RelocationDescriptors = RelocationDescriptors.Concat(result.RelocationDescriptors);
-            Labels = Labels.Concat(result.Labels);
+            RelocationDescriptors = RelocationDescriptors.Concat(result.RelocationDescriptors.Select(x =>
+            {
+                x.Location += GeneratedData.Count();
+                return x;
+            }));
+            Labels = Labels.Concat(result.Labels.Select(x =>
+            {
+                x.Position += GeneratedData.Count();
+                return x;
+            }));
 
             return this;
+        }
+
+        public void ClearDataSlots()
+        {
+            Symbols = Symbols.Where(x => x.Value is not ArcDataSlot).ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

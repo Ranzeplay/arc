@@ -40,5 +40,16 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             Assert.That(result.Symbols, Has.Count.EqualTo(8));
         }
+
+        [Test]
+        public void FunctionWithAssignmentExpression()
+        {
+            var text = "namespace Arc::Program { public func main(): val int { var a: val int; a = 2; a = 2 + 3; } }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
+            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var result = Flow.GenerateUnit(unit);
+
+            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+        }
     }
 }

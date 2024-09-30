@@ -28,7 +28,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
                         DataDeclarator.DataType.IsArray ? (byte)0x01 : (byte)0x00
                     ])
                     .Concat(BitConverter.GetBytes((long) 0)),
-                Symbols = new() { { id, DataDeclarator } },
+                Symbols = new() { { id, slot } },
+                RelocationDescriptors = [new() { Id = new Random().Next(), CommandBeginLocation = 3, Type = ArcRelocationType.Symbol, Target = new(DataDeclarator) }]
             };
         }
     }
