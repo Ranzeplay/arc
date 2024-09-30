@@ -29,27 +29,27 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                         case ArcOperator.Divide:
                             result.Append(new DivideInstruction().Encode(source));
                             break;
-                        // case ArcOperator.Modulus:
-                        //     throw new NotImplementedException();
-                        //     break;
+                        case ArcOperator.Modulus:
+                            result.Append(new ModulusInstruction().Encode(source));
+                            break;
                         case ArcOperator.BitwiseAnd:
                             result.Append(new BitwiseAndInstruction().Encode(source));
                             break;
                         case ArcOperator.BitwiseOr:
                             result.Append(new BitwiseOrInstruction().Encode(source));
                             break;
-                        // case ArcOperator.BitwiseXor:
-                        //     result.Append(new BitwiseXorInstruction().Encode(source));
-                        //     break;
+                        case ArcOperator.BitwiseXor:
+                            result.Append(new BitwiseXorInstruction().Encode(source));
+                            break;
                         case ArcOperator.BitwiseNot:
                             result.Append(new BitwiseNotInstruction().Encode(source));
                             break;
-                        // case ArcOperator.ShiftLeft:
-                        //     result.Append(new ShiftLeftInstruction().Encode(source));
-                        //     break;
-                        // case ArcOperator.ShiftRight:
-                        //    result.Append(new ShiftRightInstruction().Encode(source));
-                        //    break;
+                        case ArcOperator.ShiftLeft:
+                            result.Append(new ShiftLeftInstruction().Encode(source));
+                            break;
+                        case ArcOperator.ShiftRight:
+                            result.Append(new ShiftRightInstruction().Encode(source));
+                            break;
                         case ArcOperator.ObjectEquals:
                             result.Append(new ComparisonValueEqualInstruction().Encode(source));
                             break;

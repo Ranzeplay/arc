@@ -54,3 +54,7 @@ title: Instruction set
 | 0x2e   | pefid    | Push execution flow ID on top of the stack                                |
 | 0x2f   | cefid    | Continue execution flow by ID on the top of the stack                     |
 | 0x30   | ctype    | Cast the object on top of the stack to another type                       |
+| 0x31   | shl      | Shift left                                                                |
+| 0x32   | shr      | Shift right                                                               |
+| 0x33   | mod      | Modulus                                                                   |
+| 0x34   | bitxor   | Bitwise XOR                                                               |
