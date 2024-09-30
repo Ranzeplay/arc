@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Models;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
+﻿using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Interfaces
 {

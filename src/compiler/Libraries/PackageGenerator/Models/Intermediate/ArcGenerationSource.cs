@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
             get => Symbols.Values.Where(x => x is ArcDataSlot) as IEnumerable<ArcDataSlot>;
             set
             {
-                foreach(var key in Symbols.Where(x => x.Value is ArcDataSlot).Select(x => x.Key))
+                foreach (var key in Symbols.Where(x => x.Value is ArcDataSlot).Select(x => x.Key))
                 {
                     Symbols.Remove(key);
                 }

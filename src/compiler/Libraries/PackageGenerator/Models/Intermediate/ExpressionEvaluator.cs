@@ -89,7 +89,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                 }
                 else
                 {
-                    switch(term.DataValue?.Type)
+                    switch (term.DataValue?.Type)
                     {
                         case ArcDataValue.ValueType.InstantValue:
                             result.Append(new PushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));

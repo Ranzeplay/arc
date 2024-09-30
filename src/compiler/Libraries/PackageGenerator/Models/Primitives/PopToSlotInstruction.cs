@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Arc.Compiler.PackageGenerator.Interfaces;
+﻿using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
