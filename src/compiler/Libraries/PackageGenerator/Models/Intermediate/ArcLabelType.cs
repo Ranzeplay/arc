@@ -7,6 +7,7 @@
         BeginLoop,
         EndLoop,
         BeginIf,
+        BeginIfComponent,
         EndIf,
         BeginScope,
         EndScope,

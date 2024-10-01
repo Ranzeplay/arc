@@ -83,6 +83,11 @@ namespace Arc.Compiler.PackageGenerator
 
         public static ArcGenerationResult GenerateFunctionBody(ArcGenerationSource<ArcFunctionBody> source)
         {
+            return GenerateSequentialExecutionFlow(source.Migrate((ArcBlockSequentialExecution) source.Value));
+        }
+
+        public static ArcGenerationResult GenerateSequentialExecutionFlow(ArcGenerationSource<ArcBlockSequentialExecution> source)
+        {
             var result = new ArcGenerationResult();
 
             foreach (var step in source.Value.ExecutionSteps)
@@ -103,6 +108,16 @@ namespace Arc.Compiler.PackageGenerator
                             // Pop top element to the target
                             var targetSymbol = source.Symbols.First(x => x.Value is ArcDataSlot ds && ds.Declarator.Identifier.Name == assign.Identifier.Name).Value as ArcDataSlot;
                             stepResult.Append(new PopToSlotInstruction(targetSymbol).Encode(source));
+                            break;
+                        }
+                    case ArcBlockIf ifBlock:
+                        {
+                            stepResult = ConditionBlockGenerator.Encode(source.Migrate(ifBlock));
+                            break;
+                        }
+                    case ArcBlockConditionalLoop conditionalLoop:
+                        {
+                            stepResult = ConditionLoopBlockGenerator.Encode(source.Migrate(conditionalLoop));
                             break;
                         }
                     default:

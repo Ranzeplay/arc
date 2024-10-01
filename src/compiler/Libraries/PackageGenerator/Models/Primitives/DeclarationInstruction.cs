@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
 
         public ArcDataDeclarator DataDeclarator { get; } = dataDecl;
 
-        public ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
+        public new ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
         {
             var id = new Random().NextInt64();
             var slot = new ArcDataSlot
