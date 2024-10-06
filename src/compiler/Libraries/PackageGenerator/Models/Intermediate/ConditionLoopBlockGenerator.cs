@@ -21,14 +21,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                 TargetType = ArcRelocationTargetType.Relative,
                 Offset = body.GeneratedData.LongCount()
             };
-            var jumpOutInstruction = new ConditionalJumpInstruction(jumpOutRelocator).Encode(source);
+            var jumpOutInstruction = new ArcConditionalJumpInstruction(jumpOutRelocator).Encode(source);
 
             var jumpBackRelocator = new ArcRelocationTarget()
             {
                 TargetType = ArcRelocationTargetType.Relative,
                 Offset = -(expr.GeneratedData.LongCount() + bodyLength + jumpOutInstruction.GeneratedData.LongCount())
             };
-            var jumpBackInstruction = new ConditionalJumpInstruction(jumpBackRelocator).Encode(source);
+            var jumpBackInstruction = new ArcConditionalJumpInstruction(jumpBackRelocator).Encode(source);
 
             result.Append(expr);
             result.Append(jumpOutInstruction);

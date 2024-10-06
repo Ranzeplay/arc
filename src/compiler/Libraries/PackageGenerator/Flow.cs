@@ -95,7 +95,7 @@ namespace Arc.Compiler.PackageGenerator
                 {
                     case ArcStatementDeclaration decl:
                         {
-                            stepResult = new DeclarationInstruction(decl.DataDeclarator).Encode(source);
+                            stepResult = new ArcDeclarationInstruction(decl.DataDeclarator).Encode(source);
                             break;
                         }
                     case ArcStatementAssign assign:
@@ -105,7 +105,7 @@ namespace Arc.Compiler.PackageGenerator
 
                             // Pop top element to the target
                             var targetSymbol = source.LocalDataSlots.First(ds => ds.Declarator.Identifier.Name == assign.Identifier.Name);
-                            stepResult.Append(new PopToSlotInstruction(targetSymbol).Encode(source));
+                            stepResult.Append(new ArcPopToSlotInstruction(targetSymbol).Encode(source));
                             break;
                         }
                     case ArcBlockIf ifBlock:

@@ -5,9 +5,9 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
-namespace Arc.Compiler.PackageGenerator.Models.Primitives
+namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class DeclarationInstruction(ArcDataDeclarator dataDecl) : ArcPrimitiveInstructionBase
+    internal class ArcDeclarationInstruction(ArcDataDeclarator dataDecl) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x01];
 

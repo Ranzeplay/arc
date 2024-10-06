@@ -3,9 +3,9 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
-namespace Arc.Compiler.PackageGenerator.Models.Primitives
+namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class PopToSlotInstruction(ArcDataSlot slot) : ArcPrimitiveInstructionBase
+    internal class ArcPopToSlotInstruction(ArcDataSlot slot) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode { get; } = [0x06];
 

@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                 Offset = bodyLength
             };
 
-            result.Append(new ConditionalJumpInstruction(jumpOutRelocation).Encode(source));
+            result.Append(new ArcConditionalJumpInstruction(jumpOutRelocation).Encode(source));
             result.Append(body);
 
             return result;

@@ -5,9 +5,9 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
 using System.Text;
 
-namespace Arc.Compiler.PackageGenerator.Models.Primitives
+namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class PushInstantValueInstruction(ArcInstantValue instantValue) : ArcPrimitiveInstructionBase
+    internal class ArcPushInstantValueInstruction(ArcInstantValue instantValue) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x02];
 

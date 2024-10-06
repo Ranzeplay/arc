@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 

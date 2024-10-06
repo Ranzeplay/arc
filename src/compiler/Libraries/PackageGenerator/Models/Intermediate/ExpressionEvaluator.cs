@@ -19,70 +19,70 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                     switch (term.Operator)
                     {
                         case ArcOperator.Plus:
-                            result.Append(new AddInstruction().Encode(source));
+                            result.Append(new ArcAddInstruction().Encode(source));
                             break;
                         case ArcOperator.Minus:
-                            result.Append(new SubtractInstruction().Encode(source));
+                            result.Append(new ArcSubtractInstruction().Encode(source));
                             break;
                         case ArcOperator.Multiply:
-                            result.Append(new MultiplyInstruction().Encode(source));
+                            result.Append(new ArcMultiplyInstruction().Encode(source));
                             break;
                         case ArcOperator.Divide:
-                            result.Append(new DivideInstruction().Encode(source));
+                            result.Append(new ArcDivideInstruction().Encode(source));
                             break;
                         case ArcOperator.Modulus:
-                            result.Append(new ModulusInstruction().Encode(source));
+                            result.Append(new ArcModulusInstruction().Encode(source));
                             break;
                         case ArcOperator.BitwiseAnd:
-                            result.Append(new BitwiseAndInstruction().Encode(source));
+                            result.Append(new ArcBitwiseAndInstruction().Encode(source));
                             break;
                         case ArcOperator.BitwiseOr:
-                            result.Append(new BitwiseOrInstruction().Encode(source));
+                            result.Append(new ArcBitwiseOrInstruction().Encode(source));
                             break;
                         case ArcOperator.BitwiseXor:
-                            result.Append(new BitwiseXorInstruction().Encode(source));
+                            result.Append(new ArcBitwiseXorInstruction().Encode(source));
                             break;
                         case ArcOperator.BitwiseNot:
-                            result.Append(new BitwiseNotInstruction().Encode(source));
+                            result.Append(new ArcBitwiseNotInstruction().Encode(source));
                             break;
                         case ArcOperator.ShiftLeft:
-                            result.Append(new ShiftLeftInstruction().Encode(source));
+                            result.Append(new ArcShiftLeftInstruction().Encode(source));
                             break;
                         case ArcOperator.ShiftRight:
-                            result.Append(new ShiftRightInstruction().Encode(source));
+                            result.Append(new ArcShiftRightInstruction().Encode(source));
                             break;
                         case ArcOperator.ObjectEquals:
-                            result.Append(new ComparisonValueEqualInstruction().Encode(source));
+                            result.Append(new ArcComparisonValueEqualInstruction().Encode(source));
                             break;
                         case ArcOperator.ObjectNotEquals:
-                            result.Append(new ComparisonValueNotEqualInstruction().Encode(source));
+                            result.Append(new ArcComparisonValueNotEqualInstruction().Encode(source));
                             break;
                         case ArcOperator.ReferenceEquals:
-                            result.Append(new ComparisonReferenceEqualInstruction().Encode(source));
+                            result.Append(new ArcComparisonReferenceEqualInstruction().Encode(source));
                             break;
                         case ArcOperator.ReferenceNotEquals:
-                            result.Append(new ComparisonReferenceNotEqualInstruction().Encode(source));
+                            result.Append(new ArcComparisonReferenceNotEqualInstruction().Encode(source));
                             break;
                         case ArcOperator.LessThan:
-                            result.Append(new ComparisonLessThanInstruction().Encode(source));
+                            result.Append(new ArcComparisonLessThanInstruction().Encode(source));
                             break;
                         case ArcOperator.LessThanOrEqual:
-                            result.Append(new ComparisonLessThanOrEqualToInstruction().Encode(source));
+                            result.Append(new ArcComparisonLessThanOrEqualToInstruction().Encode(source));
                             break;
                         case ArcOperator.GreaterThan:
-                            result.Append(new ComparisonMoreThanInstruction().Encode(source));
+                            result.Append(new ArcComparisonMoreThanInstruction().Encode(source));
                             break;
                         case ArcOperator.GreaterThanOrEqual:
-                            result.Append(new ComparisonMoreThanOrEqualToInstruction().Encode(source));
+                            result.Append(new ArcComparisonMoreThanOrEqualToInstruction().Encode(source));
                             break;
                         case ArcOperator.LogicalAnd:
-                            result.Append(new LogicalAndInstruction().Encode(source));
+                            result.Append(new ArcLogicalAndInstruction().Encode(source));
                             break;
                         case ArcOperator.LogicalOr:
-                            result.Append(new LogicalOrInstruction().Encode(source));
+                            result.Append(new ArcLogicalOrInstruction().Encode(source));
                             break;
                         case ArcOperator.LogicalNot:
-                            result.Append(new LogicalNotInstruction().Encode(source));
+                            result.Append(new ArcLogicalNotInstruction().Encode(source));
                             break;
                         default:
                             throw new NotImplementedException();
@@ -93,7 +93,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                     switch (term.DataValue?.Type)
                     {
                         case ArcDataValue.ValueType.InstantValue:
-                            result.Append(new PushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));
+                            result.Append(new ArcPushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));
                             break;
                         default:
                             throw new NotImplementedException();

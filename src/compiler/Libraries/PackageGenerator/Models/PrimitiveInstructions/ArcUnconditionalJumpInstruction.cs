@@ -2,15 +2,15 @@
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
-namespace Arc.Compiler.PackageGenerator.Models.Primitives
+namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class ConditionalJumpInstruction(ArcRelocationTarget target) : ArcPrimitiveInstructionBase
+    internal class ArcUnconditionalJumpInstruction : ArcPrimitiveInstructionBase
     {
-        public override byte[] Opcode => [0x22];
+        public override byte[] Opcode => [0x21];
 
-        public ArcRelocationTarget Target { get; set; } = target;
+        public required ArcRelocationTarget Target { get; set; }
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {
