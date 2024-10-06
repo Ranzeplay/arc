@@ -22,7 +22,7 @@ if you have more to say, put them to the body.
 - `fix`: Fix an existing issue.
 - `chore`: Routine/automatic operations.
 - `refactor`: Refactor an existing function for better using.
-- `test`: Add/remove/modify rests.
+- `test`: Add/remove/modify tests.
 - `docs`: Add/remove/modify documents.
 - `ci` : Commits add by CI tools.
 - `revert`: Revert to a previous commit
