@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
@@ -10,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcCompilationUnit> CompilationUnits { get; set; } = compilationUnits;
 
-        public IEnumerable<ArcLabel> Labels { get; set; } = [];
+        public IEnumerable<ArcRelocationLabel> Labels { get; set; } = [];
 
         public IEnumerable<ArcGenerationScope> Scopes { get; set; } = [];
     }

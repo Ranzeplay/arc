@@ -34,18 +34,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
         {
             var result = new ArcPartialGenerationResult();
 
-            var beginIfLabel = new ArcLabel()
+            var beginIfLabel = new ArcRelocationLabel()
             {
-                Id = new Random().Next(),
-                Position = 0,
-                Type = ArcLabelType.BeginIf,
+                Location = 0,
+                Type = ArcRelocationLabelType.BeginIfBlock,
                 Name = "begin"
             };
-            var endIfLabel = new ArcLabel()
+            var endIfLabel = new ArcRelocationLabel()
             {
-                Id = new Random().Next(),
-                Position = -1,
-                Type = ArcLabelType.EndIf,
+                Location = -1,
+                Type = ArcRelocationLabelType.EndIfBlock,
                 Name = "end"
             };
 
@@ -54,7 +52,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
             {
                 var cbResult = new ArcPartialGenerationResult();
                 var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, block.Expression);
-
 
                 // var jumpOutInstruction = new ConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
 
