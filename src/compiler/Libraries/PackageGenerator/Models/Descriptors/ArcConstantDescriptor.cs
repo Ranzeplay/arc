@@ -1,11 +1,9 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+﻿using Arc.Compiler.PackageGenerator.Base;
+
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
-    internal class ArcConstantDescriptor
+    internal class ArcConstantDescriptor : ArcSymbolBase
     {
-        public long Id { get; set; }
-
-        public string RawFullName { get; set; }
-
         public ArcDataTypeDescriptor DataType { get; set; }
 
         public IEnumerable<byte> Bytes { get; set; }

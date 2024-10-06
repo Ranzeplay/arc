@@ -1,6 +1,6 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
-namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
     internal class ArcFunctionDescriptor
     {

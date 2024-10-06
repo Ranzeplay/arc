@@ -1,13 +1,11 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
-namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 {
-    internal class ArcGroupDescriptor
+    internal class ArcGroupDescriptor : ArcSymbolBase
     {
-        public long Id { get; set; }
-
-        public string RawFullName { get; set; }
-
         public IEnumerable<ArcFunctionDescriptor> Functions { get; set; }
 
         public IEnumerable<ArcFunctionDescriptor> Constructors { get; set; }

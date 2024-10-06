@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Primitives;
+﻿using Arc.Compiler.PackageGenerator.Models.Primitives;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate

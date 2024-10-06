@@ -4,7 +4,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
     internal class ArcRelocationDescriptor
     {
-        public long Id { get; set; }
+        public long Id { get; } = new Random().NextInt64();
 
         public ArcRelocationType Type { get; set; }
 
@@ -12,6 +12,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 
         public long Location { get; set; }
 
-        public WeakReference<object>? Target { get; set; }
+        public WeakReference<object>? TargetSymbol { get; set; }
     }
 }

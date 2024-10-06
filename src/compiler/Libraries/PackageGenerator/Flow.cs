@@ -83,7 +83,7 @@ namespace Arc.Compiler.PackageGenerator
 
         public static ArcGenerationResult GenerateFunctionBody(ArcGenerationSource<ArcFunctionBody> source)
         {
-            return GenerateSequentialExecutionFlow(source.Migrate((ArcBlockSequentialExecution) source.Value));
+            return GenerateSequentialExecutionFlow(source.Migrate((ArcBlockSequentialExecution)source.Value));
         }
 
         public static ArcGenerationResult GenerateSequentialExecutionFlow(ArcGenerationSource<ArcBlockSequentialExecution> source)

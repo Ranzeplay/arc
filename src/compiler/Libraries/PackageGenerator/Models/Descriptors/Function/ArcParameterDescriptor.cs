@@ -1,4 +1,4 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
     public class ArcParameterDescriptor
     {

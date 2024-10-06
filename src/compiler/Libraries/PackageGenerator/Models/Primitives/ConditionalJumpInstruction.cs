@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
         {
             return new ArcGenerationResult
             {
-                GeneratedData = Opcode.Concat(BitConverter.GetBytes((long) 0)),
+                GeneratedData = Opcode.Concat(BitConverter.GetBytes((long)0)),
                 RelocationDescriptors = [
                     new()
                     {
