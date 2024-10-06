@@ -18,7 +18,24 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public void Append(ArcPartialGenerationResult generationResult)
         {
-            throw new NotImplementedException();
+            RelocationTargets = RelocationTargets.Concat(generationResult.RelocationTargets.Select(r =>
+            {
+                if (r.TargetType == ArcRelocationTargetType.Absolute)
+                {
+                    r.Location += GeneratedData.LongCount();
+                }
+
+                return r;
+            }));
+            RelocationLabels = RelocationLabels.Concat(generationResult.RelocationLabels.Select(l =>
+            {
+                l.Location += GeneratedData.LongCount();
+                return l;
+            }));
+            DataSlots = DataSlots.Concat(generationResult.DataSlots);
+            OtherSymbols = OtherSymbols.Concat(generationResult.OtherSymbols);
+
+            GeneratedData = GeneratedData.Concat(generationResult.GeneratedData);
         }
     }
 }

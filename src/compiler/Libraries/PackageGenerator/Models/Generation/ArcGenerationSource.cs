@@ -8,7 +8,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
     {
         public WeakReference<ArcGenerationContext> ContextReference { get; }
 
-        public IEnumerable<ArcDataSlot> LocalDataSlots { get; } = [];
+        public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
         public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];
 
@@ -16,12 +16,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public void Merge(ArcGenerationSource generationSource)
         {
-            throw new NotImplementedException();
+            LocalDataSlots = LocalDataSlots.Concat(generationSource.LocalDataSlots);
+            AccessibleSymbols = AccessibleSymbols.Concat(generationSource.AccessibleSymbols);
         }
 
         public void Merge(ArcPartialGenerationResult generationResult)
         {
-            throw new NotImplementedException();
+            LocalDataSlots = LocalDataSlots.Concat(generationResult.DataSlots);
+            AccessibleSymbols = AccessibleSymbols.Concat(generationResult.OtherSymbols);
         }
     }
 }
