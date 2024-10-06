@@ -1,6 +1,9 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models
@@ -9,11 +12,11 @@ namespace Arc.Compiler.PackageGenerator.Models
     {
         public IEnumerable<byte> GeneratedData { get; set; } = [];
 
-        public Dictionary<long, object> Symbols { get; set; } = [];
+        public Dictionary<long, ArcSymbolBase> Symbols { get; set; } = [];
 
-        public IEnumerable<ArcRelocationDescriptor> RelocationDescriptors { get; set; } = [];
+        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
 
-        public IEnumerable<ArcLabel> Labels { get; set; } = [];
+        public IEnumerable<ArcRelocationLabel> Labels { get; set; } = [];
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
@@ -21,15 +24,15 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void Append(ArcGeneratorContext result) { }
 
-        public void Append(ArcGenerationResult result)
+        public void Append(ArcPartialGenerationResult result)
         {
             GeneratedData = GeneratedData.Concat(result.GeneratedData);
-            foreach (var symbol in result.Symbols)
+            foreach (var symbol in result.OtherSymbols)
             {
-                Symbols[symbol.Key] = symbol.Value;
+                Symbols[symbol.Id] = symbol;
             }
-            RelocationDescriptors = RelocationDescriptors.Concat(result.RelocationDescriptors);
-            Labels = Labels.Concat(result.Labels);
+            RelocationTargets = RelocationTargets.Concat(result.RelocationTargets);
+            Labels = Labels.Concat(result.RelocationLabels);
         }
 
         public void LoadFromCompilationUnit(ArcCompilationUnit compilationUnit) { }
@@ -42,12 +45,11 @@ namespace Arc.Compiler.PackageGenerator.Models
             }
         }
 
-        public ArcGenerationSource<T> GenerateSource<T>(T value)
+        public ArcGenerationSource GenerateSource()
         {
             return new()
             {
-                Value = value,
-                Symbols = Symbols,
+                AccessibleSymbols = Symbols.Values.ToList(),
                 PackageDescriptor = PackageDescriptor
             };
         }

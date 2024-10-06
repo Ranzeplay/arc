@@ -1,9 +1,8 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Builtin
-{
-    internal class ArcBaseType
-    {
-        public long TypeId { get; set; }
+﻿using Arc.Compiler.PackageGenerator.Base;
 
-        public string FullName { get; set; }
+namespace Arc.Compiler.PackageGenerator.Models.Builtin
+{
+    internal class ArcBaseType : ArcTypeBase
+    {
     }
 }

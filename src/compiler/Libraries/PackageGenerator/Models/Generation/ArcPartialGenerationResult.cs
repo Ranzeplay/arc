@@ -1,11 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
+﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
@@ -18,5 +13,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public IEnumerable<ArcRelocationLabel> RelocationLabels { get; set; } = [];
 
         public IEnumerable<ArcDataSlot> DataSlots { get; set; } = [];
+
+        public IEnumerable<ArcSymbolBase> OtherSymbols { get; set; } = [];
+
+        public void Append(ArcPartialGenerationResult generationResult)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

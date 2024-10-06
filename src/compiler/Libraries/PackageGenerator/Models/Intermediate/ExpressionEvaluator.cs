@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Primitives;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Primitives;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
@@ -7,11 +8,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
     internal class ExpressionEvaluator
     {
-        public static ArcGenerationResult GenerateEvaluationCommand(ArcGenerationSource<ArcExpression> source)
+        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr)
         {
-            var result = new ArcGenerationResult();
+            var result = new ArcPartialGenerationResult();
 
-            foreach (var term in source.Value.Terms)
+            foreach (var term in expr.Terms)
             {
                 if (term.IsOperator)
                 {

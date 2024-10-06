@@ -1,18 +1,9 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+﻿using Arc.Compiler.PackageGenerator.Base;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
-    public class ArcDataTypeDescriptor
+    internal class ArcDataTypeDescriptor : ArcSymbolBase
     {
-        public long TypeId { get; set; }
-
-        public bool IsArray { get; set; }
-
-        public bool AllowNone { get; set; }
-
-        public ArcMutability Mutability { get; set; }
-
-        public ArcMemoryStorageType MemoryStorageType { get; set; }
+        public long SymbolId { get; set; }
     }
 }

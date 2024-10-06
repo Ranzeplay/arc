@@ -1,24 +1,34 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Primitives;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Primitives;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
     internal class ConditionLoopBlockGenerator
     {
-        public static ArcGenerationResult Encode(ArcGenerationSource<ArcBlockConditionalLoop> source)
+        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditionalLoop clBlock)
         {
-            var result = new ArcGenerationResult();
+            var result = new ArcPartialGenerationResult();
 
-            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source.Migrate(source.Value.ConditionalBlock.Expression));
+            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
-            var body = Flow.GenerateSequentialExecutionFlow(source.Migrate(source.Value.ConditionalBlock.Body));
+            var body = Flow.GenerateSequentialExecutionFlow(source, clBlock.ConditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
-            var jumpOutInstruction = new ConditionalJumpInstruction().Encode(source.Migrate((ArcRelocationType.Relative, bodyLength)));
-            var jumpBackInstruction = new ConditionalJumpInstruction().Encode(source.Migrate((
-                    ArcRelocationType.Relative,
-                    -(expr.GeneratedData.LongCount() + bodyLength + jumpOutInstruction.GeneratedData.LongCount())
-                )));
+            var jumpOutRelocator = new ArcRelocationTarget()
+            {
+                TargetType = ArcRelocationTargetType.Relative,
+                Offset = body.GeneratedData.LongCount()
+            };
+            var jumpOutInstruction = new ConditionalJumpInstruction(jumpOutRelocator).Encode(source);
+
+            var jumpBackRelocator = new ArcRelocationTarget()
+            {
+                TargetType = ArcRelocationTargetType.Relative,
+                Offset = -(expr.GeneratedData.LongCount() + bodyLength + jumpOutInstruction.GeneratedData.LongCount())
+            };
+            var jumpBackInstruction = new ConditionalJumpInstruction(jumpBackRelocator).Encode(source);
 
             result.Append(expr);
             result.Append(jumpOutInstruction);

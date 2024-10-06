@@ -1,29 +1,38 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Primitives;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Primitives;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
     internal class ConditionBlockGenerator
     {
-        public static ArcGenerationResult Encode(ArcGenerationSource<ArcBlockConditional> source)
+        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditional conditionalBlock)
         {
-            var result = new ArcGenerationResult();
+            var result = new ArcPartialGenerationResult();
 
-            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source.Migrate(source.Value.Expression));
+            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
             result.Append(expr);
 
-            var body = Flow.GenerateSequentialExecutionFlow(source.Migrate(source.Value.Body));
+            var body = Flow.GenerateSequentialExecutionFlow(source, conditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
-            result.Append(new ConditionalJumpInstruction().Encode(source.Migrate((ArcRelocationType.Relative, bodyLength))));
+            var jumpOutRelocation = new ArcRelocationTarget
+            {
+                TargetType = ArcRelocationTargetType.Relative,
+                Offset = bodyLength
+            };
+
+            result.Append(new ConditionalJumpInstruction(jumpOutRelocation).Encode(source));
             result.Append(body);
 
             return result;
         }
 
-        public static ArcGenerationResult Encode(ArcGenerationSource<ArcBlockIf> source)
+        // TODO: Complete function
+        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockIf ifBlock)
         {
-            var result = new ArcGenerationResult();
+            var result = new ArcPartialGenerationResult();
 
             var beginIfLabel = new ArcLabel()
             {
@@ -40,13 +49,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                 Name = "end"
             };
 
-            var conditionalBlocks = new List<ArcGenerationResult>();
-            foreach (var block in source.Value.ConditionalBlocks)
+            var conditionalBlocks = new List<ArcPartialGenerationResult>();
+            foreach (var block in ifBlock.ConditionalBlocks)
             {
-                var cbResult = new ArcGenerationResult();
-                var expr = ExpressionEvaluator.GenerateEvaluationCommand(source.Migrate(block.Expression));
-                var jumpOutInstruction = new ConditionalJumpInstruction().Encode(source.Migrate((ArcRelocationType.Relative, 0)));
-                var body = Flow.GenerateSequentialExecutionFlow(source.Migrate(block.Body));
+                var cbResult = new ArcPartialGenerationResult();
+                var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, block.Expression);
+
+
+                // var jumpOutInstruction = new ConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
+
+                var body = Flow.GenerateSequentialExecutionFlow(source, block.Body);
             }
 
             return result;

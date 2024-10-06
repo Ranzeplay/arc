@@ -1,7 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
@@ -15,6 +15,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcGroupDescriptor> GroupDescriptors { get; set; } = [];
 
-        public IEnumerable<ArcRelocationDescriptor> RelocationDescriptors { get; set; } = [];
+        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
     }
 }

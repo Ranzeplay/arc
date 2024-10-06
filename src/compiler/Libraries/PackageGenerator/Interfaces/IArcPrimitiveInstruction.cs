@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Arc.Compiler.PackageGenerator.Interfaces
+﻿namespace Arc.Compiler.PackageGenerator.Interfaces
 {
     internal interface IArcPrimitiveInstruction : IArcEncodable
     {

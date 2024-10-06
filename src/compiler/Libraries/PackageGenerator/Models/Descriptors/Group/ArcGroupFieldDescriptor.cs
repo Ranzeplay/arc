@@ -8,7 +8,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 
         public string RawFullName { get; set; }
 
-        public ArcDataTypeDescriptor DataType { get; set; }
+        public ArcDataDeclarationDescriptor DataType { get; set; }
 
         public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; }
 

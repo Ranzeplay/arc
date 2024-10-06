@@ -9,8 +9,6 @@ namespace Arc.Compiler.PackageGenerator.Generator
         {
             var result = new ArcPartialGenerationResult();
 
-            var 
-
             return result;
         }
     }

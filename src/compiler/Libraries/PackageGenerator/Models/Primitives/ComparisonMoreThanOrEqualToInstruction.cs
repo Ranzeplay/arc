@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Interfaces;
+﻿using Arc.Compiler.PackageGenerator.Base;
+
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
     internal class ComparisonMoreThanOrEqualToInstruction : ArcPrimitiveInstructionBase

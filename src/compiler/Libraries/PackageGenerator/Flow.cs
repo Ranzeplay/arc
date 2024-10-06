@@ -1,8 +1,11 @@
 ﻿using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Primitives;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
@@ -21,34 +24,33 @@ namespace Arc.Compiler.PackageGenerator
             result.LoadPrimitiveTypes();
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
-                result.Append(GenerateFunction(result.GenerateSource<(ArcNamespaceBlock, ArcBlockIndependentFunction)>((ns, fn))));
+                result.Append(GenerateFunction(result.GenerateSource(), ns, fn));
             }
 
             return result;
         }
 
-        public static ArcGenerationResult GenerateFunction(ArcGenerationSource<(ArcNamespaceBlock, ArcBlockIndependentFunction)> source)
+        public static ArcPartialGenerationResult GenerateFunction(ArcGenerationSource source, ArcNamespaceBlock ns, ArcBlockIndependentFunction func)
         {
-            var ns = source.Value.Item1;
-            var func = source.Value.Item2;
-
             var signature = $"{ns.Identifier}+{func.Declarator.Identifier.Name}@{string.Join('&', func.Declarator.Arguments.Select(a => a.DataType))}";
             var parameters = func.Declarator.Arguments.Select(a => new ArcParameterDescriptor
             {
-                DataType = new ArcDataTypeDescriptor
+                DataType = new ArcDataDeclarationDescriptor
                 {
-                    TypeId = source.Symbols.First(u => u.Value is ArcBaseType bt && bt.FullName == (a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName()).Key,
+                    TypeId = source.AccessibleSymbols
+                        .First(u => u is ArcBaseType bt && bt.FullName == (a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
+                        .Id,
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
                 },
                 RawFullName = a.Identifier.Name,
             });
-            var returnValueType = new ArcDataTypeDescriptor
+            var returnValueType = new ArcDataDeclarationDescriptor
             {
-                TypeId = source.Symbols
-                        .First(u => u.Value is ArcBaseType bt && bt.FullName == (func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
-                        .Key,
+                TypeId = source.AccessibleSymbols
+                        .First(u => u is ArcBaseType bt && bt.FullName == (func.Declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
+                        .Id,
                 AllowNone = false,
                 IsArray = func.Declarator.ReturnType.IsArray,
                 MemoryStorageType = func.Declarator.ReturnType.MemoryStorageType,
@@ -56,43 +58,39 @@ namespace Arc.Compiler.PackageGenerator
 
             var descriptor = new ArcFunctionDescriptor
             {
-                Id = new Random().Next(),
-                RawFullName = signature,
+                Name = signature,
                 ReturnValueType = returnValueType,
                 Parameters = parameters,
             };
 
-            var result = new ArcGenerationResult
+            var result = new ArcPartialGenerationResult
             {
-                Symbols = new()
-                {
-                    { descriptor.Id, descriptor },
-                },
+                OtherSymbols = [descriptor]
             };
 
-            var body = GenerateFunctionBody(source.Migrate(func.Body));
+            var body = GenerateFunctionBody(source, func.Body);
             result.Append(body);
 
-            result.Labels = [
-                new() { Id = new Random().Next(), Name = descriptor.RawFullName, Type = ArcLabelType.BeginFunction, Position = 0 },
-                new() { Id = new Random().Next(), Name = descriptor.RawFullName, Type = ArcLabelType.EndFunction, Position = result.GeneratedData.Count() }
+            result.RelocationLabels = [
+                new() { Name = descriptor.RawFullName, Type = ArcRelocationLabelType.BeginFunction, Location = 0 },
+                new() { Name = descriptor.RawFullName, Type = ArcRelocationLabelType.EndFunction, Location = result.GeneratedData.Count() }
             ];
 
             return result;
         }
 
-        public static ArcGenerationResult GenerateFunctionBody(ArcGenerationSource<ArcFunctionBody> source)
+        public static ArcPartialGenerationResult GenerateFunctionBody(ArcGenerationSource source, ArcFunctionBody body)
         {
-            return GenerateSequentialExecutionFlow(source.Migrate((ArcBlockSequentialExecution)source.Value));
+            return GenerateSequentialExecutionFlow(source, (ArcBlockSequentialExecution)body);
         }
 
-        public static ArcGenerationResult GenerateSequentialExecutionFlow(ArcGenerationSource<ArcBlockSequentialExecution> source)
+        public static ArcPartialGenerationResult GenerateSequentialExecutionFlow(ArcGenerationSource source, ArcBlockSequentialExecution seqExec)
         {
-            var result = new ArcGenerationResult();
+            var result = new ArcPartialGenerationResult();
 
-            foreach (var step in source.Value.ExecutionSteps)
+            foreach (var step in seqExec.ExecutionSteps)
             {
-                var stepResult = new ArcGenerationResult();
+                var stepResult = new ArcPartialGenerationResult();
                 switch (step)
                 {
                     case ArcStatementDeclaration decl:
@@ -102,22 +100,22 @@ namespace Arc.Compiler.PackageGenerator
                         }
                     case ArcStatementAssign assign:
                         {
-                            var exprResult = ExpressionEvaluator.GenerateEvaluationCommand(source.Migrate(assign.Expression));
+                            var exprResult = ExpressionEvaluator.GenerateEvaluationCommand(source, assign.Expression);
                             stepResult.Append(exprResult);
 
                             // Pop top element to the target
-                            var targetSymbol = source.Symbols.First(x => x.Value is ArcDataSlot ds && ds.Declarator.Identifier.Name == assign.Identifier.Name).Value as ArcDataSlot;
+                            var targetSymbol = source.LocalDataSlots.First(ds => ds.Declarator.Identifier.Name == assign.Identifier.Name);
                             stepResult.Append(new PopToSlotInstruction(targetSymbol).Encode(source));
                             break;
                         }
                     case ArcBlockIf ifBlock:
                         {
-                            stepResult = ConditionBlockGenerator.Encode(source.Migrate(ifBlock));
+                            stepResult = ConditionBlockGenerator.Encode(source, ifBlock);
                             break;
                         }
                     case ArcBlockConditionalLoop conditionalLoop:
                         {
-                            stepResult = ConditionLoopBlockGenerator.Encode(source.Migrate(conditionalLoop));
+                            stepResult = ConditionLoopBlockGenerator.Encode(source, conditionalLoop);
                             break;
                         }
                     default:
@@ -128,7 +126,7 @@ namespace Arc.Compiler.PackageGenerator
                 result.Append(stepResult);
             }
 
-            result.ClearDataSlots();
+            result.DataSlots = [];
             return result;
         }
     }

@@ -1,9 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Models
 {
@@ -11,6 +6,6 @@ namespace Arc.Compiler.PackageGenerator.Models
     {
         public IEnumerable<byte> Data { get; set; }
 
-        public IEnumerable<ArcRelocationDescriptor> RelocationDescriptors { get; set; }
+        public IEnumerable<ArcRelocationType> RelocationTargets { get; set; }
     }
 }

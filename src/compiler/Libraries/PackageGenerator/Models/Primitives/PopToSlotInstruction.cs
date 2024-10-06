@@ -1,5 +1,7 @@
-﻿using Arc.Compiler.PackageGenerator.Interfaces;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
@@ -9,19 +11,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
 
         private ArcDataSlot Slot { get; } = slot;
 
-        public new ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
+        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            return new ArcGenerationResult
+            return new ArcPartialGenerationResult
             {
                 GeneratedData = Opcode
                     .Concat(BitConverter.GetBytes(slot.SlotId)),
-                RelocationDescriptors = [
+                RelocationTargets = [
                     new()
                     {
-                        Id = new Random().Next(),
-                        CommandBeginLocation = 1,
-                        Type = ArcRelocationType.Symbol,
-                        Target = new(Slot)
+                        Location = 1,
+                        TargetType = ArcRelocationTargetType.Symbol,
+                        Symbol = Slot
                     }
                 ]
             };

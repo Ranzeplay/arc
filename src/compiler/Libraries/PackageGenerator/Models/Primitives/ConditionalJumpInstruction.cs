@@ -1,42 +1,22 @@
-﻿using Arc.Compiler.PackageGenerator.Interfaces;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
 {
-    internal class ConditionalJumpInstruction : ArcPrimitiveInstructionBase
+    internal class ConditionalJumpInstruction(ArcRelocationTarget target) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x22];
 
-        public ArcGenerationResult Encode(ArcGenerationSource<(ArcRelocationType, long)> source)
-        {
-            return new ArcGenerationResult
-            {
-                GeneratedData = Opcode.Concat(BitConverter.GetBytes((long)0)),
-                RelocationDescriptors = [
-                    new()
-                    {
-                        Id = new Random().Next(),
-                        Type = source.Value.Item1,
-                        CommandBeginLocation = 1,
-                        Location = source.Value.Item2,
-                    },
-                ],
-            };
-        }
+        public ArcRelocationTarget Target { get; set; } = target;
 
-        public ArcGenerationResult Encode(ArcGenerationSource<ArcLabel> source)
+        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            return new ArcGenerationResult
+            return new ArcPartialGenerationResult
             {
                 GeneratedData = Opcode.Concat(BitConverter.GetBytes((long)0)),
-                RelocationDescriptors = [
-                    new()
-                    {
-                        Id = 0,
-                        Type = ArcRelocationType.Symbol,
-                        CommandBeginLocation = 1,
-                        Location = source.Value.Position,
-                    },
+                RelocationTargets = [
+                    Target
                 ],
             };
         }

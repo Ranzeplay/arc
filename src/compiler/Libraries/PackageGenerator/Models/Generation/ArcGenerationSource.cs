@@ -1,10 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
@@ -14,6 +10,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; } = [];
 
-        public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; } = [];
+        public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];
+
+        public ArcPackageDescriptor PackageDescriptor { get; set; }
+
+        public void Merge(ArcGenerationSource generationSource)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Merge(ArcPartialGenerationResult generationResult)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

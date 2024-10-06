@@ -1,5 +1,8 @@
-﻿using Arc.Compiler.PackageGenerator.Interfaces;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Primitives
@@ -10,17 +13,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
 
         public ArcDataDeclarator DataDeclarator { get; } = dataDecl;
 
-        public new ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
+        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            var id = new Random().NextInt64();
             var slot = new ArcDataSlot
             {
-                Id = id,
+                Name = "Local data slot",
                 Declarator = DataDeclarator,
-                SlotId = source.Symbols.Where(x => x.Value is ArcDataSlot).Count(),
+                SlotId = source.LocalDataSlots.Count(),
             };
 
-            return new ArcGenerationResult
+            var dataType = source.AccessibleSymbols.First(x => x is ArcDataTypeDescriptor);
+
+            return new ArcPartialGenerationResult
             {
                 GeneratedData = Opcode
                     .Concat([
@@ -28,15 +32,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Primitives
                         DataDeclarator.DataType.IsArray ? (byte)0x01 : (byte)0x00
                     ])
                     .Concat(BitConverter.GetBytes((long)0)),
-                Symbols = new() { { id, slot } },
-                RelocationDescriptors = [
+                RelocationTargets = [
                     new() {
-                        Id = new Random().Next(),
-                        CommandBeginLocation = 3,
-                        Type = ArcRelocationType.Symbol,
-                        Target = new(DataDeclarator)
+                        Location = 3,
+                        TargetType = ArcRelocationTargetType.Symbol,
+                        Symbol = dataType
                     }
-                ]
+                ],
+                DataSlots = [slot]
             };
         }
     }

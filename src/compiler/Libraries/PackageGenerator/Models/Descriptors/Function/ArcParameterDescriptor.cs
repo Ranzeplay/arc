@@ -2,7 +2,7 @@
 {
     public class ArcParameterDescriptor
     {
-        public ArcDataTypeDescriptor DataType { get; set; }
+        public ArcDataDeclarationDescriptor DataType { get; set; }
 
         public string RawFullName { get; set; }
     }

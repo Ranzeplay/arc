@@ -1,14 +1,14 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Intermediate;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 
-namespace Arc.Compiler.PackageGenerator.Interfaces
+namespace Arc.Compiler.PackageGenerator.Base
 {
     internal abstract class ArcPrimitiveInstructionBase
     {
         public abstract byte[] Opcode { get; }
 
-        public ArcGenerationResult Encode<T>(ArcGenerationSource<T> source)
+        public ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            return new ArcGenerationResult
+            return new ArcPartialGenerationResult
             {
                 GeneratedData = Opcode,
             };

@@ -1,16 +1,15 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
-    internal class ArcFunctionDescriptor
+    internal class ArcFunctionDescriptor : ArcSymbolBase
     {
-        public long Id { get; set; }
-
-        public string RawFullName { get; set; }
+        public string RawFullName { get => Name; set => Name = value; }
 
         public IEnumerable<ArcParameterDescriptor> Parameters { get; set; }
 
-        public ArcDataTypeDescriptor ReturnValueType { get; set; }
+        public ArcDataDeclarationDescriptor ReturnValueType { get; set; }
 
         public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; }
 
