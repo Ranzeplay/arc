@@ -3,13 +3,13 @@
     internal static class PersistentData
     {
         public static IEnumerable<ArcBaseType> BaseTypes = [
-            new ArcBaseType { Name = "none" },
-            new ArcBaseType { Name = "any" },
-            new ArcBaseType { Name = "int" },
-            new ArcBaseType { Name = "decimal" },
-            new ArcBaseType { Name = "char" },
-            new ArcBaseType { Name = "string" },
-            new ArcBaseType { Name = "bool" },
+            new ArcBaseType { Id = 0, Name = "none" },
+            new ArcBaseType { Id = 1, Name = "any" },
+            new ArcBaseType { Id = 2, Name = "int" },
+            new ArcBaseType { Id = 3, Name = "decimal" },
+            new ArcBaseType { Id = 4, Name = "char" },
+            new ArcBaseType { Id = 5, Name = "string" },
+            new ArcBaseType { Id = 6, Name = "bool" },
         ];
     }
 }

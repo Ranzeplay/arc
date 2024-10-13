@@ -4,7 +4,7 @@ namespace Arc.Compiler.PackageGenerator.Base
 {
     internal abstract class ArcSymbolBase : IArcLocatable
     {
-        public long Id { get; } = new Random().NextInt64();
+        public long Id { get; internal set; } = new Random().NextInt64();
 
         public required string Name { get; set; }
     }
