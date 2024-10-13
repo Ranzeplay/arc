@@ -40,14 +40,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 
         public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
 
-        public string TypeName
+        public string TypeName => DataType switch
         {
-            get => DataType switch
-            {
-                DataMemberType.Primitive => PrimitiveType.ToString(),
-                DataMemberType.Derivative => DerivativeType?.Identifier.ToString(),
-            };
-        }
+            DataMemberType.Primitive => PrimitiveType?.ToString() ?? string.Empty,
+            DataMemberType.Derivative => DerivativeType?.Identifier.ToString() ?? string.Empty,
+            _ => string.Empty
+        };
 
         public override string? ToString()
         {

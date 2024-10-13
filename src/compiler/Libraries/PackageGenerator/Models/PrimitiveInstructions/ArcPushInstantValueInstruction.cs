@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public ArcInstantValue Value { get; set; } = instantValue;
 
-        public ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             switch (Value.Type)
             {

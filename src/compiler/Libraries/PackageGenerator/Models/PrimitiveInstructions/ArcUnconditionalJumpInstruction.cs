@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public required ArcRelocationTarget Target { get; set; }
 
-        public ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {

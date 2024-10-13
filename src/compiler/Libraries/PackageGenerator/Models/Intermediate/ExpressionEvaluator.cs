@@ -1,5 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.PackageGenerator.Models.Primitives;
+using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
