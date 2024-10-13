@@ -42,7 +42,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 
         public string TypeName => DataType switch
         {
-            DataMemberType.Primitive => PrimitiveType?.ToString() ?? string.Empty,
+            DataMemberType.Primitive => PrimitiveType?.GetTypeName() ?? string.Empty,
             DataMemberType.Derivative => DerivativeType?.Identifier.ToString() ?? string.Empty,
             _ => string.Empty
         };

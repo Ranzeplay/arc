@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
@@ -22,7 +21,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 SlotId = source.LocalDataSlots.Count(),
             };
 
-            var dataType = source.AccessibleSymbols.First(x => x is ArcDataTypeDescriptor);
+            var dataType = source.AccessibleSymbols.First(x => x is ArcTypeBase && x.Name == DataDeclarator.DataType.TypeName);
 
             return new ArcPartialGenerationResult
             {
