@@ -37,6 +37,8 @@ export default defineConfig({
             { text: 'Index', link: '/reference/' },
             { text: 'Instruction set', link: '/reference/instruction-set' },
             { text: 'Descriptor set', link: '/reference/descriptor-set' },
+            { text: 'On-stack data save-load operations', link: '/reference/on-stack-data-sl-operations' },
+            { text: 'Signature', link: '/reference/signature' },
           ]
         }
       ]
