@@ -5,7 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcGenerationScope : ArcSymbolBase, IArcLocatable
+    internal class ArcGenerationScope : ArcSymbolBase
     {
         public WeakReference<ArcGenerationScope> Parent { get; set; }
 

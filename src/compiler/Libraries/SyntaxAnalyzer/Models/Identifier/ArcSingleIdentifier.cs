@@ -7,5 +7,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
         public string Name { get; set; } = context.IDENTIFIER().GetText();
 
         public ArcSourceCodeParser.Arc_single_identifierContext Context { get; } = context;
+
+        public override string ToString() => Name;
     }
 }

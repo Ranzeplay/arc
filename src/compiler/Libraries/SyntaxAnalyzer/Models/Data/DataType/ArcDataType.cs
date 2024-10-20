@@ -1,9 +1,10 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    public class ArcDataType : IArcTraceable<ArcSourceCodeParser.Arc_data_typeContext>
+    public class ArcDataType : IArcTraceable<ArcSourceCodeParser.Arc_data_typeContext>, IArcLocatable
     {
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {
@@ -47,9 +48,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             _ => string.Empty
         };
 
-        public override string? ToString()
-        {
-            return $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(IsArray ? "A" : "S")}{TypeName}";
-        }
+        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(IsArray ? "A" : "S")}{TypeName}";
+
+        public string GetSignature() => ToString();
     }
 }

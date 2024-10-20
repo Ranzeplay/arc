@@ -1,11 +1,12 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    public class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context) : IArcTraceable<ArcSourceCodeParser.Arc_data_declaratorContext>
+    public class ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context) : IArcTraceable<ArcSourceCodeParser.Arc_data_declaratorContext>, IArcLocatable
     {
         public ArcMemoryStorageType MemoryStorageType { get; set; } = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
 
@@ -16,5 +17,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
         public ArcDataType DataType { get; set; } = new ArcDataType(context.arc_data_type());
 
         public ArcSourceCodeParser.Arc_data_declaratorContext Context { get; } = context;
+
+        public string GetSignature() => $"{DataType.GetSignature()}@{Identifier.Name}";
     }
 }

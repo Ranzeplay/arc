@@ -1,18 +1,19 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
-    public class ArcNamespaceBlock :IArcTraceable<ArcSourceCodeParser.Arc_namespace_blockContext>
+    public class ArcNamespaceBlock : IArcTraceable<ArcSourceCodeParser.Arc_namespace_blockContext>, IArcLocatable
     {
         public ArcNamespaceIdentifier Identifier { get; set; }
 
         public IEnumerable<ArcGroup> Groups { get; set; }
 
         public IEnumerable<ArcBlockIndependentFunction> Functions { get; set; }
-        
+
         public ArcSourceCodeParser.Arc_namespace_blockContext Context { get; }
 
         public ArcNamespaceBlock(ArcSourceCodeParser.Arc_namespace_blockContext context)
@@ -26,6 +27,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
                 .Select(g => new ArcGroup(g.arc_group_block()));
 
             Context = context;
+        }
+
+        public string GetSignature()
+        {
+            return string.Join(':', Identifier.Namespace ?? []);
         }
     }
 }

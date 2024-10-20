@@ -1,11 +1,12 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    public class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context)
+    public class ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context) : IArcLocatable
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; } = context.arc_annotation().Select(a => new ArcAnnotation(a));
 
@@ -16,5 +17,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
         public IEnumerable<ArcFunctionArgument> Arguments { get; set; } = context.arc_wrapped_arg_list().arc_arg_list()?.arc_data_declarator().Select(p => new ArcFunctionArgument(p)) ?? [];
 
         public ArcDataType ReturnType { get; set; } = new(context.arc_data_type());
+
+        public string GetSignature() => $"F{Identifier}@{string.Join('&', Arguments.Select(a => a.DataType.GetSignature()))}*{ReturnType.GetSignature()}";
     }
 }

@@ -1,8 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
-
-namespace Arc.Compiler.PackageGenerator.Base
+﻿namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal abstract class ArcSymbolBase : IArcLocatable
+    internal abstract class ArcSymbolBase
     {
         public long Id { get; internal set; } = new Random().NextInt64();
 

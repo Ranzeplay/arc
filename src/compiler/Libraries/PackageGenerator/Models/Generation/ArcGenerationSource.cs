@@ -14,6 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
+        public ArcSignature ParentSignature { get; set; }
+
         public void Merge(ArcGenerationSource generationSource)
         {
             LocalDataSlots = LocalDataSlots.Concat(generationSource.LocalDataSlots);

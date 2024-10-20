@@ -16,9 +16,11 @@ The signature will be `s1:s2:s3:s4:...`.
 
 ## Function signature
 
-Consider the function `func fnName(var a1: val t1, var a2: ref t2, const a3: val t3[]): val tr` in scope `s1::s2`
+Consider the function `func fnName(var a1: val t1, var a2: ref t2, const a3: val t3[]): val tr` in scope `s1::s2`.
 
 The signature will be `s1:s2+FfnName@VSt1&RSt2&VAt3*VStr`, with `F` indicating function.
+
+Also, it will create a new function scope.
 
 ### Components
 
