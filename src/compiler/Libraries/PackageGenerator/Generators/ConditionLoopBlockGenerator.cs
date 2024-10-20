@@ -1,9 +1,10 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
-namespace Arc.Compiler.PackageGenerator.Models.Intermediate
+namespace Arc.Compiler.PackageGenerator.Generators
 {
     internal class ConditionLoopBlockGenerator
     {
