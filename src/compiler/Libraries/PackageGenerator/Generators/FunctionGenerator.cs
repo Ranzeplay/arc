@@ -34,7 +34,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
         public static ArcPartialGenerationResult GenerateBody(ArcGenerationSource source, ArcFunctionBody body)
         {
-            return SequentialExecutionGenerator.GenerateSequentialExecutionFlow(source, body);
+            return SequentialExecutionGenerator.Generate(source, body);
         }
 
         public static ArcFunctionDescriptor GenerateDescripto(ArcGenerationSource source, ArcFunctionDeclarator declarator)

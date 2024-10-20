@@ -7,7 +7,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 {
     internal static class SequentialExecutionGenerator
     {
-        public static ArcPartialGenerationResult GenerateSequentialExecutionFlow(ArcGenerationSource source, ArcBlockSequentialExecution seqExec)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockSequentialExecution seqExec)
         {
             var result = new ArcPartialGenerationResult();
 

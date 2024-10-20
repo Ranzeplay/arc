@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
             result.Append(expr);
 
-            var body = Flow.GenerateSequentialExecutionFlow(source, conditionalBlock.Body);
+            var body = SequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
             var jumpOutRelocation = new ArcRelocationTarget
@@ -56,7 +56,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
                 // var jumpOutInstruction = new ConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
 
-                var body = Flow.GenerateSequentialExecutionFlow(source, block.Body);
+                var body = SequentialExecutionGenerator.Generate(source, block.Body);
             }
 
             return result;

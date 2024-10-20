@@ -14,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
-            var body = Flow.GenerateSequentialExecutionFlow(source, clBlock.ConditionalBlock.Body);
+            var body = SequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
             var jumpOutRelocator = new ArcRelocationTarget()
