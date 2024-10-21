@@ -36,6 +36,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
                             stepResult = ConditionLoopBlockGenerator.Encode(source, conditionalLoop);
                             break;
                         }
+                    case ArcStatementReturn @return:
+                        {
+                            stepResult = SequenceReturnGenerator.Generate(source, @return);
+                            break;
+                        }
                     default:
                         throw new NotImplementedException();
                 }

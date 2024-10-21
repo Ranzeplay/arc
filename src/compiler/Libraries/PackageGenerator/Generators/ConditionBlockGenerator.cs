@@ -30,7 +30,6 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return result;
         }
 
-        // TODO: Complete function
         public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockIf ifBlock)
         {
             var result = new ArcPartialGenerationResult();
