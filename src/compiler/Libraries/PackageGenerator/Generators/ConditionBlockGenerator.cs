@@ -54,10 +54,38 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var cbResult = new ArcPartialGenerationResult();
                 var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, block.Expression);
 
-                // var jumpOutInstruction = new ConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
+                var nextBlockLabel = new ArcRelocationLabel()
+                {
+                    Location = 0,
+                    Type = ArcRelocationLabelType.BeginIfSubBlock,
+                    Name = "next"
+                };
+
+                var jumpOutInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
+                var jumpNextInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = nextBlockLabel }).Encode(source);
 
                 var body = SequentialExecutionGenerator.Generate(source, block.Body);
+
+                cbResult.Append(expr);
+                cbResult.Append(jumpNextInstruction);
+                cbResult.Append(body);
+                cbResult.Append(jumpOutInstruction);
+
+                conditionalBlocks.Add(cbResult);
             }
+
+            conditionalBlocks.ForEach(result.Append);
+
+            // Now the ElseBlock
+            if (ifBlock.ElseBody != null)
+            {
+                var bResult = SequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
+                result.Append(bResult);
+            }
+
+            endIfLabel.Location = result.GeneratedData.LongCount();
+
+            result.RelocationLabels = result.RelocationLabels.Concat([beginIfLabel, endIfLabel]);
 
             return result;
         }
