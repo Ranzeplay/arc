@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.PackageGenerator.Generators
@@ -49,6 +50,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     case ArcStatementContinue @continue:
                         {
                             stepResult = LoopControlGenerator.GenerateContinue(source);
+                            break;
+                        }
+                    case ArcStatementCall call:
+                        {
+                            stepResult = FunctionCallGenerator.Generate(source, call.FunctionCall);
                             break;
                         }
                     default:

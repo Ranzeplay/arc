@@ -60,7 +60,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     Name = "next"
                 };
 
-                var jumpOutInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel}).Encode(source);
+                var jumpOutInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel }).Encode(source);
                 var jumpNextInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = nextBlockLabel }).Encode(source);
 
                 var body = SequentialExecutionGenerator.Generate(source, block.Body);
