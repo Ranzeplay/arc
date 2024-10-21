@@ -41,6 +41,16 @@ namespace Arc.Compiler.PackageGenerator.Generators
                             stepResult = SequenceReturnGenerator.Generate(source, @return);
                             break;
                         }
+                    case ArcStatementBreak @break:
+                        {
+                            stepResult = LoopControlGenerator.GenerateBreak(source);
+                            break;
+                        }
+                    case ArcStatementContinue @continue:
+                        {
+                            stepResult = LoopControlGenerator.GenerateContinue(source);
+                            break;
+                        }
                     default:
                         throw new NotImplementedException();
                 }
