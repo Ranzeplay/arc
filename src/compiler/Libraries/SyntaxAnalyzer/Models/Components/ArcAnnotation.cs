@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 

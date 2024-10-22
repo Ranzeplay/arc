@@ -38,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void LoadPrimitiveTypes()
         {
-            foreach (var bt in PersistentData.BaseTypes)
+            foreach (var bt in ArcPersistentData.BaseTypes)
             {
                 Symbols.Add(bt.TypeId, bt);
             }

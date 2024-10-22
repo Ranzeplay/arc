@@ -6,7 +6,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class ConditionBlockGenerator
+    internal class ArcConditionBlockGenerator
     {
         public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditional conditionalBlock)
         {
@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
             result.Append(expr);
 
-            var body = SequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
+            var body = ArcSequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
             var jumpOutRelocation = new ArcRelocationTarget
@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var jumpOutInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = endIfLabel }).Encode(source);
                 var jumpNextInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = nextBlockLabel }).Encode(source);
 
-                var body = SequentialExecutionGenerator.Generate(source, block.Body);
+                var body = ArcSequentialExecutionGenerator.Generate(source, block.Body);
 
                 cbResult.Append(expr);
                 cbResult.Append(jumpNextInstruction);
@@ -78,7 +78,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             // Now the ElseBlock
             if (ifBlock.ElseBody != null)
             {
-                var bResult = SequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
+                var bResult = ArcSequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
                 result.Append(bResult);
             }
 

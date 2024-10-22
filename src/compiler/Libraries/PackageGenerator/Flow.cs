@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator
             result.LoadPrimitiveTypes();
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
-                result.Append(FunctionGenerator.Generate(result.GenerateSource(), fn, ns));
+                result.Append(ArcFunctionGenerator.Generate(result.GenerateSource(), fn, ns));
             }
 
             return result;

@@ -1,4 +1,5 @@
 ﻿using Antlr4.Runtime;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {

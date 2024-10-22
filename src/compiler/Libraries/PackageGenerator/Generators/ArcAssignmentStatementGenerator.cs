@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal static class AssignmentStatement
+    internal static class ArcAssignmentStatementGenerator
     {
         public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source)
         {

@@ -1,12 +1,11 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
-using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal static class SequentialExecutionGenerator
+    internal static class ArcSequentialExecutionGenerator
     {
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockSequentialExecution seqExec)
         {
@@ -24,39 +23,39 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         }
                     case ArcStatementAssign assign:
                         {
-                            stepResult = AssignmentStatement.Generate(assign, source);
+                            stepResult = ArcAssignmentStatementGenerator.Generate(assign, source);
                             break;
                         }
                     case ArcBlockIf ifBlock:
                         {
-                            stepResult = ConditionBlockGenerator.Encode(source, ifBlock);
+                            stepResult = ArcConditionBlockGenerator.Encode(source, ifBlock);
                             break;
                         }
                     case ArcBlockConditionalLoop conditionalLoop:
                         {
-                            stepResult = ConditionLoopBlockGenerator.Encode(source, conditionalLoop);
+                            stepResult = ArcConditionLoopBlockGenerator.Encode(source, conditionalLoop);
                             break;
                         }
                     case ArcStatementReturn @return:
                         {
-                            stepResult = SequenceReturnGenerator.Generate(source, @return);
+                            stepResult = ArcSequenceReturnGenerator.Generate(source, @return);
                             break;
                         }
                     case ArcStatementBreak @break:
                         {
-                            stepResult = LoopControlGenerator.GenerateBreak(source);
+                            stepResult = ArcLoopControlGenerator.GenerateBreak(source);
                             break;
                         }
                     case ArcStatementContinue @continue:
                         {
-                            stepResult = LoopControlGenerator.GenerateContinue(source);
+                            stepResult = ArcLoopControlGenerator.GenerateContinue(source);
                             break;
                         }
                     case ArcStatementCall call:
                         {
-                            stepResult = FunctionCallGenerator.Generate(source, call.FunctionCall);
+                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall);
                             // Discard the result of the function call
-                            stepResult.Append(new Disca().Encode(source));
+                            stepResult.Append(new ArcDiscardStackTopInstruction().Encode(source));
                             break;
                         }
                     default:

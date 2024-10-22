@@ -4,7 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class LoopControlGenerator
+    internal class ArcLoopControlGenerator
     {
         public static ArcPartialGenerationResult GenerateBreak(ArcGenerationSource source)
         {

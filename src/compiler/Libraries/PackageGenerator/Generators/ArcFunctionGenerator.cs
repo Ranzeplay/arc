@@ -10,7 +10,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal static class FunctionGenerator
+    internal static class ArcFunctionGenerator
     {
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockIndependentFunction func, ArcNamespaceBlock ns)
         {
@@ -34,7 +34,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
         public static ArcPartialGenerationResult GenerateBody(ArcGenerationSource source, ArcFunctionBody body)
         {
-            return SequentialExecutionGenerator.Generate(source, body);
+            return ArcSequentialExecutionGenerator.Generate(source, body);
         }
 
         public static ArcFunctionDescriptor GenerateDescripto(ArcGenerationSource source, ArcFunctionDeclarator declarator)

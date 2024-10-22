@@ -97,7 +97,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                             result.Append(new ArcPushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));
                             break;
                         case ArcDataValue.ValueType.FunctionCall:
-                            result.Append(FunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
+                            result.Append(ArcFunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
                             break;
                         default:
                             throw new NotImplementedException();

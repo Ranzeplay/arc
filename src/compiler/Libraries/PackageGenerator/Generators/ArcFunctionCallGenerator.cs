@@ -6,7 +6,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class FunctionCallGenerator
+    internal class ArcFunctionCallGenerator
     {
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall)
         {

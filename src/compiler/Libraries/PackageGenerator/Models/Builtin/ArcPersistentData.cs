@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Models.Builtin
 {
-    internal static class PersistentData
+    internal static class ArcPersistentData
     {
         public static IEnumerable<ArcBaseType> BaseTypes = [
             new ArcBaseType { Id = 0, Name = "none" },

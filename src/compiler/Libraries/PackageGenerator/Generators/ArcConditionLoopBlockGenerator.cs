@@ -6,7 +6,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class ConditionLoopBlockGenerator
+    internal class ArcConditionLoopBlockGenerator
     {
         public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditionalLoop clBlock)
         {
@@ -14,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
-            var body = SequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
+            var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();
 
             var jumpOutRelocator = new ArcRelocationTarget()

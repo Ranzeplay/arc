@@ -1,5 +1,6 @@
 ﻿using Antlr4.Runtime;
 using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
