@@ -60,3 +60,5 @@ title: Instruction set
 | 0x34   | bitxor   | Bitwise XOR                                                                |
 | 0x35   | fret     | Return from function                                                       |
 | 0x36   | fcall    | Call a function                                                            |
+| 0x37   | ldstk    | Load data to stack                                                         |
+| 0x38   | svstk    | Save data from stack                                                       |
