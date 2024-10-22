@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Generators;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
@@ -94,6 +95,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                     {
                         case ArcDataValue.ValueType.InstantValue:
                             result.Append(new ArcPushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));
+                            break;
+                        case ArcDataValue.ValueType.FunctionCall:
+                            result.Append(FunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
                             break;
                         default:
                             throw new NotImplementedException();

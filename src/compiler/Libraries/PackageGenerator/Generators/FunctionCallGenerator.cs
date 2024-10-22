@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
@@ -15,9 +16,14 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 .OfType<ArcFunctionDescriptor>()
                 .FirstOrDefault(f => f.RawFullName == funcCall.Identifier.ToString());
 
-            if (funcDeclarator != null)
+            if (funcDeclarator == null)
             {
                 throw new InvalidOperationException();
+            }
+
+            foreach (var arg in funcCall.Arguments.Reverse())
+            {
+                result.Append(ExpressionEvaluator.GenerateEvaluationCommand(source, arg.Expression));
             }
 
             result.Append(new ArcFunctionCallInstruction(funcDeclarator.Id, funcCall.Arguments.Count()).Encode(source));
