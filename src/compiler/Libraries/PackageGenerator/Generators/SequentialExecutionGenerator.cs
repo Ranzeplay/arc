@@ -55,6 +55,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     case ArcStatementCall call:
                         {
                             stepResult = FunctionCallGenerator.Generate(source, call.FunctionCall);
+                            // Discard the result of the function call
+                            stepResult.Append(new Disca().Encode(source));
                             break;
                         }
                     default:
