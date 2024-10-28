@@ -48,8 +48,9 @@ namespace Arc.Compiler.PackageGenerator.Models
         {
             return new()
             {
-                AccessibleSymbols = Symbols.Values.ToList(),
-                PackageDescriptor = PackageDescriptor
+                AccessibleSymbols = Symbols.Values,
+                PackageDescriptor = PackageDescriptor,
+                ParentSignature = new ArcSignature()
             };
         }
     }

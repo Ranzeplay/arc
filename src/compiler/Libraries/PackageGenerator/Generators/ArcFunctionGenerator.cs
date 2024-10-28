@@ -14,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
     {
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockIndependentFunction func, ArcNamespaceBlock ns)
         {
-            var descriptor = GenerateDescripto(source, func.Declarator);
+            var descriptor = GenerateDescriptor(source, func.Declarator);
 
             var result = new ArcPartialGenerationResult
             {
@@ -37,7 +37,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return ArcSequentialExecutionGenerator.Generate(source, body);
         }
 
-        public static ArcFunctionDescriptor GenerateDescripto(ArcGenerationSource source, ArcFunctionDeclarator declarator)
+        public static ArcFunctionDescriptor GenerateDescriptor(ArcGenerationSource source, ArcFunctionDeclarator declarator)
         {
             var signatureSource = source.ParentSignature;
             signatureSource.Locators = signatureSource.Locators.Append(declarator);

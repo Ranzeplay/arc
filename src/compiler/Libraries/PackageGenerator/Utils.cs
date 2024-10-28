@@ -1,4 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
 
@@ -20,7 +20,7 @@ namespace Arc.Compiler.PackageGenerator
             }
             else
             {
-                var typeId = ArcPersistentData.BaseTypes.FirstOrDefault(t => t.Name.Equals(value.Type.ToString())).Id;
+                var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName).Id;
                 var id = source.AccessibleConstants.LongCount() + result.AddedConstants.LongCount();
                 result.AddedConstants = result.AddedConstants.Append(new ArcConstant
                 {

@@ -73,5 +73,15 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
                 throw new NotImplementedException();
             }
         }
+
+        public string TypeName => Type switch
+        {
+            ValueType.String => "str",
+            ValueType.Integer => "int",
+            ValueType.Decimal => "decimal",
+            ValueType.Boolean => "bool",
+            _ => throw new NotImplementedException(),
+        };
+
     }
 }
