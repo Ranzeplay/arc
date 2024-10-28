@@ -16,6 +16,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcSymbolBase> OtherSymbols { get; set; } = [];
 
+        public IEnumerable<ArcConstant> AddedConstants { get; set; } = [];
+
         public void Append(ArcPartialGenerationResult generationResult)
         {
             RelocationTargets = RelocationTargets.Concat(generationResult.RelocationTargets.Select(r =>

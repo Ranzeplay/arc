@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
@@ -12,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
-            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
             result.Append(expr);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
@@ -51,7 +50,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             foreach (var block in ifBlock.ConditionalBlocks)
             {
                 var cbResult = new ArcPartialGenerationResult();
-                var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, block.Expression);
+                var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, block.Expression);
 
                 var nextBlockLabel = new ArcRelocationLabel()
                 {

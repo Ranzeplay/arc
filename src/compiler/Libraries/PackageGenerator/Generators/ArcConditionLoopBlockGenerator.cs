@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
@@ -12,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
-            var expr = ExpressionEvaluator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
             var bodyLength = body.GeneratedData.LongCount();

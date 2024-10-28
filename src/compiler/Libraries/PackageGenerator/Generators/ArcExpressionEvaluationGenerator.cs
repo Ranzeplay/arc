@@ -1,13 +1,13 @@
-﻿using Arc.Compiler.PackageGenerator.Generators;
-using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
-namespace Arc.Compiler.PackageGenerator.Models.Intermediate
+namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class ExpressionEvaluator
+    internal class ArcExpressionEvaluationGenerator
     {
         public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr)
         {
@@ -94,11 +94,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
                     switch (term.DataValue?.Type)
                     {
                         case ArcDataValue.ValueType.InstantValue:
-                            result.Append(new ArcPushInstantValueInstruction(term.DataValue.InstantValue!).Encode(source));
-                            break;
+                            {
+                                var dataLocation = Utils.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
+                                result.Append(new ArcLoadDataToStackInstruction(ArcDataSourceType.ConstantTable, dataLocation, 0x00).Encode(source));
+                                break;
+                            }
                         case ArcDataValue.ValueType.FunctionCall:
-                            result.Append(ArcFunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
-                            break;
+                            {
+                                result.Append(ArcFunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
+                                break;
+                            }
                         default:
                             throw new NotImplementedException();
                     }

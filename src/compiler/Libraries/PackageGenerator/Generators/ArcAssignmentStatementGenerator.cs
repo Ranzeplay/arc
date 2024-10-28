@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
@@ -11,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
-            var exprResult = ExpressionEvaluator.GenerateEvaluationCommand(source, assign.Expression);
+            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
             result.Append(exprResult);
 
             // Pop top element to the target
