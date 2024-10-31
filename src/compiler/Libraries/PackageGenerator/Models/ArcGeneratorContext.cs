@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models
@@ -19,6 +20,8 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
+        public IEnumerable<ArcConstant> Constants { get; set; } = [];
+
         public void ApplyReloation() { }
 
         public void Append(ArcGeneratorContext result) { }
@@ -32,6 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             }
             RelocationTargets = RelocationTargets.Concat(result.RelocationTargets);
             Labels = Labels.Concat(result.RelocationLabels);
+            Constants = Constants.Concat(result.AddedConstants);
         }
 
         public void LoadFromCompilationUnit(ArcCompilationUnit compilationUnit) { }
@@ -46,11 +50,16 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public ArcGenerationSource GenerateSource()
         {
+            return GenerateSource([]);
+        }
+
+        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location)
+        {
             return new()
             {
                 AccessibleSymbols = Symbols.Values,
                 PackageDescriptor = PackageDescriptor,
-                ParentSignature = new ArcSignature()
+                ParentSignature = new ArcSignature() { Locators = location }
             };
         }
     }

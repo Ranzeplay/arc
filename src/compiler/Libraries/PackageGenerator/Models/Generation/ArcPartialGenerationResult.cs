@@ -38,6 +38,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             OtherSymbols = OtherSymbols.Concat(generationResult.OtherSymbols);
 
             GeneratedData = GeneratedData.Concat(generationResult.GeneratedData);
+
+            AddedConstants = AddedConstants.Concat(generationResult.AddedConstants);
         }
     }
 }
