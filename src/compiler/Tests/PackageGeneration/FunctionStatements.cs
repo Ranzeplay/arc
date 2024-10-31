@@ -6,7 +6,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 {
     [CancelAfter(1000)]
     [Category("PackageGeneration")]
-    internal class TierOne
+    internal class FunctionStatements
     {
         [Test]
         public void EmptyFunction()
@@ -44,7 +44,30 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void FunctionWithAssignmentExpression()
         {
-            var text = "namespace Arc::Program { public func main(): val int { var a: val int; a = 2; a = 2 + 3; } }";
+            var text = @"namespace Arc::Program {
+                            public func main(): val int {
+                                var a: val int; a = 2; a = 2 + 3;
+                            }
+                        }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
+            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var result = Flow.GenerateUnit(unit);
+
+            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+            Assert.That(result.Constants.Count(), Is.EqualTo(3));
+        }
+
+        [Test]
+        public void FunctionWithBlockStatements()
+        {
+            var text = @"
+                        namespace Arc::Program { 
+                            public func main(): val int { 
+                                if (2 < 3) { var a: val int; a = 1; } 
+                                else { var b: val int; b = 2; }
+                                while (2 < 3) { var c: val int; c = 3; } 
+                            }
+                        }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
             var unit = new ArcCompilationUnit(compilationUnitContext, "test");
             var result = Flow.GenerateUnit(unit);
