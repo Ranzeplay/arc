@@ -13,6 +13,7 @@ namespace Arc.Compiler.PackageGenerator
 
         public static long GetConstantIdOrCreateConstant(ArcInstantValue value, ref ArcGenerationSource source, ref ArcPartialGenerationResult result)
         {
+            // TODO: Fix duplicated entry (existingConstant is always null)
             var existingConstant = GetTotalConstants(source, result).FirstOrDefault(c => c.Value.Equals(value));
             if (existingConstant != null)
             {
@@ -20,12 +21,12 @@ namespace Arc.Compiler.PackageGenerator
             }
             else
             {
-                var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName).Id;
+                var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
                 var id = source.AccessibleConstants.LongCount() + result.AddedConstants.LongCount();
                 result.AddedConstants = result.AddedConstants.Append(new ArcConstant
                 {
                     Id = id,
-                    TypeId = typeId,
+                    TypeId = typeId ?? -1,
                     Value = value
                 });
 

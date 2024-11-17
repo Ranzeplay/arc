@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal class ArcTypeBase : ArcSymbolBase
+    public class ArcTypeBase : ArcSymbolBase
     {
         public long TypeId { get => Id; }
 

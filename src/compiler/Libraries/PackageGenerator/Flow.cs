@@ -1,9 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
-using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.SyntaxAnalyzer.Models;
-using System.Collections.Generic;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -28,10 +26,17 @@ namespace Arc.Compiler.PackageGenerator
             var context = new ArcGeneratorContext();
             context.LoadPrimitiveTypes();
 
+            // Generate group signatures
+            foreach(var grp in compilationUnit.Namespace.Groups)
+            {
+                // TODO: Code here
+            }
+
             // Generate function signatures
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
                 var functionDescriptor = ArcFunctionGenerator.GenerateDescriptor(context.GenerateSource([compilationUnit.Namespace]), fn.Declarator);
+                result.Add(functionDescriptor);
             }
 
             return result;

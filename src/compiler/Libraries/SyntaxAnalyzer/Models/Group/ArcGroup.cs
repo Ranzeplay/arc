@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    public class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>
+    public class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>, IArcLocatable
     {
         public ArcSingleIdentifier Identifier { get; set; }
 
@@ -25,5 +25,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
             Functions = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_function() != null).Select(f => new ArcGroupFunction(f.arc_group_function()));
             Context = context;
         }
+
+        public string GetSignature() => $"G{Identifier}";
     }
 }

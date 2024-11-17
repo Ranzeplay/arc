@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    public class ArcGroupField : IArcTraceable<ArcSourceCodeParser.Arc_group_fieldContext>
+    public class ArcGroupField : IArcTraceable<ArcSourceCodeParser.Arc_group_fieldContext>, IArcLocatable
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; }
 
@@ -20,6 +20,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
             Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));
             Accessibility = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
             DataDeclarator = new(context.arc_data_declarator());
+        }
+
+        public string GetSignature()
+        {
+            return $"D{DataDeclarator.GetSignature()}";
         }
     }
 }

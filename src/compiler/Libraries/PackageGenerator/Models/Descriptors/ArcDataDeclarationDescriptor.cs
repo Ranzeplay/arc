@@ -1,11 +1,12 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
     public class ArcDataDeclarationDescriptor
     {
-        public long TypeId { get; set; }
+        public ArcTypeBase Type { get; set; }
 
         public bool IsArray { get; set; }
 

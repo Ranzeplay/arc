@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal abstract class ArcSymbolBase
+    public abstract class ArcSymbolBase
     {
         public long Id { get; internal set; } = new Random().NextInt64();
 

@@ -5,7 +5,6 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator.Generators
@@ -46,9 +45,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    TypeId = source.AccessibleSymbols
-                        .First(u => u is ArcBaseType bt && bt.FullName == (a.DataType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
-                        .Id,
+                    Type = source.AccessibleSymbols
+                        .OfType<ArcBaseType>()
+                        .First(bt => bt.FullName == a.DataType.TypeName),
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
@@ -57,9 +56,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                TypeId = source.AccessibleSymbols
-                        .First(u => u is ArcBaseType bt && bt.FullName == (declarator.ReturnType.PrimitiveType ?? ArcPrimitiveDataType.Infer).GetTypeName())
-                        .Id,
+                Type = source.AccessibleSymbols
+                        .OfType<ArcBaseType>()
+                        .First(bt => bt.FullName == declarator.ReturnType.TypeName),
                 AllowNone = false,
                 IsArray = declarator.ReturnType.IsArray,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
