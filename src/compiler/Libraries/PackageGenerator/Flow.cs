@@ -1,6 +1,8 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator
@@ -20,14 +22,17 @@ namespace Arc.Compiler.PackageGenerator
             return result;
         }
 
-        public static IEnumerable<ArcSymbolBase> GenerateUnitStructure(ArcCompilationUnit compilationUnit)
+        public static ArcCompilationUnitStructure GenerateUnitStructure(ArcCompilationUnit compilationUnit)
         {
             var result = new List<ArcSymbolBase>();
             var context = new ArcGeneratorContext();
             context.LoadPrimitiveTypes();
 
+            var ns = compilationUnit.Namespace;
+            result.Add(new ArcNamespaceDescriptor { Name = ns.GetSignature() });
+
             // Generate group signatures
-            foreach(var grp in compilationUnit.Namespace.Groups)
+            foreach (var grp in compilationUnit.Namespace.Groups)
             {
                 // TODO: Code here
             }
@@ -39,7 +44,7 @@ namespace Arc.Compiler.PackageGenerator
                 result.Add(functionDescriptor);
             }
 
-            return result;
+            return new ArcCompilationUnitStructure() { Symbols = result };
         }
     }
 }
