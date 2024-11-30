@@ -9,7 +9,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
     internal class Structures
     {
         [Test]
-        public void SingleCompilationUnit()
+        public void SingleCompilationUnitWithFunctions()
         {
             var text = @"namespace Arc::Program {
                             public func main(var args: val string[]): val int {
@@ -26,6 +26,31 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var structure = Flow.GenerateUnitStructure(unit);
 
             Assert.That(structure.Symbols.Count(), Is.EqualTo(4));
+        }
+
+        [Test]
+        public void SingleCompilationUnitWithGroup() {
+            var text = @"namespace Arc::Program {
+                            @Export
+                        	public group ArcExample {
+                        		@Getter
+                        		public field const foo: val string;
+                        		@Accessor
+                        		public field var bar: val string;
+                        
+                        		private func eval(): val bool {
+                        			return false;
+                        		}
+                        
+                        		public func empty(): val none {}
+                        	}
+                        }";
+
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
+            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+
+            var structure = Flow.GenerateUnitStructure(unit);
+            Assert.That(structure.Symbols.Count(), Is.EqualTo(1));
         }
     }
 }

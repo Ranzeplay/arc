@@ -34,7 +34,8 @@ namespace Arc.Compiler.PackageGenerator
             // Generate group signatures
             foreach (var grp in compilationUnit.Namespace.Groups)
             {
-                // TODO: Code here
+                var groupDescriptor = ArcGroupGenerator.GenerateGroupDescriptorSkelecton(context.GenerateSource([compilationUnit.Namespace]), grp);
+                result.Add(groupDescriptor);
             }
 
             // Generate function signatures
