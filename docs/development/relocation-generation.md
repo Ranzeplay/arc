@@ -1,0 +1,15 @@
+---
+title: Relocation generation
+---
+
+# Relocation generation
+
+1. Generate **Group** name symbols
+
+2. Generate top-level **Functions** symbols
+
+3. Fill **Group** element symbols
+
+4. Expand **Group** element symbols
+
+5. Generate **Body**

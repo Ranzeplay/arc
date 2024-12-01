@@ -19,6 +19,7 @@ export default defineConfig({
           text: 'Development',
           items: [
             { text: 'Index', link: '/development/' },
+            { text: 'Relocation generation', link: '/development/relocation-generation' },
           ]
         }
       ],
