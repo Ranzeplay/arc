@@ -21,7 +21,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             {
                 Name = context.arc_single_identifier().IDENTIFIER().GetText();
             }
-            
+
             Context = context;
         }
 

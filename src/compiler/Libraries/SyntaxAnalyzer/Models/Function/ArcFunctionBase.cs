@@ -8,7 +8,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
         public ArcFunctionDeclarator Declarator { get; set; }
 
         public ArcFunctionBody Body { get; set; }
-        
+
         public T Context { get; internal init; }
     }
 }

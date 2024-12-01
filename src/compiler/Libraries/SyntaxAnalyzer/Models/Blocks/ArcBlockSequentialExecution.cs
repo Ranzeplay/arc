@@ -54,7 +54,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
                     throw new NotImplementedException();
                 }
             }
-            
+
             Context = context;
         }
 

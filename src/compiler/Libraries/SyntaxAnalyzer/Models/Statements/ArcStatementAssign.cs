@@ -13,7 +13,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
         public ArcExpression Expression { get; set; } = new(context.arc_expression());
 
         public bool AssignIfNull { get; set; } = context.ASSIGN_IF_NULL() != null;
-        
+
         public ArcSourceCodeParser.Arc_stmt_assignContext Context { get; } = context;
     }
 }

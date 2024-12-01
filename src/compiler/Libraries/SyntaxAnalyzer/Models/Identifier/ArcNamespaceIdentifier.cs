@@ -8,7 +8,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
         public IEnumerable<string>? Namespace { get; set; }
 
         public ArcSourceCodeParser.Arc_namespace_identifierContext Context { get; }
-        
+
         public ArcNamespaceIdentifier(ArcSourceCodeParser.Arc_namespace_identifierContext context)
         {
             Namespace = context.IDENTIFIER().Select(i => i.GetText());

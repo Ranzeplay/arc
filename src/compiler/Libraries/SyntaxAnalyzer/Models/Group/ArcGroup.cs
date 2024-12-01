@@ -14,7 +14,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
         public IEnumerable<ArcGroupField> Fields { get; set; }
 
         public IEnumerable<ArcGroupFunction> Functions { get; set; }
-        
+
         public ArcSourceCodeParser.Arc_group_blockContext Context { get; }
 
         public ArcGroup(ArcSourceCodeParser.Arc_group_blockContext context)
