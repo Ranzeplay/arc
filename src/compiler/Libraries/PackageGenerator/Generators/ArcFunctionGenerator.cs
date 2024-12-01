@@ -1,24 +1,25 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Antlr4.Runtime;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
-using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
-using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
     internal static class ArcFunctionGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockIndependentFunction func, ArcNamespaceBlock ns)
+        public static ArcPartialGenerationResult Generate<T>(ArcGenerationSource source, ArcFunctionBase<T> func, bool withDeclarationDescriptor) where T : ParserRuleContext
         {
             var descriptor = GenerateDescriptor(source, func.Declarator);
 
-            var result = new ArcPartialGenerationResult
+            var result = new ArcPartialGenerationResult();
+
+            if (withDeclarationDescriptor)
             {
-                OtherSymbols = [descriptor]
-            };
+                result.OtherSymbols = result.OtherSymbols.Append(descriptor);
+            }
 
             var body = GenerateBody(source, func.Body);
             result.Append(body);
