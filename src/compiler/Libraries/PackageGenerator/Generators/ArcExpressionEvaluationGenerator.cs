@@ -104,6 +104,12 @@ namespace Arc.Compiler.PackageGenerator.Generators
                                 result.Append(ArcFunctionCallGenerator.Generate(source, term.DataValue.FunctionCall!));
                                 break;
                             }
+                        case ArcDataValue.ValueType.FlexibleIdentifier:
+                            {
+                                var slot = source.LocalDataSlots.First(x => x.Declarator.Identifier.Name == term.DataValue.FlexibleIdentifier!.Name);
+                                result.Append(new ArcLoadDataToStackInstruction(ArcDataSourceType.DataSlot, slot.Id, 0x00).Encode(source));
+                                break;
+                            }
                         default:
                             throw new NotImplementedException();
                     }
