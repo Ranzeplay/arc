@@ -16,12 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 {
                     TargetType = ArcRelocationTargetType.Label,
                     Location = 1,
-                    Label = new ArcRelocationLabel()
-                    {
-                        Name = "loop_end",
-                        Location = 1,
-                        Type = ArcRelocationLabelType.EndWhileBlock,
-                    }
+                    Label = ArcRelocationLabelType.EndLoopBlock
                 }
             };
 
@@ -40,12 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 {
                     TargetType = ArcRelocationTargetType.Label,
                     Location = -1,
-                    Label = new ArcRelocationLabel()
-                    {
-                        Name = "loop_begin",
-                        Location = -1,
-                        Type = ArcRelocationLabelType.BeginWhileBlock,
-                    }
+                    Label = ArcRelocationLabelType.BeginLoopBlock
                 },
             };
 

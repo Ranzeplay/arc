@@ -10,7 +10,7 @@
         EndIfSubBlock,
         BeginBlock,
         EndBlock,
-        BeginWhileBlock,
-        EndWhileBlock,
+        BeginLoopBlock,
+        EndLoopBlock,
     }
 }

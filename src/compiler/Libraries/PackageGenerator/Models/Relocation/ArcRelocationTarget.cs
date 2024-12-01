@@ -10,6 +10,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
 
         private object _destination = null!;
 
+        public long Parameter { get; set; } = 0;
+
         public long TargetLocation
         {
             get
@@ -62,13 +64,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
             }
         }
 
-        public ArcRelocationLabel Label
+        public ArcRelocationLabelType Label
         {
             get
             {
                 if (TargetType == ArcRelocationTargetType.Label)
                 {
-                    return (ArcRelocationLabel)_destination;
+                    return (ArcRelocationLabelType)_destination;
                 }
                 else
                 {
