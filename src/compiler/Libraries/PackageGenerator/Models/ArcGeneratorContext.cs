@@ -9,7 +9,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models
 {
-    internal class ArcGeneratorContext
+    public class ArcGeneratorContext
     {
         public IEnumerable<byte> GeneratedData { get; set; } = [];
 

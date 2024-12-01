@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
-    internal class ArcFunctionDescriptor : ArcSymbolBase
+    public class ArcFunctionDescriptor : ArcSymbolBase
     {
         public string RawFullName { get => Name; set => Name = value; }
 

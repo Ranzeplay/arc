@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal class ArcRelocationTarget
+    public class ArcRelocationTarget
     {
         public ArcRelocationTargetType TargetType { get; set; }
 

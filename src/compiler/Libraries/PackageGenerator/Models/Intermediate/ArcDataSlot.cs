@@ -3,7 +3,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
-    internal class ArcDataSlot : ArcSymbolBase
+    public class ArcDataSlot : ArcSymbolBase
     {
         public ArcDataDeclarator Declarator { get; set; }
 

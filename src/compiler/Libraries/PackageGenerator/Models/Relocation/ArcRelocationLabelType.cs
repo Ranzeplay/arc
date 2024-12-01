@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal enum ArcRelocationLabelType
+    public enum ArcRelocationLabelType
     {
         BeginFunction,
         EndFunction,

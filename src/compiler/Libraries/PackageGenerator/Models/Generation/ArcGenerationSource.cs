@@ -4,7 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcGenerationSource
+    public class ArcGenerationSource
     {
         public WeakReference<ArcGenerationContext> ContextReference { get; }
 

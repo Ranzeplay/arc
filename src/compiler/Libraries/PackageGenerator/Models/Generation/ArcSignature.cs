@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcSignature : IArcLocatable
+    public class ArcSignature : IArcLocatable
     {
         public IEnumerable<IArcLocatable> Locators { get; set; } = [];
 

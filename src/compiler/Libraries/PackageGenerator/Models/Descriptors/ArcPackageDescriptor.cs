@@ -1,6 +1,8 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors
+﻿using System.Text;
+
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
-    internal class ArcPackageDescriptor
+    public class ArcPackageDescriptor
     {
         public string Name { get; set; }
 

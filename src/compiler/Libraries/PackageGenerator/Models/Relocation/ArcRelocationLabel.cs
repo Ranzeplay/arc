@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal class ArcRelocationLabel : ArcSymbolBase
+    public class ArcRelocationLabel : ArcSymbolBase
     {
         public ArcRelocationLabelType Type { get; set; }
 

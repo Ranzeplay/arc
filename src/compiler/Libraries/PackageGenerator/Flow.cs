@@ -9,7 +9,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator
 {
-    internal class Flow
+    public class Flow
     {
         public static ArcGeneratorContext GenerateUnit(ArcCompilationUnit compilationUnit)
         {

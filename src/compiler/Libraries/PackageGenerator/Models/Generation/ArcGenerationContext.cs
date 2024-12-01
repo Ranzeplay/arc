@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcGenerationContext(ArcPackageDescriptor packageDescriptor, IEnumerable<ArcCompilationUnit> compilationUnits)
+    public class ArcGenerationContext(ArcPackageDescriptor packageDescriptor, IEnumerable<ArcCompilationUnit> compilationUnits)
     {
         public ArcPackageDescriptor PackageDescriptor { get; set; } = packageDescriptor;
 

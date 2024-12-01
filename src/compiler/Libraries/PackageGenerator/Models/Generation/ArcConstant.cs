@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcConstant
+    public class ArcConstant
     {
         public long Id { get; set; }
 

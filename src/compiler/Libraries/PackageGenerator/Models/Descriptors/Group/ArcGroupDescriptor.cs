@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 {
-    internal class ArcGroupDescriptor : ArcSymbolBase
+    public class ArcGroupDescriptor : ArcSymbolBase
     {
         public IEnumerable<ArcFunctionDescriptor> Functions { get; set; } = [];
 

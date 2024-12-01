@@ -4,7 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcPartialGenerationResult
+    public class ArcPartialGenerationResult
     {
         public IEnumerable<byte> GeneratedData { get; set; } = [];
 

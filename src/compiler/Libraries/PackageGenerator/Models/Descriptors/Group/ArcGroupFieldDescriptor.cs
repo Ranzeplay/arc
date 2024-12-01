@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 {
-    internal class ArcGroupFieldDescriptor : ArcSymbolBase, IArcLocatable
+    public class ArcGroupFieldDescriptor : ArcSymbolBase, IArcLocatable
     {
         public string RawFullName => Name;
 
