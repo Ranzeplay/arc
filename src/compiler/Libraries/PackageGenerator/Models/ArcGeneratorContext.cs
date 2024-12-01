@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models;
@@ -36,6 +37,14 @@ namespace Arc.Compiler.PackageGenerator.Models
             RelocationTargets = RelocationTargets.Concat(result.RelocationTargets);
             Labels = Labels.Concat(result.RelocationLabels);
             Constants = Constants.Concat(result.AddedConstants);
+        }
+
+        public void Append(ArcCompilationUnitStructure structure)
+        {
+            foreach (var symbol in structure.Symbols)
+            {
+                Symbols[symbol.Id] = symbol;
+            }
         }
 
         public void LoadFromCompilationUnit(ArcCompilationUnit compilationUnit) { }

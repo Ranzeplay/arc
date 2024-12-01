@@ -2,8 +2,10 @@
 using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -14,9 +16,26 @@ namespace Arc.Compiler.PackageGenerator
             var ns = compilationUnit.Namespace;
             var result = new ArcGeneratorContext();
             result.LoadPrimitiveTypes();
+
+            var structure = GenerateUnitStructure(compilationUnit);
+            structure.Symbols = structure.Symbols.Concat(
+                structure.Symbols
+                    .OfType<ArcGroupDescriptor>()
+                    .SelectMany(x => x.ExpandSymbols())
+            );
+            result.Append(structure);
+
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
-                result.Append(ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace]), fn, ns));
+                result.Append(ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace]), fn, false));
+            }
+
+            foreach (var grp in compilationUnit.Namespace.Groups)
+            {
+                foreach (var fn in grp.Functions)
+                {
+                    result.Append(ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace, grp]), (ArcBlockIndependentFunction)fn, false));
+                }
             }
 
             return result;

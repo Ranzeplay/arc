@@ -1,6 +1,7 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models;
+﻿using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.SyntaxAnalyzer;
-using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -29,7 +30,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
         }
 
         [Test]
-        public void SingleCompilationUnitWithGroup() {
+        public void SingleCompilationUnitWithGroup()
+        {
             var text = @"namespace Arc::Program {
                             @Export
                         	public group ArcExample {
@@ -50,7 +52,10 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, "test");
 
             var structure = Flow.GenerateUnitStructure(unit);
-            Assert.That(structure.Symbols.Count(), Is.EqualTo(1));
+            Assert.That(structure.Symbols.Count(), Is.EqualTo(2));
+
+            structure.Symbols = structure.Symbols.Concat(structure.Symbols.OfType<ArcGroupDescriptor>().SelectMany(x => x.ExpandSymbols()));
+            Assert.That(structure.Symbols.Count(), Is.EqualTo(6));
         }
     }
 }

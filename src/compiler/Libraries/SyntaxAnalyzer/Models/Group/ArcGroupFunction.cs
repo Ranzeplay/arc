@@ -1,5 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
-using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
@@ -12,6 +12,15 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
             Body = new(context.arc_function_block().arc_wrapped_function_body());
 
             Context = context;
+        }
+
+        public static explicit operator ArcBlockIndependentFunction(ArcGroupFunction groupFn)
+        {
+            return new ArcBlockIndependentFunction(groupFn.Context.arc_function_block())
+            {
+                Declarator = groupFn.Declarator,
+                Body = groupFn.Body,
+            };
         }
     }
 }
