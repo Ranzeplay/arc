@@ -34,7 +34,8 @@ namespace Arc.Compiler.PackageGenerator
             {
                 foreach (var fn in grp.Functions)
                 {
-                    result.Append(ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace, grp]), (ArcBlockIndependentFunction)fn, false));
+                    var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace, grp]), (ArcBlockIndependentFunction)fn, false);
+                    result.Append(fnResult);
                 }
             }
 
@@ -65,6 +66,19 @@ namespace Arc.Compiler.PackageGenerator
             }
 
             return new ArcCompilationUnitStructure() { Symbols = result };
+        }
+
+        public static IEnumerable<byte> DumpFullByteStream(ArcGeneratorContext context)
+        {
+            var result = new List<byte>();
+
+            result.AddRange(ArcDescriptorSerializer.SerializePackageDescriptor(context));
+            result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
+            result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));
+            context.ApplyReloation();
+            result.AddRange(context.GeneratedData);
+
+            return result;
         }
     }
 }

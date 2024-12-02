@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
+using System.Text;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -32,6 +33,14 @@ namespace Arc.Compiler.PackageGenerator
 
                 return id;
             }
+        }
+
+        public static IEnumerable<byte> SerializeString(string s)
+        {
+            var result = new List<byte>();
+            result.AddRange(BitConverter.GetBytes(s.Length));
+            result.AddRange(Encoding.UTF8.GetBytes(s));
+            return result;
         }
     }
 }

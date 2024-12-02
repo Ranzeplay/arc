@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
-        public WeakReference<ArcGenerationContext> ContextReference { get; }
+        public WeakReference<ArcGenerationContext> ContextReference { get; init; }
 
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
@@ -30,6 +30,19 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             LocalDataSlots = LocalDataSlots.Concat(generationResult.DataSlots);
             AccessibleSymbols = AccessibleSymbols.Concat(generationResult.OtherSymbols);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
+        }
+
+        public ArcGenerationSource Clone()
+        {
+            return new ArcGenerationSource
+            {
+                ContextReference = ContextReference,
+                LocalDataSlots = LocalDataSlots,
+                AccessibleSymbols = AccessibleSymbols,
+                PackageDescriptor = PackageDescriptor,
+                ParentSignature = ParentSignature,
+                AccessibleConstants = AccessibleConstants
+            };
         }
     }
 }
