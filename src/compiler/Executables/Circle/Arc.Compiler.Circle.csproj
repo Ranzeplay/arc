@@ -12,4 +12,9 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Libraries\PackageGenerator\Arc.Compiler.PackageGenerator.csproj" />
+    <ProjectReference Include="..\..\Libraries\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
+  </ItemGroup>
+
 </Project>
