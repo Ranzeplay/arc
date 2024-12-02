@@ -14,6 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
             foreach (var fn in group.Functions)
             {
                 result.Functions = result.Functions.Append(ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator));
+                // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
+                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count() - 1);
             }
 
             foreach (var field in group.Fields)
