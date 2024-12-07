@@ -72,11 +72,16 @@ namespace Arc.Compiler.PackageGenerator
         {
             var result = new List<byte>();
 
+            result.AddRange([0x20, 0x24]);
+
             result.AddRange(ArcDescriptorSerializer.SerializePackageDescriptor(context));
             result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
             result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));
             context.ApplyReloation();
             result.AddRange(context.GeneratedData);
+
+            Console.WriteLine(BitConverter.ToString(context.GeneratedData.ToArray()).Replace("-", " "));
+            Console.WriteLine($"Commands generated, {context.GeneratedData.Count()} bytes in total");
 
             return result;
         }

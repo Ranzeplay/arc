@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using System.Text;
+using System.Text.Json;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -57,8 +58,13 @@ namespace Arc.Compiler.PackageGenerator
                     iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
                 }
 
+                // Print iterResult in hex
+                Console.WriteLine(BitConverter.ToString(iterResult.ToArray()).Replace("-", " "));
+
                 result.AddRange(iterResult);
             }
+
+            Console.WriteLine($"Symbol table serialized, {context.Symbols.Count} in total");
 
             return result;
         }
@@ -77,7 +83,11 @@ namespace Arc.Compiler.PackageGenerator
                 iterResult.AddRange(constant.RawData);
 
                 result.AddRange(iterResult);
+
+                Console.WriteLine(BitConverter.ToString(iterResult.ToArray()).Replace("-", " "));
             }
+
+            Console.WriteLine($"Constant table serialized, {context.Constants.Count()} in total");
 
             return result;
         }
