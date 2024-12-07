@@ -11,43 +11,48 @@ namespace Arc.Compiler.PackageGenerator
     {
         public static IEnumerable<byte> SerializeSymbolTable(ArcGeneratorContext context)
         {
-            var result = new List<byte>();
+            context.Symbols.Remove(0);
+            context.Symbols.Remove(1);
+            context.Symbols.Remove(2);
+            context.Symbols.Remove(3);
+            context.Symbols.Remove(4);
+            context.Symbols.Remove(5);
+            context.Symbols.Remove(6);
 
-            foreach (var symbol in context.Symbols)
+            var result = new List<byte>();
+            result.AddRange(BitConverter.GetBytes(context.Symbols.LongCount()));
+
+            foreach (var symbol in context.Symbols.Values)
             {
                 var iterResult = new List<byte>();
-                iterResult.AddRange(BitConverter.GetBytes(symbol.Key));
+                iterResult.AddRange(BitConverter.GetBytes(symbol.Id));
 
-                if (symbol.Value is ArcFunctionDescriptor functionDescriptor)
+                if (symbol is ArcFunctionDescriptor functionDescriptor)
                 {
-                    iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.Id));
                     iterResult.AddRange((byte)ArcSymbolType.Function);
+                    iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
                     iterResult.AddRange(Utils.SerializeString(functionDescriptor.RawFullName));
 
-                    var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
-                    iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
+                    // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
+                    // iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
                 }
-                else if (symbol.Value is ArcGroupDescriptor groupDescriptor)
+                else if (symbol is ArcGroupDescriptor groupDescriptor)
                 {
-                    iterResult.AddRange(BitConverter.GetBytes(groupDescriptor.Id));
                     iterResult.AddRange((byte)ArcSymbolType.Group);
                     iterResult.AddRange(Utils.SerializeString(groupDescriptor.Name));
                 }
-                else if (symbol.Value is ArcGroupFieldDescriptor fieldDescriptor)
+                else if (symbol is ArcGroupFieldDescriptor fieldDescriptor)
                 {
-                    iterResult.AddRange(BitConverter.GetBytes(fieldDescriptor.Id));
                     iterResult.AddRange((byte)ArcSymbolType.GroupField);
                     iterResult.AddRange(Utils.SerializeString(fieldDescriptor.Name));
                 }
-                else if (symbol.Value is ArcDataTypeDescriptor dataTypeDescriptor)
+                else if (symbol is ArcDataTypeDescriptor dataTypeDescriptor)
                 {
-                    iterResult.AddRange(BitConverter.GetBytes(dataTypeDescriptor.Id));
                     iterResult.AddRange((byte)ArcSymbolType.DataType);
                     iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
                 }
-                else if (symbol.Value is ArcNamespaceDescriptor namespaceDescriptor)
+                else if (symbol is ArcNamespaceDescriptor namespaceDescriptor)
                 {
-                    iterResult.AddRange(BitConverter.GetBytes(namespaceDescriptor.Id));
                     iterResult.AddRange((byte)ArcSymbolType.Namespace);
                     iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
                 }
@@ -61,13 +66,14 @@ namespace Arc.Compiler.PackageGenerator
         public static IEnumerable<byte> SerializeConstantTable(ArcGeneratorContext context)
         {
             var result = new List<byte>();
+            result.AddRange(BitConverter.GetBytes(context.Constants.LongCount()));
 
             foreach (var constant in context.Constants)
             {
                 var iterResult = new List<byte>();
                 iterResult.AddRange(BitConverter.GetBytes(constant.Id));
                 iterResult.AddRange(BitConverter.GetBytes(constant.TypeId));
-                iterResult.AddRange(BitConverter.GetBytes(constant.RawData.Count()));
+                iterResult.AddRange(BitConverter.GetBytes(constant.RawData.LongCount()));
                 iterResult.AddRange(constant.RawData);
 
                 result.AddRange(iterResult);
@@ -83,7 +89,7 @@ namespace Arc.Compiler.PackageGenerator
             result.AddRange((byte)context.PackageDescriptor.Type);
 
             var nameBytes = Encoding.UTF8.GetBytes(context.PackageDescriptor.Name);
-            result.AddRange(BitConverter.GetBytes(nameBytes.Length));
+            result.AddRange(BitConverter.GetBytes(nameBytes.LongLength));
             result.AddRange(nameBytes);
 
             result.AddRange(BitConverter.GetBytes(context.PackageDescriptor.Version));

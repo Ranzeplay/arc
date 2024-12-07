@@ -38,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator
         public static IEnumerable<byte> SerializeString(string s)
         {
             var result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes(s.Length));
+            result.AddRange(BitConverter.GetBytes(s.LongCount()));
             result.AddRange(Encoding.UTF8.GetBytes(s));
             return result;
         }
