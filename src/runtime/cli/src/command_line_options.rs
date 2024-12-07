@@ -8,7 +8,7 @@ pub struct Args {
     pub verbose: bool,
     #[clap(long, help = "Prints version information")]
     pub version: bool,
-    #[clap(short, long, help = "Only decode package content but not execute")]
+    #[clap(short, long, help = "Only decode package content but not execute", requires("path"))]
     pub decode: bool,
     #[clap(short, long, help = "Path to the package file")]
     pub path: Option<PathBuf>,
