@@ -14,11 +14,11 @@ context.PackageDescriptor = new ArcPackageDescriptor()
 {
     Type = ArcPackageType.Executable,
     Name = "Test",
-    Version = 0,
+    Version = 255,
     RootGroupTableEntryPos = 0,
     RootFunctionTableEntryPos = 0,
     RootConstantTableEntryPos = 0,
-    RegionTableEntryPos = 0,
+    RegionTableEntryPos = 0xffffffff,
     EntrypointFunctionId = 0,
     DataAlignmentLength = 8
 };
