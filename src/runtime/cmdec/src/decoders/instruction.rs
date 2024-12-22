@@ -109,7 +109,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                     raw: stream[pos..pos + len].to_vec(),
                 };
 
-                pos += 1;
+                pos += len;
             }
             0x37 => {
                 let (ldstk, len) = LoadStackInstruction::decode(stream, pos, package).unwrap();
@@ -132,7 +132,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
         result.push(instruction);
     }
 
-    println!("Remaining instructions: {:02X?}", &stream[pos..]);
+    if pos == stream.len() { println!("All instructions decoded successfully!"); }
+    else { println!("Remaining instructions: {:02X?}", &stream[pos..stream.len()]); }
 
     result
 }
