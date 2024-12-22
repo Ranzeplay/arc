@@ -1,6 +1,7 @@
 use shared::models::instruction::{Instruction, InstructionType};
 use shared::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use shared::models::instructions::decl::DeclInstruction;
+use shared::models::instructions::func_call::FunctionCallInstruction;
 use shared::models::instructions::jump::JumpInstruction;
 use shared::models::instructions::load_stack::LoadStackInstruction;
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
@@ -423,6 +424,17 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::FRet(return_function),
+                    raw: stream[pos..pos + len].to_vec(),
+                };
+
+                pos += len;
+            }
+            0x36 => {
+                let (function_call, len) = FunctionCallInstruction::decode(stream, pos, package).unwrap();
+
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::FCall(function_call),
                     raw: stream[pos..pos + len].to_vec(),
                 };
 

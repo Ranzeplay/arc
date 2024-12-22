@@ -2,6 +2,7 @@ use std::fmt::{Debug, Formatter};
 use strum_macros::AsRefStr;
 use crate::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use crate::models::instructions::decl::DeclInstruction;
+use crate::models::instructions::func_call::FunctionCallInstruction;
 use crate::models::instructions::jump::JumpInstruction;
 use crate::models::instructions::load_stack::LoadStackInstruction;
 use crate::models::instructions::pop_to_slot::PopToSlotInstruction;
@@ -61,7 +62,7 @@ pub enum InstructionType {
     ShR,
     BitXor,
     FRet(ReturnInstruction),
-    FCall,
+    FCall(FunctionCallInstruction),
     LdStk(LoadStackInstruction),
     SvStk
 }
