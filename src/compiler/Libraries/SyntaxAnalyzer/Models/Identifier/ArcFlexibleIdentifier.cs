@@ -31,11 +31,22 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             Context = context;
         }
 
+        private ArcFlexibleIdentifier(IEnumerable<string> ns, string name)
+        {
+            Namespace = ns;
+            Name = name;
+        }
+
         public ParserRuleContext Context { get; }
 
         public override string? ToString()
         {
-            return Namespace != null ? $"{string.Join("::", Namespace)}+{Name}" : Name;
+            return Namespace != null ? $"{string.Join(":", Namespace)}+{Name}" : Name;
+        }
+
+        public ArcFlexibleIdentifier CloneWithoutContext()
+        {
+            return new ArcFlexibleIdentifier(Namespace, Name);
         }
     }
 }

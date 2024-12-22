@@ -42,9 +42,15 @@ namespace Arc.Compiler.Tests.PackageGeneration
 					else { c = a - b; }
 			
 					# call [Console].PrintLn(""Hello, world!"");
+                    
+                    call [Arc::Program].test();
 			
-					return 0;
+					return [Arc::Program].test();
 				}
+                
+                public func test(): val int {
+        	        return 0;
+    	        }
 			}
             ";
 
@@ -54,7 +60,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text);
             var unit = new ArcCompilationUnit(compilationUnit, "test");
             var context = Flow.GenerateUnit(unit);
-            Assert.That(context.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 7));
+            Assert.That(context.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 8));
         }
         [Test]
         public void DumpTest()

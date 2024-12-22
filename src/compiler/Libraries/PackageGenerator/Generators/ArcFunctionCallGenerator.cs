@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             var funcDeclarator = source.AccessibleSymbols
                 .OfType<ArcFunctionDescriptor>()
-                .FirstOrDefault(f => f.RawFullName == funcCall.Identifier.ToString());
+                .FirstOrDefault(f => f.IsFunctionMatch(funcCall));
 
             if (funcDeclarator == null)
             {
