@@ -4,7 +4,6 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using System.Text;
-using System.Text.Json;
 
 namespace Arc.Compiler.PackageGenerator
 {

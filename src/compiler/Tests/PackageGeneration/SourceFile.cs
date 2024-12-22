@@ -3,7 +3,6 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -59,23 +58,23 @@ namespace Arc.Compiler.Tests.PackageGeneration
         }
         [Test]
         public void DumpTest()
-		{
+        {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, "test");
             var context = Flow.GenerateUnit(syntaxUnit);
 
-			context.PackageDescriptor = new ArcPackageDescriptor()
-			{
-				Type = ArcPackageType.Executable,
-				Name = "Test",
-				Version = 0,
-				RootGroupTableEntryPos = 0,
-				RootFunctionTableEntryPos = 0,
-				RootConstantTableEntryPos = 0,
-				RegionTableEntryPos = 0,
-				EntrypointFunctionId = 0,
-				DataAlignmentLength = 8
-			};
+            context.PackageDescriptor = new ArcPackageDescriptor()
+            {
+                Type = ArcPackageType.Executable,
+                Name = "Test",
+                Version = 0,
+                RootGroupTableEntryPos = 0,
+                RootFunctionTableEntryPos = 0,
+                RootConstantTableEntryPos = 0,
+                RegionTableEntryPos = 0,
+                EntrypointFunctionId = 0,
+                DataAlignmentLength = 8
+            };
 
 
             var outputStream = Flow.DumpFullByteStream(context);
