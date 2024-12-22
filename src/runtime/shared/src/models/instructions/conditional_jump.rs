@@ -6,7 +6,7 @@ pub struct ConditionalJumpInstruction {
 }
 
 impl DecodableInstruction<ConditionalJumpInstruction> for ConditionalJumpInstruction {
-    fn decode(stream: &[u8], offset: usize, _package: &Package) -> Option<(ConditionalJumpInstruction, usize)> {
+    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(ConditionalJumpInstruction, usize)> {
         let jump_offset = i64::from_le_bytes(stream[1..9].try_into().unwrap());
         let length = 9;
 

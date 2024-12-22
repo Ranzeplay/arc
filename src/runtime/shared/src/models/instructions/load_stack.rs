@@ -25,7 +25,7 @@ impl From<u8> for DataSourceType {
 }
 
 impl DecodableInstruction<LoadStackInstruction> for LoadStackInstruction {
-    fn decode(stream: &[u8], offset: usize, _package: &Package) -> Option<(LoadStackInstruction, usize)> {
+    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(LoadStackInstruction, usize)> {
         let source = DataSourceType::from(stream[1]);
         let location_id = usize::from_le_bytes(stream[2..10].try_into().unwrap());
         let field = usize::from_le_bytes(stream[10..18].try_into().unwrap());

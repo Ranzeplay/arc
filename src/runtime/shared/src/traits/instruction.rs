@@ -1,4 +1,3 @@
-use std::fmt::Debug;
 use crate::models::package::Package;
 
 pub trait DecodableInstruction<T> {

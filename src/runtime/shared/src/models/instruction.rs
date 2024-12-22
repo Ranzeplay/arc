@@ -1,4 +1,4 @@
-use std::fmt::{Debug, Display, Formatter};
+use std::fmt::{Debug, Formatter};
 use strum_macros::AsRefStr;
 use crate::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use crate::models::instructions::decl::DeclInstruction;
@@ -74,6 +74,6 @@ pub struct Instruction {
 
 impl Debug for Instruction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "0x{:04X} {:?}\t {:02X?}", self.offset, self.instruction_type.as_ref(), self.raw)
+        write!(f, "0x{:08X}\t{}\t{:02X?}", self.offset, self.instruction_type.as_ref(), self.raw)
     }
 }
