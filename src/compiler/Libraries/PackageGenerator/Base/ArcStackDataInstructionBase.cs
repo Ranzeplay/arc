@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Base
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode.Concat([(byte)DataSourceType, (byte)LocationId, (byte)FieldId]).ToArray(),
+                GeneratedData = [.. Opcode, (byte)DataSourceType, .. BitConverter.GetBytes(LocationId), .. BitConverter.GetBytes(FieldId)],
             };
         }
     }
