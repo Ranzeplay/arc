@@ -10,11 +10,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
-            result.Append(new ArcReturnFromFunctionInstruction(stmt.Expression is not null).Encode(source));
             if (stmt.Expression is not null)
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmt.Expression));
             }
+            result.Append(new ArcReturnFromFunctionInstruction(stmt.Expression is not null).Encode(source));
 
             return result;
         }
