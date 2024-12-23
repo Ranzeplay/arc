@@ -13,11 +13,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             var funcDeclarator = source.AccessibleSymbols
                 .OfType<ArcFunctionDescriptor>()
-                .FirstOrDefault(f => f.IsFunctionMatch(funcCall));
+                .FirstOrDefault(f => f.RawFullName.StartsWith(funcCall.Identifier.AsFunctionIdentifier()));
 
             if (funcDeclarator == null)
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("Invalid function declarator");
             }
 
             foreach (var arg in funcCall.Arguments.Reverse())
