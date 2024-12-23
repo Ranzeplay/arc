@@ -1,9 +1,13 @@
-﻿namespace Arc.Compiler.PackageGenerator.Base
+﻿using Arc.Compiler.PackageGenerator.Models;
+
+namespace Arc.Compiler.PackageGenerator.Base
 {
     public abstract class ArcSymbolBase
     {
         public long Id { get; internal set; } = new Random().NextInt64();
 
         public required string Name { get; set; }
+
+        public ArcSymbolScope Scope { get; set; } = new() { Type = ArcSymbolScopeType.CurrentPackage };
     }
 }
