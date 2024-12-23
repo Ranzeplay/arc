@@ -12,9 +12,9 @@ title: On-stack data save-load operations
 
 - `<prefix>`: Instruction prefix or identifier
 - `<source>`: Specify the source of data
-	- `0x01`: From constant table
-	- `0x02`: From accessible data slot
-	- `0x03`: Data handle on the top of the stack
+  - `0x01`: From constant table
+  - `0x02`: From accessible data slot
+  - `0x03`: Data handle on the top of the stack
 - `<args>`: Additional data may need to be provided
 
 ### Arguments of loading data instruction
