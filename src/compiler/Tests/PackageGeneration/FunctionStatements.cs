@@ -54,8 +54,11 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
-            Assert.That(result.Constants.Count(), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+                Assert.That(result.Constants.Count(), Is.EqualTo(3));
+            });
         }
 
         [Test]
