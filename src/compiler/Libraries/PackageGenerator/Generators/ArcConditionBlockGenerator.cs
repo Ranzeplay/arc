@@ -58,6 +58,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     Type = ArcRelocationLabelType.BeginIfSubBlock,
                     Name = "next"
                 };
+                cbResult.RelocationLabels = cbResult.RelocationLabels.Concat([nextBlockLabel]);
 
                 var jumpOutInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = ArcRelocationLabelType.EndIfBlock }).Encode(source);
                 var jumpNextInstruction = new ArcConditionalJumpInstruction(new() { TargetType = ArcRelocationTargetType.Label, Label = ArcRelocationLabelType.BeginIfSubBlock, Parameter = 1 }).Encode(source);
