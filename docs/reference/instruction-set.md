@@ -56,6 +56,7 @@ title: Instruction set
 | 0x30   | ctype    | Cast the object on top of the stack to another type                        |
 | 0x31   | shl      | Shift left                                                                 |
 | 0x32   | shr      | Shift right                                                                |
+| 0x33   | lbl      | Create a label for locating                                                |
 | 0x34   | bitxor   | Bitwise XOR                                                                |
 | 0x35   | fret     | Return from function                                                       |
 | 0x36   | fcall    | Call a function                                                            |
