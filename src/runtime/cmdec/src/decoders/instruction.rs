@@ -410,6 +410,15 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
 
                 pos += 1;
             }
+            0x33 => {
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::Lbl,
+                    raw: stream[pos..pos + 1].to_vec(),
+                };
+
+                pos += 1;
+            }
             0x34 => {
                 instruction = Instruction {
                     offset: pos,

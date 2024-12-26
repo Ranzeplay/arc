@@ -60,6 +60,7 @@ pub enum InstructionType {
     CType,
     ShL,
     ShR,
+    Lbl,
     BitXor,
     FRet(ReturnInstruction),
     FCall(FunctionCallInstruction),
