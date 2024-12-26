@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
     internal class ArcLabellingInstruction : ArcPrimitiveInstructionBase
     {
-        public override byte[] Opcode => [0x34];
+        public override byte[] Opcode => [0x33];
 
         public ArcRelocationLabel Label { get; }
 
