@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 Target = new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
-                    Location = 1,
+                    Parameter = 1,
                     Label = ArcRelocationLabelType.EndLoopBlock
                 }
             };
@@ -34,7 +34,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 Target = new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
-                    Location = -1,
+                    Parameter = -1,
                     Label = ArcRelocationLabelType.BeginLoopBlock
                 },
             };

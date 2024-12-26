@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
@@ -21,13 +22,13 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 result.OtherSymbols = result.OtherSymbols.Append(descriptor);
             }
 
+            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, descriptor.RawFullName).Encode(source);
             var body = GenerateBody(source, func.Body);
-            result.Append(body);
+            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndFunction, descriptor.RawFullName).Encode(source);
 
-            result.RelocationLabels = [
-                new() { Name = descriptor.RawFullName, Type = ArcRelocationLabelType.BeginFunction, Location = 0 },
-                new() { Name = descriptor.RawFullName, Type = ArcRelocationLabelType.EndFunction, Location = result.GeneratedData.Count() }
-            ];
+            result.Append(beginBlockLabel);
+            result.Append(body);
+            result.Append(endBlockLabel);
 
             return result;
         }

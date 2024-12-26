@@ -11,29 +11,36 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
+            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin").Encode(source);
+
             var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
-            var bodyLength = body.GeneratedData.LongCount();
 
             var jumpOutRelocator = new ArcRelocationTarget()
             {
-                TargetType = ArcRelocationTargetType.Relative,
-                Offset = body.GeneratedData.LongCount()
+                TargetType = ArcRelocationTargetType.Label,
+                Label = ArcRelocationLabelType.EndLoopBlock,
+                Parameter = 1
             };
             var jumpOutInstruction = new ArcConditionalJumpInstruction(jumpOutRelocator).Encode(source);
 
             var jumpBackRelocator = new ArcRelocationTarget()
             {
-                TargetType = ArcRelocationTargetType.Relative,
-                Offset = -(expr.GeneratedData.LongCount() + bodyLength + jumpOutInstruction.GeneratedData.LongCount())
+                TargetType = ArcRelocationTargetType.Label,
+                Label = ArcRelocationLabelType.BeginLoopBlock,
+                Parameter = -1
             };
             var jumpBackInstruction = new ArcConditionalJumpInstruction(jumpBackRelocator).Encode(source);
 
+            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndLoopBlock, "end").Encode(source);
+
+            result.Append(beginBlockLabel);
             result.Append(expr);
             result.Append(jumpOutInstruction);
             result.Append(body);
             result.Append(jumpBackInstruction);
+            result.Append(endBlockLabel);
 
             return result;
         }
