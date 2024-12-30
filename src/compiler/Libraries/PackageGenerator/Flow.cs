@@ -77,7 +77,8 @@ namespace Arc.Compiler.PackageGenerator
             result.AddRange(ArcDescriptorSerializer.SerializePackageDescriptor(context));
             result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
             result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));
-            context.ApplyReloation();
+            context.TransformLabelRelocationTargets();
+            context.ApplyRelocation();
             result.AddRange(context.GeneratedData);
 
             Console.WriteLine(BitConverter.ToString(context.GeneratedData.ToArray()).Replace("-", " "));

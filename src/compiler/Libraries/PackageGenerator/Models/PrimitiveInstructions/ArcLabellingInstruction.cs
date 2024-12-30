@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             {
                 Name = name,
                 Type = labelType,
-                Location = 0
+                Location = 0,
             };
         }
 

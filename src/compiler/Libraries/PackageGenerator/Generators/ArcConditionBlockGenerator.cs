@@ -53,7 +53,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var jumpOutInstruction = new ArcConditionalJumpInstruction(new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
-                    Label = ArcRelocationLabelType.EndIfBlock
+                    Label = ArcRelocationLabelType.EndIfBlock,
+                    Parameter = 1
                 }).Encode(source);
                 var endSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end").Encode(source);
 

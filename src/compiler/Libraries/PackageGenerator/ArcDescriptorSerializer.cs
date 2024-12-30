@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Arc.Compiler.PackageGenerator
 {
-    internal class ArcDescriptorSerializer
+    internal static class ArcDescriptorSerializer
     {
         public static IEnumerable<byte> SerializeSymbolTable(ArcGeneratorContext context)
         {
@@ -29,7 +29,7 @@ namespace Arc.Compiler.PackageGenerator
 
                 if (symbol is ArcFunctionDescriptor functionDescriptor)
                 {
-                    iterResult.AddRange((byte)ArcSymbolType.Function);
+                    iterResult.Add((byte)ArcSymbolType.Function);
                     iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
                     iterResult.AddRange(Utils.SerializeString(functionDescriptor.RawFullName));
 
@@ -38,22 +38,22 @@ namespace Arc.Compiler.PackageGenerator
                 }
                 else if (symbol is ArcGroupDescriptor groupDescriptor)
                 {
-                    iterResult.AddRange((byte)ArcSymbolType.Group);
+                    iterResult.Add((byte)ArcSymbolType.Group);
                     iterResult.AddRange(Utils.SerializeString(groupDescriptor.Name));
                 }
                 else if (symbol is ArcGroupFieldDescriptor fieldDescriptor)
                 {
-                    iterResult.AddRange((byte)ArcSymbolType.GroupField);
+                    iterResult.Add((byte)ArcSymbolType.GroupField);
                     iterResult.AddRange(Utils.SerializeString(fieldDescriptor.Name));
                 }
                 else if (symbol is ArcDataTypeDescriptor dataTypeDescriptor)
                 {
-                    iterResult.AddRange((byte)ArcSymbolType.DataType);
+                    iterResult.Add((byte)ArcSymbolType.DataType);
                     iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
                 }
                 else if (symbol is ArcNamespaceDescriptor namespaceDescriptor)
                 {
-                    iterResult.AddRange((byte)ArcSymbolType.Namespace);
+                    iterResult.Add((byte)ArcSymbolType.Namespace);
                     iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
                 }
 
@@ -95,7 +95,7 @@ namespace Arc.Compiler.PackageGenerator
         {
             var result = new List<byte>();
 
-            result.AddRange((byte)context.PackageDescriptor.Type);
+            result.Add((byte)context.PackageDescriptor.Type);
 
             var nameBytes = Encoding.UTF8.GetBytes(context.PackageDescriptor.Name);
             result.AddRange(BitConverter.GetBytes(nameBytes.LongLength));

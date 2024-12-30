@@ -24,8 +24,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             {
                 if (r.TargetType == ArcRelocationTargetType.Absolute)
                 {
-                    r.Location += GeneratedData.LongCount();
+                    r.TargetLocation += GeneratedData.LongCount();
                 }
+
+                r.Location += GeneratedData.LongCount();
 
                 return r;
             }));
