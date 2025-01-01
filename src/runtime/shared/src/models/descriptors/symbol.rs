@@ -19,7 +19,7 @@ pub struct DataTypeSymbol {
 
 impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Data type: {}", self.signature)
+        writeln!(f, "[DT] {}", self.signature)
     }
 }
 
@@ -30,7 +30,7 @@ pub struct FunctionSymbol {
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Function: {} at {}", self.signature, self.entry_pos)
+        writeln!(f, "[FN] {} at {}", self.signature, self.entry_pos)
     }
 }
 
@@ -40,7 +40,7 @@ pub struct GroupSymbol {
 
 impl Debug for GroupSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Group: {}", self.signature)
+        writeln!(f, "[GP] {}", self.signature)
     }
 }
 
@@ -50,7 +50,7 @@ pub struct GroupFieldSymbol {
 
 impl Debug for GroupFieldSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Group field: {}", self.signature)
+        writeln!(f, "[GF] {}", self.signature)
     }
 }
 
@@ -60,7 +60,7 @@ pub struct NamespaceSymbol {
 
 impl Debug for NamespaceSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "Namespace: {}", self.signature)
+        writeln!(f, "[NS] {}", self.signature)
     }
 }
 
@@ -70,9 +70,9 @@ pub struct SymbolTable {
 
 impl Debug for SymbolTable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "=== SymbolTable")?;
+        writeln!(f, "=== Symbol table")?;
         for symbol in &self.symbols {
-            write!(f, "{}: ", symbol.id)?;
+            write!(f, "{:016X}: ", symbol.id)?;
             match &symbol.value {
                 Symbol::DataType(data_type) => write!(f, "{:?}", data_type)?,
                 Symbol::Function(function) => write!(f, "{:?}", function)?,

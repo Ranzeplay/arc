@@ -76,6 +76,6 @@ pub struct Instruction {
 
 impl Debug for Instruction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "0x{:08X}\t{}\t{:02X?}", self.offset, self.instruction_type.as_ref(), self.raw)
+        write!(f, "0x{:08X} {:4} {:<16} {:02X?}", self.offset, ' ', self.instruction_type.as_ref(), self.raw)
     }
 }

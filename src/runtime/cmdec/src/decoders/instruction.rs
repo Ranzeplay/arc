@@ -10,7 +10,7 @@ use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
 
 pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction> {
-    println!("=== Instructions:");
+    println!("=== Instructions");
 
     let mut result: Vec<Instruction> = Vec::new();
 
