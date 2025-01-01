@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new()
             {
-                GeneratedData = Opcode.Concat([(byte)(WithReturnValue ? 0x01 : 0x00)]),
+                GeneratedData = [.. Opcode, (byte)(WithReturnValue ? 0x01 : 0x00)],
             };
         }
     }

@@ -5,23 +5,22 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
-using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models
 {
     public class ArcGeneratorContext
     {
-        public IEnumerable<byte> GeneratedData { get; set; } = [];
+        public List<byte> GeneratedData { get; set; } = [];
 
-        public Dictionary<long, ArcSymbolBase> Symbols { get; set; } = [];
+        public Dictionary<long, ArcSymbolBase> Symbols { get; } = [];
 
-        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
+        public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
-        public IEnumerable<ArcRelocationLabel> Labels { get; set; } = [];
+        public List<ArcRelocationLabel> Labels { get; } = [];
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
-        public IEnumerable<ArcConstant> Constants { get; set; } = [];
+        public List<ArcConstant> Constants { get; } = [];
 
         public void TransformLabelRelocationTargets()
         {
@@ -34,20 +33,23 @@ namespace Arc.Compiler.PackageGenerator.Models
                 if (target.TargetType != ArcRelocationTargetType.Label) continue;
                 
                 // Replace label with concrete relative location
-                IEnumerable<ArcRelocationLabel> labelQuery;
+                List<ArcRelocationLabel> labelQuery;
                 if (target.Parameter > 0)
                 {
                     labelQuery = Labels.Where(l => l.Location > target.Location)
-                        .OrderBy(l => l.Location);
+                        .OrderBy(l => l.Location)
+                        .ToList();
                 }
                 else
                 {
                     labelQuery = Labels.Where(l => l.Location < target.Location)
-                        .OrderByDescending(l => l.Location);
+                        .OrderByDescending(l => l.Location)
+                        .ToList();
                 }
 
                 // Parameter is 1-based
-                var label = labelQuery.ElementAt(Utils.TraceRelocationLabel(labelQuery, target.Parameter) - 1);
+                var labelQueryList = labelQuery.ToList();
+                var label = labelQueryList.ElementAt(Utils.TraceRelocationLabel(labelQueryList.ToList(), target.Parameter) - 1);
 
                 target.TargetType = ArcRelocationTargetType.Relative;
                 target.Parameter = label.Location - target.Location;
@@ -76,13 +78,11 @@ namespace Arc.Compiler.PackageGenerator.Models
                         throw new InvalidOperationException();
                 }
 
-                GeneratedData = GeneratedData.Take((int) target.Location)
-                    .Concat(data)
-                    .Concat(GeneratedData.Skip((int)target.Location + data.Length));
+                // Replace target location with data
+                GeneratedData.InsertRange((int)target.Location, data);
+                GeneratedData.RemoveRange((int)(target.Location + data.Length), 1);
             }
         }
-
-        public void Append(ArcGeneratorContext result) { }
 
         public void Append(ArcPartialGenerationResult result)
         {
@@ -90,18 +90,18 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 Symbols[symbol.Id] = symbol;
             }
-            RelocationTargets = RelocationTargets.Concat(result.RelocationTargets.Select(t =>
+            RelocationTargets.AddRange(result.RelocationTargets.Select(t =>
             {
                 t.Location += GeneratedData.LongCount();
                 return t;
             }));
-            Labels = Labels.Concat(result.RelocationLabels.Select(l =>
+            Labels.AddRange(result.RelocationLabels.Select(l =>
             {
                 l.Location += GeneratedData.LongCount();
                 return l;
             }));
-            Constants = Constants.Concat(result.AddedConstants);
-            GeneratedData = GeneratedData.Concat(result.GeneratedData);
+            Constants.AddRange(result.AddedConstants);
+            GeneratedData.AddRange(result.GeneratedData);
         }
 
         public void Append(ArcCompilationUnitStructure structure)
@@ -111,8 +111,6 @@ namespace Arc.Compiler.PackageGenerator.Models
                 Symbols[symbol.Id] = symbol;
             }
         }
-
-        public void LoadFromCompilationUnit(ArcCompilationUnit compilationUnit) { }
 
         public void LoadPrimitiveTypes()
         {

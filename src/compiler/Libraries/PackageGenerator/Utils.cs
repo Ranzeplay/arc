@@ -25,7 +25,7 @@ namespace Arc.Compiler.PackageGenerator
 
             var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
             var id = source.AccessibleConstants.LongCount() + result.AddedConstants.LongCount();
-            result.AddedConstants = result.AddedConstants.Append(new ArcConstant
+            result.AddedConstants.Add(new ArcConstant
             {
                 Id = id,
                 TypeId = typeId ?? -1,
@@ -38,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator
         public static IEnumerable<byte> SerializeString(string s)
         {
             var result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes(s.Length));
+            result.AddRange(BitConverter.GetBytes((long)s.Length));
             result.AddRange(Encoding.UTF8.GetBytes(s));
             return result;
         }

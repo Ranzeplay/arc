@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode.Concat(BitConverter.GetBytes(FunctionSymbolId)).Concat(BitConverter.GetBytes(ParameterCount)),
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(FunctionSymbolId), .. BitConverter.GetBytes(ParameterCount)],
             };
         }
     }

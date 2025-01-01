@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Base
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode,
+                GeneratedData = [..Opcode],
             };
         }
     }

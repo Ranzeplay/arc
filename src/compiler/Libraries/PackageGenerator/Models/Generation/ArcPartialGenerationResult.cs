@@ -6,42 +6,42 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcPartialGenerationResult
     {
-        public IEnumerable<byte> GeneratedData { get; set; } = [];
+        public List<byte> GeneratedData { get; init; } = [];
 
-        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
+        public List<ArcRelocationTarget> RelocationTargets { get; init; } = [];
 
-        public IEnumerable<ArcRelocationLabel> RelocationLabels { get; set; } = [];
+        public List<ArcRelocationLabel> RelocationLabels { get; init; } = [];
 
-        public IEnumerable<ArcDataSlot> DataSlots { get; set; } = [];
+        public List<ArcDataSlot> DataSlots { get; set; } = [];
 
-        public IEnumerable<ArcSymbolBase> OtherSymbols { get; set; } = [];
+        public List<ArcSymbolBase> OtherSymbols { get; } = [];
 
-        public IEnumerable<ArcConstant> AddedConstants { get; set; } = [];
+        public List<ArcConstant> AddedConstants { get; } = [];
 
         public void Append(ArcPartialGenerationResult generationResult)
         {
-            RelocationTargets = RelocationTargets.Concat(generationResult.RelocationTargets.Select(r =>
+            RelocationTargets.AddRange(generationResult.RelocationTargets.Select(r =>
             {
                 if (r.TargetType == ArcRelocationTargetType.Absolute)
                 {
-                    r.TargetLocation += GeneratedData.LongCount();
+                    r.TargetLocation += GeneratedData.Count;
                 }
 
-                r.Location += GeneratedData.LongCount();
+                r.Location += GeneratedData.Count;
 
                 return r;
-            }));
-            RelocationLabels = RelocationLabels.Concat(generationResult.RelocationLabels.Select(l =>
+            }).ToList());
+            RelocationLabels.AddRange(generationResult.RelocationLabels.Select(l =>
             {
-                l.Location += GeneratedData.LongCount();
+                l.Location += GeneratedData.Count;
                 return l;
-            }));
-            DataSlots = DataSlots.Concat(generationResult.DataSlots);
-            OtherSymbols = OtherSymbols.Concat(generationResult.OtherSymbols);
+            }).ToList());
+            DataSlots.AddRange(generationResult.DataSlots);
+            OtherSymbols.AddRange(generationResult.OtherSymbols);
 
-            GeneratedData = GeneratedData.Concat(generationResult.GeneratedData);
+            GeneratedData.AddRange(generationResult.GeneratedData);
 
-            AddedConstants = AddedConstants.Concat(generationResult.AddedConstants);
+            AddedConstants.AddRange(generationResult.AddedConstants);
         }
     }
 }

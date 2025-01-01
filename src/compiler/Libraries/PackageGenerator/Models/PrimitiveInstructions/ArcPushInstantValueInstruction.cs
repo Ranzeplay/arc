@@ -22,9 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                         var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "int");
                         return new ArcPartialGenerationResult
                         {
-                            GeneratedData = Opcode
-                                .Concat(BitConverter.GetBytes((long)0))
-                                .Concat(BitConverter.GetBytes(Value.IntegerValue!.Value)),
+                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(Value.IntegerValue!.Value)],
                             RelocationTargets = [
                                 new()
                                 {
@@ -40,9 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                         var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "decimal");
                         return new ArcPartialGenerationResult
                         {
-                            GeneratedData = Opcode
-                                .Concat(BitConverter.GetBytes((long)0))
-                                .Concat(BitConverter.GetBytes(decimal.ToDouble(Value.DecimalValue!.Value))),
+                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(decimal.ToDouble(Value.DecimalValue!.Value))],
                             RelocationTargets = [
                                 new()
                                 {
@@ -61,7 +57,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                             GeneratedData = Opcode
                             .Concat(BitConverter.GetBytes((long)0))
                             .Concat(BitConverter.GetBytes(Value.StringValue!.Value.Length))
-                            .Concat(Encoding.UTF8.GetBytes(Value.StringValue!.Value)),
+                            .Concat(Encoding.UTF8.GetBytes(Value.StringValue!.Value)).ToList(),
                             RelocationTargets = [
                                 new()
                                 {
@@ -79,7 +75,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                         {
                             GeneratedData = Opcode
                             .Concat(BitConverter.GetBytes((long)0))
-                            .Concat(BitConverter.GetBytes(Value.BooleanValue!.Value)),
+                            .Concat(BitConverter.GetBytes(Value.BooleanValue!.Value)).ToList(),
                             RelocationTargets = [
                                 new()
                                 {

@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             if (withDeclarationDescriptor)
             {
-                result.OtherSymbols = result.OtherSymbols.Append(descriptor);
+                result.OtherSymbols.Add(descriptor);
             }
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, descriptor.RawFullName).Encode(source);

@@ -78,11 +78,11 @@ namespace Arc.Compiler.PackageGenerator
             result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
             result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));
             context.TransformLabelRelocationTargets();
-            context.ApplyRelocation();
+            // context.ApplyRelocation();
             result.AddRange(context.GeneratedData);
 
-            Console.WriteLine(BitConverter.ToString(context.GeneratedData.ToArray()).Replace("-", " "));
-            Console.WriteLine($"Commands generated, {context.GeneratedData.Count()} bytes in total");
+            Console.WriteLine(BitConverter.ToString([.. context.GeneratedData]).Replace("-", " "));
+            Console.WriteLine($"Commands generated, {context.GeneratedData.Count} bytes in total");
 
             return result;
         }

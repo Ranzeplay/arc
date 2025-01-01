@@ -15,8 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode
-                    .Concat(BitConverter.GetBytes(slot.SlotId)),
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(slot.SlotId)],
                 RelocationTargets = [
                     new()
                     {
