@@ -38,7 +38,7 @@ impl Debug for PackageDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== Package descriptor")?;
 
-        writeln!(f, "Package Type: {}", match self.package_type {
+        writeln!(f, "Package Type:                          {}", match self.package_type {
             PackageType::Library => "Library",
             PackageType::Executable => "Executable",
             PackageType::Invalid => "Invalid",
