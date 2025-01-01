@@ -12,6 +12,4 @@ fn main() {
         println!("Decoding package file: {:?}", args.path);
         call_cmdec(&args.path.unwrap());
     }
-
-    println!("Hello, world!");
 }
