@@ -1,3 +1,4 @@
+use std::fmt::{Debug, Formatter};
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
@@ -7,10 +8,27 @@ pub struct LoadStackInstruction {
     pub field: usize,
 }
 
+impl Debug for LoadStackInstruction {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?} L:{} F:{}", self.source, self.location_id, self.field)
+    }
+}
+
 pub enum DataSourceType {
     ConstantTable,
     DataSlot,
     DataHandle,
+}
+
+impl Debug for DataSourceType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ConstantTable => write!(f, "CT"),
+            Self::DataSlot => write!(f, "DS"),
+            Self::DataHandle => write!(f, "DH"),
+        }
+    }
+
 }
 
 impl From<u8> for DataSourceType {

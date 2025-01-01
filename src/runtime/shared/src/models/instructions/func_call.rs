@@ -1,9 +1,16 @@
+use std::fmt::Debug;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
 pub struct FunctionCallInstruction {
     pub function_id: usize,
     pub param_count: u32,
+}
+
+impl Debug for FunctionCallInstruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "F:{} P:{}", self.function_id, self.param_count)
+    }
 }
 
 impl DecodableInstruction<FunctionCallInstruction> for FunctionCallInstruction {

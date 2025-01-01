@@ -3,6 +3,7 @@ pub enum Mutability {
     Mutable,
 }
 
+#[derive(Debug)]
 pub enum MemoryStorageType {
     Reference,
     Value,

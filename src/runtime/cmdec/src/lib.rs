@@ -15,7 +15,7 @@ impl Cmdec {
             panic!("Invalid Arc package");
         }
 
-        println!("Raw: {:02X?}", stream);
+        println!("Raw:\n{:02X?}", stream);
 
         let mut pos = 2;
         let (package_descriptor, len) = decode_package_descriptor(&stream[pos..]);

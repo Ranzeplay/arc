@@ -1,8 +1,15 @@
+use std::fmt::Debug;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
 pub struct ConditionalJumpInstruction {
     pub jump_offset: i64,
+}
+
+impl Debug for ConditionalJumpInstruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "L:{}", self.jump_offset)
+    }
 }
 
 impl DecodableInstruction<ConditionalJumpInstruction> for ConditionalJumpInstruction {

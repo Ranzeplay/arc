@@ -1,3 +1,4 @@
+use std::fmt::Debug;
 use crate::models::encodings::data_type_enc::MemoryStorageType;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
@@ -6,6 +7,23 @@ pub struct DeclInstruction {
     pub data_type_id: usize,
     pub is_array: bool,
     pub memory_storage_type: MemoryStorageType,
+}
+
+impl Debug for DeclInstruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mst = match self.memory_storage_type {
+            MemoryStorageType::Value => 'V',
+            MemoryStorageType::Reference => 'R',
+        };
+
+        let is_array = if self.is_array { 'A' } else { 'S' };
+
+        write!(
+            f,
+            "{}/{} {}",
+            mst, is_array, self.data_type_id
+        )
+    }
 }
 
 impl DecodableInstruction<DeclInstruction> for DeclInstruction {

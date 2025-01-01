@@ -1,8 +1,15 @@
+use std::fmt::Debug;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
 pub struct ReturnInstruction {
     pub with_value: bool,
+}
+
+impl Debug for ReturnInstruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", if self.with_value { "value" } else { "empty" })
+    }
 }
 
 impl DecodableInstruction<ReturnInstruction> for ReturnInstruction {

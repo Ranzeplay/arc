@@ -1,8 +1,15 @@
+use std::fmt::Debug;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
 pub struct PopToSlotInstruction {
     pub slot_id: usize,
+}
+
+impl Debug for PopToSlotInstruction {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "id:{}", self.slot_id)
+    }
 }
 
 impl DecodableInstruction<PopToSlotInstruction> for PopToSlotInstruction {
