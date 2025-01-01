@@ -33,7 +33,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     .Concat(BitConverter.GetBytes((long)0)),
                 RelocationTargets = [
                     new() {
-                        Location = 3,
+                        Location = 2,
                         TargetType = ArcRelocationTargetType.Symbol,
                         Symbol = dataType
                     }
