@@ -19,7 +19,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
         let instruction: Instruction;
         match stream[pos] {
             0x01 => {
-                let (decl, len) = DeclInstruction::decode(stream, pos, package).unwrap();
+                let (decl, len) = DeclInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::Decl(decl),
@@ -38,7 +38,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += 1;
             }
             0x06 => {
-                let (pop_to_slot, len) = PopToSlotInstruction::decode(stream, pos, package).unwrap();
+                let (pop_to_slot, len) = PopToSlotInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::PopS(pop_to_slot),
@@ -210,7 +210,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += 1;
             }
             0x1a => {
-                let (return_function, len) = ReturnInstruction::decode(stream, pos, package).unwrap();
+                let (return_function, len) = ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::FRet(return_function),
@@ -265,7 +265,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += 1;
             }
             0x21 => {
-                let (jump, len) = JumpInstruction::decode(stream, pos, package).unwrap();
+                let (jump, len) = JumpInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::Jmp(jump),
@@ -275,7 +275,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += len;
             }
             0x22 => {
-                let (cond_jump, len) = ConditionalJumpInstruction::decode(stream, pos, package).unwrap();
+                let (cond_jump, len) = ConditionalJumpInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::JmpC(cond_jump),
@@ -429,7 +429,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += 1;
             }
             0x35 => {
-                let (return_function, len) = ReturnInstruction::decode(stream, pos, package).unwrap();
+                let (return_function, len) = ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::FRet(return_function),
@@ -439,7 +439,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += len;
             }
             0x36 => {
-                let (function_call, len) = FunctionCallInstruction::decode(stream, pos, package).unwrap();
+                let (function_call, len) = FunctionCallInstruction::decode(&stream[pos..], pos, package).unwrap();
 
                 instruction = Instruction {
                     offset: pos,
@@ -450,7 +450,7 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
                 pos += len;
             }
             0x37 => {
-                let (ldstk, len) = LoadStackInstruction::decode(stream, pos, package).unwrap();
+                let (ldstk, len) = LoadStackInstruction::decode(&stream[pos..], pos, package).unwrap();
 
                 instruction = Instruction {
                     offset: pos,
