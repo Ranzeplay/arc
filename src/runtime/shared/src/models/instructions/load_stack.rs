@@ -10,7 +10,7 @@ pub struct LoadStackInstruction {
 
 impl Debug for LoadStackInstruction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?} L:{} F:{}", self.source, self.location_id, self.field)
+        write!(f, "{:?} L:0x{:X} F:0x{:X}", self.source, self.location_id, self.field)
     }
 }
 

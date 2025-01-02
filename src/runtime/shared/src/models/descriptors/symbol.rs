@@ -72,7 +72,7 @@ impl Debug for SymbolTable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== Symbol table")?;
         for symbol in &self.symbols {
-            write!(f, "{:016X}: ", symbol.id)?;
+            write!(f, "0x{:016X}: ", symbol.id)?;
             match &symbol.value {
                 Symbol::DataType(data_type) => write!(f, "{:?}", data_type)?,
                 Symbol::Function(function) => write!(f, "{:?}", function)?,
