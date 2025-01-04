@@ -78,9 +78,7 @@ namespace Arc.Compiler.PackageGenerator.Models
                         throw new InvalidOperationException();
                 }
 
-                // Replace target location with data
-                GeneratedData.InsertRange((int)target.Location, data);
-                GeneratedData.RemoveRange((int)(target.Location + data.Length), 1);
+                GeneratedData.ReplaceRange((int)target.Location, data);
             }
         }
 

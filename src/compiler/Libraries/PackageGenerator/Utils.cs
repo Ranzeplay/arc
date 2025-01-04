@@ -74,5 +74,13 @@ namespace Arc.Compiler.PackageGenerator
             
             throw new ArgumentOutOfRangeException(nameof(labels), "Cannot find the corresponding label");
         }
+
+        public static void ReplaceRange<T>(this IList<T> list, int index, IEnumerable<T> collection)
+        {
+            for(int i = 0; i < collection.Count(); i++)
+            {
+                list[index + i] = collection.ElementAt(i);
+            }
+        }
     }
 }
