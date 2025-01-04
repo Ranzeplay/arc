@@ -34,7 +34,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 ],
                 RelocationTargets = [
                     new() {
-                        Location = 2,
+                        Location = 3,
                         TargetType = ArcRelocationTargetType.Symbol,
                         Symbol = dataType
                     }

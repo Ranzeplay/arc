@@ -12,6 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
+            Target.Location = 1;
             return new ArcPartialGenerationResult
             {
                 GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0)],

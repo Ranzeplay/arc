@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             result.Append(expr);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
-            var bodyLength = body.GeneratedData.LongCount();
+            var bodyLength = body.GeneratedData.Count;
 
             var jumpOutRelocation = new ArcRelocationTarget
             {
