@@ -5,6 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
+using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Models
 {
@@ -16,6 +17,8 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
+        public List<ArcMaterializedRelocationTarget> MaterializedRelocationTargets { get; } = [];
+
         public List<ArcRelocationLabel> Labels { get; } = [];
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
@@ -24,45 +27,53 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void TransformLabelRelocationTargets()
         {
-            var targets = RelocationTargets.ToList();
-
-            for (var index = 0; index < targets.Count; index++)
+            for (var index = 0; index < RelocationTargets.Count; index++)
             {
-                var target = targets[index];
+                var target = RelocationTargets[index];
                 // Skip non-label targets
                 if (target.TargetType != ArcRelocationTargetType.Label) continue;
-                
+
                 // Replace label with concrete relative location
                 List<ArcRelocationLabel> labelQuery;
                 if (target.Parameter > 0)
                 {
-                    labelQuery = Labels.Where(l => l.Location > target.Location)
-                        .OrderBy(l => l.Location)
-                        .ToList();
+                    labelQuery = [..
+                        Labels.Where(l => l.Location > target.Location)
+                            .OrderBy(l => l.Location)
+                        ];
                 }
                 else
                 {
-                    labelQuery = Labels.Where(l => l.Location < target.Location)
-                        .OrderByDescending(l => l.Location)
-                        .ToList();
+                    labelQuery = [..
+                        Labels.Where(l => l.Location < target.Location)
+                            .OrderByDescending(l => l.Location)
+                        ];
                 }
 
                 // Parameter is 1-based
-                var labelQueryList = labelQuery.ToList();
-                var label = labelQueryList.ElementAt(Utils.TraceRelocationLabel(labelQueryList.ToList(), target.Parameter) - 1);
+                var labelIndex = Utils.TraceRelocationLabel([.. labelQuery], target.Parameter) - 1;
 
-                target.TargetType = ArcRelocationTargetType.Relative;
-                target.Parameter = label.Location - target.Location;
+                target.Parameter = target.Parameter > 0
+                    ? labelIndex
+                    : -labelIndex;
 
-                targets[index] = target;
+                RelocationTargets[index] = target;
             }
         }
 
-        public void ApplyRelocation() {
+        public void ApplyRelocation()
+        {
+            foreach (var target in MaterializedRelocationTargets)
+            {
+                GeneratedData.ReplaceRange((int)target.Location, target.Data);
+            }
+        }
+
+        public void PreApplyRelocation()
+        {
             foreach (var target in RelocationTargets)
             {
                 byte[] data;
-
                 switch (target.TargetType)
                 {
                     case ArcRelocationTargetType.Relative:
@@ -74,11 +85,14 @@ namespace Arc.Compiler.PackageGenerator.Models
                     case ArcRelocationTargetType.Symbol:
                         data = BitConverter.GetBytes(target.Symbol.Id);
                         break;
+                    case ArcRelocationTargetType.Label:
+                        data = BitConverter.GetBytes(target.Parameter);
+                        break;
                     default:
-                        throw new InvalidOperationException();
+                        throw new UnreachableException();
                 }
 
-                GeneratedData.ReplaceRange((int)target.Location, data);
+                MaterializedRelocationTargets.Add(new(target.Location, data));
             }
         }
 
@@ -95,7 +109,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             }));
             Labels.AddRange(result.RelocationLabels.Select(l =>
             {
-                l.Location += GeneratedData.LongCount();
+                l.Location += GeneratedData.Count;
                 return l;
             }));
             Constants.AddRange(result.AddedConstants);
