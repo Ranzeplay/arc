@@ -107,7 +107,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         case ArcDataValue.ValueType.FlexibleIdentifier:
                             {
                                 var slot = source.LocalDataSlots.First(x => x.Declarator.Identifier.Name == term.DataValue.FlexibleIdentifier!.Name);
-                                result.Append(new ArcLoadDataToStackInstruction(ArcDataSourceType.DataSlot, slot.Id, 0x00).Encode(source));
+                                result.Append(new ArcLoadDataToStackInstruction(ArcDataSourceType.DataSlot, slot.SlotId, 0x00).Encode(source));
                                 break;
                             }
                         default:

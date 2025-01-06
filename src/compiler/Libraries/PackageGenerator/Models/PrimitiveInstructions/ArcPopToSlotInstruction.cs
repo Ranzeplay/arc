@@ -15,15 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(slot.SlotId)],
-                RelocationTargets = [
-                    new()
-                    {
-                        Location = 1,
-                        TargetType = ArcRelocationTargetType.Symbol,
-                        Symbol = Slot
-                    }
-                ]
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(Slot.SlotId)],
             };
         }
     }
