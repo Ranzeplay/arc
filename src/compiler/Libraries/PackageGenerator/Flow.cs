@@ -74,6 +74,7 @@ namespace Arc.Compiler.PackageGenerator
 
             result.AddRange([0x20, 0x24]);
 
+            context.ApplyFunctionSymbolRelocation();
             result.AddRange(ArcDescriptorSerializer.SerializePackageDescriptor(context));
             result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
             result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));

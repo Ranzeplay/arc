@@ -20,7 +20,7 @@ namespace Arc.Compiler.PackageGenerator
             context.Symbols.Remove(6);
 
             var result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes(context.Symbols.LongCount()));
+            result.AddRange(BitConverter.GetBytes((long)context.Symbols.Count));
 
             foreach (var symbol in context.Symbols.Values)
             {

@@ -1,10 +1,12 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Models
@@ -93,6 +95,19 @@ namespace Arc.Compiler.PackageGenerator.Models
                 }
 
                 MaterializedRelocationTargets.Add(new(target.Location, data));
+            }
+        }
+
+        public void ApplyFunctionSymbolRelocation()
+        {
+            foreach (var symbol in Symbols.Values)
+            {
+                if (symbol is ArcFunctionDescriptor desc)
+                {
+                    var label = Labels.First(l => l.Type == ArcRelocationLabelType.BeginFunction && l.Name == desc.RawFullName);
+                    desc.EntrypointPos = label.Location;
+                    Symbols[symbol.Id] = desc;
+                }
             }
         }
 
