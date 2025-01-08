@@ -82,5 +82,17 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             ValueType.Boolean => "bool",
             _ => throw new NotImplementedException(),
         };
+
+        public object GetRawValue()
+        {
+            return Type switch
+            {
+                ValueType.String => StringValue!.Value,
+                ValueType.Integer => IntegerValue!.Value,
+                ValueType.Decimal => DecimalValue!.Value,
+                ValueType.Boolean => BooleanValue!.Value,
+                _ => throw new InvalidCastException(),
+            };
+        }
     }
 }

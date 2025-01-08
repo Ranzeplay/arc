@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace Arc.Compiler.PackageGenerator
@@ -58,7 +59,7 @@ namespace Arc.Compiler.PackageGenerator
                 }
 
                 // Print iterResult in hex
-                Console.WriteLine(BitConverter.ToString(iterResult.ToArray()).Replace("-", " "));
+                Console.WriteLine(BitConverter.ToString([.. iterResult]).Replace("-", " "));
 
                 result.AddRange(iterResult);
             }
@@ -71,26 +72,23 @@ namespace Arc.Compiler.PackageGenerator
         public static IEnumerable<byte> SerializeConstantTable(ArcGeneratorContext context)
         {
             var result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes(context.Constants.LongCount()));
+            result.AddRange(BitConverter.GetBytes((long)context.Constants.Count));
 
             foreach (var constant in context.Constants)
             {
-                var iterResult = new List<byte>();
-                iterResult.AddRange(BitConverter.GetBytes(constant.Id));
-                iterResult.AddRange(BitConverter.GetBytes(constant.TypeId));
-                iterResult.AddRange(BitConverter.GetBytes(constant.RawData.LongCount()));
-                iterResult.AddRange(constant.RawData);
+                var encodedValue = constant.Encode();
+                result.AddRange(encodedValue);
 
-                result.AddRange(iterResult);
-
-                Console.WriteLine(BitConverter.ToString(iterResult.ToArray()).Replace("-", " "));
+                Console.WriteLine(BitConverter.ToString(encodedValue.ToArray()).Replace("-", " "));
             }
 
-            Console.WriteLine($"Constant table serialized, {context.Constants.Count()} in total");
+            Console.WriteLine($"Constant table serialized, {context.Constants.Count} in total");
 
             return result;
         }
 
+
+        [SuppressMessage("Clarity", "IDE0028", Justification = "We need to separate declaration to clarify code")]
         public static IEnumerable<byte> SerializePackageDescriptor(ArcGeneratorContext context)
         {
             var result = new List<byte>();

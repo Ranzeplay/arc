@@ -3,6 +3,8 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
 using System.Text;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Encoders;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -24,12 +26,13 @@ namespace Arc.Compiler.PackageGenerator
             }
 
             var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
-            var id = source.AccessibleConstants.LongCount() + result.AddedConstants.LongCount();
+            var id = source.AccessibleConstants.LongCount() + result.AddedConstants.Count;
             result.AddedConstants.Add(new ArcConstant
             {
                 Id = id,
                 TypeId = typeId ?? -1,
-                Value = value
+                Value = value.GetRawValue(),
+                Encoder = GetEncoderFromInstantValue(value)
             });
 
             return id;
@@ -81,6 +84,18 @@ namespace Arc.Compiler.PackageGenerator
             {
                 list[index + i] = collection.ElementAt(i);
             }
+        }
+
+        public static IArcConstantEncoder GetEncoderFromInstantValue(ArcInstantValue value)
+        {
+            return value.Type switch
+            {
+                ArcInstantValue.ValueType.Integer => new ArcIntegerEncoder(),
+                ArcInstantValue.ValueType.Decimal => new ArcDecimalEncoder(),
+                ArcInstantValue.ValueType.String => new ArcStringEncoder(),
+                ArcInstantValue.ValueType.Boolean => new ArcBooleanEncoder(),
+                _ => throw new NotImplementedException(),
+            };
         }
     }
 }
