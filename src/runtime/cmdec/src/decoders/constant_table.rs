@@ -27,6 +27,7 @@ fn decode_constant(stream: &[u8]) -> (ConstantDescriptor, usize) {
     pos += 8;
 
     let raw_value = stream[pos..pos + len].try_into().unwrap();
+    pos += len;
 
     (ConstantDescriptor{
         id,
