@@ -8,7 +8,9 @@ pub struct ConstantDescriptor {
 
 impl Debug for ConstantDescriptor {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[I]{:<20} [T]{:<20} [L]{:<20}", self.id, self.type_id, self.raw_value.len())
+        write!(f, "[I] {:<20} ", self.id)?;
+        write!(f, "[T] {:<20} ", self.type_id)?;
+        write!(f, "[L] {:02X?}", self.raw_value)
     }
 }
 
