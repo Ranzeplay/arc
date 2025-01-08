@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
@@ -75,9 +76,9 @@ namespace Arc.Compiler.PackageGenerator
             result.AddRange([0x20, 0x24]);
 
             context.ApplyFunctionSymbolRelocation();
-            result.AddRange(ArcDescriptorSerializer.SerializePackageDescriptor(context));
-            result.AddRange(ArcDescriptorSerializer.SerializeSymbolTable(context));
-            result.AddRange(ArcDescriptorSerializer.SerializeConstantTable(context));
+            result.AddRange(ArcPackageDescriptorEncoder.Encode(context));
+            result.AddRange(ArcSymbolTableEncoder.Encode(context));
+            result.AddRange(ArcConstantTableEncoder.Encode(context));
             context.TransformLabelRelocationTargets();
             context.PreApplyRelocation();
             context.ApplyRelocation();

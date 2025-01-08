@@ -34,8 +34,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
 					var a: val int;
 					# a = [Console].readLn();
 					var b: val int;
-					a = 4;
-					b = 6;
+					a = 114514;
+					b = 1919810;
 					const c: val int;
 					if (a > b) { c = a + b; }
 					elif (a < b) { c = a * b; }
