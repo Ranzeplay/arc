@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -9,6 +10,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [Category("PackageGeneration")]
     internal class Structures
     {
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<Structures>();
+
         [Test]
         public void SingleCompilationUnitWithFunctions()
         {
@@ -21,8 +24,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                 return true;
                             }
                         }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = Flow.GenerateUnitStructure(unit);
 
@@ -48,8 +51,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
                         	}
                         }";
 
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = Flow.GenerateUnitStructure(unit);
             Assert.That(structure.Symbols.Count(), Is.EqualTo(2));

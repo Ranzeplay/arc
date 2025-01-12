@@ -15,4 +15,8 @@
 		<InternalsVisibleTo Include="Arc.Compiler.Tests" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	</ItemGroup>
+
 </Project>

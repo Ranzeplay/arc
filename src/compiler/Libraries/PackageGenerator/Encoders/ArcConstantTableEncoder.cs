@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {
@@ -14,10 +15,10 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 var encodedValue = constant.Encode();
                 result.AddRange(encodedValue);
 
-                Console.WriteLine(BitConverter.ToString(encodedValue.ToArray()).Replace("-", " "));
+                context.Logger.LogTrace("Constant: {}", BitConverter.ToString([.. encodedValue]).Replace("-", " "));
             }
 
-            Console.WriteLine($"Constant table serialized, {context.Constants.Count} in total");
+            context.Logger.LogInformation("Generated {} constants into constant table", context.Constants.Count);
 
             return result;
         }

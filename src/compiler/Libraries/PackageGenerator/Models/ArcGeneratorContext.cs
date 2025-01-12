@@ -6,7 +6,7 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
-using Arc.Compiler.SyntaxAnalyzer.Models.Function;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Models
@@ -26,6 +26,8 @@ namespace Arc.Compiler.PackageGenerator.Models
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
         public List<ArcConstant> Constants { get; } = [];
+
+        public required ILogger Logger { get; set; }
 
         public void TransformLabelRelocationTargets()
         {

@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -9,12 +10,15 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [Category("PackageGeneration")]
     internal class FunctionStatements
     {
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<FunctionStatements>();
+
         [Test]
         public void EmptyFunction()
         {
+            _logger.LogInformation("Running EmptyFunction test");
             var text = "namespace Arc::Program { public func main(): val none {} }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
@@ -23,9 +27,10 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void FunctionWithArguments()
         {
+            _logger.LogInformation("Running FunctionWithArguments test");
             var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
@@ -34,9 +39,10 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void FunctionWithLessStatements()
         {
+            _logger.LogInformation("Running FunctionWithLessStatements test");
             var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
@@ -45,35 +51,37 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void FunctionWithAssignmentExpression()
         {
+            _logger.LogInformation("Running FunctionWithAssignmentExpression test");
             var text = @"namespace Arc::Program {
-                            public func main(): val int {
-                                var a: val int; a = 2; a = 2 + 3;
-                            }
-                        }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+                                public func main(): val int {
+                                    var a: val int; a = 2; a = 2 + 3;
+                                }
+                            }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
             Assert.Multiple(() =>
             {
                 Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
-                Assert.That(result.Constants.Count(), Is.EqualTo(3));
+                Assert.That(result.Constants.Count, Is.EqualTo(3));
             });
         }
 
         [Test]
         public void FunctionWithBlockStatements()
         {
+            _logger.LogInformation("Running FunctionWithBlockStatements test");
             var text = @"
-                        namespace Arc::Program { 
-                            public func main(): val int { 
-                                if (2 < 3) { var a: val int; a = 1; } 
-                                else { var b: val int; b = 2; }
-                                while (2 < 3) { var c: val int; c = 3; } 
-                            }
-                        }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
+                            namespace Arc::Program { 
+                                public func main(): val int { 
+                                    if (2 < 3) { var a: val int; a = 1; } 
+                                    else { var b: val int; b = 2; }
+                                    while (2 < 3) { var c: val int; c = 3; } 
+                                }
+                            }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));

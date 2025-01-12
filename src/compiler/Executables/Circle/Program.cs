@@ -2,12 +2,32 @@
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
 
-Console.WriteLine("Arc compiler CLI");
+
+var logLevelArg = args[2] ?? "";
+var logLevel = logLevelArg switch
+{
+    "trace" => LogLevel.Trace,
+    "debug" => LogLevel.Debug,
+    "info" => LogLevel.Information,
+    "warn" => LogLevel.Warning,
+    "error" => LogLevel.Error,
+    "critical" => LogLevel.Critical,
+    _ => LogLevel.Information
+};
+
+var logger = LoggerFactory.Create(builder =>
+{
+    builder.AddConsole();
+    builder.SetMinimumLevel(logLevel);
+}).CreateLogger("Circle CLI");
+
+logger.LogInformation("Circle CLI");
 
 var text = File.ReadAllText(args[0]);
-var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
-var syntaxUnit = new ArcCompilationUnit(compilationUnit, args[0]);
+var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, logger);
+var syntaxUnit = new ArcCompilationUnit(compilationUnit, logger, args[0]);
 var context = Flow.GenerateUnit(syntaxUnit);
 
 context.PackageDescriptor = new ArcPackageDescriptor()

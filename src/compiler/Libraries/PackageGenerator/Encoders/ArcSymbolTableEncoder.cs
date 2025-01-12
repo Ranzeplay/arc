@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {
@@ -57,12 +58,12 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 }
 
                 // Print iterResult in hex
-                Console.WriteLine(BitConverter.ToString([.. iterResult]).Replace("-", " "));
+                context.Logger.LogTrace("Symbol: {}", BitConverter.ToString([.. iterResult]).Replace("-", " "));
 
                 result.AddRange(iterResult);
             }
 
-            Console.WriteLine($"Symbol table serialized, {context.Symbols.Count} in total");
+            context.Logger.LogInformation("Generated {} symbols into symbol table", result.Count);
 
             return result;
         }

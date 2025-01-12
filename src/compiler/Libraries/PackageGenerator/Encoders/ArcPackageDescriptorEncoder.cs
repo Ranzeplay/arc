@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Models;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
@@ -9,6 +10,8 @@ namespace Arc.Compiler.PackageGenerator.Encoders
         [SuppressMessage("Clarity", "IDE0028", Justification = "We need to separate declaration to clarify code")]
         public static IEnumerable<byte> Encode(ArcGeneratorContext context)
         {
+            context.Logger.LogDebug("Encoding package descriptor");
+
             var result = new List<byte>();
 
             result.Add((byte)context.PackageDescriptor.Type);

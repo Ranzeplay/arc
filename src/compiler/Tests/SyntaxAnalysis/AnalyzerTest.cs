@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
 using System.Text;
 
 namespace Arc.Compiler.Tests.SyntaxAnalysis
@@ -8,11 +9,13 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
     [Category("SyntaxAnalysis")]
     internal class AnalyzerTest
     {
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<AnalyzerTest>();
+
         [Test]
         public void AntlrParsing()
         {
             var text = Encoding.UTF8.GetString(Resource.test_script);
-            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
 
             Assert.That(compilationUnit, Is.Not.Null);
 
@@ -32,8 +35,8 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
         public void Transformation()
         {
             var text = Encoding.UTF8.GetString(Resource.test_script);
-            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text);
-            var transformed = new ArcCompilationUnit(compilationUnit, "test");
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var transformed = new ArcCompilationUnit(compilationUnit, _logger, "test");
 
             Assert.That(transformed, Is.Not.Null);
         }

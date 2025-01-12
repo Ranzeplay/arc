@@ -3,6 +3,8 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -10,6 +12,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [CancelAfter(1000)]
     internal class SourceFile
     {
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SourceFile>();
+
         private readonly string _text = @"
 			link Arc::Std;
 			
@@ -57,16 +61,16 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void SingleCompilationUnit()
         {
-            var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text);
-            var unit = new ArcCompilationUnit(compilationUnit, "test");
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = Flow.GenerateUnit(unit);
             Assert.That(context.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 8));
         }
         [Test]
         public void DumpTest()
         {
-            var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text);
-            var syntaxUnit = new ArcCompilationUnit(compilationUnit, "test");
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
+            var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
             var context = Flow.GenerateUnit(syntaxUnit);
 
             context.PackageDescriptor = new ArcPackageDescriptor()
