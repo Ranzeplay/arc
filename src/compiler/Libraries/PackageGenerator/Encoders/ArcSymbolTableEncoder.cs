@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 result.AddRange(iterResult);
             }
 
-            context.Logger.LogInformation("Generated {} symbols into symbol table", result.Count);
+            context.Logger.LogInformation("Generated {} symbols into symbol table", context.Symbols.Count);
 
             return result;
         }
