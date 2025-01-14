@@ -31,37 +31,15 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void TransformLabelRelocationTargets()
         {
-            for (var index = 0; index < RelocationTargets.Count; index++)
+            for (var i = 0; i < RelocationTargets.Count; i++)
             {
-                var target = RelocationTargets[index];
+                var target = RelocationTargets[i];
                 // Skip non-label targets
                 if (target.TargetType != ArcRelocationTargetType.Label) continue;
 
-                // Replace label with concrete relative location
-                List<ArcRelocationLabel> labelQuery;
-                if (target.Parameter > 0)
-                {
-                    labelQuery = [..
-                        Labels.Where(l => l.Location > target.Location)
-                            .OrderBy(l => l.Location)
-                        ];
-                }
-                else
-                {
-                    labelQuery = [..
-                        Labels.Where(l => l.Location < target.Location)
-                            .OrderByDescending(l => l.Location)
-                        ];
-                }
+                target.Parameter = Utils.LocateLabelRelativeLocation(Labels, target.Parameter > 0, target, Math.Abs(target.Parameter));
 
-                // Parameter is 1-based
-                var labelIndex = Utils.TraceRelocationLabel([.. labelQuery], target.Parameter) - 1;
-
-                target.Parameter = target.Parameter > 0
-                    ? labelIndex
-                    : -labelIndex;
-
-                RelocationTargets[index] = target;
+                RelocationTargets[i] = target;
             }
         }
 

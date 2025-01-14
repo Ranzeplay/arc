@@ -46,41 +46,49 @@ namespace Arc.Compiler.PackageGenerator
             return result;
         }
 
-        public static int TraceRelocationLabel(IEnumerable<ArcRelocationLabel> labels, long count)
+        public static int LocateLabelRelativeLocation(IEnumerable<ArcRelocationLabel> labels, bool forwardSearch, ArcRelocationTarget target, long count)
         {
-            var firstLabel = labels.First();
-            var antiLabel = firstLabel.Type.GetAntiLabel();
+            var label = target.Label;
+            var antiLabel = label.GetAntiLabel();
+            var sourceLocation = target.Location;
 
-            var distance = 0;
-            var layer = 0;
-            foreach (var label in labels)
+            var list = labels.ToList();
+            var directionList = forwardSearch switch
             {
-                if (label.Type == firstLabel.Type)
+                true => list.Where(l => l.Location >= sourceLocation).OrderBy(l => l.Location),
+                false => list.Where(l => l.Location <= sourceLocation).OrderByDescending(l => l.Location)
+            };
+
+            var layer = 0;
+            for (int i = 0; i < directionList.Count(); i++)
+            {
+                var l = directionList.ElementAt(i);
+
+                if (l.Type == antiLabel)
                 {
                     layer++;
                 }
-                else if (label.Type == antiLabel)
+                else if (l.Type == label)
                 {
                     layer--;
-                    if (layer == 0)
+                    if (layer <= 0)
                     {
                         count--;
                         if (count == 0)
                         {
-                            return distance;
+                            return (forwardSearch ? 1 : -1) * (i + 1);
                         }
                     }
                 }
-
-                distance++;
             }
-            
+
+
             throw new ArgumentOutOfRangeException(nameof(labels), "Cannot find the corresponding label");
         }
 
         public static void ReplaceRange<T>(this IList<T> list, int index, IEnumerable<T> collection)
         {
-            for(int i = 0; i < collection.Count(); i++)
+            for (int i = 0; i < collection.Count(); i++)
             {
                 list[index + i] = collection.ElementAt(i);
             }
