@@ -41,7 +41,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
         public static ArcFunctionDescriptor GenerateDescriptor(ArcGenerationSource source, ArcFunctionDeclarator declarator)
         {
             var signatureSource = source.ParentSignature;
-            signatureSource.Locators = signatureSource.Locators.Append(declarator);
+            signatureSource.Locators.Add(declarator);
 
             var parameters = declarator.Arguments.Select(a => new ArcParameterDescriptor
             {

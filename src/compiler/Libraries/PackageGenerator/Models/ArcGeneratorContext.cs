@@ -138,7 +138,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 AccessibleSymbols = Symbols.Values,
                 PackageDescriptor = PackageDescriptor,
-                ParentSignature = new ArcSignature() { Locators = location }
+                ParentSignature = new ArcSignature() { Locators = location.ToList() }
             };
         }
     }

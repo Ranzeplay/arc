@@ -27,34 +27,42 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 var iterResult = new List<byte>();
                 iterResult.AddRange(BitConverter.GetBytes(symbol.Id));
 
-                if (symbol is ArcFunctionDescriptor functionDescriptor)
+                switch (symbol)
                 {
-                    iterResult.Add((byte)ArcSymbolType.Function);
-                    iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
-                    iterResult.AddRange(Utils.SerializeString(functionDescriptor.RawFullName));
+                    case ArcFunctionDescriptor functionDescriptor:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.Function);
+                            iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
+                            iterResult.AddRange(Utils.SerializeString(functionDescriptor.RawFullName));
 
-                    // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
-                    // iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
-                }
-                else if (symbol is ArcGroupDescriptor groupDescriptor)
-                {
-                    iterResult.Add((byte)ArcSymbolType.Group);
-                    iterResult.AddRange(Utils.SerializeString(groupDescriptor.Name));
-                }
-                else if (symbol is ArcGroupFieldDescriptor fieldDescriptor)
-                {
-                    iterResult.Add((byte)ArcSymbolType.GroupField);
-                    iterResult.AddRange(Utils.SerializeString(fieldDescriptor.Name));
-                }
-                else if (symbol is ArcDataTypeDescriptor dataTypeDescriptor)
-                {
-                    iterResult.Add((byte)ArcSymbolType.DataType);
-                    iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
-                }
-                else if (symbol is ArcNamespaceDescriptor namespaceDescriptor)
-                {
-                    iterResult.Add((byte)ArcSymbolType.Namespace);
-                    iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
+                            // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
+                            // iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
+                            break;
+                        }
+                    case ArcGroupDescriptor groupDescriptor:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.Group);
+                            iterResult.AddRange(Utils.SerializeString(groupDescriptor.Name));
+                            break;
+                        }
+                    case ArcGroupFieldDescriptor fieldDescriptor:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.GroupField);
+                            iterResult.AddRange(Utils.SerializeString(fieldDescriptor.Name));
+                            break;
+                        }
+                    case ArcDataTypeDescriptor dataTypeDescriptor:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.DataType);
+                            iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
+                            break;
+                        }
+                    case ArcNamespaceDescriptor namespaceDescriptor:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.Namespace);
+                            iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
+                            break;
+                        }
                 }
 
                 // Print iterResult in hex
