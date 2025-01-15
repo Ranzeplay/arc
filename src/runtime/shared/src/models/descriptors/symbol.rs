@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use crate::models::encodings::data_type_enc::{MemoryStorageType, Mutability};
 
 pub struct SymbolDescriptor {
     pub id: usize,
@@ -15,11 +16,12 @@ pub enum Symbol {
 
 pub struct DataTypeSymbol {
     pub signature: String,
+    pub type_symbol_id: usize,
 }
 
 impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[DT] {}", self.signature)
+        writeln!(f, "[DT] {} -> 0x{:016X}", self.signature, self.type_symbol_id)
     }
 }
 
@@ -36,16 +38,32 @@ impl Debug for FunctionSymbol {
 
 pub struct GroupSymbol {
     pub signature: String,
+    pub field_ids: Vec<usize>,
+    pub constructor_ids: Vec<usize>,
+    pub destructor_ids: Vec<usize>,
+    pub function_ids: Vec<usize>,
+    pub sub_group_ids: Vec<usize>,
 }
 
 impl Debug for GroupSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[GP] {}", self.signature)
+        writeln!(f, "[GP] {} {}/{}/{}/{}/{}",
+                 self.signature,
+                 self.field_ids.len(),
+                 self.function_ids.len(),
+                 self.constructor_ids.len(),
+                 self.destructor_ids.len(),
+                 self.sub_group_ids.len()
+        )
     }
 }
 
 pub struct GroupFieldSymbol {
     pub signature: String,
+    pub memory_storage_type: MemoryStorageType,
+    pub is_array: bool,
+    pub mutability: Mutability,
+    pub data_type_id: usize,
 }
 
 impl Debug for GroupFieldSymbol {
