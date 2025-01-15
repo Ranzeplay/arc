@@ -5,6 +5,9 @@ using System.Text;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -104,6 +107,18 @@ namespace Arc.Compiler.PackageGenerator
                 ArcInstantValue.ValueType.Boolean => new ArcBooleanEncoder(),
                 _ => throw new NotImplementedException(),
             };
+        }
+
+        public static IEnumerable<byte> Encode(this ArcDataDeclarationDescriptor decl, IEnumerable<ArcSymbolBase> symbols)
+        {
+            // TODO: Use bitmask
+            var dataType = symbols.First(x => x is ArcTypeBase && x.Name == decl.Type.FullName);
+            return [
+                decl.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
+                decl.IsArray ? (byte)0x01 : (byte)0x00,
+                decl.Mutability == ArcMutability.Variable ? (byte)0x01 : (byte)0x00,
+                .. BitConverter.GetBytes(dataType.Id),
+            ];
         }
     }
 }

@@ -29,7 +29,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
             result.AddRange(Fields);
             result.AddRange(Groups);
 
-            var typeDescriptor = new ArcDataTypeDescriptor { Name = Name };
+            var typeDescriptor = new ArcDataTypeDescriptor { Name = Name, SymbolId = Id };
             result.Add(typeDescriptor);
 
             return result;

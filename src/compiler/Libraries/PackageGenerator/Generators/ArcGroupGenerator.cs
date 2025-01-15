@@ -1,4 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
@@ -30,7 +32,19 @@ namespace Arc.Compiler.PackageGenerator.Generators
         public static ArcGroupFieldDescriptor GenerateFieldDescriptor(ArcGenerationSource source, ArcGroupField field)
         {
             source.ParentSignature.Locators.Add(field);
-            var result = new ArcGroupFieldDescriptor() { Name = source.ParentSignature.GetSignature() };
+            var result = new ArcGroupFieldDescriptor()
+            {
+                Name = source.ParentSignature.GetSignature(),
+                DataType = new ArcDataDeclarationDescriptor
+                {
+                    Type = source.AccessibleSymbols
+                        .OfType<ArcBaseType>()
+                        .First(bt => bt.FullName == field.DataDeclarator.DataType.TypeName),
+                    AllowNone = false,
+                    IsArray = field.DataDeclarator.DataType.IsArray,
+                    MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
+                }
+            };
 
             return result;
         }

@@ -25,6 +25,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
             return new ArcPartialGenerationResult
             {
+                // TODO: use bitmask
                 GeneratedData =
                 [
                     .. Opcode,

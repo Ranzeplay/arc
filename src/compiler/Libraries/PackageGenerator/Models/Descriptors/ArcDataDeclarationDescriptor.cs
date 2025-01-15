@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
     public class ArcDataDeclarationDescriptor
     {
-        public ArcTypeBase Type { get; set; }
+        public required ArcTypeBase Type { get; set; }
 
         public bool IsArray { get; set; }
 

@@ -11,18 +11,11 @@ namespace Arc.Compiler.PackageGenerator.Encoders
     {
         public static IEnumerable<byte> Encode(ArcGeneratorContext context)
         {
-            context.Symbols.Remove(0);
-            context.Symbols.Remove(1);
-            context.Symbols.Remove(2);
-            context.Symbols.Remove(3);
-            context.Symbols.Remove(4);
-            context.Symbols.Remove(5);
-            context.Symbols.Remove(6);
-
             var result = new List<byte>();
-            result.AddRange(BitConverter.GetBytes((long)context.Symbols.Count));
 
-            foreach (var symbol in context.Symbols.Values)
+            var validSymbols = context.Symbols.Values.Where(x => x.Id > 6);
+            result.AddRange(BitConverter.GetBytes(validSymbols.LongCount()));
+            foreach (var symbol in validSymbols)
             {
                 var iterResult = new List<byte>();
                 iterResult.AddRange(BitConverter.GetBytes(symbol.Id));
@@ -42,18 +35,20 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                     case ArcGroupDescriptor groupDescriptor:
                         {
                             iterResult.Add((byte)ArcSymbolType.Group);
-                            iterResult.AddRange(Utils.SerializeString(groupDescriptor.Name));
+                            iterResult.AddRange(GroupSymbolEncoder.EncodeGroupSymbol(groupDescriptor));
                             break;
                         }
                     case ArcGroupFieldDescriptor fieldDescriptor:
                         {
                             iterResult.Add((byte)ArcSymbolType.GroupField);
                             iterResult.AddRange(Utils.SerializeString(fieldDescriptor.Name));
+                            iterResult.AddRange(fieldDescriptor.DataType.Encode(context.Symbols.Values));
                             break;
                         }
                     case ArcDataTypeDescriptor dataTypeDescriptor:
                         {
                             iterResult.Add((byte)ArcSymbolType.DataType);
+                            iterResult.AddRange(BitConverter.GetBytes(dataTypeDescriptor.SymbolId));
                             iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
                             break;
                         }
