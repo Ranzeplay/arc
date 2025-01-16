@@ -58,7 +58,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             Assert.That(structure.Symbols.Count(), Is.EqualTo(2));
 
             structure.Symbols = structure.Symbols.Concat(structure.Symbols.OfType<ArcGroupDescriptor>().SelectMany(x => x.ExpandSymbols()));
-            Assert.That(structure.Symbols.Count(), Is.EqualTo(6));
+            Assert.That(structure.Symbols.Count(), Is.EqualTo(7));
         }
     }
 }
