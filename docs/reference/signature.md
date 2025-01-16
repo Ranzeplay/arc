@@ -58,9 +58,7 @@ The signature will be `s1:s2+FfnName@VSt1&RSt2&VAt3*VStr+VSint@a`
 
 ## Type signature
 
-### Base type
-
-The signature of base types are their name.
+With prefix `T`.
 
 ## Group signature
 
