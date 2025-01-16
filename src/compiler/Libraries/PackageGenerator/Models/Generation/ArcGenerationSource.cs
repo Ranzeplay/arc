@@ -6,8 +6,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
-        public WeakReference<ArcGenerationContext> ContextReference { get; init; }
-
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
         public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];
@@ -36,7 +34,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         {
             return new ArcGenerationSource
             {
-                ContextReference = ContextReference,
                 LocalDataSlots = LocalDataSlots,
                 AccessibleSymbols = AccessibleSymbols,
                 PackageDescriptor = PackageDescriptor,

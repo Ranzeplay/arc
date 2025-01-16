@@ -1,4 +1,6 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Builtin
+﻿using Arc.Compiler.PackageGenerator.Models.Scope;
+
+namespace Arc.Compiler.PackageGenerator.Models.Builtin
 {
     internal static class ArcPersistentData
     {
@@ -11,5 +13,17 @@
             new ArcBaseType { Id = 5, Name = "string", Scope = new(){ Type = ArcSymbolScopeType.Language } },
             new ArcBaseType { Id = 6, Name = "bool", Scope = new(){ Type = ArcSymbolScopeType.Language } },
         ];
+
+        public static ArcScopeTree BaseTypeScopeTree
+        {
+            get
+            {
+                var tree = new ArcScopeTree();
+                var node = tree.Root.AddChild(new ArcScopeTreeNamespaceNode("Arc"));
+                node = node.AddChild(new ArcScopeTreeNamespaceNode("Base"));
+                node.AddChildren(BaseTypes.Select(t => new ArcScopeTreeDataTypeNode(t)));
+                return tree;
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
@@ -13,6 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Models
 {
     public class ArcGeneratorContext
     {
+        public ArcScopeTreeNodeBase CurrentScope { get; set; }
+
         public List<byte> GeneratedData { get; set; } = [];
 
         public Dictionary<long, ArcSymbolBase> Symbols { get; } = [];
