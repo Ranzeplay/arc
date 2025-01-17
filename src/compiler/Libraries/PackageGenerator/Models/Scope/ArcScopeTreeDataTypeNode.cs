@@ -7,5 +7,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
         public ArcTypeBase DataType { get; set; } = dataType;
+
+        public override string GetSignature() => "+T" + DataType.FullName;
+
+        public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
     }
 }

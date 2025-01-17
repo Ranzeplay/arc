@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -7,5 +8,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupField;
 
         public ArcGroupFieldDescriptor GroupField { get; set; } = groupField;
+
+        public override string GetSignature()
+        {
+            return "+" + GroupField.GetSignature();
+        }
+
+        public override IEnumerable<ArcSymbolBase> GetSymbols() => [GroupField];
     }
 }

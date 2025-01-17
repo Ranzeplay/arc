@@ -1,10 +1,13 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Scope
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
+
+namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     public abstract class ArcScopeTreeNodeBase
     {
         public abstract ArcScopeTreeNodeType NodeType { get; }
 
-        public ICollection<ArcScopeTreeNodeBase> Children { get; set; } = [];
+        public List<ArcScopeTreeNodeBase> Children { get; set; } = [];
 
         public virtual ArcScopeTreeNodeBase Parent { get; set; }
 
@@ -23,5 +26,90 @@
             }
             return this;
         }
+
+        public IEnumerable<string> ParentSignatureStack
+        {
+            get
+            {
+                var stack = new List<string>();
+                var current = this;
+                while (current is not ArcRootScopeNode)
+                {
+                    stack.Add(current.GetSignature());
+                    current = current.Parent;
+                }
+                return stack;
+            }
+        }
+
+        public abstract string GetSignature();
+
+        public ArcRootScopeNode Root
+        {
+            get
+            {
+                var current = this;
+                while (current is not ArcRootScopeNode)
+                {
+                    current = current.Parent;
+                }
+                return (ArcRootScopeNode)current;
+            }
+        }
+        
+        public IEnumerable<ArcScopeTreeNodeBase> GetAncestors()
+        {
+            var current = this;
+            while (current is not ArcRootScopeNode)
+            {
+                yield return current;
+                current = current.Parent;
+            }
+        }
+
+        public T? GetSpecificChild<T>(Func<T, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
+        {
+            return GetSpecificChild(n => n is T t && predicate(t), recursive) as T;
+        }
+
+        public ArcScopeTreeNodeBase? GetSpecificChild(Func<ArcScopeTreeNodeBase, bool> predicate, bool recursive = false)
+        {
+            return GetChildren(predicate, recursive).FirstOrDefault();
+        }
+
+        public IEnumerable<T> GetSpecificChildren<T>(Func<T, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
+        {
+            return GetChildren(n => n is T t && predicate(t), recursive).Cast<T>();
+        }
+
+        public IEnumerable<ArcScopeTreeNodeBase> GetChildren(Func<ArcScopeTreeNodeBase, bool> predicate, bool recursive = false)
+        {
+            foreach (var child in Children)
+            {
+                if (predicate(child))
+                {
+                    yield return child;
+                }
+                if (recursive)
+                {
+                    foreach (var result in child.GetChildren(predicate, true))
+                    {
+                        yield return result;
+                    }
+                }
+            }
+        }
+
+        public IEnumerable<T> GetChildren<T>(Func<ArcScopeTreeNodeBase, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
+        {
+            return GetChildren(n => n is T, recursive).Cast<T>();
+        }
+
+        public IEnumerable<T> GetChildren<T>(bool recursive = false) where T : ArcScopeTreeNodeBase
+        {
+            return GetChildren<T>(n => true, recursive);
+        }
+
+        public abstract IEnumerable<ArcSymbolBase> GetSymbols();
     }
 }

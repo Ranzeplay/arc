@@ -1,4 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -6,6 +8,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.Group;
 
-        public ArcGroupDescriptor Group { get; set; } = group;
+        public ArcGroupDescriptor Descriptor { get; set; } = group;
+
+        public ArcGroup SyntaxTree { get; set; }
+
+        public override string GetSignature() => "+G" + SyntaxTree.Identifier.ToString();
+
+        public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
     }
 }

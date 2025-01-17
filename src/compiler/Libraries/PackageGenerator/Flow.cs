@@ -4,12 +4,11 @@ using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
-using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Microsoft.Extensions.Logging;
+using System.Collections.Immutable;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -22,25 +21,45 @@ namespace Arc.Compiler.PackageGenerator
             result.LoadPrimitiveTypes();
 
             var structure = GenerateUnitStructure(compilationUnit);
-            structure.Symbols = structure.Symbols.Concat(
-                structure.Symbols
-                    .OfType<ArcGroupDescriptor>()
-                    .SelectMany(x => x.ExpandSymbols())
-            );
             result.Append(structure);
 
-            foreach (var fn in compilationUnit.Namespace.Functions)
+            var funcs = structure.ScopeTree
+                .GetNodes<ArcScopeTreeIndividualFunctionNode>();
+            foreach (var fn in funcs)
             {
-                result.Append(ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace]), fn, false));
+                var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace], fn), fn.SyntaxTree, false);
+                fn.GenerationResult = fnResult;
             }
 
-            foreach (var grp in compilationUnit.Namespace.Groups)
+            var groups = structure.ScopeTree
+                .GetNodes<ArcScopeTreeGroupNode>();
+            foreach (var grp in groups)
             {
-                foreach (var fn in grp.Functions)
+                var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
+                foreach (var fn in groupFns)
                 {
-                    var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace, grp]), (ArcBlockIndependentFunction)fn, false);
-                    result.Append(fnResult);
+                    var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace], fn), fn.SyntaxTree, false);
+                    fn.GenerationResult = fnResult;
                 }
+            }
+
+            structure.ScopeTree
+                .GetNodes<ArcScopeTreeIndividualFunctionNode>()
+                .Select(n => n.GenerationResult)
+                .ToImmutableList()
+                .ForEach(result.Append);
+
+            structure.ScopeTree
+                .GetNodes<ArcScopeTreeGroupFunctionNode>()
+                .Select(n => n.GenerationResult)
+                .ToImmutableList()
+                .ForEach(result.Append);
+
+            structure.OverwriteSymbolsUsingScopeTree();
+            result.Symbols.Clear();
+            foreach (var symbol in structure.Symbols)
+            {
+                result.Symbols.Add(symbol.Id, symbol);
             }
 
             return result;
@@ -70,7 +89,7 @@ namespace Arc.Compiler.PackageGenerator
             compilationUnit.Logger.LogDebug("Generating group signatures");
             foreach (var grp in compilationUnit.Namespace.Groups)
             {
-                var skelecton = ArcGroupGenerator.GenerateGroupDescriptorSkelecton(context.GenerateSource([compilationUnit.Namespace]), grp);
+                var skelecton = ArcGroupGenerator.GenerateGroupDescriptorSkelecton(context.GenerateSource([compilationUnit.Namespace], null), grp);
                 symbols.Add(skelecton.Item1);
 
                 current.AddChild(skelecton.Item2);
@@ -80,10 +99,10 @@ namespace Arc.Compiler.PackageGenerator
             compilationUnit.Logger.LogDebug("Generating function signatures");
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
-                var functionDescriptor = ArcFunctionGenerator.GenerateDescriptor(context.GenerateSource([compilationUnit.Namespace]), fn.Declarator);
+                var functionDescriptor = ArcFunctionGenerator.GenerateDescriptor(context.GenerateSource([compilationUnit.Namespace], null), fn.Declarator);
                 symbols.Add(functionDescriptor);
 
-                var functionScope = new ArcScopeTreeIndividualFunctionNode(functionDescriptor);
+                var functionScope = new ArcScopeTreeIndividualFunctionNode(functionDescriptor) { SyntaxTree = fn };
                 current.AddChild(functionScope);
             }
             compilationUnit.Logger.LogDebug("Generated signatures for {} functions", compilationUnit.Namespace.Functions.Count());

@@ -14,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 {
     public class ArcGeneratorContext
     {
-        public ArcScopeTreeNodeBase CurrentScope { get; set; }
+        public ArcScopeTree ScopeTree { get; set; }
 
         public List<byte> GeneratedData { get; set; } = [];
 
@@ -99,10 +99,10 @@ namespace Arc.Compiler.PackageGenerator.Models
             foreach (var symbol in result.OtherSymbols)
             {
                 Symbols[symbol.Id] = symbol;
-            }
+            }   
             RelocationTargets.AddRange(result.RelocationTargets.Select(t =>
             {
-                t.Location += GeneratedData.LongCount();
+                t.Location += GeneratedData.Count;
                 return t;
             }));
             Labels.AddRange(result.RelocationLabels.Select(l =>
@@ -132,16 +132,17 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public ArcGenerationSource GenerateSource()
         {
-            return GenerateSource([]);
+            return GenerateSource([], ScopeTree.Root);
         }
 
-        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location)
+        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node)
         {
             return new()
             {
                 AccessibleSymbols = Symbols.Values,
                 PackageDescriptor = PackageDescriptor,
-                ParentSignature = new ArcSignature() { Locators = location.ToList() }
+                ParentSignature = new ArcSignature() { Locators = location.ToList() },
+                CurrentNode = node
             };
         }
     }

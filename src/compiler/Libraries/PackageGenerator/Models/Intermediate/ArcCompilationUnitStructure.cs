@@ -5,8 +5,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
     public class ArcCompilationUnitStructure
     {
-        public IEnumerable<ArcSymbolBase> Symbols { get; set; } = [];
+        public List<ArcSymbolBase> Symbols { get; set; } = [];
 
         public ArcScopeTree ScopeTree { get; set; } = new();
+
+        public void OverwriteSymbolsUsingScopeTree()
+        {
+            Symbols = [];
+
+            foreach (var node in ScopeTree.FlattenedNodes)
+            {
+                Symbols.AddRange(node.GetSymbols());
+            }
+        }
     }
 }

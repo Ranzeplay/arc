@@ -1,11 +1,14 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
+        public ArcScopeTreeNodeBase CurrentNode { get; set; }
+
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
         public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];

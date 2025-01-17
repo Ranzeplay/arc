@@ -47,7 +47,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 			
 					# call [Console].PrintLn(""Hello, world!"");
                     
-                    call [Arc::Program].test();
+                    call test();
 
                     while (1 > 0) { a = 2233; }
 			

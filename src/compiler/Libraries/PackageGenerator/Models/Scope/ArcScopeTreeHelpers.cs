@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Scope;
+﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 
 internal static class ArcScopeTreeHelpers
 {
@@ -17,27 +18,32 @@ internal static class ArcScopeTreeHelpers
         return nodes;
     }
 
-    public static void MergeNode(ArcScopeTreeNodeBase node, ArcScopeTreeNodeBase otherNode)
+    public static ArcScopeTreeNodeBase MergeNodes(ArcScopeTreeNodeBase node1, ArcScopeTreeNodeBase node2)
     {
-        var otherNodePosition = otherNode;
-        var currentNodePosition = node;
+        MergeNamespace(node1.GetSpecificChild<ArcScopeTreeNamespaceNode>(_ => true)!, node2.GetSpecificChild<ArcScopeTreeNamespaceNode>(_ => true)!);
+        return node1;
+    }
 
-        foreach (var otherChild in otherNode.Children)
+    public static ArcScopeTreeNamespaceNode? MergeNamespace(ArcScopeTreeNamespaceNode ns1, ArcScopeTreeNamespaceNode ns2)
+    {
+        if (ns1.Name == ns2.Name)
         {
-            var found = false;
-            foreach (var currentChild in currentNodePosition.Children)
+            foreach(var ns in ns1.GetChildren<ArcScopeTreeNamespaceNode>())
             {
-                if (currentChild.Equals(otherChild))
+                var ns2ChildNamespace = ns2.GetChildren<ArcScopeTreeNamespaceNode>().FirstOrDefault(n => n.Name == ns.Name);
+                if (ns2ChildNamespace != null)
                 {
-                    MergeNode(currentChild, otherChild);
-                    found = true;
-                    break;
+                    MergeNamespace(ns, ns2ChildNamespace);
+                    ns2.Children.Remove(ns2ChildNamespace);
                 }
             }
-            if (!found)
+
+            foreach (var ns in ns2.Children)
             {
-                currentNodePosition.AddChild(otherChild);
+                ns1.AddChild(ns);
             }
         }
+
+        return ns1;
     }
 }

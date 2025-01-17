@@ -5,5 +5,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
     internal class ArcBaseType : ArcTypeBase
     {
         public byte[] FieldId => [0x00];
+
+        public ArcBaseType(long id, string identifier) : base(identifier)
+        {
+            Id = id;
+            Name = identifier;
+            Scope = new ArcSymbolScope() { Type = ArcSymbolScopeType.Language };
+        }
     }
 }

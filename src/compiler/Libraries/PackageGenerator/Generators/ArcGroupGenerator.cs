@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             {
                 var fnDescriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
                 descriptor.Functions.Add(fnDescriptor);
-                functionNodes.Add(new ArcScopeTreeGroupFunctionNode(fnDescriptor));
+                functionNodes.Add(new ArcScopeTreeGroupFunctionNode(fnDescriptor) { SyntaxTree = fn });
                 // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
                 source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
             }
