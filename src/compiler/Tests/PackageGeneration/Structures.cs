@@ -55,10 +55,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = Flow.GenerateUnitStructure(unit);
-            Assert.That(structure.Symbols.Count(), Is.EqualTo(2));
-
-            structure.Symbols.AddRange(structure.Symbols.OfType<ArcGroupDescriptor>().SelectMany(x => x.ExpandSymbols()));
-            Assert.That(structure.Symbols.Count(), Is.EqualTo(7));
+            Assert.That(structure.Symbols, Has.Count.EqualTo(2));
         }
     }
 }

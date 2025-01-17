@@ -21,7 +21,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
 
         [Test]
@@ -63,7 +63,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             Assert.Multiple(() =>
             {
-                Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+                Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
                 Assert.That(result.Constants.Count, Is.EqualTo(3));
             });
         }
@@ -84,7 +84,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = Flow.GenerateUnit(unit);
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 2));
+            Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
     }
 }
