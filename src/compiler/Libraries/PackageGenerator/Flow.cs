@@ -45,15 +45,21 @@ namespace Arc.Compiler.PackageGenerator
 
             structure.ScopeTree
                 .GetNodes<ArcScopeTreeIndividualFunctionNode>()
-                .Select(n => n.GenerationResult)
                 .ToImmutableList()
-                .ForEach(result.Append);
+                .ForEach(t =>
+                {
+                    t.Descriptor.EntrypointPos = result.GeneratedData.Count;
+                    result.Append(t.GenerationResult);
+                });
 
             structure.ScopeTree
                 .GetNodes<ArcScopeTreeGroupFunctionNode>()
-                .Select(n => n.GenerationResult)
                 .ToImmutableList()
-                .ForEach(result.Append);
+                .ForEach(t =>
+                {
+                    t.Descriptor.EntrypointPos = result.GeneratedData.Count;
+                    result.Append(t.GenerationResult);
+                });
 
             structure.OverwriteSymbolsUsingScopeTree();
             result.Symbols.Clear();
@@ -120,7 +126,6 @@ namespace Arc.Compiler.PackageGenerator
 
             result.AddRange([0x20, 0x24]);
 
-            context.ApplyFunctionSymbolRelocation();
             result.AddRange(ArcPackageDescriptorEncoder.Encode(context));
             result.AddRange(ArcSymbolTableEncoder.Encode(context));
             result.AddRange(ArcConstantTableEncoder.Encode(context));

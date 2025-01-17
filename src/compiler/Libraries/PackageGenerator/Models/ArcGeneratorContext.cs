@@ -81,19 +81,6 @@ namespace Arc.Compiler.PackageGenerator.Models
             }
         }
 
-        public void ApplyFunctionSymbolRelocation()
-        {
-            foreach (var symbol in Symbols.Values)
-            {
-                if (symbol is ArcFunctionDescriptor desc)
-                {
-                    var label = Labels.First(l => l.Type == ArcRelocationLabelType.BeginFunction && l.Name == desc.RawFullName);
-                    desc.EntrypointPos = label.Location;
-                    Symbols[symbol.Id] = desc;
-                }
-            }
-        }
-
         public void Append(ArcPartialGenerationResult result)
         {
             foreach (var symbol in result.OtherSymbols)
