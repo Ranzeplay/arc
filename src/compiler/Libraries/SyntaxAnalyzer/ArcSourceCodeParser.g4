@@ -100,3 +100,4 @@ arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrappe
 arc_group_function: arc_function_block;
 
 // Call chain
+arc_call_chain: arc_flexible_identifier (DOT (arc_single_identifier | arc_function_call_base))*;
