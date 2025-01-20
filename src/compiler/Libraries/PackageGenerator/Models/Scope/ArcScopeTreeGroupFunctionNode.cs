@@ -1,22 +1,16 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
-using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    internal class ArcScopeTreeGroupFunctionNode(ArcFunctionDescriptor groupFunction) : ArcScopeTreeNodeBase
+    internal class ArcScopeTreeGroupFunctionNode(ArcFunctionDescriptor desc) : ArcScopeTreeFunctionNodeBase(desc)
     {
-        public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupFunction;
+        public override long Id { get => Descriptor.Id; init => Descriptor.Id = value; }
 
-        public ArcFunctionDescriptor Descriptor { get; set; } = groupFunction;
+        public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupFunction;
 
         public ArcGroupFunction SyntaxTree { get; set; }
 
-        public ArcPartialGenerationResult GenerationResult { get; set; }
-
-        public override string GetSignature() => "+" + SyntaxTree.Declarator.GetSignature();
-
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
+        public override string SignatureAddend => SyntaxTree.Declarator.GetSignature();
     }
 }

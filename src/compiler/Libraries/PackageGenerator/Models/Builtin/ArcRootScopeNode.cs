@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
 
         public override ArcScopeTreeNodeBase Parent { get => null!; set => base.Parent = value; }
 
-        public override string GetSignature() => "Root";
+        public override string SignatureAddend => "Root";
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }

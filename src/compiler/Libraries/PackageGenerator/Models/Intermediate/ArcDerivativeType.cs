@@ -3,7 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
-    internal class ArcExternalType(ArcGroupDescriptor groupDescriptor) : ArcTypeBase(groupDescriptor.Name)
+    internal class ArcDerivativeType(ArcGroupDescriptor groupDescriptor) : ArcTypeBase(groupDescriptor.Name)
     {
         public long GroupId { get; set; } = groupDescriptor.Id;
     }

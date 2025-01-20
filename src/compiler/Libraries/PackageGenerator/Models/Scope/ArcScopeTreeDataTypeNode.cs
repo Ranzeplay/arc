@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -6,9 +7,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
+        public bool IsInternal { get; set; } = dataType is ArcBaseType;
+
         public ArcTypeBase DataType { get; set; } = dataType;
 
-        public override string GetSignature() => "+T" + DataType.FullName;
+        public override string SignatureAddend => "T" + DataType.FullName;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
     }

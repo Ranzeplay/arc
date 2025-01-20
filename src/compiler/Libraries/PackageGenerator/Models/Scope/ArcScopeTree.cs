@@ -19,5 +19,21 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         {
             return GetNodes<T>(_ => true);
         }
+
+        public ArcScopeTreeNamespaceNode GetNamespace(IEnumerable<string> names)
+        {
+            var current = Root;
+            foreach (var name in names)
+            {
+                var ns = current.GetSpecificChild<ArcScopeTreeNamespaceNode>(n => n.Name == name);
+                if (ns == null)
+                {
+                    ns = new ArcScopeTreeNamespaceNode(name);
+                    current.AddChild(ns);
+                }
+                current = ns;
+            }
+            return (ArcScopeTreeNamespaceNode)current;
+        }
     }
 }

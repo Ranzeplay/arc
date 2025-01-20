@@ -5,6 +5,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     public abstract class ArcScopeTreeNodeBase
     {
+        public virtual long Id { get; init; } = new Random().NextInt64();
+
         public abstract ArcScopeTreeNodeType NodeType { get; }
 
         public List<ArcScopeTreeNodeBase> Children { get; set; } = [];
@@ -35,14 +37,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 var current = this;
                 while (current is not ArcRootScopeNode)
                 {
-                    stack.Add(current.GetSignature());
+                    stack.Add(current.SignatureAddend);
                     current = current.Parent;
                 }
                 return stack;
             }
         }
 
-        public abstract string GetSignature();
+        public abstract string SignatureAddend { get; }
+
+        public string Signature { get => string.Join("+", ParentSignatureStack.Reverse()); }
 
         public ArcRootScopeNode Root
         {

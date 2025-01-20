@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcDataDeclarator SyntaxTree { get; set; } = declarator;
 
-        public override string GetSignature() => "+S" + SyntaxTree.GetSignature();
+        public override string SignatureAddend => "S" + SyntaxTree.GetSignature();
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }

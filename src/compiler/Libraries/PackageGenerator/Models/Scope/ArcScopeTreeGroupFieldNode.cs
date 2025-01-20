@@ -5,14 +5,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     internal class ArcScopeTreeGroupFieldNode(ArcGroupFieldDescriptor groupField) : ArcScopeTreeNodeBase
     {
+        public override long Id { get => GroupField.Id; init => GroupField.Id = value; }
+
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupField;
 
         public ArcGroupFieldDescriptor GroupField { get; set; } = groupField;
 
-        public override string GetSignature()
-        {
-            return "+" + GroupField.GetSignature();
-        }
+        public override string SignatureAddend => "+" + GroupField.GetSignature();
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [GroupField];
     }
