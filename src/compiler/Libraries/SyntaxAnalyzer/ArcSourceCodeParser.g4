@@ -37,7 +37,7 @@ arc_function_block: arc_function_declarator arc_wrapped_function_body;
 arc_bool_value: KW_TRUE | KW_FALSE;
 arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
-arc_data_value: arc_instant_value | arc_function_call_base | arc_flexible_identifier | arc_type_value | KW_NONE;
+arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | KW_NONE;
 
 arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
@@ -45,10 +45,10 @@ arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
 arc_stmt_return: KW_RETURN arc_expression?;
 arc_stmt_decl: arc_data_declarator;
 // TODO: incremental
-arc_stmt_assign: arc_flexible_identifier (ASSIGN | ASSIGN_IF_NULL) arc_expression;
+arc_stmt_assign: arc_call_chain (ASSIGN | ASSIGN_IF_NULL) arc_expression;
 arc_stmt_break: KW_BREAK;
 arc_stmt_continue: KW_CONTINUE;
-arc_stmt_call: KW_CALL arc_function_call_base;
+arc_stmt_call: KW_CALL (arc_function_call_base | arc_call_chain);
 arc_stmt_while: KW_WHILE LPAREN arc_expression RPAREN arc_wrapped_function_body;
 arc_stmt_for: KW_FOR LPAREN arc_stmt_decl SEMICOLON arc_expression SEMICOLON arc_stmt_assign RPAREN arc_wrapped_function_body;
 arc_stmt_loop: KW_LOOP arc_wrapped_function_body;
@@ -100,4 +100,5 @@ arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrappe
 arc_group_function: arc_function_block;
 
 // Call chain
-arc_call_chain: arc_flexible_identifier (DOT (arc_single_identifier | arc_function_call_base))*;
+arc_call_chain: arc_call_chain_term (DOT arc_call_chain_term)*;
+arc_call_chain_term: arc_flexible_identifier | arc_function_call_base;

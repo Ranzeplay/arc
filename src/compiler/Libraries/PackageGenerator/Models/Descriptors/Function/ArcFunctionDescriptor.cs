@@ -7,11 +7,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
     {
         public string RawFullName { get => Name; set => Name = value; }
 
-        public IEnumerable<ArcParameterDescriptor> Parameters { get; set; }
+        public IEnumerable<ArcParameterDescriptor> Parameters { get; set; } = [];
 
         public ArcDataDeclarationDescriptor ReturnValueType { get; set; }
 
-        public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; }
+        public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; } = [];
 
         public long EntrypointPos { get; set; }
 

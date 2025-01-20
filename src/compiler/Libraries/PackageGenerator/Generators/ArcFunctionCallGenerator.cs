@@ -12,23 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             var result = new ArcPartialGenerationResult();
 
-            long funcId = 0;
-            if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
-            {
-                var funcDeclarator = source.AccessibleSymbols
-                    .OfType<ArcFunctionDescriptor>()
-                    .FirstOrDefault(f => f.RawFullName.StartsWith(funcCall.Identifier.AsFunctionIdentifier()))
-                    ?? throw new InvalidOperationException("Invalid function declarator");
-                funcId = funcDeclarator.Id;
-            }
-            else
-            {
-                var funcNode = source.CurrentNode
-                    .Root
-                    .GetSpecificChild<ArcScopeTreeIndividualFunctionNode>(n => n.SyntaxTree.Declarator.Identifier.Name == funcCall.Identifier.Name, true)
-                    ?? throw new InvalidOperationException("Invalid function node");
-                funcId = funcNode.Descriptor.Id;
-            }
+            long funcId = Utils.GetFunctionId(source, funcCall);
 
             foreach (var arg in funcCall.Arguments.Reverse())
             {

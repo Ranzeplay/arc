@@ -1,14 +1,14 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
-using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Statements
 {
     public class ArcStatementAssign(ArcSourceCodeParser.Arc_stmt_assignContext context) : ArcExecutionStepBase, IArcTraceable<ArcSourceCodeParser.Arc_stmt_assignContext>
     {
-        public ArcFlexibleIdentifier Identifier { get; set; } = new(context.arc_flexible_identifier());
+        public ArcCallChain CallChain { get; set; } = new(context.arc_call_chain());
 
         public ArcExpression Expression { get; set; } = new(context.arc_expression());
 

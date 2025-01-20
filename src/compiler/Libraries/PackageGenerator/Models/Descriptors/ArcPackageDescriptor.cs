@@ -4,7 +4,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
     public class ArcPackageDescriptor
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = Guid.NewGuid().ToString();
 
         public long Version { get; set; }
 

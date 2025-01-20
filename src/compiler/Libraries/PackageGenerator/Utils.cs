@@ -8,6 +8,10 @@ using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
+using Arc.Compiler.PackageGenerator.Models.Scope;
+using System;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -46,6 +50,17 @@ namespace Arc.Compiler.PackageGenerator
             var result = new List<byte>();
             result.AddRange(BitConverter.GetBytes((long)s.Length));
             result.AddRange(Encoding.UTF8.GetBytes(s));
+            return result;
+        }
+
+        public static IEnumerable<byte> SerializeArray(IEnumerable<long> array)
+        {
+            var result = new List<byte>();
+            result.AddRange(BitConverter.GetBytes((long)array.Count()));
+            foreach (var item in array)
+            {
+                result.AddRange(BitConverter.GetBytes(item));
+            }
             return result;
         }
 
@@ -119,6 +134,26 @@ namespace Arc.Compiler.PackageGenerator
                 decl.Mutability == ArcMutability.Variable ? (byte)0x01 : (byte)0x00,
                 .. BitConverter.GetBytes(dataType.Id),
             ];
+        }
+
+        public static long GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall)
+        {
+            if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
+            {
+                var funcDeclarator = source.AccessibleSymbols
+                    .OfType<ArcFunctionDescriptor>()
+                    .FirstOrDefault(f => f.RawFullName.StartsWith(funcCall.Identifier.AsFunctionIdentifier()))
+                    ?? throw new InvalidOperationException("Invalid function declarator");
+                return funcDeclarator.Id;
+            }
+            else
+            {
+                var funcNode = source.CurrentNode
+                    .Root
+                    .GetSpecificChild<ArcScopeTreeIndividualFunctionNode>(n => n.SyntaxTree.Declarator.Identifier.Name == funcCall.Identifier.Name, true)
+                    ?? throw new InvalidOperationException("Invalid function node");
+                return funcNode.Descriptor.Id;
+            }
         }
     }
 }

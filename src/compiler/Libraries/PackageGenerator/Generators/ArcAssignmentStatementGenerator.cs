@@ -14,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             result.Append(exprResult);
 
             // Pop top element to the target
-            var targetSymbol = source.LocalDataSlots.First(ds => ds.Declarator.Identifier.Name == assign.Identifier.Name);
+            var targetSymbol = source.LocalDataSlots.First(ds => ds.Declarator.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
             result.Append(new ArcPopToSlotInstruction(targetSymbol).Encode(source));
 
             return result;

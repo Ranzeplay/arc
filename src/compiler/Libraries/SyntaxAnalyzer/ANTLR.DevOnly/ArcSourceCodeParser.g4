@@ -48,7 +48,7 @@ arc_stmt_decl: arc_data_declarator;
 arc_stmt_assign: arc_flexible_identifier (ASSIGN | ASSIGN_IF_NULL) arc_expression;
 arc_stmt_break: KW_BREAK;
 arc_stmt_continue: KW_CONTINUE;
-arc_stmt_call: KW_CALL arc_function_call_base;
+arc_stmt_call: KW_CALL (arc_function_call_base | arc_call_chain);
 arc_stmt_while: KW_WHILE LPAREN arc_expression RPAREN arc_wrapped_function_body;
 arc_stmt_for: KW_FOR LPAREN arc_stmt_decl SEMICOLON arc_expression SEMICOLON arc_stmt_assign RPAREN arc_wrapped_function_body;
 arc_stmt_loop: KW_LOOP arc_wrapped_function_body;
@@ -100,4 +100,5 @@ arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrappe
 arc_group_function: arc_function_block;
 
 // Call chain
-arc_call_chain: arc_flexible_identifier (DOT (arc_single_identifier | arc_function_call_base))*;
+arc_call_chain: arc_call_chain_term (DOT arc_call_chain_term)*;
+arc_call_chain_term: arc_flexible_identifier | arc_function_call_base;

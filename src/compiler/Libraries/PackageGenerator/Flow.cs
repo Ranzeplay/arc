@@ -95,7 +95,7 @@ namespace Arc.Compiler.PackageGenerator
             compilationUnit.Logger.LogDebug("Generating group signatures");
             foreach (var grp in compilationUnit.Namespace.Groups)
             {
-                var skelecton = ArcGroupGenerator.GenerateGroupDescriptorSkelecton(context.GenerateSource([compilationUnit.Namespace], null), grp);
+                var skelecton = ArcGroupGenerator.GenerateGroupDescriptorSkelecton(context.GenerateSource([compilationUnit.Namespace], null!), grp);
                 symbols.Add(skelecton.Item1);
 
                 current.AddChild(skelecton.Item2);
@@ -105,7 +105,7 @@ namespace Arc.Compiler.PackageGenerator
             compilationUnit.Logger.LogDebug("Generating function signatures");
             foreach (var fn in compilationUnit.Namespace.Functions)
             {
-                var functionDescriptor = ArcFunctionGenerator.GenerateDescriptor(context.GenerateSource([compilationUnit.Namespace], null), fn.Declarator);
+                var functionDescriptor = ArcFunctionGenerator.GenerateDescriptor(context.GenerateSource([compilationUnit.Namespace], null!), fn.Declarator);
                 symbols.Add(functionDescriptor);
 
                 var functionScope = new ArcScopeTreeIndividualFunctionNode(functionDescriptor) { SyntaxTree = fn };

@@ -5,6 +5,7 @@
         ConstantTable = 0x01,
         DataSlot = 0x02,
         DataHandle = 0x03,
+        StackTop = 0x04,
         Invalid = 0x00
     }
 }

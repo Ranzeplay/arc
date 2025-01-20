@@ -8,9 +8,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public long TypeId { get; set; }
 
-        public object Value { get; set; }
+        public required object Value { get; set; }
 
-        public IArcConstantEncoder Encoder { get; set; }
+        public required IArcConstantEncoder Encoder { get; set; }
 
         public IEnumerable<byte> RawData => Encoder.Encode(Value);
 
