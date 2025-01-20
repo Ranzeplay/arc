@@ -7,7 +7,7 @@ title: On-stack data save-load operations
 ## Instruction format
 
 ```
-<prefix> <source> <loc_id> <field_id> <args>
+<prefix> <source> <loc_id> <list field_id> <args>
 ```
 
 - `<prefix>`: Instruction prefix or identifier
@@ -23,7 +23,7 @@ title: On-stack data save-load operations
 
 The `<loc_id>` will be the *TableEntryId*.
 
-The `<field_id>` indicates the *FieldId* in the symbol table. For base types, thay are always `0x00`.
+The `<list field_id>` indicates the *FieldId* link in the symbol table. For base types, thay are always `0x00`.
 
 #### From accessible data slot
 
