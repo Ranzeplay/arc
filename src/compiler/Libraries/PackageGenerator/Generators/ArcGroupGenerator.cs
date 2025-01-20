@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
@@ -13,6 +14,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
         {
             source.ParentSignature.Locators.Add(group);
             var descriptor = new ArcGroupDescriptor() { Name = source.ParentSignature.GetSignature() };
+
+            var typeDescriptor = new ArcDerivativeType(descriptor) { Name = descriptor.Name };
+            var typeNode = new ArcScopeTreeDataTypeNode(typeDescriptor);
 
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in group.Functions)
@@ -33,7 +37,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
             }
 
             var node = new ArcScopeTreeGroupNode(descriptor);
-            node.AddChildren(functionNodes).AddChildren(fieldNodes);
+            node.AddChildren(functionNodes)
+                .AddChildren(fieldNodes)
+                .AddChild(typeNode);
 
             return (descriptor, node);
         }
