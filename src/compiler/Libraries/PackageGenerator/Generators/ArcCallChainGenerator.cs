@@ -22,7 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 locator.Source = ArcDataSourceType.DataSlot;
 
                 var identifier = callChain.Terms.First().Identifier!;
-                var slot = source.LocalDataSlots.First(s => s.Name == identifier.Name);
+                var slot = source.LocalDataSlots.First(s => s.Declarator.Identifier.Name == identifier.Name);
                 locator.LocationId = slot.SlotId;
             }
             else
