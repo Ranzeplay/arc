@@ -4,8 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
 
-
-var logLevelArg = args[2] ?? "";
+var logLevelArg = args.ElementAtOrDefault(2);
 var logLevel = logLevelArg switch
 {
     "trace" => LogLevel.Trace,
@@ -22,6 +21,12 @@ var logger = LoggerFactory.Create(builder =>
     builder.AddConsole();
     builder.SetMinimumLevel(logLevel);
 }).CreateLogger("Circle CLI");
+
+if (args.Length < 2)
+{
+    logger.LogError("Usage: Circle <input> <output> [logLevel]");
+    return;
+}
 
 logger.LogInformation("Circle CLI");
 
