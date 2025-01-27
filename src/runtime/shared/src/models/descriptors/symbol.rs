@@ -14,14 +14,22 @@ pub enum Symbol {
     Namespace(NamespaceSymbol),
 }
 
-pub struct DataTypeSymbol {
+pub enum DataTypeSymbol {
+    BaseType(String),
+    DerivativeType(DerivativeTypeSymbol),
+}
+
+pub struct DerivativeTypeSymbol {
     pub signature: String,
-    pub type_symbol_id: usize,
+    pub group_id: usize,
 }
 
 impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[DT] {} -> 0x{:016X}", self.signature, self.type_symbol_id)
+        match &self {
+            DataTypeSymbol::DerivativeType(dt) => writeln!(f, "[DT] {} -> 0x{:016X}", dt.signature, dt.group_id),
+            DataTypeSymbol::BaseType(bt) => writeln!(f, "[DT] {}", bt)
+        }
     }
 }
 

@@ -1,7 +1,4 @@
-use shared::models::descriptors::symbol::{
-    DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol,
-    SymbolDescriptor, SymbolTable,
-};
+use shared::models::descriptors::symbol::{DataTypeSymbol, DerivativeTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
 use shared::models::encodings::data_type_enc::{MemoryStorageType, Mutability};
 use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use shared::models::encodings::str_enc::StringEncoding;
@@ -127,15 +124,23 @@ pub fn decode_group_field_descriptor(stream: &[u8]) -> (Symbol, usize) {
 
 pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let mut pos = 0;
-    let type_id = usize::from_le_bytes(stream[0..8].try_into().unwrap());
-    pos += 8;
+
+    let is_base_type = stream[pos] == 0x00;
+    pos += 1;
 
     let name_encoding = StringEncoding::from_u8(&stream[pos..]);
-    let signature = name_encoding.value;
     pos += name_encoding.total_size;
 
-    let result = Symbol::DataType(DataTypeSymbol { signature, type_symbol_id: type_id });
-    (result, pos)
+    if is_base_type {
+        (Symbol::DataType(DataTypeSymbol::BaseType(name_encoding.value)), pos)
+    } else {
+        let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+        pos += 8;
+        (Symbol::DataType(DataTypeSymbol::DerivativeType(DerivativeTypeSymbol {
+            signature: name_encoding.value,
+            group_id,
+        })), pos)
+    }
 }
 
 pub fn decode_namespace_descriptor(stream: &[u8]) -> (Symbol, usize) {
