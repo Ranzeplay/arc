@@ -15,8 +15,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
             source.ParentSignature.Locators.Add(group);
             var descriptor = new ArcGroupDescriptor() { Name = source.ParentSignature.GetSignature() };
 
-            var typeDescriptor = new ArcDerivativeType(descriptor) { Name = descriptor.Name };
-            var typeNode = new ArcScopeTreeDataTypeNode(typeDescriptor);
+            var derivativeTypeDescriptor = new ArcDerivativeType(descriptor) { Name = descriptor.Name };
+            var typeNode = new ArcScopeTreeDataTypeNode(derivativeTypeDescriptor);
 
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in group.Functions)

@@ -19,20 +19,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
         public List<ArcAnnotationDescriptor> Annotations { get; set; } = [];
 
         public ArcAccessibility Accessibility { get; set; } = ArcAccessibility.Private;
-
-        public IEnumerable<ArcSymbolBase> ExpandSymbols()
-        {
-            var result = new List<ArcSymbolBase>();
-            result.AddRange(Functions);
-            result.AddRange(Constructors);
-            result.AddRange(Destructors);
-            result.AddRange(Fields);
-            result.AddRange(Groups);
-
-            var typeDescriptor = new ArcDataTypeDescriptor { Name = Name, SymbolId = Id };
-            result.Add(typeDescriptor);
-
-            return result;
-        }
     }
 }

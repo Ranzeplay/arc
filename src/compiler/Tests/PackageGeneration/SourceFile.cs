@@ -88,7 +88,6 @@ namespace Arc.Compiler.Tests.PackageGeneration
                 DataAlignmentLength = 8
             };
 
-
             var outputStream = Flow.DumpFullByteStream(context);
 
             Assert.That(outputStream, Is.Not.Null);

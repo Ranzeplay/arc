@@ -4,6 +4,9 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models;
 using Microsoft.Extensions.Logging;
+using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {
@@ -45,17 +48,21 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                             iterResult.AddRange(fieldDescriptor.DataType.Encode(context.Symbols.Values));
                             break;
                         }
-                    case ArcDataTypeDescriptor dataTypeDescriptor:
-                        {
-                            iterResult.Add((byte)ArcSymbolType.DataType);
-                            iterResult.AddRange(BitConverter.GetBytes(dataTypeDescriptor.SymbolId));
-                            iterResult.AddRange(Utils.SerializeString(dataTypeDescriptor.Name));
-                            break;
-                        }
                     case ArcNamespaceDescriptor namespaceDescriptor:
                         {
                             iterResult.Add((byte)ArcSymbolType.Namespace);
                             iterResult.AddRange(Utils.SerializeString(namespaceDescriptor.Name));
+                            break;
+                        }
+                    case ArcTypeBase typeBase:
+                        {
+                            iterResult.Add((byte)ArcSymbolType.DataType);
+                            iterResult.Add((byte)((typeBase is ArcBaseType) ? 0x00 : 0x01));
+                            iterResult.AddRange(Utils.SerializeString(typeBase.FullName));
+                            if (typeBase is ArcDerivativeType derivativeType)
+                            {
+                                iterResult.AddRange(BitConverter.GetBytes(derivativeType.GroupId));
+                            }
                             break;
                         }
                 }
