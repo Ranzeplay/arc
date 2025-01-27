@@ -44,6 +44,7 @@ impl Debug for FunctionSymbol {
     }
 }
 
+#[derive(Clone)]
 pub struct GroupSymbol {
     pub signature: String,
     pub field_ids: Vec<usize>,

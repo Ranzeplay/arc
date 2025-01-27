@@ -1,3 +1,5 @@
+use shared::models::descriptors::symbol::Symbol;
+use shared::models::display::group::{GroupDetailViewModel, GroupListViewModel};
 use crate::decoders::constant_table::decode_constant_table;
 use crate::decoders::instruction::decode_instructions;
 use crate::decoders::package_descriptor::decode_package_descriptor;
@@ -25,6 +27,20 @@ impl Cmdec {
         let (symbol_table, len) = decode_symbol_table(&stream[pos..]);
         pos += len;
         println!("{:?}", symbol_table);
+
+        let mut group_detail_list = GroupListViewModel{
+            groups: Vec::new()
+        };
+        for symbol in &symbol_table.symbols {
+            match &symbol.value {
+                Symbol::Group(group) => {
+                    let g = group.clone();
+                    group_detail_list.groups.push(GroupDetailViewModel::new(g));
+                },
+                _ => {}
+            }
+        }
+        println!("{:?}", group_detail_list);
 
         let (constant_table, len) = decode_constant_table(&stream[pos..]);
         pos += len;
