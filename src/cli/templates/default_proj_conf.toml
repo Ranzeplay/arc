@@ -1,0 +1,8 @@
+[description]
+name = "untitled-project"
+version = "0"
+description = "A new project"
+author = "Anonymous"
+license = "MIT"
+
+[dependencies]
