@@ -3,20 +3,10 @@ using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
-    public class ArcCompilationUnitStructure
+    public class ArcCompilationUnitStructure(ArcScopeTree scopeTree)
     {
-        public List<ArcSymbolBase> Symbols { get; set; } = [];
+        public ArcScopeTree ScopeTree { get; set; } = scopeTree;
 
-        public ArcScopeTree ScopeTree { get; set; } = new();
-
-        public void OverwriteSymbolsUsingScopeTree()
-        {
-            Symbols = [];
-
-            foreach (var node in ScopeTree.FlattenedNodes)
-            {
-                Symbols.AddRange(node.GetSymbols());
-            }
-        }
+        public List<ArcSymbolBase> Symbols => ScopeTree.FlattenedNodes.SelectMany(n => n.GetSymbols()).ToList();
     }
 }

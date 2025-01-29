@@ -32,17 +32,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             AccessibleSymbols = AccessibleSymbols.Concat(generationResult.OtherSymbols);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
         }
-
-        public ArcGenerationSource Clone()
-        {
-            return new ArcGenerationSource
-            {
-                LocalDataSlots = LocalDataSlots,
-                AccessibleSymbols = AccessibleSymbols,
-                PackageDescriptor = PackageDescriptor,
-                ParentSignature = ParentSignature,
-                AccessibleConstants = AccessibleConstants
-            };
-        }
     }
 }

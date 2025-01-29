@@ -61,13 +61,6 @@ namespace Arc.Compiler.PackageGenerator
                     result.Append(t.GenerationResult);
                 });
 
-            structure.OverwriteSymbolsUsingScopeTree();
-            result.Symbols.Clear();
-            foreach (var symbol in structure.Symbols)
-            {
-                result.Symbols.Add(symbol.Id, symbol);
-            }
-
             return result;
         }
 
@@ -115,7 +108,7 @@ namespace Arc.Compiler.PackageGenerator
 
             tree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
 
-            return new ArcCompilationUnitStructure() { Symbols = symbols, ScopeTree = tree };
+            return new(tree);
         }
 
         public static IEnumerable<byte> DumpFullByteStream(ArcGeneratorContext context)

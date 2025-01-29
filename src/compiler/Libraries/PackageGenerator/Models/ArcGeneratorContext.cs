@@ -1,7 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
@@ -18,7 +17,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public List<byte> GeneratedData { get; set; } = [];
 
-        public Dictionary<long, ArcSymbolBase> Symbols { get; } = [];
+        public Dictionary<long, ArcSymbolBase> Symbols => ScopeTree.FlattenedNodes.SelectMany(n => n.GetSymbols()).ToDictionary(s => s.Id);
 
         public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
