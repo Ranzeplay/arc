@@ -7,7 +7,7 @@ using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
-namespace Arc.Compiler.PackageGenerator.Generators
+namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcFunctionGenerator
     {

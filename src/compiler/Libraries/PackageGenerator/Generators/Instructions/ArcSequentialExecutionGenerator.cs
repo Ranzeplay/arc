@@ -3,7 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
-namespace Arc.Compiler.PackageGenerator.Generators
+namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcSequentialExecutionGenerator
     {
@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         }
                     case ArcStatementAssign assign:
                         {
-                            stepResult = ArcAssignmentStatementGenerator.Generate(assign, source);
+                            stepResult = assign.Generate(source);
                             break;
                         }
                     case ArcBlockIf ifBlock:

@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
-namespace Arc.Compiler.PackageGenerator.Generators
+namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcExpressionEvaluationGenerator
     {

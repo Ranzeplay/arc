@@ -2,7 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
-namespace Arc.Compiler.PackageGenerator.Generators
+namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcLoopControlGenerator
     {
