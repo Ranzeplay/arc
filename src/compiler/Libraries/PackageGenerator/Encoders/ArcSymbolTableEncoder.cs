@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
         {
             var result = new List<byte>();
 
-            var validSymbols = context.Symbols.Values.Where(x => x.Id > 6);
+            var validSymbols = context.Symbols.Values;
             result.AddRange(BitConverter.GetBytes(validSymbols.LongCount()));
             foreach (var symbol in validSymbols)
             {
