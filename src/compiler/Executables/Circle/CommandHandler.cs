@@ -14,12 +14,7 @@ namespace Arc.Compiler.Circle
                 builder.SetMinimumLevel(logLevel);
             }).CreateLogger("Circle CLI");
 
-            if (inputs.Length == 0)
-            {
-                logger.LogError("No input file path provided");
-                return;
-            }
-
+            // We can ensure that inputs is not empty because of the validator
             var compilationUnits = inputs
                 .Select(t => new { Content = File.ReadAllText(t), Path = t })
                 .Select(t => new { Context = AntlrAdapter.ParseCompilationUnit(t.Content, logger), t.Path })
