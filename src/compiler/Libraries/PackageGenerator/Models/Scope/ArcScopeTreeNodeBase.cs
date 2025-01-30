@@ -1,12 +1,11 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
-using Arc.Compiler.PackageGenerator.Models.Generation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     public abstract class ArcScopeTreeNodeBase
     {
-        public virtual long Id { get; init; } = new Random().NextInt64();
+        public virtual long Id { get; set; } = new Random().NextInt64();
 
         public abstract ArcScopeTreeNodeType NodeType { get; }
 

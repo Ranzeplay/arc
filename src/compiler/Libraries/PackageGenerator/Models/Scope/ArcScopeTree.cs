@@ -8,7 +8,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ICollection<ArcScopeTreeNodeBase> FlattenedNodes => ArcScopeTreeHelpers.FlattenNodes(Root);
 
-        public void MergeRoot(ArcScopeTree other) => ArcScopeTreeHelpers.MergeNodes(Root, other.Root);
+        public void MergeRoot(ArcScopeTree other, bool overwrite = false) => Root = ArcScopeTreeHelpers.MergeTree(this, other, overwrite).Root;
 
         public ICollection<T> GetNodes<T>(Func<T, bool> predicate) where T : ArcScopeTreeNodeBase
         {

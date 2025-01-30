@@ -5,7 +5,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     internal class ArcScopeTreeGroupFieldNode(ArcGroupFieldDescriptor groupField) : ArcScopeTreeNodeBase
     {
-        public override long Id { get => GroupField.Id; init => GroupField.Id = value; }
+        public override long Id { get => GroupField.Id; set => GroupField.Id = value; }
 
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupField;
 

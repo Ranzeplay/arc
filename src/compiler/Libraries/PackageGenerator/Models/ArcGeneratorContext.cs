@@ -1,9 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Encoders;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
@@ -99,22 +97,6 @@ namespace Arc.Compiler.PackageGenerator.Models
             }));
             Constants.AddRange(result.AddedConstants);
             GeneratedData.AddRange(result.GeneratedData);
-        }
-
-        public void Append(ArcCompilationUnitStructure structure)
-        {
-            foreach (var symbol in structure.Symbols)
-            {
-                Symbols[symbol.Id] = symbol;
-            }
-        }
-
-        public void LoadPrimitiveTypes()
-        {
-            foreach (var bt in ArcPersistentData.BaseTypes)
-            {
-                Symbols.Add(bt.TypeId, bt);
-            }
         }
 
         public ArcGenerationSource GenerateSource()

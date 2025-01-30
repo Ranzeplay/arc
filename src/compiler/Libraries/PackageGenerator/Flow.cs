@@ -1,5 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
@@ -18,10 +18,9 @@ namespace Arc.Compiler.PackageGenerator
         {
             var ns = compilationUnit.Namespace;
             var result = new ArcGeneratorContext() { Logger = compilationUnit.Logger };
-            result.LoadPrimitiveTypes();
 
-            var structure = GenerateUnitStructure(compilationUnit);
-            result.Append(structure);
+            var structure = LayeredScopeTreeGenerator.GenerateUnitStructure([compilationUnit]).First();
+            result.ScopeTree = structure.ScopeTree;
 
             var funcs = structure.ScopeTree
                 .GetNodes<ArcScopeTreeIndividualFunctionNode>();
@@ -72,7 +71,6 @@ namespace Arc.Compiler.PackageGenerator
             var tree = new ArcScopeTree();
             var context = new ArcGeneratorContext() { Logger = compilationUnit.Logger };
             compilationUnit.Logger.LogDebug("Loading primitive types");
-            context.LoadPrimitiveTypes();
 
             var ns = compilationUnit.Namespace;
             symbols.Add(new ArcNamespaceDescriptor { Name = ns.GetSignature() });

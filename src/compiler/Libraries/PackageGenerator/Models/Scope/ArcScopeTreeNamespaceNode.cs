@@ -12,5 +12,17 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override string SignatureAddend => "N" + Name;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [new ArcNamespaceDescriptor() { Name = Name }];
+
+        public ArcScopeTree GetIsolatedTree()
+        {
+            var tree = new ArcScopeTree();
+            var current = tree.Root;
+            var ancestors = GetAncestors().Reverse();
+            foreach (var ancestor in ancestors)
+            {
+                current = current.AddChild(ancestor);
+            }
+            return tree;
+        }
     }
 }

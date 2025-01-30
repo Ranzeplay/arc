@@ -21,7 +21,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
                 var tree = new ArcScopeTree();
                 var node = tree.Root.AddChild(new ArcScopeTreeNamespaceNode("Arc"));
                 node = node.AddChild(new ArcScopeTreeNamespaceNode("Base"));
-                node.AddChildren(BaseTypes.Select(t => new ArcScopeTreeDataTypeNode(t)));
+                node.AddChildren(BaseTypes.Select(t =>
+                {
+                    var node = new ArcScopeTreeDataTypeNode(t);
+                    node.Id = t.Id;
+                    return node;
+                }));
                 return tree;
             }
         }

@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     internal class ArcScopeTreeGroupFunctionNode(ArcFunctionDescriptor desc) : ArcScopeTreeFunctionNodeBase(desc)
     {
-        public override long Id { get => Descriptor.Id; init => Descriptor.Id = value; }
+        public override long Id { get => Descriptor.Id; set => Descriptor.Id = value; }
 
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupFunction;
 
