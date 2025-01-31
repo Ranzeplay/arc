@@ -19,7 +19,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(): val none {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = Flow.GenerateUnit(unit);
+            var result = Flow.GenerateUnit([unit]);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
@@ -31,7 +31,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = Flow.GenerateUnit(unit);
+            var result = Flow.GenerateUnit([unit]);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
@@ -43,7 +43,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = Flow.GenerateUnit(unit);
+            var result = Flow.GenerateUnit([unit]);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
@@ -59,7 +59,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                             }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = Flow.GenerateUnit(unit);
+            var result = Flow.GenerateUnit([unit]);
 
             Assert.Multiple(() =>
             {
@@ -82,7 +82,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                             }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = Flow.GenerateUnit(unit);
+            var result = Flow.GenerateUnit([unit]);
 
             Assert.That(result.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 4));
         }
