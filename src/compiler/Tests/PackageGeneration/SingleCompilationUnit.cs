@@ -9,9 +9,9 @@ namespace Arc.Compiler.Tests.PackageGeneration
 {
     [Category("PackageGeneration")]
     [CancelAfter(1000)]
-    internal class SourceFile
+    internal class SingleCompilationUnit
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SourceFile>();
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SingleCompilationUnit>();
 
         private readonly string _text = @"
 			link Arc::Std;
@@ -60,11 +60,11 @@ namespace Arc.Compiler.Tests.PackageGeneration
             ";
 
         [Test]
-        public void SingleCompilationUnit()
+        public void Generation()
         {
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var context = Flow.GenerateUnit(unit);
+            var context = Flow.GenerateUnit([unit]);
             Assert.That(context.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 11));
         }
         [Test]
@@ -72,7 +72,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = Flow.GenerateUnit(syntaxUnit);
+            var context = Flow.GenerateUnit([syntaxUnit]);
 
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
