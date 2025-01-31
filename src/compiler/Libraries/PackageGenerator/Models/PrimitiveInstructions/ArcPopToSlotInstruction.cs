@@ -1,7 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {

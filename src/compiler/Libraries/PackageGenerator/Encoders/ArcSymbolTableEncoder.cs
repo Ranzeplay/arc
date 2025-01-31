@@ -1,12 +1,12 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
+﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models;
-using Microsoft.Extensions.Logging;
-using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {

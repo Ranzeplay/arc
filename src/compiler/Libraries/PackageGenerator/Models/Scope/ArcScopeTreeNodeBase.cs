@@ -60,7 +60,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 return (ArcRootScopeNode)current;
             }
         }
-        
+
         public IEnumerable<ArcScopeTreeNodeBase> GetAncestors()
         {
             var current = this;

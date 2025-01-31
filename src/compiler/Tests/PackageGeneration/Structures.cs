@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;

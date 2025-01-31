@@ -12,9 +12,9 @@ namespace Arc.Compiler.PackageGenerator.Base
             return new ArcPartialGenerationResult
             {
                 GeneratedData = [
-                    ..Opcode, 
+                    ..Opcode,
                     (byte)Locator.Source,
-                    ..BitConverter.GetBytes(Locator.LocationId), 
+                    ..BitConverter.GetBytes(Locator.LocationId),
                     ..Utils.SerializeArray(Locator.FieldChain.Select(f => f.Id)),
                     ..Locator.Addend
                     ],

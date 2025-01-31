@@ -1,17 +1,16 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
-using System.Text;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
-using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Encoders;
-using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data;
-using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
+using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
-using System;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
+using System.Text;
 
 namespace Arc.Compiler.PackageGenerator
 {

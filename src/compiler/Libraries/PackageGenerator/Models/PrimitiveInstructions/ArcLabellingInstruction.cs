@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new()
             {
-                GeneratedData = [..Opcode],
+                GeneratedData = [.. Opcode],
                 RelocationLabels = [Label]
             };
         }

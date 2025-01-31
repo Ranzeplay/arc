@@ -1,9 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
-using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope

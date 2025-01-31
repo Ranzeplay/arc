@@ -1,7 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
-using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
-using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions

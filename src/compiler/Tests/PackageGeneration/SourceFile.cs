@@ -4,7 +4,6 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {

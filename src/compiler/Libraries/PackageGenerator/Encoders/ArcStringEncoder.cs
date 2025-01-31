@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
         {
             if (o is string str)
             {
-                return [..BitConverter.GetBytes((long)str.Length), ..Encoding.UTF8.GetBytes(str)];
+                return [.. BitConverter.GetBytes((long)str.Length), .. Encoding.UTF8.GetBytes(str)];
             }
             else
             {

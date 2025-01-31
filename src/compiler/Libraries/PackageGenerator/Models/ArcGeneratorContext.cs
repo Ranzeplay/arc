@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public List<byte> GeneratedData { get; set; } = [];
 
-        public Dictionary<long, ArcSymbolBase> Symbols => 
+        public Dictionary<long, ArcSymbolBase> Symbols =>
             SearchTree.FlattenedNodes
                 .DistinctBy(x => x.Id)
                 .SelectMany(n => n.GetSymbols())
@@ -77,7 +77,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             foreach (var symbol in result.OtherSymbols)
             {
                 Symbols[symbol.Id] = symbol;
-            }   
+            }
             RelocationTargets.AddRange(result.RelocationTargets.Select(t =>
             {
                 t.Location += GeneratedData.Count;

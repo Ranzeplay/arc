@@ -13,7 +13,7 @@
         BeginLoopBlock,
         EndLoopBlock,
     }
-    
+
     public static class ArcRelocationLabelTypeExtensions
     {
         public static ArcRelocationLabelType GetAntiLabel(this ArcRelocationLabelType type)
