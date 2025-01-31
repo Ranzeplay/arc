@@ -1,4 +1,6 @@
-﻿using Arc.Compiler.SyntaxAnalyzer;
+﻿using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
 
@@ -20,7 +22,23 @@ namespace Arc.Compiler.Circle
                 .Select(t => new { Context = AntlrAdapter.ParseCompilationUnit(t.Content, logger), t.Path })
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
-            // TODO: Implement linking and generation
+            var context = Flow.GenerateUnit(compilationUnits);
+            context.PackageDescriptor = new ArcPackageDescriptor()
+            {
+                Type = ArcPackageType.Executable,
+                Name = "Test",
+                Version = 0,
+                RootGroupTableEntryPos = 0,
+                RootFunctionTableEntryPos = 0,
+                RootConstantTableEntryPos = 0,
+                RegionTableEntryPos = 0,
+                EntrypointFunctionId = 0,
+                DataAlignmentLength = 8
+            };
+
+            var outputStream = context.DumpFullByteStream();
+
+            File.WriteAllBytes(output, outputStream.ToArray());
         }
     }
 }
