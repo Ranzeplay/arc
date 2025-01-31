@@ -28,7 +28,7 @@ internal static class ArcScopeTreeHelpers
         var tree2Namespaces = node2.GetChildren<ArcScopeTreeNamespaceNode>().ToList();
         foreach (var ns1 in tree1Namespaces)
         {
-            var ns2 = tree2Namespaces.FirstOrDefault(n => n.Name == ns1.Name);
+            var ns2 = tree2Namespaces.FirstOrDefault(n => n.Name == ns1.Name || ns1.Id == n.Id);
             if (ns2 != null)
             {
                 var ns2Id = ns2.Id;
