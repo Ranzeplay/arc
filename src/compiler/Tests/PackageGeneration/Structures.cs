@@ -1,4 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.PackageGenerator.Generators;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
@@ -26,9 +28,9 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
-            var structure = Flow.GenerateUnitStructure(unit);
+            var structure = LayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
 
-            Assert.That(structure.Symbols.Count(), Is.EqualTo(4));
+            Assert.That(structure.Symbols, Has.Count.EqualTo(4 + ArcPersistentData.BaseTypeScopeTree.Symbols.Count()));
         }
 
         [Test]
@@ -53,8 +55,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
-            var structure = Flow.GenerateUnitStructure(unit);
-            Assert.That(structure.Symbols, Has.Count.EqualTo(2));
+            var structure = LayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
+            Assert.That(structure.Symbols, Has.Count.EqualTo(7 + ArcPersistentData.BaseTypeScopeTree.Symbols.Count()));
         }
     }
 }
