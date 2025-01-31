@@ -7,13 +7,25 @@
 		},
 		{
 			"include": "#strings"
+		},
+		{
+			"include": "#characters"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#operators"
 		}
 	],
 	"repository": {
 		"keywords": {
 			"patterns": [{
 				"name": "keyword.control.arc",
-				"match": "\\b(if|while|for|return)\\b"
+				"match": "\\b(if|elif|else|while|for|loop|foreach|in|break|continue|return|throw|try|catch|finally|match|case|get|set|default|await|async|func|group|field|constructor|destructor|operator|public|internal|protected|private|static|const|var|val|ref|call|new|defer|macro|namespace|extends|implements|link|true|false|none|any|infer|char|bool|int|decimal|string|dispose|with|lifetime|typeof|self)\\b"
 			}]
 		},
 		"strings": {
@@ -26,6 +38,73 @@
 					"match": "\\\\."
 				}
 			]
+		},
+		"characters": {
+			"name": "string.quoted.single.arc",
+			"begin": "'",
+			"end": "'",
+			"patterns": [
+				{
+					"name": "constant.character.escape.arc",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.sharp.arc",
+					"match": "#.*$"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.arc",
+					"match": "\\b(\\d+(\\.\\d+)?([eE][+-]?\\d+)?)\\b"
+				}
+			]
+		},
+		"operators": {
+			"patterns": [
+    {
+      "name": "keyword.operator.arc.math",
+      "match": "\\+|-|\\*|\\/|%"
+    },
+    {
+      "name": "keyword.operator.arc.bitwise",
+      "match": "&|\\||<<|>>|\\^|~"
+    },
+    {
+      "name": "keyword.operator.arc.comparison",
+      "match": "==|===|<>|<!>|<|>|<=|>="
+    },
+    {
+      "name": "keyword.operator.arc.logical",
+      "match": "&&|\\|\\||!"
+    },
+    {
+      "name": "keyword.operator.arc.assignment",
+      "match": "=|\\?\\?=|\\+\\+|--|\\+=|-=|\\*=|\\/=|%="
+    },
+    {
+      "name": "keyword.operator.arc.delimiter",
+      "match": "\\(|\\)|\\[|\\]|\\{|\\}"
+    },
+    {
+      "name": "keyword.operator.arc.malicious",
+      "match": "\\?|;|\\.\\.|@|,|\\|>"
+    },
+    {
+      "name": "keyword.operator.arc.selective",
+      "match": "\\?\\?|:"
+    },
+    {
+      "name": "keyword.operator.arc.limiter",
+      "match": "\\.|=>|\\?\\.|::"
+    }
+  ]
 		}
 	},
 	"scopeName": "source.arc"
