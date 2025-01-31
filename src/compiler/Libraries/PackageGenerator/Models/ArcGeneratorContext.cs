@@ -18,7 +18,6 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public Dictionary<long, ArcSymbolBase> Symbols =>
             SearchTree.FlattenedNodes
-                .DistinctBy(x => x.Id)
                 .SelectMany(n => n.GetSymbols())
                 .ToDictionary(s => s.Id);
 
