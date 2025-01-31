@@ -18,7 +18,6 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public Dictionary<long, ArcSymbolBase> Symbols =>
             SearchTree.FlattenedNodes
-                .DistinctBy(x => x.Id)
                 .SelectMany(n => n.GetSymbols())
                 .ToDictionary(s => s.Id);
 
@@ -94,19 +93,19 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void Append(ArcGeneratorContext context)
         {
-            context.Labels.Select(l =>
+            context.Labels.ForEach(l =>
             {
                 l.Location += GeneratedData.Count;
-                return l;
-            }).ToList().ForEach(l => Labels.Add(l));
+                Labels.Add(l);
+            });
 
-            context.RelocationTargets.Select(t =>
+            context.RelocationTargets.ForEach(t =>
             {
                 t.Location += GeneratedData.Count;
-                return t;
-            }).ToList().ForEach(t => RelocationTargets.Add(t));
+                RelocationTargets.Add(t);
+            });
 
-            context.Constants.ForEach(c => Constants.Add(c));
+            Constants.AddRange(context.Constants);
             GeneratedData.AddRange(context.GeneratedData);
         }
 

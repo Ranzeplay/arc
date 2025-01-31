@@ -90,12 +90,14 @@ internal static class ArcScopeTreeHelpers
                 if (overwrite)
                 {
                     resultNamespace.AddChild(node2);
-                    ns2NonNamespaceNodes.Remove(node2);
+
                 }
                 else
                 {
                     resultNamespace.AddChild(node1);
                 }
+
+                ns2NonNamespaceNodes.Remove(node2);
             }
             else
             {
