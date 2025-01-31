@@ -20,7 +20,7 @@ namespace Arc.Compiler.PackageGenerator
             var result = new ArcGeneratorContext() { Logger = compilationUnit.Logger };
 
             var structure = LayeredScopeTreeGenerator.GenerateUnitStructure([compilationUnit]).First();
-            result.ScopeTree = structure.ScopeTree;
+            result.SearchTree = structure.ScopeTree;
 
             var funcs = structure.ScopeTree
                 .GetNodes<ArcScopeTreeIndividualFunctionNode>();

@@ -12,11 +12,15 @@ namespace Arc.Compiler.PackageGenerator.Models
 {
     public class ArcGeneratorContext
     {
-        public ArcScopeTree ScopeTree { get; set; }
+        public ArcScopeTree SearchTree { get; set; }
 
         public List<byte> GeneratedData { get; set; } = [];
 
-        public Dictionary<long, ArcSymbolBase> Symbols => ScopeTree.FlattenedNodes.SelectMany(n => n.GetSymbols()).ToDictionary(s => s.Id);
+        public Dictionary<long, ArcSymbolBase> Symbols => 
+            SearchTree.FlattenedNodes
+                .DistinctBy(x => x.Id)
+                .SelectMany(n => n.GetSymbols())
+                .ToDictionary(s => s.Id);
 
         public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
@@ -56,25 +60,14 @@ namespace Arc.Compiler.PackageGenerator.Models
         {
             foreach (var target in RelocationTargets)
             {
-                byte[] data;
-                switch (target.TargetType)
+                byte[] data = target.TargetType switch
                 {
-                    case ArcRelocationTargetType.Relative:
-                        data = BitConverter.GetBytes(target.Parameter);
-                        break;
-                    case ArcRelocationTargetType.Absolute:
-                        data = BitConverter.GetBytes(target.TargetLocation);
-                        break;
-                    case ArcRelocationTargetType.Symbol:
-                        data = BitConverter.GetBytes(target.Symbol.Id);
-                        break;
-                    case ArcRelocationTargetType.Label:
-                        data = BitConverter.GetBytes(target.Parameter);
-                        break;
-                    default:
-                        throw new UnreachableException();
-                }
-
+                    ArcRelocationTargetType.Relative => BitConverter.GetBytes(target.Parameter),
+                    ArcRelocationTargetType.Absolute => BitConverter.GetBytes(target.TargetLocation),
+                    ArcRelocationTargetType.Symbol => BitConverter.GetBytes(target.Symbol.Id),
+                    ArcRelocationTargetType.Label => BitConverter.GetBytes(target.Parameter),
+                    _ => throw new UnreachableException(),
+                };
                 MaterializedRelocationTargets.Add(new(target.Location, data));
             }
         }
@@ -101,15 +94,15 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public ArcGenerationSource GenerateSource()
         {
-            return GenerateSource([], ScopeTree.Root);
+            return GenerateSource([], SearchTree.Root);
         }
 
         public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node)
         {
             return new()
             {
-                AccessibleSymbols = Symbols.Values,
                 PackageDescriptor = PackageDescriptor,
+                SearchTree = SearchTree,
                 ParentSignature = new ArcSignature() { Locators = location.ToList() },
                 CurrentNode = node
             };

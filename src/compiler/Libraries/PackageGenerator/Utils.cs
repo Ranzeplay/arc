@@ -148,8 +148,7 @@ namespace Arc.Compiler.PackageGenerator
             }
             else
             {
-                var funcNode = source.CurrentNode
-                    .Root
+                var funcNode = source.SearchTree.Root
                     .GetSpecificChild<ArcScopeTreeIndividualFunctionNode>(n => n.SyntaxTree.Declarator.Identifier.Name == funcCall.Identifier.Name, true)
                     ?? throw new InvalidOperationException("Invalid function node");
                 return funcNode.Descriptor.Id;

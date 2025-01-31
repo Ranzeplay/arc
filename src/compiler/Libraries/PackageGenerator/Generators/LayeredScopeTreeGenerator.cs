@@ -32,7 +32,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var derivativeTypeDescriptor = new ArcDerivativeType(descriptor) { Name = descriptor.Name };
                 var typeNode = new ArcScopeTreeDataTypeNode(derivativeTypeDescriptor);
 
-                var node = new ArcScopeTreeGroupNode(descriptor);
+                var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 node.AddChild(typeNode);
 
                 current = current.AddChild(node);
@@ -41,7 +41,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return tree;
         }
 
-        public static ArcScopeTree GenerateSearchTree(IEnumerable<ArcScopeTree> availableTrees, ArcCompilationUnit unit)
+        public static ArcScopeTree GenerateSearchTree(IEnumerable<ArcScopeTree> availableTrees)
         {
             var fullTree = new ArcScopeTree();
             foreach (var tree in availableTrees)
@@ -49,9 +49,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 fullTree.MergeRoot(tree);
             }
 
-            var linkedNamespaces = unit.LinkedSymbols
-                .Select(s => s.Identifier.Namespace)
-                .Select(fullTree.GetNamespace!);
+            var linkedNamespaces = new List<ArcScopeTreeNamespaceNode>();
 
             var linkedNamespaceTree = new ArcScopeTree();
             foreach (var ns in linkedNamespaces)
@@ -65,42 +63,13 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return searchTree;
         }
 
-        public static ArcScopeTreeGroupNode ExpandGroup(ArcGenerationSource source, ArcScopeTreeGroupNode node, IEnumerable<ArcScopeTree> availableTrees, ArcCompilationUnit unit)
+        public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
         {
-            var searchTree = GenerateSearchTree(availableTrees, unit);
-
-            var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
-            foreach (var fn in node.SyntaxTree.Functions)
-            {
-                var fnDescriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
-                node.Descriptor.Functions.Add(fnDescriptor);
-                functionNodes.Add(new ArcScopeTreeGroupFunctionNode(fnDescriptor) { SyntaxTree = fn });
-                // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
-                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
-            }
-
-            var fieldNodes = new List<ArcScopeTreeGroupFieldNode>();
-            foreach (var field in node.SyntaxTree.Fields)
-            {
-                var fieldDescriptor = ArcGroupGenerator.GenerateFieldDescriptor(source, field);
-                node.Descriptor.Fields.Add(fieldDescriptor);
-                fieldNodes.Add(new ArcScopeTreeGroupFieldNode(fieldDescriptor));
-            }
-
-            node.AddChildren(functionNodes)
-                .AddChildren(fieldNodes);
-
-            return node;
-        }
-
-        public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit, IEnumerable<ArcScopeTree> availableTrees)
-        {
-            var searchTree = GenerateSearchTree(availableTrees, unit);
-
             var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace!);
             foreach (var fn in unit.Namespace.Functions)
             {
                 var descriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
+                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
                 var node = new ArcScopeTreeIndividualFunctionNode(descriptor) { SyntaxTree = fn };
                 namespaceNode.AddChild(node);
             }
@@ -121,16 +90,19 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var availableTree = pairs.Select(p => p.Item2)
                 .Aggregate((a, b) =>
                 {
-                    a.MergeRoot(b); return a;
+                    a.MergeRoot(b);
+                    return a;
                 });
                 availableTree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
 
-                var groups = t.FlattenedNodes.OfType<ArcScopeTreeGroupNode>().Select(n =>
-                {
-                    var context = new ArcGeneratorContext() { Logger = logger, ScopeTree = t };
-                    var source = context.GenerateSource([u.Namespace], n);
-                    return ExpandGroup(source, n, [availableTree], u);
-                });
+                t.FlattenedNodes.OfType<ArcScopeTreeGroupNode>()
+                    .ToList()
+                    .ForEach(n =>
+                    {
+                        var context = new ArcGeneratorContext() { Logger = logger, SearchTree = t };
+                        var source = context.GenerateSource([u.Namespace], n);
+                        n.ExpandSubDescriptors(source);
+                    });
 
                 t.MergeRoot(availableTree, true);
             });
@@ -145,14 +117,13 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 {
                     a.MergeRoot(b); return a;
                 });
-                availableTree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
 
-                var individualFunctions = t.FlattenedNodes.OfType<ArcScopeTreeIndividualFunctionNode>().Select(n =>
-                {
-                    var context = new ArcGeneratorContext() { Logger = logger, ScopeTree = t };
-                    var source = context.GenerateSource([u.Namespace], n);
-                    return GenerateIndividualFunctions(source, t, u, [availableTree]);
-                });
+                var namespaceNode = t.GetNamespace(u.Namespace.Identifier.Namespace);
+                var context = new ArcGeneratorContext() { Logger = logger, SearchTree = t };
+                var source = context.GenerateSource([u.Namespace], namespaceNode);
+                var individualFunctionTree = GenerateIndividualFunctions(source, t, u);
+
+                t.MergeRoot(individualFunctionTree, true);
 
                 t.MergeRoot(availableTree, true);
             });

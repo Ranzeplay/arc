@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -34,5 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             }
             return current as ArcScopeTreeNamespaceNode;
         }
+
+        public IEnumerable<ArcSymbolBase> Symbols => FlattenedNodes.SelectMany(n => n.GetSymbols());
     }
 }

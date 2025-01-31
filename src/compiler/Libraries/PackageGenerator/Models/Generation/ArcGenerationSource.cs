@@ -7,11 +7,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
+        public ArcScopeTree SearchTree { get; set; }
+
         public ArcScopeTreeNodeBase CurrentNode { get; set; }
 
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
-        public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];
+        public IEnumerable<ArcSymbolBase> AccessibleSymbols => SearchTree.FlattenedNodes.SelectMany(node => node.GetSymbols());
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
@@ -22,14 +24,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public void Merge(ArcGenerationSource generationSource)
         {
             LocalDataSlots = LocalDataSlots.Concat(generationSource.LocalDataSlots);
-            AccessibleSymbols = AccessibleSymbols.Concat(generationSource.AccessibleSymbols);
             AccessibleConstants = AccessibleConstants.Concat(generationSource.AccessibleConstants);
         }
 
         public void Merge(ArcPartialGenerationResult generationResult)
         {
             LocalDataSlots = LocalDataSlots.Concat(generationResult.DataSlots);
-            AccessibleSymbols = AccessibleSymbols.Concat(generationResult.OtherSymbols);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
         }
     }

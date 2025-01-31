@@ -1,5 +1,5 @@
 ﻿using Antlr4.Runtime;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
@@ -47,9 +47,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = source.AccessibleSymbols
-                        .OfType<ArcBaseType>()
-                        .First(bt => bt.FullName == a.DataType.TypeName),
+                    Type = source.SearchTree.Symbols
+                        .OfType<ArcTypeBase>()
+                        .First(bt => bt.FullName == a.DataType.TypeName || bt.Identifier == a.DataType.TypeName),
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
@@ -58,9 +58,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = source.AccessibleSymbols
-                        .OfType<ArcBaseType>()
-                        .First(bt => bt.FullName == declarator.ReturnType.TypeName),
+                Type = source.SearchTree.Symbols
+                        .OfType<ArcTypeBase>()
+                        .First(bt => bt.FullName == declarator.ReturnType.TypeName || bt.Identifier == declarator.ReturnType.TypeName),
                 AllowNone = false,
                 IsArray = declarator.ReturnType.IsArray,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,

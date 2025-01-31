@@ -22,10 +22,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
 
-        public void ExpandSubDescriptors(ArcGeneratorContext context, ArcGenerationSource source, IEnumerable<ArcScopeTree> availableTrees, ArcCompilationUnit unit)
+        public void ExpandSubDescriptors(ArcGenerationSource source)
         {
-            var searchTree = LayeredScopeTreeGenerator.GenerateSearchTree(availableTrees, unit);
-
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in SyntaxTree.Functions)
             {
