@@ -1,0 +1,25 @@
+{
+  "name": "arc-lang-ext",
+  "displayName": "Arc Language Extension",
+  "description": "Language support for the Arc programming language",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "arc",
+      "aliases": ["Arc", "arc"],
+      "extensions": [".arc"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "arc",
+      "scopeName": "source.arc",
+      "path": "./syntaxes/arc.tmLanguage.json"
+    }]
+  }
+}
