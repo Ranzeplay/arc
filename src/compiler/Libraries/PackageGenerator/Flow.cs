@@ -14,51 +14,71 @@ namespace Arc.Compiler.PackageGenerator
 {
     public class Flow
     {
-        public static ArcGeneratorContext GenerateUnit(ArcCompilationUnit compilationUnit)
+        public static ArcGeneratorContext GenerateUnit(IEnumerable<ArcCompilationUnit> compilationUnits)
         {
-            var ns = compilationUnit.Namespace;
-            var result = new ArcGeneratorContext() { Logger = compilationUnit.Logger };
+            var structures = LayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
+            var searchTree = LayeredScopeTreeGenerator.GenerateSearchTree(structures.Select(s => s.ScopeTree));
 
-            var structure = LayeredScopeTreeGenerator.GenerateUnitStructure([compilationUnit]).First();
-            result.SearchTree = structure.ScopeTree;
-
-            var funcs = structure.ScopeTree
-                .GetNodes<ArcScopeTreeIndividualFunctionNode>();
-            foreach (var fn in funcs)
+            var result = new ArcGeneratorContext()
             {
-                var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace], fn), fn.SyntaxTree, false);
-                fn.GenerationResult = fnResult;
-            }
+                Logger = compilationUnits.First().Logger,
+                SearchTree = searchTree
+            };
 
-            var groups = structure.ScopeTree
-                .GetNodes<ArcScopeTreeGroupNode>();
-            foreach (var grp in groups)
+            var pairs = compilationUnits.Zip(structures, (unit, structure) => (unit, structure));
+
+            foreach (var pair in pairs)
             {
-                var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
-                foreach (var fn in groupFns)
+                var unit = pair.unit;
+                var structure = pair.structure;
+
+                var ns = unit.Namespace;
+                var iterResult = new ArcGeneratorContext
                 {
-                    var fnResult = ArcFunctionGenerator.Generate(result.GenerateSource([compilationUnit.Namespace], fn), fn.SyntaxTree, false);
+                    Logger = unit.Logger,
+                    SearchTree = searchTree
+                };
+
+                var funcs = structure.ScopeTree
+                    .GetNodes<ArcScopeTreeIndividualFunctionNode>();
+                foreach (var fn in funcs)
+                {
+                    var fnResult = ArcFunctionGenerator.Generate(iterResult.GenerateSource([unit.Namespace], fn), fn.SyntaxTree, false);
                     fn.GenerationResult = fnResult;
                 }
+
+                var groups = structure.ScopeTree
+                    .GetNodes<ArcScopeTreeGroupNode>();
+                foreach (var grp in groups)
+                {
+                    var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
+                    foreach (var fn in groupFns)
+                    {
+                        var fnResult = ArcFunctionGenerator.Generate(iterResult.GenerateSource([unit.Namespace], fn), fn.SyntaxTree, false);
+                        fn.GenerationResult = fnResult;
+                    }
+                }
+
+                structure.ScopeTree
+                    .GetNodes<ArcScopeTreeIndividualFunctionNode>()
+                    .ToImmutableList()
+                    .ForEach(t =>
+                    {
+                        t.Descriptor.EntrypointPos = iterResult.GeneratedData.Count;
+                        iterResult.Append(t.GenerationResult);
+                    });
+
+                structure.ScopeTree
+                    .GetNodes<ArcScopeTreeGroupFunctionNode>()
+                    .ToImmutableList()
+                    .ForEach(t =>
+                    {
+                        t.Descriptor.EntrypointPos = iterResult.GeneratedData.Count;
+                        iterResult.Append(t.GenerationResult);
+                    });
+
+                result.Append(iterResult);
             }
-
-            structure.ScopeTree
-                .GetNodes<ArcScopeTreeIndividualFunctionNode>()
-                .ToImmutableList()
-                .ForEach(t =>
-                {
-                    t.Descriptor.EntrypointPos = result.GeneratedData.Count;
-                    result.Append(t.GenerationResult);
-                });
-
-            structure.ScopeTree
-                .GetNodes<ArcScopeTreeGroupFunctionNode>()
-                .ToImmutableList()
-                .ForEach(t =>
-                {
-                    t.Descriptor.EntrypointPos = result.GeneratedData.Count;
-                    result.Append(t.GenerationResult);
-                });
 
             return result;
         }
