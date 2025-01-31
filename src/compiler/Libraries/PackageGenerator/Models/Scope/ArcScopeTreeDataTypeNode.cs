@@ -16,5 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
 
         public string ShortName => DataType.Identifier;
+
+        public override string Name => DataType.Identifier;
     }
 }

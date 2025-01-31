@@ -18,6 +18,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string SignatureAddend => SyntaxTree.GetSignature();
 
+        public override string Name => Descriptor.Name;
+
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
 
         public void ExpandSubDescriptors(ArcGenerationSource source)

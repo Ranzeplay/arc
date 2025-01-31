@@ -7,6 +7,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
     {
         public virtual long Id { get; set; } = new Random().NextInt64();
 
+        public abstract string Name { get; }
+
         public abstract ArcScopeTreeNodeType NodeType { get; }
 
         public List<ArcScopeTreeNodeBase> Children { get; set; } = [];

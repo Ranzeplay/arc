@@ -42,5 +42,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
         {
             return Namespace != null ? $"{string.Join(":", Namespace)}+F{Name}" : Name;
         }
+
+        public IEnumerable<string> NameArray => Namespace != null ? Namespace.Append(Name) : [Name];
     }
 }

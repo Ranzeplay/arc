@@ -139,16 +139,13 @@ namespace Arc.Compiler.PackageGenerator
         {
             if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
             {
-                var funcDeclarator = source.AccessibleSymbols
-                    .OfType<ArcFunctionDescriptor>()
-                    .FirstOrDefault(f => f.RawFullName.StartsWith(funcCall.Identifier.AsFunctionIdentifier()))
-                    ?? throw new InvalidOperationException("Invalid function declarator");
+                var funcDeclarator = source.SearchTree.GetNode<ArcScopeTreeIndividualFunctionNode>(funcCall.Identifier.NameArray)
+                    ?? throw new InvalidOperationException("Invalid function node");
                 return funcDeclarator.Id;
             }
             else
             {
-                var funcNode = source.SearchTree.Root
-                    .GetSpecificChild<ArcScopeTreeIndividualFunctionNode>(n => n.SyntaxTree.Declarator.Identifier.Name == funcCall.Identifier.Name, true)
+                var funcNode = source.SearchTree.GetNodeByName<ArcScopeTreeIndividualFunctionNode>(funcCall.Identifier.Name)
                     ?? throw new InvalidOperationException("Invalid function node");
                 return funcNode.Descriptor.Id;
             }

@@ -11,6 +11,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string SignatureAddend => "S" + SyntaxTree.GetSignature();
 
+        public override string Name => SyntaxTree.Identifier.Name;
+
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }
 }

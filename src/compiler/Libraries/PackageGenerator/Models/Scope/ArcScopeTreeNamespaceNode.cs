@@ -7,9 +7,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.Namespace;
 
-        public string Name { get; set; } = name;
-
         public override string SignatureAddend => "N" + Name;
+
+        public override string Name => name;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [new ArcNamespaceDescriptor() { Name = Name }];
 

@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ICollection<T> GetNodes<T>(Func<T, bool> predicate) where T : ArcScopeTreeNodeBase
         {
-            return FlattenedNodes.Where(n => n is T && predicate((T)n)).Cast<T>().ToList();
+            return FlattenedNodes.Where(n => n is T t && predicate(t)).Cast<T>().ToList();
         }
 
         public ICollection<T> GetNodes<T>() where T : ArcScopeTreeNodeBase
@@ -34,6 +34,36 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 current = ns;
             }
             return current as ArcScopeTreeNamespaceNode;
+        }
+
+        public ArcScopeTreeNodeBase? GetNode(IEnumerable<string> names)
+        {
+            var current = Root;
+            foreach (var name in names)
+            {
+                var node = current.GetSpecificChild(n => n.Name == name);
+                if (node == null)
+                {
+                    return null;
+                }
+                current = node;
+            }
+            return current;
+        }
+
+        public T? GetNode<T>(IEnumerable<string> names) where T : ArcScopeTreeNodeBase
+        {
+            return GetNode(names) as T;
+        }
+
+        public T? GetNodeByName<T>(string name) where T : ArcScopeTreeNodeBase
+        {
+            return GetNodeByName(name) as T;
+        }
+
+        public ArcScopeTreeNodeBase? GetNodeByName(string name)
+        {
+            return Root.GetSpecificChild<ArcScopeTreeNodeBase>(n => n.Name == name, true);
         }
 
         public IEnumerable<ArcSymbolBase> Symbols => FlattenedNodes.SelectMany(n => n.GetSymbols());

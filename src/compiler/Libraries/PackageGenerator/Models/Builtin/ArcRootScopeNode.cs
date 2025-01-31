@@ -11,6 +11,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
 
         public override string SignatureAddend => "Root";
 
+        public override string Name => SignatureAddend;
+
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }
 }

@@ -13,6 +13,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string SignatureAddend => "+" + GroupField.GetSignature();
 
+        public override string Name => GroupField.Name;
+
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [GroupField];
     }
 }
