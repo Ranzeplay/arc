@@ -41,7 +41,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return tree;
         }
 
-        public static ArcScopeTree GenerateSearchTree(IEnumerable<ArcScopeTree> availableTrees)
+        public static ArcScopeTree GenerateSearchTree(ArcCompilationUnit unit, IEnumerable<ArcScopeTree> availableTrees)
         {
             var fullTree = new ArcScopeTree();
             foreach (var tree in availableTrees)
@@ -49,7 +49,10 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 fullTree.MergeRoot(tree);
             }
 
-            var linkedNamespaces = new List<ArcScopeTreeNamespaceNode>();
+            var linkedNamespaces = unit.LinkedSymbols
+                .SelectMany(ls => availableTrees.Select(t => t.GetNamespace(ls.Identifier.Namespace)))
+                .TakeWhile(n => n != null)
+                .Cast<ArcScopeTreeNamespaceNode>() ?? [];
 
             var linkedNamespaceTree = new ArcScopeTree();
             foreach (var ns in linkedNamespaces)

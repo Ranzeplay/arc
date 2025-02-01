@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
+using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using System.Collections.Immutable;
@@ -12,12 +13,11 @@ namespace Arc.Compiler.PackageGenerator
         public static ArcGeneratorContext GenerateUnit(IEnumerable<ArcCompilationUnit> compilationUnits)
         {
             var structures = LayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
-            var searchTree = LayeredScopeTreeGenerator.GenerateSearchTree(structures.Select(s => s.ScopeTree));
 
             var result = new ArcGeneratorContext()
             {
                 Logger = compilationUnits.First().Logger,
-                SearchTree = searchTree
+                SearchTree = null!
             };
 
             var pairs = compilationUnits.Zip(structures, (unit, structure) => (unit, structure));
@@ -26,6 +26,11 @@ namespace Arc.Compiler.PackageGenerator
             {
                 var unit = pair.unit;
                 var structure = pair.structure;
+
+                var searchTree = LayeredScopeTreeGenerator.GenerateSearchTree(
+                    unit,
+                    structures.Select(s => s.ScopeTree).Append(ArcStdlib.GetTree())
+                );
 
                 var ns = unit.Namespace;
                 var iterResult = new ArcGeneratorContext
@@ -66,6 +71,14 @@ namespace Arc.Compiler.PackageGenerator
                 result.Append(iterResult);
             }
 
+            result.SearchTree = structures
+                .Select(s => s.ScopeTree)
+                .Append(ArcStdlib.GetTree())
+                .Aggregate((a, b) =>
+                {
+                    a.MergeRoot(b);
+                    return a;
+                });
             return result;
         }
     }

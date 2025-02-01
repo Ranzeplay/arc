@@ -15,11 +15,27 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public virtual ArcScopeTreeNodeBase Parent { get; set; }
 
+        /// <summary>
+        /// Adds a child to the current node.
+        /// </summary>
+        /// <param name="child">The node to be attached</param>
+        /// <returns>The node just added</returns>
         public ArcScopeTreeNodeBase AddChild(ArcScopeTreeNodeBase child)
         {
             child.Parent = this;
             Children.Add(child);
             return child;
+        }
+
+        /// <summary>
+        /// Adds a child and returns the parent node.
+        /// </summary>
+        /// <param name="child">The node to be attached</param>
+        /// <returns>Current node</returns>
+        public ArcScopeTreeNodeBase AddChildChained(ArcScopeTreeNodeBase child)
+        {
+            AddChild(child);
+            return this;
         }
 
         public ArcScopeTreeNodeBase AddChildren(IEnumerable<ArcScopeTreeNodeBase> children)

@@ -5,14 +5,22 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
     internal static class ArcPersistentData
     {
         public static IEnumerable<ArcBaseType> BaseTypes = [
-            new ArcBaseType(0, "none"){Name = "none"},
-            new ArcBaseType(1, "any"){Name = "any"},
-            new ArcBaseType(2, "int") {Name = "int" },
-            new ArcBaseType(3, "decimal") {Name = "decimal" },
-            new ArcBaseType(4, "char") {Name = "char"},
-            new ArcBaseType(5, "string") {Name = "string"},
-            new ArcBaseType(6, "bool") {Name = "bool"},
+            NoneType,
+            AnyType,
+            IntType,
+            DecimalType,
+            CharType,
+            StringType,
+            BoolType
         ];
+
+        public static ArcBaseType NoneType => new ArcBaseType(0, "none") { Name = "none" };
+        public static ArcBaseType AnyType => new ArcBaseType(1, "any") { Name = "any" };
+        public static ArcBaseType IntType => new ArcBaseType(2, "int") { Name = "int" };
+        public static ArcBaseType DecimalType => new ArcBaseType(3, "decimal") { Name = "decimal" };
+        public static ArcBaseType CharType => new ArcBaseType(4, "char") { Name = "char" };
+        public static ArcBaseType StringType => new ArcBaseType(5, "string") { Name = "string" };
+        public static ArcBaseType BoolType => new ArcBaseType(6, "bool") { Name = "bool" };
 
         public static ArcScopeTree BaseTypeScopeTree
         {
