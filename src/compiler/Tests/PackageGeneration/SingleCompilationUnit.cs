@@ -67,6 +67,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var context = Flow.GenerateUnit([unit]);
             Assert.That(context.Symbols, Has.Count.EqualTo(ArcPersistentData.BaseTypes.Count() + 11));
         }
+
         [Test]
         public void DumpTest()
         {
@@ -89,6 +90,41 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var outputStream = context.DumpFullByteStream();
 
+            Assert.That(outputStream, Is.Not.Null);
+        }
+
+        [Test]
+        public void HelloWorld()
+        {
+            var text = @"
+                link Arc::Std::Console;
+
+                namespace Arc::Program {
+                	@Export
+                	@Entrypoint
+                	public func main(var args: val string[]): val int {
+                		call PrintString(""Hello, world!\n"");
+                		return 0;
+                	}
+                }
+            ";
+
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
+            var context = Flow.GenerateUnit([syntaxUnit]);
+            context.PackageDescriptor = new ArcPackageDescriptor()
+            {
+                Type = ArcPackageType.Executable,
+                Name = "Test",
+                Version = 0,
+                RootGroupTableEntryPos = 0,
+                RootFunctionTableEntryPos = 0,
+                RootConstantTableEntryPos = 0,
+                RegionTableEntryPos = 0,
+                EntrypointFunctionId = 0,
+                DataAlignmentLength = 8
+            };
+            var outputStream = context.DumpFullByteStream();
             Assert.That(outputStream, Is.Not.Null);
         }
     }
