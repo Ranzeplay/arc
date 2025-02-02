@@ -7,8 +7,6 @@ namespace Arc.Compiler.PackageGenerator.Encoders
         public static IEnumerable<byte> EncodeGroupSymbol(ArcGroupDescriptor group)
         {
             return [
-                // Name
-                ..Utils.SerializeString(group.Name),
                 // Field id list
                 ..BitConverter.GetBytes((long)group.Fields.Count),
                 ..group.Fields.SelectMany(field => BitConverter.GetBytes(field.Id)),
