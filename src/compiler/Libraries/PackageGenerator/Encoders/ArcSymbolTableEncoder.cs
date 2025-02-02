@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 foreach (var symbol in node.GetSymbols())
                 {
                     var iterResult = new List<byte>();
-                    iterResult.AddRange(BitConverter.GetBytes(symbol.Id));
+                    iterResult.AddRange(BitConverter.GetBytes(node.Id));
 
                     switch (symbol)
                     {
