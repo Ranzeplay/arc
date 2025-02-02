@@ -6,8 +6,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
     {
         public static ArcScopeTree GetTree()
         {
-            var tree = ArcStdlibNamespace.GetTree();
-            tree.Root.AddChild(
+            var treeResult = ArcStdlibNamespace.GetTree();
+            var tree = treeResult.Item1;
+            var stdNamespace = treeResult.Item2;
+
+            stdNamespace.AddChild(
                 ArcStdlibConsole.GetNamespace()
             );
 

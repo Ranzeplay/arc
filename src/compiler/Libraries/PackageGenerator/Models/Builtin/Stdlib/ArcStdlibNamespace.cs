@@ -4,7 +4,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
 {
     internal class ArcStdlibNamespace
     {
-        public static ArcScopeTree GetTree()
+        public static (ArcScopeTree, ArcScopeTreeNamespaceNode) GetTree()
         {
             var tree = new ArcScopeTree();
             tree.Root.AddChild(
@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                         new ArcScopeTreeNamespaceNode("Std")
                     )
             );
-            return tree;
+            return (tree, tree.GetNamespace(["Arc", "Std"])!);
         }
     }
 }
