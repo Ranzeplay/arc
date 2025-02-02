@@ -102,7 +102,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     .ToList()
                     .ForEach(n =>
                     {
-                        var context = new ArcGeneratorContext() { Logger = logger, SearchTree = t };
+                        var context = new ArcGeneratorContext() { Logger = logger, GlobalScopeTree = t };
                         var source = context.GenerateSource([u.Namespace], n);
                         n.ExpandSubDescriptors(source);
                     });
@@ -122,7 +122,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 });
 
                 var namespaceNode = t.GetNamespace(u.Namespace.Identifier.Namespace);
-                var context = new ArcGeneratorContext() { Logger = logger, SearchTree = t };
+                var context = new ArcGeneratorContext() { Logger = logger, GlobalScopeTree = t };
                 var source = context.GenerateSource([u.Namespace], namespaceNode);
                 var individualFunctionTree = GenerateIndividualFunctions(source, t, u);
 

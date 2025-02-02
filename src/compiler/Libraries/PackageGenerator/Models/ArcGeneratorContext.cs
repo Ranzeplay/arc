@@ -12,12 +12,12 @@ namespace Arc.Compiler.PackageGenerator.Models
 {
     public class ArcGeneratorContext
     {
-        public ArcScopeTree SearchTree { get; set; }
+        public ArcScopeTree GlobalScopeTree { get; set; }
 
         public List<byte> GeneratedData { get; set; } = [];
 
         public Dictionary<long, ArcSymbolBase> Symbols =>
-            SearchTree.FlattenedNodes
+            GlobalScopeTree.FlattenedNodes
                 .SelectMany(n => n.GetSymbols())
                 .ToDictionary(s => s.Id);
 
@@ -111,7 +111,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public ArcGenerationSource GenerateSource()
         {
-            return GenerateSource([], SearchTree.Root);
+            return GenerateSource([], GlobalScopeTree.Root);
         }
 
         public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node)
@@ -119,7 +119,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             return new()
             {
                 PackageDescriptor = PackageDescriptor,
-                SearchTree = SearchTree,
+                GlobalScopeTree = GlobalScopeTree,
                 ParentSignature = new ArcSignature() { Locators = location.ToList() },
                 CurrentNode = node
             };

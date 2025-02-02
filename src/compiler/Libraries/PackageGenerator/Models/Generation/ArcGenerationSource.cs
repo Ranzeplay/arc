@@ -7,13 +7,15 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
-        public ArcScopeTree SearchTree { get; set; }
+        public ArcScopeTree GlobalScopeTree { get; set; }
+
+        public IEnumerable<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
 
         public ArcScopeTreeNodeBase CurrentNode { get; set; }
 
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
-        public IEnumerable<ArcSymbolBase> AccessibleSymbols => SearchTree.FlattenedNodes.SelectMany(node => node.GetSymbols());
+        public IEnumerable<ArcSymbolBase> AccessibleSymbols => GlobalScopeTree.FlattenedNodes.SelectMany(node => node.GetSymbols());
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 

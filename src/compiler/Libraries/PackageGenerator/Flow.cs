@@ -17,7 +17,7 @@ namespace Arc.Compiler.PackageGenerator
             var result = new ArcGeneratorContext()
             {
                 Logger = compilationUnits.First().Logger,
-                SearchTree = null!
+                GlobalScopeTree = null!
             };
 
             var pairs = compilationUnits.Zip(structures, (unit, structure) => (unit, structure));
@@ -36,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator
                 var iterResult = new ArcGeneratorContext
                 {
                     Logger = unit.Logger,
-                    SearchTree = searchTree
+                    GlobalScopeTree = searchTree
                 };
 
                 var funcs = structure.ScopeTree
@@ -71,7 +71,7 @@ namespace Arc.Compiler.PackageGenerator
                 result.Append(iterResult);
             }
 
-            result.SearchTree = structures
+            result.GlobalScopeTree = structures
                 .Select(s => s.ScopeTree)
                 .Append(ArcStdlib.GetTree())
                 .Aggregate((a, b) =>

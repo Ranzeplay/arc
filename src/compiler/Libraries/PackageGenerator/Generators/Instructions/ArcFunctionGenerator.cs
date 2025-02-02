@@ -47,7 +47,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = source.SearchTree.Symbols
+                    Type = source.GlobalScopeTree.Symbols
                         .OfType<ArcTypeBase>()
                         .First(bt => bt.FullName == a.DataType.TypeName || bt.Identifier == a.DataType.TypeName),
                     AllowNone = false,
@@ -58,7 +58,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = source.SearchTree.Symbols
+                Type = source.GlobalScopeTree.Symbols
                         .OfType<ArcTypeBase>()
                         .First(bt => bt.FullName == declarator.ReturnType.TypeName || bt.Identifier == declarator.ReturnType.TypeName),
                 AllowNone = false,
