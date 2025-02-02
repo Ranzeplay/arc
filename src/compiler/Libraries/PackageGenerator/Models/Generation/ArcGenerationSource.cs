@@ -15,8 +15,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
-        public IEnumerable<ArcSymbolBase> AccessibleSymbols => GlobalScopeTree.FlattenedNodes.SelectMany(node => node.GetSymbols());
-
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
         public ArcSignature ParentSignature { get; set; }

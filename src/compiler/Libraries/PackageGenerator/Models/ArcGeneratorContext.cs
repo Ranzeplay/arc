@@ -73,10 +73,6 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public void Append(ArcPartialGenerationResult result)
         {
-            foreach (var symbol in result.OtherSymbols)
-            {
-                Symbols[symbol.Id] = symbol;
-            }
             RelocationTargets.AddRange(result.RelocationTargets.Select(t =>
             {
                 t.Location += GeneratedData.Count;

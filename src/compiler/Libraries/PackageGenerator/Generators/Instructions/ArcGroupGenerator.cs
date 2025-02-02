@@ -52,9 +52,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Name = source.ParentSignature.GetSignature(),
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = source.AccessibleSymbols
-                        .OfType<ArcBaseType>()
-                        .First(bt => bt.FullName == field.DataDeclarator.DataType.TypeName),
+                    Type = Utils.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
                     AllowNone = false,
                     IsArray = field.DataDeclarator.DataType.IsArray,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,

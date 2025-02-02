@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             {
                 case ArcInstantValue.ValueType.Integer:
                     {
-                        var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "int");
+                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "int");
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(Value.IntegerValue!.Value)],
@@ -35,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.Decimal:
                     {
-                        var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "decimal");
+                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "decimal");
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(decimal.ToDouble(Value.DecimalValue!.Value))],
@@ -51,7 +51,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.String:
                     {
-                        var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "str");
+                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "str");
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode
@@ -70,7 +70,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.Boolean:
                     {
-                        var typeSymbol = source.AccessibleSymbols.First(x => x is ArcBaseType bt && bt.FullName == "bool");
+                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "bool");
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode

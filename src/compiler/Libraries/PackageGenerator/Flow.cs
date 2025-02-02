@@ -27,23 +27,35 @@ namespace Arc.Compiler.PackageGenerator
                 var unit = pair.unit;
                 var structure = pair.structure;
 
-                var searchTree = LayeredScopeTreeGenerator.GenerateSearchTree(
-                    unit,
-                    structures.Select(s => s.ScopeTree).Append(ArcStdlib.GetTree())
-                );
-
                 var ns = unit.Namespace;
                 var iterResult = new ArcGeneratorContext
                 {
                     Logger = unit.Logger,
-                    GlobalScopeTree = searchTree
+                    GlobalScopeTree = structures.Select(s => s.ScopeTree)
+                        .Append(ArcStdlib.GetTree())
+                        .Aggregate((a, b) =>
+                        {
+                            a.MergeRoot(b);
+                            return a;
+                        }),
                 };
+
+                var genSource = iterResult.GenerateSource([unit.Namespace], null);
+
+                genSource.LinkedNamespaces = unit.LinkedSymbols
+                    .SelectMany(ls => structures.Select(s => s.ScopeTree)
+                                        .Select(t => t.GetNamespace(ls.Identifier.Namespace))
+                    )
+                    .TakeWhile(n => n != null)
+                    .Append(structure.ScopeTree.GetNamespace(ns.Identifier.Namespace))
+                    .Cast<ArcScopeTreeNamespaceNode>() ?? [];
 
                 var funcs = structure.ScopeTree
                     .GetNodes<ArcScopeTreeIndividualFunctionNode>();
                 foreach (var fn in funcs)
                 {
-                    var fnResult = ArcFunctionGenerator.Generate(iterResult.GenerateSource([unit.Namespace], fn), fn.SyntaxTree, false);
+                    genSource.CurrentNode = fn;
+                    var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
                     fn.GenerationResult = fnResult;
                 }
 
@@ -54,7 +66,8 @@ namespace Arc.Compiler.PackageGenerator
                     var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
                     foreach (var fn in groupFns)
                     {
-                        var fnResult = ArcFunctionGenerator.Generate(iterResult.GenerateSource([unit.Namespace], fn), fn.SyntaxTree, false);
+                        genSource.CurrentNode = fn;
+                        var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
                         fn.GenerationResult = fnResult;
                     }
                 }
@@ -65,7 +78,10 @@ namespace Arc.Compiler.PackageGenerator
                     .ForEach(t =>
                     {
                         t.Descriptor.EntrypointPos = iterResult.GeneratedData.Count + result.GeneratedData.Count;
-                        iterResult.Append(t.GenerationResult);
+                        if (t.GenerationResult != null)
+                        {
+                            iterResult.Append(t.GenerationResult);
+                        }
                     });
 
                 result.Append(iterResult);

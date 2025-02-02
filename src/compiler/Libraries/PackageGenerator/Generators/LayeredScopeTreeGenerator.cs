@@ -41,31 +41,6 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return tree;
         }
 
-        public static ArcScopeTree GenerateSearchTree(ArcCompilationUnit unit, IEnumerable<ArcScopeTree> availableTrees)
-        {
-            var fullTree = new ArcScopeTree();
-            foreach (var tree in availableTrees)
-            {
-                fullTree.MergeRoot(tree);
-            }
-
-            var linkedNamespaces = unit.LinkedSymbols
-                .SelectMany(ls => availableTrees.Select(t => t.GetNamespace(ls.Identifier.Namespace)))
-                .TakeWhile(n => n != null)
-                .Cast<ArcScopeTreeNamespaceNode>() ?? [];
-
-            var linkedNamespaceTree = new ArcScopeTree();
-            foreach (var ns in linkedNamespaces)
-            {
-                linkedNamespaceTree.MergeRoot(ns.GetIsolatedTree());
-            }
-
-            var searchTree = new ArcScopeTree();
-            searchTree.MergeRoot(fullTree);
-
-            return searchTree;
-        }
-
         public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
         {
             var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace!);

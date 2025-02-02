@@ -1,12 +1,14 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using System.Text;
@@ -30,7 +32,7 @@ namespace Arc.Compiler.PackageGenerator
                 return existingConstant.Id;
             }
 
-            var typeId = source.AccessibleSymbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
+            var typeId = source.GlobalScopeTree.Symbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
             var id = source.AccessibleConstants.LongCount() + result.AddedConstants.Count;
             result.AddedConstants.Add(new ArcConstant
             {
@@ -144,9 +146,45 @@ namespace Arc.Compiler.PackageGenerator
             }
             else
             {
-                var funcNode = source.GlobalScopeTree.GetNodeByName<ArcScopeTreeFunctionNodeBase>(funcCall.Identifier.Name)
+                var funcNode = source.LinkedNamespaces
+                    .Select(n => n.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(n => n.Name == funcCall.Identifier.Name))
+                    .SkipWhile(n => n == null)
+                    .First()
                     ?? throw new InvalidOperationException("Invalid function node");
                 return funcNode.Descriptor.Id;
+            }
+        }
+
+        public static ArcScopeTreeDataTypeNode? GetDataTypeNode(ArcGenerationSource source, ArcDataType dataType)
+        {
+            if (dataType.DataType == ArcDataType.DataMemberType.Primitive)
+            {
+                var candidateTypes = source.GlobalScopeTree.FlattenedNodes.OfType<ArcScopeTreeDataTypeNode>();
+
+                return dataType.PrimitiveType switch
+                {
+                    ArcPrimitiveDataType.Integer => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.IntType.TypeId),
+                    ArcPrimitiveDataType.Decimal => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.DecimalType.TypeId),
+                    ArcPrimitiveDataType.String => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.StringType.TypeId),
+                    ArcPrimitiveDataType.Char => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.CharType.TypeId),
+                    ArcPrimitiveDataType.Bool => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.BoolType.TypeId),
+                    ArcPrimitiveDataType.None => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.NoneType.TypeId),
+                    ArcPrimitiveDataType.Any => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.AnyType.TypeId),
+                    _ => throw new NotImplementedException(),
+                };
+            }
+            else
+            {
+                var typeIdentifier = dataType.DerivativeType!.Identifier;
+
+                if(typeIdentifier.Namespace != null && typeIdentifier.Namespace.Any())
+                {
+                    return source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(typeIdentifier.NameArray);
+                }
+                else
+                {
+                    return source.LinkedNamespaces.SelectMany(n => n.GetChildren<ArcScopeTreeDataTypeNode>(c => c.Name == typeIdentifier.Name, true)).First();
+                }
             }
         }
     }
