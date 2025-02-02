@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcGroupFieldDescriptor GroupField { get; set; } = groupField;
 
-        public override string SignatureAddend => "+" + GroupField.GetSignature();
+        public override string SignatureAddend => "D" + GroupField.IdentifierName;
 
         public override string Name => GroupField.Name;
 

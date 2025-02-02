@@ -14,6 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 
         public ArcAccessibility Accessibility { get; set; }
 
+        public required string IdentifierName { get; set; }
+
         public string GetSignature() => $"D{RawFullName}";
     }
 }

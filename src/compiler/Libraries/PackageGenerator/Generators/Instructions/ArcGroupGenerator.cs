@@ -58,7 +58,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     AllowNone = false,
                     IsArray = field.DataDeclarator.DataType.IsArray,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
-                }
+                },
+                IdentifierName = field.DataDeclarator.Identifier.Name,
             };
 
             return result;
