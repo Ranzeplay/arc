@@ -17,6 +17,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                             "PrintString",
                             new ArcFunctionDescriptor()
                             {
+                                Id = 0xa1,
                                 Name = "PrintString",
                                 Accessibility = ArcAccessibility.Public,
                                 Parameters = [
@@ -43,12 +44,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 }
                             }
                         )
+                        { Id = 0xa1 }
                     )
                     .AddChildChained(
                         new ArcScopeTreeBuiltinFunction(
                             "ReadString",
                             new ArcFunctionDescriptor()
                             {
+                                Id = 0xa2,
                                 Name = "ReadString",
                                 Accessibility = ArcAccessibility.Public,
                                 ReturnValueType = new ArcDataDeclarationDescriptor()
@@ -61,6 +64,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 }
                             }
                         )
+                        { Id = 0xa2 }
                     );
         }
     }
