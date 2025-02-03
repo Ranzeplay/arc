@@ -22,7 +22,7 @@ namespace Arc.Compiler.Circle
                 .Select(t => new { Context = AntlrAdapter.ParseCompilationUnit(t.Content, logger), t.Path })
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
-            var context = Flow.GenerateUnit(compilationUnits);
+            var context = Flow.GenerateUnits(compilationUnits);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = ArcPackageType.Executable,

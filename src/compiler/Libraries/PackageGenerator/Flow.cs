@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator
 {
     public class Flow
     {
-        public static ArcGeneratorContext GenerateUnit(IEnumerable<ArcCompilationUnit> compilationUnits)
+        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits)
         {
             var structures = LayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
 
@@ -20,27 +20,27 @@ namespace Arc.Compiler.PackageGenerator
                 GlobalScopeTree = null!
             };
 
-            var pairs = compilationUnits.Zip(structures, (unit, structure) => (unit, structure));
+            var globalScopeTree = structures
+                .Select(s => s.ScopeTree)
+                .Append(ArcStdlib.GetTree())
+                .Aggregate((a, b) =>
+                {
+                    a.MergeRoot(b);
+                    return a;
+                });
 
-            foreach (var pair in pairs)
+            foreach (var structure in structures)
             {
-                var unit = pair.unit;
-                var structure = pair.structure;
+                var unit = structure.CompilationUnit;
 
                 var ns = unit.Namespace;
                 var iterResult = new ArcGeneratorContext
                 {
                     Logger = unit.Logger,
-                    GlobalScopeTree = structures.Select(s => s.ScopeTree)
-                        .Append(ArcStdlib.GetTree())
-                        .Aggregate((a, b) =>
-                        {
-                            a.MergeRoot(b);
-                            return a;
-                        }),
+                    GlobalScopeTree = globalScopeTree
                 };
 
-                var genSource = iterResult.GenerateSource([unit.Namespace], null);
+                var genSource = iterResult.GenerateSource([unit.Namespace]);
 
                 genSource.LinkedNamespaces = unit.LinkedSymbols
                     .SelectMany(ls => structures.Select(s => s.ScopeTree)
@@ -87,14 +87,7 @@ namespace Arc.Compiler.PackageGenerator
                 result.Append(iterResult);
             }
 
-            result.GlobalScopeTree = structures
-                .Select(s => s.ScopeTree)
-                .Append(ArcStdlib.GetTree())
-                .Aggregate((a, b) =>
-                {
-                    a.MergeRoot(b);
-                    return a;
-                });
+            result.GlobalScopeTree = globalScopeTree;
             return result;
         }
     }

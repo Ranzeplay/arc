@@ -64,7 +64,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var context = Flow.GenerateUnit([unit]);
+            var context = Flow.GenerateUnits([unit]);
             Assert.That(context.Symbols, Has.Count.EqualTo(22));
         }
 
@@ -73,7 +73,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = Flow.GenerateUnit([syntaxUnit]);
+            var context = Flow.GenerateUnits([syntaxUnit]);
 
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
@@ -111,7 +111,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = Flow.GenerateUnit([syntaxUnit]);
+            var context = Flow.GenerateUnits([syntaxUnit]);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = ArcPackageType.Executable,

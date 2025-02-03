@@ -5,7 +5,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
     public class ArcNamespaceIdentifier : IArcTraceable<ArcSourceCodeParser.Arc_namespace_identifierContext>
     {
-        public IEnumerable<string>? Namespace { get; set; }
+        public IEnumerable<string> Namespace { get; set; } = [];
 
         public ArcSourceCodeParser.Arc_namespace_identifierContext Context { get; }
 

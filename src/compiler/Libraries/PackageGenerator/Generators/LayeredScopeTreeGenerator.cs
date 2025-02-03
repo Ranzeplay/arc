@@ -106,7 +106,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 t.MergeRoot(availableTree, true);
             });
 
-            return pairs.Select(p => new ArcCompilationUnitStructure(p.Item2));
+            return pairs.Select(p => new ArcCompilationUnitStructure(p.Item2, p.u));
         }
     }
 }

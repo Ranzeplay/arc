@@ -110,7 +110,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             return GenerateSource([], GlobalScopeTree.Root);
         }
 
-        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node)
+        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node = null!)
         {
             return new()
             {
