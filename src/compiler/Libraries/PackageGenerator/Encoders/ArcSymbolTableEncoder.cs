@@ -33,6 +33,16 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                 iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
                                 iterResult.AddRange(Utils.SerializeString(node.Signature));
 
+                                // Return type descriptor
+                                iterResult.AddRange(functionDescriptor.ReturnValueType.Encode(context.Symbols.Values));
+
+                                // Parameter type descriptors
+                                iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.Parameters.LongCount()));
+                                foreach (var parameter in functionDescriptor.Parameters)
+                                {
+                                    iterResult.AddRange(parameter.DataType.Encode(context.Symbols.Values));
+                                }
+
                                 // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
                                 // iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
                                 break;
