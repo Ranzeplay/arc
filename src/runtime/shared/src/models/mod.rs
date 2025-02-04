@@ -4,3 +4,4 @@ pub mod encodings;
 pub mod package;
 pub mod instructions;
 pub mod display;
+pub mod execution;

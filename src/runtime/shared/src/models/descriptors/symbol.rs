@@ -1,5 +1,5 @@
+use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::fmt::Debug;
-use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 
 pub struct SymbolDescriptor {
     pub id: usize,
