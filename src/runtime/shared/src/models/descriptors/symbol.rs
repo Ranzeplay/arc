@@ -36,13 +36,14 @@ impl Debug for DataTypeSymbol {
 pub struct FunctionSymbol {
     pub signature: String,
     pub entry_pos: usize,
+    pub block_length: usize,
     pub return_value_descriptor: DataTypeEncoding,
     pub parameter_descriptors: Vec<DataTypeEncoding>,
 }
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[FN] {} at {}", self.signature, self.entry_pos)
+        writeln!(f, "[FN] {} at {}(+{})", self.signature, self.entry_pos, self.block_length)
     }
 }
 

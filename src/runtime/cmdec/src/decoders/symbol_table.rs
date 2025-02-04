@@ -43,6 +43,8 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let mut pos = 0;
     let entry_pos = usize::from_le_bytes(stream[0..8].try_into().unwrap());
     pos += 8;
+    let block_length = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    pos += 8;
 
     let name_encoding = StringEncoding::from_u8(&stream[pos..]);
     let signature = name_encoding.value;
@@ -59,6 +61,7 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     (
         Symbol::Function(FunctionSymbol {
             entry_pos,
+            block_length,
             signature,
             return_value_descriptor,
             parameter_descriptors,
