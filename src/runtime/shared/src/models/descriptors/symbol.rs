@@ -1,5 +1,5 @@
 use std::fmt::Debug;
-use crate::models::encodings::data_type_enc::{MemoryStorageType, Mutability};
+use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 
 pub struct SymbolDescriptor {
     pub id: usize,
@@ -36,6 +36,8 @@ impl Debug for DataTypeSymbol {
 pub struct FunctionSymbol {
     pub signature: String,
     pub entry_pos: usize,
+    pub return_value_descriptor: DataTypeEncoding,
+    pub parameter_descriptors: Vec<DataTypeEncoding>,
 }
 
 impl Debug for FunctionSymbol {
@@ -69,10 +71,7 @@ impl Debug for GroupSymbol {
 
 pub struct GroupFieldSymbol {
     pub signature: String,
-    pub memory_storage_type: MemoryStorageType,
-    pub is_array: bool,
-    pub mutability: Mutability,
-    pub data_type_id: usize,
+    pub value_descriptor: DataTypeEncoding
 }
 
 impl Debug for GroupFieldSymbol {

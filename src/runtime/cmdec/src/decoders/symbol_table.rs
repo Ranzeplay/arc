@@ -1,5 +1,8 @@
-use shared::models::descriptors::symbol::{DataTypeSymbol, DerivativeTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
-use shared::models::encodings::data_type_enc::{MemoryStorageType, Mutability};
+use shared::models::descriptors::symbol::{
+    DataTypeSymbol, DerivativeTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol,
+    NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable,
+};
+use shared::models::encodings::data_type_enc::DataTypeEncoding;
 use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use shared::models::encodings::str_enc::StringEncoding;
 
@@ -45,10 +48,20 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let signature = name_encoding.value;
     pos += name_encoding.total_size;
 
+    let (return_value_descriptor, return_value_descriptor_len) =
+        DataTypeEncoding::from_u8(&stream[pos..]);
+    pos += return_value_descriptor_len;
+
+    let (parameter_descriptors, parameter_descriptors_len) =
+        SizedArrayEncoding::with_data_type_data(&stream[pos..]);
+    pos += parameter_descriptors_len;
+
     (
         Symbol::Function(FunctionSymbol {
             entry_pos,
             signature,
+            return_value_descriptor,
+            parameter_descriptors,
         }),
         pos,
     )
@@ -63,7 +76,8 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (field_ids, field_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += field_ids_len;
 
-    let (constructor_ids, constructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    let (constructor_ids, constructor_ids_len) =
+        SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += constructor_ids_len;
 
     let (destructor_ids, destructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
@@ -92,32 +106,12 @@ pub fn decode_group_field_descriptor(stream: &[u8]) -> (Symbol, usize) {
 
     let mut pos = name_encoding.total_size;
 
-    let memory_storage_type = match stream[pos] {
-        0x01 => MemoryStorageType::Value,
-        0x02 => MemoryStorageType::Reference,
-        _ => unreachable!(),
-    };
-    pos += 1;
-
-    let is_array = stream[pos] == 0x01;
-    pos += 1;
-
-    let mutability = match stream[pos] {
-        0x01 => Mutability::Mutable,
-        0x00 => Mutability::Immutable,
-        _ => unreachable!(),
-    };
-    pos += 1;
-
-    let data_type_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
-    pos += 8;
+    let (data_type, data_type_id_len) = DataTypeEncoding::from_u8(&stream[pos..]);
+    pos += data_type_id_len;
 
     let result = Symbol::GroupField(GroupFieldSymbol {
         signature,
-        memory_storage_type,
-        is_array,
-        mutability,
-        data_type_id,
+        value_descriptor: data_type,
     });
     (result, pos)
 }
@@ -132,14 +126,20 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
     pos += name_encoding.total_size;
 
     if is_base_type {
-        (Symbol::DataType(DataTypeSymbol::BaseType(name_encoding.value)), pos)
+        (
+            Symbol::DataType(DataTypeSymbol::BaseType(name_encoding.value)),
+            pos,
+        )
     } else {
         let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
-        (Symbol::DataType(DataTypeSymbol::DerivativeType(DerivativeTypeSymbol {
-            signature: name_encoding.value,
-            group_id,
-        })), pos)
+        (
+            Symbol::DataType(DataTypeSymbol::DerivativeType(DerivativeTypeSymbol {
+                signature: name_encoding.value,
+                group_id,
+            })),
+            pos,
+        )
     }
 }
 
