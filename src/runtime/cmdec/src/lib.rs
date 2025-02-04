@@ -11,7 +11,7 @@ mod decoders;
 pub struct Cmdec {}
 
 impl Cmdec {
-    pub fn decode(stream: &[u8]) {
+    pub fn decode(stream: &[u8]) -> Package {
         // Check first 2 bytes
         if stream[0] != 0x20 || stream[1] != 0x24 {
             panic!("Invalid Arc package");
@@ -46,13 +46,15 @@ impl Cmdec {
         pos += len;
         println!("{:?}", constant_table);
 
-        let package = Package {
+        let mut package = Package {
             descriptor: package_descriptor,
             symbols: symbol_table,
             constants: constant_table,
             instructions: Vec::new(),
         };
 
-        decode_instructions(&stream[pos..], &package);
+        package.instructions = decode_instructions(&stream[pos..], &package);
+
+        package
     }
 }
