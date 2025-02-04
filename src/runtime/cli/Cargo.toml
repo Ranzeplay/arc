@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+"shared" = { path = "../shared" }
 "cmdec" = { path = "../cmdec" }
+"executor" = { path = "../executor" }
 
 clap = { version = "~4.5", features = ["color", "derive", "debug"] }

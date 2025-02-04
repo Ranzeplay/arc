@@ -1,4 +1,5 @@
 use clap::Parser;
+use executor::launch;
 use crate::command_line_options::Args;
 use crate::dispatcher::cmdec::call_cmdec;
 
@@ -10,6 +11,7 @@ fn main() {
 
     if args.decode {
         println!("Decoding package file: {:?}", args.path);
-        call_cmdec(&args.path.unwrap());
+        let package = call_cmdec(&args.path.unwrap());
+        launch(package, args.verbose).unwrap();
     }
 }
