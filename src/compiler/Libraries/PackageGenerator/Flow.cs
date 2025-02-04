@@ -56,6 +56,7 @@ namespace Arc.Compiler.PackageGenerator
                 {
                     genSource.CurrentNode = fn;
                     var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
+                    fn.Descriptor.BlockLength = fnResult.GeneratedData.Count;
                     fn.GenerationResult = fnResult;
                 }
 
@@ -68,6 +69,7 @@ namespace Arc.Compiler.PackageGenerator
                     {
                         genSource.CurrentNode = fn;
                         var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
+                        fn.Descriptor.BlockLength = fnResult.GeneratedData.Count;
                         fn.GenerationResult = fnResult;
                     }
                 }

@@ -31,6 +31,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                             {
                                 iterResult.Add((byte)ArcSymbolType.Function);
                                 iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
+                                iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.BlockLength));
                                 iterResult.AddRange(Utils.SerializeString(node.Signature));
 
                                 // Return type descriptor

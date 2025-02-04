@@ -100,7 +100,6 @@ namespace Arc.Compiler.PackageGenerator
                 }
             }
 
-
             throw new ArgumentOutOfRangeException(nameof(labels), "Cannot find the corresponding label");
         }
 

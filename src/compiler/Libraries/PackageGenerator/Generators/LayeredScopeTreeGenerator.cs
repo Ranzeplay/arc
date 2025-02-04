@@ -43,7 +43,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
         public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
         {
-            var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace!);
+            var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace);
             foreach (var fn in unit.Namespace.Functions)
             {
                 var descriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
