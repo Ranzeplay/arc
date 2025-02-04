@@ -4,12 +4,8 @@ use shared::models::execution::result::FunctionExecutionResult;
 use shared::models::execution::result::FunctionExecutionResult::{Failure, Success};
 use shared::models::package::Package;
 
-pub fn launch(package: Package, verbose: bool) -> Result<i32, String> {
+pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     println!("Launching program...");
-
-    if verbose {
-        println!("Package: {:?}", &package);
-    }
 
     let mut context = ExecutionContext::new(package);
     let result = execute(&mut context);
@@ -27,24 +23,25 @@ pub fn launch(package: Package, verbose: bool) -> Result<i32, String> {
     }
 }
 
-pub fn execute(context: &mut ExecutionContext) -> FunctionExecutionResult {
-    let entry_function = context
+pub fn execute<'a>(context: &'a mut ExecutionContext<'a>) -> FunctionExecutionResult<'a> {
+    let binding = context
         .package
         .symbols
         .symbols
         .iter()
-        .filter(|d| match d.value {
+        .filter(|&d| match d.value {
             Symbol::Function(_) => true,
             _ => false,
         })
-        .collect::<Vec<SymbolDescriptor>>()
+        .collect::<Vec<&SymbolDescriptor>>();
+    let entry_function = binding
         .first()
         .unwrap();
 
-    execute_function(entry_function.id, &mut context)
+    execute_function(entry_function.id, context)
 }
 
-pub fn execute_function(id: usize, context: &mut ExecutionContext) -> FunctionExecutionResult {
+pub fn execute_function<'a>(id: usize, context: &'a mut ExecutionContext<'a>) -> FunctionExecutionResult<'a> {
     let entry_function = context
         .package
         .symbols
@@ -53,8 +50,8 @@ pub fn execute_function(id: usize, context: &mut ExecutionContext) -> FunctionEx
         .find(|d| d.id == id)
         .unwrap();
 
-    let mut entry_function_context = FunctionExecutionContext {
-        function: match entry_function {
+    let entry_function_context = FunctionExecutionContext {
+        function: match &entry_function.value {
             Symbol::Function(f) => f,
             _ => panic!("Invalid symbol type."),
         },
@@ -69,7 +66,12 @@ pub fn execute_function(id: usize, context: &mut ExecutionContext) -> FunctionEx
 
     let instruction_pos = entry_pos;
     while instruction_pos < entry_pos + block_length {
-        let instruction = &context.package.instructions.iter().find(|i| i.offset == instruction_pos).unwrap();
+        let instruction = context
+            .package
+            .instructions
+            .iter()
+            .find(|i| i.offset == instruction_pos)
+            .unwrap();
     }
 
     context.stack_frames.pop_back();
