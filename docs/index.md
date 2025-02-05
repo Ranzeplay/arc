@@ -4,8 +4,8 @@ layout: home
 
 hero:
   name: "TAPL Docs"
-  text: "The documentation site of The Arc Programming Language"
-  tagline: "# Programming language"
+  text: "The documentation site of the language"
+  tagline: "# The Arc Programming Language"
   actions:
     - theme: brand
       text: Usage

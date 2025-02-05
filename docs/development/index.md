@@ -14,10 +14,22 @@ We are currently working on `reboot` branch.
 
 ## Repository structure
 
+We use monorepo structure.
+
 - Root
   
   - `src`
     
-    - `compiler`: Compiler source code
+    - `compiler`: Compiler codebase
     
     - `cli`: An integrated CLI tool
+    
+    - `runtime`: Runtime codebase
+  
+  - `docs`: Documentation directory (Vitepress website)
+
+## About `SCOPE` file
+
+You will find `SCOPE` file in some directories, it is a plain text file, meaning that the directory and its subdirectories are in the scope it described. When commiting, we need to point out which scope we are changing.
+
+## Commit standard

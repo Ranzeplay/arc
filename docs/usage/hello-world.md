@@ -20,13 +20,13 @@ A typical `Hello, world!` program would be like this.
 link Arc::Std::Console;
 
 namespace Arc::Program {
-	@Export
-	@Entrypoint
-	public func main(var args: val string[]): val int {
-		call PrintString("Hello, world!\n");
+    @Export
+    @Entrypoint
+    public func main(var args: val string[]): val int {
+        call PrintString("Hello, world!\n");
 
-		return 0;
-	}
+        return 0;
+    }
 }
 ```
 
