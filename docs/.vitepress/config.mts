@@ -30,6 +30,7 @@ export default defineConfig({
           text: 'Usage',
           items: [
             { text: 'Index', link: '/usage/' },
+            { text: 'Hello, world!', link: '/usage/hello-world' },
           ]
         }
       ],

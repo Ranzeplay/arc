@@ -1,0 +1,43 @@
+---
+title: Hello, world!
+---
+
+# Write a `Hello, world!` program
+
+## Create project
+
+Create an empty directory and run the following command
+
+```bash
+arc-cli init
+```
+
+## Fill in code
+
+A typical `Hello, world!` program would be like this.
+
+```
+link Arc::Std::Console;
+
+namespace Arc::Program {
+	@Export
+	@Entrypoint
+	public func main(var args: val string[]): val int {
+		call PrintString("Hello, world!\n");
+
+		return 0;
+	}
+}
+```
+
+Replace the content of `src/main.script.arc` with the content above.
+
+## Run the program
+
+In project root directory, run the following command
+
+```bash
+arc-cli run
+```
+
+And you'll see that `Hello, world!` is printed onto the console.
