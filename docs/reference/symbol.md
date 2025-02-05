@@ -1,14 +1,58 @@
----
-title: Symbol
----
-
 # Symbol
 
-| TypeId | Name                       | Format                                         |
-| ------ | -------------------------- | ---------------------------------------------- |
-| 0x01   | Namespace scope descriptor | Namespace signature text                       |
-| 0x02   | Function descriptor        | Function signature text & entrypoint location  |
-| 0x03   | Group field descriptor     | Group signature text                           |
-| 0x04   | Data type descriptor       | Data type ID                                   |
-| 0x05   | Constant descriptor        | Data type ID & Length & Constant encoded bytes |
-| 0x06   | ...                        |                                                |
+## Symbol type
+
+| Key        | Value  | Description |
+| ---------- | ------ | ----------- |
+| Namespace  | `0x01` |             |
+| Function   | `0x02` |             |
+| GroupField | `0x03` |             |
+| DataType   | `0x04` |             |
+| Constant   | `0x05` |             |
+| Group      | `0x06` |             |
+
+## Namespace descriptor
+
+| Key       | Type     | Description                    |
+| --------- | -------- | ------------------------------ |
+| Signature | `string` | The signature of the namespace |
+
+## Function descriptor
+
+| Key                 | Type         | Description                                                 |
+| ------------------- | ------------ | ----------------------------------------------------------- |
+| Entrypoint position | `u64`        | The signature of the function                               |
+| Block length        | `u64`        | The total length of instruction byte stream of the function |
+| Signature           | `string`     | The signature of the namespace                              |
+| Return value type   | `DataType`   | Data type of return value                                   |
+| Parameter type      | `DataType[]` | Data type of parameters of the function                     |
+
+## Group field descriptor
+
+| Key                  | Type       | Description                |
+| -------------------- | ---------- | -------------------------- |
+| Signature            | `string`   | The signature of the field |
+| Containing data type | `DataType` | Data type of the field     |
+
+## Data type descriptor
+
+| Key        | Type     | Description                                                                            |
+| ---------- | -------- | -------------------------------------------------------------------------------------- |
+| Category   | `bool`   | Decide whether it is primitive(`true`) or complex(`false`)                             |
+| Signature  | `string` | The signature of the data type                                                         |
+| *Group id* | `u64`    | If it is complex type, then it stores the id of the group which is related to the type |
+
+## Constant descriptor
+
+Currently unused.
+
+## Group descriptor
+
+| Key            | Type     | Description                             |
+| -------------- | -------- | --------------------------------------- |
+| Signature      | `string` | The signature of the group              |
+| Fields id      | `u64[]`  | List of id of fields in the group       |
+| Constructor id | `u64[]`  | List of id of constructors in the group |
+| Destructor id  | `u64[]`  | List of id of destructors in the group  |
+| Function id    | `u64[]`  | List of id of functions in the group    |
+| Subgroup id    | `u64[]`  | List of id of subgroups in the group    |

@@ -22,4 +22,3 @@ features:
   - title: Flexible
     details: Flexible coding grammar
 ---
-

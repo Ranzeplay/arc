@@ -10,7 +10,8 @@ export default defineConfig({
       { text: 'Home', link: '/' },
       { text: 'Development', link: '/development' },
       { text: 'Usage', link: '/usage' },
-      { text: 'References', link: '/reference' }
+      { text: 'References', link: '/reference' },
+      { text: 'Stdlib', link: '/stdlib' }
     ],
 
     sidebar: {
@@ -31,13 +32,23 @@ export default defineConfig({
           ]
         }
       ],
+      '/stdlib/': [
+        {
+          text: 'Stdlib',
+          items: [
+            { text: 'Index', link: '/stdlib/' },
+          ]
+        }
+      ],
       '/reference/': [
         {
           text: 'References',
           items: [
             { text: 'Index', link: '/reference/' },
             { text: 'Instruction set', link: '/reference/instruction-set' },
-            { text: 'Descriptor set', link: '/reference/descriptor-set' },
+            { text: 'Package descriptor', link: '/reference/package-descriptor' },
+            { text: 'Symbols', link: '/reference/symbol' },
+            { text: 'Data type', link: '/reference/data-type' },
             { text: 'On-stack data save-load operations', link: '/reference/on-stack-data-sl-operations' },
             { text: 'Signature', link: '/reference/signature' },
           ]
