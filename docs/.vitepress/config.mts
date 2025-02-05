@@ -6,6 +6,7 @@ export default defineConfig({
   description: "The documentation site of The Arc Programming Language",
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
+    outline: [2, 3],
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Development', link: '/development' },
