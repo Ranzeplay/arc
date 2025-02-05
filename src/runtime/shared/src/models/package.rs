@@ -5,7 +5,7 @@ use crate::models::instruction::Instruction;
 
 pub struct Package {
     pub descriptor: PackageDescriptor,
-    pub symbols: SymbolTable,
-    pub constants: ConstantTable,
+    pub symbol_table: SymbolTable,
+    pub constant_table: ConstantTable,
     pub instructions: Vec<Instruction>,
 }

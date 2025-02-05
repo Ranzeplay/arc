@@ -56,8 +56,8 @@ impl Cmdec {
 
         let mut package = Package {
             descriptor: package_descriptor,
-            symbols: symbol_table,
-            constants: constant_table,
+            symbol_table: symbol_table,
+            constant_table: constant_table,
             instructions: Vec::new(),
         };
 

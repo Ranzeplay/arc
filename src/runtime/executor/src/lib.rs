@@ -31,7 +31,7 @@ pub fn execute(context: Rc<RefCell<ExecutionContext>>) -> FunctionExecutionResul
     let context_ref = context.borrow();
     let binding = context_ref
         .package
-        .symbols
+        .symbol_table
         .symbols
         .iter()
         .filter(|&d| match d.value {
@@ -52,7 +52,7 @@ pub fn execute_function(
     let mut context_mut_ref = context.borrow_mut();
     let entry_function = context_ref
         .package
-        .symbols
+        .symbol_table
         .symbols
         .iter()
         .find(|d| d.id == function_id)
