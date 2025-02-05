@@ -37,6 +37,7 @@ export default defineConfig({
           text: 'Stdlib',
           items: [
             { text: 'Index', link: '/stdlib/' },
+            { text: 'Console', link: '/stdlib/console' },
           ]
         }
       ],
