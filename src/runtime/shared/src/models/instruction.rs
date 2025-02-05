@@ -35,7 +35,7 @@ pub enum InstructionType {
     CLgE,
     CLs,
     CLsE,
-    Invoke,
+    Invoke(FunctionCallInstruction),
     Ret(ReturnInstruction),
     Throw,
     BTC,
