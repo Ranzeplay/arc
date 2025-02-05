@@ -1,8 +1,10 @@
+use std::cell::RefCell;
+use std::rc::Rc;
 use crate::models::execution::data::DataValue;
 
-pub enum FunctionExecutionResult<'a> {
+pub enum FunctionExecutionResult {
     Invalid,
-    Success(DataValue<'a>),
+    Success(Rc<RefCell<DataValue>>),
     Failure(FunctionExecutionFault),
 }
 

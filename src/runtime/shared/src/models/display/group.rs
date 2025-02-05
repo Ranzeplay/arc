@@ -1,8 +1,9 @@
 use std::fmt::Debug;
+use std::rc::Rc;
 use crate::models::descriptors::symbol::GroupSymbol;
 
 pub struct GroupDetailViewModel {
-    pub group: GroupSymbol
+    pub group: Rc<GroupSymbol>
 }
 
 impl Debug for GroupDetailViewModel {
@@ -38,7 +39,7 @@ impl Debug for GroupDetailViewModel {
 }
 
 impl GroupDetailViewModel {
-    pub fn new(group: GroupSymbol) -> GroupDetailViewModel {
+    pub fn new(group: Rc<GroupSymbol>) -> GroupDetailViewModel {
         GroupDetailViewModel {
             group
         }

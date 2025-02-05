@@ -5,6 +5,7 @@ use shared::models::descriptors::symbol::{
 use shared::models::encodings::data_type_enc::DataTypeEncoding;
 use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use shared::models::encodings::str_enc::StringEncoding;
+use std::rc::Rc;
 
 pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
     let mut result = vec![];
@@ -58,14 +59,20 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
         SizedArrayEncoding::with_data_type_data(&stream[pos..]);
     pos += parameter_descriptors_len;
 
+    let mut parameter_descriptors_vec: Vec<Rc<DataTypeEncoding>> = vec![];
+    let parameter_descriptors_vec_temp: Vec<DataTypeEncoding> = parameter_descriptors.into();
+    for d in parameter_descriptors_vec_temp {
+        parameter_descriptors_vec.push(Rc::new(d));
+    }
+
     (
-        Symbol::Function(FunctionSymbol {
+        Symbol::Function(Rc::new(FunctionSymbol {
             entry_pos,
             block_length,
             signature,
-            return_value_descriptor,
-            parameter_descriptors,
-        }),
+            return_value_descriptor: Rc::new(return_value_descriptor),
+            parameter_descriptors: parameter_descriptors_vec,
+        })),
         pos,
     )
 }
@@ -92,14 +99,14 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (sub_group_ids, sub_group_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += sub_group_ids_len;
 
-    let result = Symbol::Group(GroupSymbol {
+    let result = Symbol::Group(Rc::new(GroupSymbol {
         signature,
         field_ids,
         constructor_ids,
         destructor_ids,
         function_ids,
         sub_group_ids,
-    });
+    }));
     (result, pos)
 }
 
@@ -112,10 +119,10 @@ pub fn decode_group_field_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (data_type, data_type_id_len) = DataTypeEncoding::from_u8(&stream[pos..]);
     pos += data_type_id_len;
 
-    let result = Symbol::GroupField(GroupFieldSymbol {
+    let result = Symbol::GroupField(Rc::new(GroupFieldSymbol {
         signature,
         value_descriptor: data_type,
-    });
+    }));
     (result, pos)
 }
 
@@ -130,17 +137,19 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
 
     if is_base_type {
         (
-            Symbol::DataType(DataTypeSymbol::BaseType(name_encoding.value)),
+            Symbol::DataType(Rc::new(DataTypeSymbol::BaseType(name_encoding.value))),
             pos,
         )
     } else {
         let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
         (
-            Symbol::DataType(DataTypeSymbol::DerivativeType(DerivativeTypeSymbol {
-                signature: name_encoding.value,
-                group_id,
-            })),
+            Symbol::DataType(Rc::new(DataTypeSymbol::DerivativeType(
+                DerivativeTypeSymbol {
+                    signature: name_encoding.value,
+                    group_id,
+                },
+            ))),
             pos,
         )
     }
@@ -150,6 +159,6 @@ pub fn decode_namespace_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let name_encoding = StringEncoding::from_u8(&stream);
     let signature = name_encoding.value;
 
-    let result = Symbol::Namespace(NamespaceSymbol { signature });
+    let result = Symbol::Namespace(Rc::new(NamespaceSymbol { signature }));
     (result, name_encoding.total_size)
 }

@@ -1,5 +1,6 @@
 use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::fmt::Debug;
+use std::rc::Rc;
 
 pub struct SymbolDescriptor {
     pub id: usize,
@@ -7,11 +8,11 @@ pub struct SymbolDescriptor {
 }
 
 pub enum Symbol {
-    DataType(DataTypeSymbol),
-    Function(FunctionSymbol),
-    Group(GroupSymbol),
-    GroupField(GroupFieldSymbol),
-    Namespace(NamespaceSymbol),
+    DataType(Rc<DataTypeSymbol>),
+    Function(Rc<FunctionSymbol>),
+    Group(Rc<GroupSymbol>),
+    GroupField(Rc<GroupFieldSymbol>),
+    Namespace(Rc<NamespaceSymbol>),
 }
 
 pub enum DataTypeSymbol {
@@ -33,12 +34,13 @@ impl Debug for DataTypeSymbol {
     }
 }
 
+#[derive(Clone)]
 pub struct FunctionSymbol {
     pub signature: String,
     pub entry_pos: usize,
     pub block_length: usize,
-    pub return_value_descriptor: DataTypeEncoding,
-    pub parameter_descriptors: Vec<DataTypeEncoding>,
+    pub return_value_descriptor: Rc<DataTypeEncoding>,
+    pub parameter_descriptors: Vec<Rc<DataTypeEncoding>>,
 }
 
 impl Debug for FunctionSymbol {
