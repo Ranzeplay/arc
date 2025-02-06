@@ -9,10 +9,13 @@ use shared::models::instructions::return_from_block::ReturnInstruction;
 use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
 
-pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction> {
+pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> Vec<Instruction> {
     println!("=== Instructions");
+    if verbose {
+        println!("=== Instructions");
+    }
 
-    let mut result: Vec<Instruction> = Vec::new();
+    let mut result = vec![];
 
     let mut pos = 0;
     while pos < stream.len() {
@@ -468,6 +471,9 @@ pub fn decode_instructions(stream: &[u8], package: &Package) -> Vec<Instruction>
 
         println!("{:?}", instruction);
         result.push(instruction);
+        if verbose {
+            println!("{:?}", instruction);
+        }
     }
 
     if pos == stream.len() { println!("All instructions decoded successfully!"); }

@@ -61,7 +61,8 @@ impl Cmdec {
             instructions: Vec::new(),
         };
 
-        package.instructions = decode_instructions(&stream[pos..], &package);
+        package.instructions = decode_instructions(&stream[pos..], &package, verbose);
+        package.instructions = decode_instructions(&stream[pos..], &package, print_decoding_result);
 
         package
     }
