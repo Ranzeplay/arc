@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using System.Text;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
@@ -62,7 +63,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             }
             else if (context.LITERAL_STRING() != null)
             {
-                return new ArcInstantValue(new ArcInstantStringValue(context.LITERAL_STRING().GetText()[1..^1], false));
+                var text = context.LITERAL_STRING().GetText()[1..^1];
+                // Handle escape sequences
+                text = ConvertToEscapedString(text);
+
+                return new ArcInstantValue(new ArcInstantStringValue(text, false));
             }
             else if (context.arc_bool_value() != null)
             {
@@ -93,6 +98,75 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
                 ValueType.Boolean => BooleanValue!.Value,
                 _ => throw new InvalidCastException(),
             };
+        }
+
+        public static string ConvertToEscapedString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
+            {
+                // Check for escape sequence
+                if (i < input.Length - 1 && input[i] == '\\')
+                {
+                    char nextChar = input[i + 1];
+                    switch (nextChar)
+                    {
+                        case 'n':
+                            result.Append('\n');
+                            break;
+                        case 'r':
+                            result.Append('\r');
+                            break;
+                        case 't':
+                            result.Append('\t');
+                            break;
+                        case '\\':
+                            result.Append('\\');
+                            break;
+                        case '"':
+                            result.Append('"');
+                            break;
+                        case '\'':
+                            result.Append('\'');
+                            break;
+                        case 'b':
+                            result.Append('\b');
+                            break;
+                        case 'f':
+                            result.Append('\f');
+                            break;
+                        case 'u':
+                            // Handle Unicode escape sequences \uXXXX
+                            if (i + 5 < input.Length)
+                            {
+                                string hex = input.Substring(i + 2, 4);
+                                if (int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int unicode))
+                                {
+                                    result.Append((char)unicode);
+                                    i += 5; // Skip the unicode sequence
+                                    continue;
+                                }
+                            }
+                            result.Append(nextChar);
+                            break;
+                        default:
+                            // If it's not a recognized escape sequence, keep the backslash and the character
+                            result.Append('\\');
+                            result.Append(nextChar);
+                            break;
+                    }
+                    i++; // Skip the next character since we've already processed it
+                }
+                else
+                {
+                    result.Append(input[i]);
+                }
+            }
+
+            return result.ToString();
         }
     }
 }
