@@ -2,7 +2,9 @@ use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageTy
 use shared::models::execution::context::ExecutionContext;
 use shared::models::execution::data::{DataValue, DataValueType};
 use std::cell::RefCell;
+use std::process::exit;
 use std::rc::Rc;
+use log::error;
 use shared::models::encodings::str_enc::StringEncoding;
 
 pub fn get_data_from_constant_table(
@@ -45,7 +47,8 @@ pub fn get_data_from_constant_table(
         5 => DataValueType::String(StringEncoding::from_u8(&constant.raw_value).value),
         6 => DataValueType::Bool(constant.raw_value[0] == 0x01),
         _ => {
-            panic!("Complex pe not implemented yet!")
+            error!("Complex type not implemented yet!");
+            exit(0xffff)
         }
     };
 

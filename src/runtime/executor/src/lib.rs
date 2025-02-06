@@ -10,9 +10,10 @@ use shared::models::instructions::load_stack::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
+use log::{debug, trace};
 
 pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
-    println!("Launching program...");
+    debug!("Launching program...");
 
     let context = ExecutionContext::new(package);
     let context_rc = Rc::new(RefCell::new(context));
@@ -20,11 +21,11 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
 
     match result {
         FunctionExecutionResult::Success(_) => {
-            println!("Program executed successfully.");
+            debug!("Program executed successfully.");
             Ok(0)
         }
         FunctionExecutionResult::Failure(fault) => {
-            println!("Program execution failed: {}", fault.fault_message);
+            debug!("Program execution failed: {}", fault.fault_message);
             Ok(1)
         }
         FunctionExecutionResult::Invalid => Ok(0),
@@ -112,7 +113,7 @@ pub fn execute_function(
 
     {
         if function_id >= 0xa1 && function_id <= 0xff {
-            println!("Executing stdlib function");
+            trace!("Executing stdlib function");
 
             if function_id == 0xa1 {
                 // Arc::Std::Console::PrintString

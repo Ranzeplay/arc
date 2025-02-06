@@ -9,6 +9,7 @@ use shared::models::instructions::return_from_block::ReturnInstruction;
 use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
 use std::rc::Rc;
+use log::{error, info, warn};
 
 pub fn decode_instructions(
     stream: &[u8],
@@ -16,7 +17,7 @@ pub fn decode_instructions(
     verbose: bool,
 ) -> Vec<Rc<Instruction>> {
     if verbose {
-        println!("=== Instructions");
+        info!("=== Instructions");
     }
 
     let mut result = vec![];
@@ -474,21 +475,23 @@ pub fn decode_instructions(
                 pos += len;
             }
             _ => {
-                println!("Unknown instruction: 0x{:02X?} @ {}", stream[pos], pos);
+                error!("Unknown instruction: 0x{:02X?} @ {}", stream[pos], pos);
                 break;
             }
         }
 
         if verbose {
-            println!("{:?}", instruction);
+            info!("{:?}", instruction);
         }
         result.push(Rc::new(instruction));
     }
 
     if pos == stream.len() {
-        println!("All instructions decoded successfully!");
+        if verbose {
+            info!("All instructions decoded successfully!");
+        }
     } else {
-        println!(
+        warn!(
             "Remaining instructions: {:02X?}",
             &stream[pos..stream.len()]
         );
