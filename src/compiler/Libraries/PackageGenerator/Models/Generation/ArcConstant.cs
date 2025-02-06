@@ -8,6 +8,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public long TypeId { get; set; }
 
+        public required bool IsArray { get; set; }
+
         public required object Value { get; set; }
 
         public required IArcConstantEncoder Encoder { get; set; }
@@ -17,6 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public IEnumerable<byte> Encode() => [
                 ..BitConverter.GetBytes(Id),
                 ..BitConverter.GetBytes(TypeId),
+                ..BitConverter.GetBytes(IsArray),
                 ..BitConverter.GetBytes(RawData.LongCount()),
                 ..RawData
             ];

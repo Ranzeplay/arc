@@ -38,6 +38,7 @@ namespace Arc.Compiler.PackageGenerator
             {
                 Id = id,
                 TypeId = typeId ?? -1,
+                IsArray = false,
                 Value = value.GetRawValue(),
                 Encoder = GetEncoderFromInstantValue(value)
             });

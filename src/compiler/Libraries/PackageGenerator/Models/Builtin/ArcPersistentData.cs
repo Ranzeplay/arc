@@ -14,13 +14,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
             BoolType
         ];
 
-        public static ArcBaseType NoneType => new ArcBaseType(0, "none") { Name = "none" };
-        public static ArcBaseType AnyType => new ArcBaseType(1, "any") { Name = "any" };
-        public static ArcBaseType IntType => new ArcBaseType(2, "int") { Name = "int" };
-        public static ArcBaseType DecimalType => new ArcBaseType(3, "decimal") { Name = "decimal" };
-        public static ArcBaseType CharType => new ArcBaseType(4, "char") { Name = "char" };
-        public static ArcBaseType StringType => new ArcBaseType(5, "string") { Name = "string" };
-        public static ArcBaseType BoolType => new ArcBaseType(6, "bool") { Name = "bool" };
+        public static ArcBaseType NoneType => new(0, "none") { Name = "none" };
+        public static ArcBaseType AnyType => new(1, "any") { Name = "any" };
+        public static ArcBaseType IntType => new(2, "int") { Name = "int" };
+        public static ArcBaseType DecimalType => new(3, "decimal") { Name = "decimal" };
+        public static ArcBaseType CharType => new(4, "char") { Name = "char" };
+        public static ArcBaseType StringType => new(5, "string") { Name = "string" };
+        public static ArcBaseType BoolType => new(6, "bool") { Name = "bool" };
 
         public static ArcScopeTree BaseTypeScopeTree
         {
