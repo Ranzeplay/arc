@@ -1,14 +1,16 @@
+#[derive(Debug, Clone)]
 pub enum Mutability {
     Immutable,
     Mutable,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum MemoryStorageType {
     Reference,
     Value,
 }
 
+#[derive(Debug, Clone)]
 pub struct DataTypeEncoding {
     pub type_id: usize,
     pub is_array: bool,

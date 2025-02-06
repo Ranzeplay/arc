@@ -16,6 +16,7 @@ pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
     for _ in 0..count {
         let symbol_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
+
         let (symbol, len) = decode_symbol(&stream[pos..]);
         result.push(SymbolDescriptor {
             id: symbol_id,

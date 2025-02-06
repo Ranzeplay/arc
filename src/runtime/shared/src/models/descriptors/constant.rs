@@ -3,6 +3,7 @@ use std::fmt::Debug;
 pub struct ConstantDescriptor {
     pub id: usize,
     pub type_id: usize,
+    pub is_array: bool,
     pub raw_value: Vec<u8>,
 }
 

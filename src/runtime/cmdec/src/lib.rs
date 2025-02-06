@@ -56,12 +56,11 @@ impl Cmdec {
 
         let mut package = Package {
             descriptor: package_descriptor,
-            symbol_table: symbol_table,
-            constant_table: constant_table,
+            symbol_table,
+            constant_table,
             instructions: Vec::new(),
         };
 
-        package.instructions = decode_instructions(&stream[pos..], &package, verbose);
         package.instructions = decode_instructions(&stream[pos..], &package, print_decoding_result);
 
         package

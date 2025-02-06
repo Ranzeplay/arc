@@ -23,6 +23,9 @@ fn decode_constant(stream: &[u8]) -> (ConstantDescriptor, usize) {
     let type_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
+    let is_array = stream[pos] == 0x01;
+    pos += 1;
+
     let len = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
@@ -32,6 +35,7 @@ fn decode_constant(stream: &[u8]) -> (ConstantDescriptor, usize) {
     (ConstantDescriptor{
         id,
         type_id,
+        is_array,
         raw_value,
     }, pos)
 }

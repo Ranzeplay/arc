@@ -1,8 +1,12 @@
+mod data;
+
 use shared::models::descriptors::symbol::{Symbol, SymbolDescriptor};
+use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
+use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
-use shared::models::execution::result::FunctionExecutionResult::{Failure, Success};
 use shared::models::instruction::InstructionType;
+use shared::models::instructions::load_stack::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -15,11 +19,11 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     let result = execute(context_rc);
 
     match result {
-        Success(_) => {
+        FunctionExecutionResult::Success(_) => {
             println!("Program executed successfully.");
             Ok(0)
         }
-        Failure(fault) => {
+        FunctionExecutionResult::Failure(fault) => {
             println!("Program execution failed: {}", fault.fault_message);
             Ok(1)
         }
@@ -28,58 +32,119 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
 }
 
 pub fn execute(context: Rc<RefCell<ExecutionContext>>) -> FunctionExecutionResult {
-    let context_ref = context.borrow();
-    let binding = context_ref
-        .package
-        .symbol_table
-        .symbols
-        .iter()
-        .filter(|&d| match d.value {
-            Symbol::Function(_) => true,
-            _ => false,
-        })
-        .collect::<Vec<&SymbolDescriptor>>();
-    let entry_function = binding.first().unwrap();
+    let function_id = {
+        let context_ref = context.borrow();
+        let binding = context_ref
+            .package
+            .symbol_table
+            .symbols
+            .iter()
+            .filter(|&d| match d.value {
+                Symbol::Function(_) => true,
+                _ => false,
+            })
+            .collect::<Vec<&SymbolDescriptor>>();
+        let entry_function = *binding.first().unwrap();
 
-    execute_function(entry_function.id, context.clone())
+        entry_function.id
+    };
+
+    execute_function(function_id, context.clone())
 }
 
 pub fn execute_function(
     function_id: usize,
     context: Rc<RefCell<ExecutionContext>>,
 ) -> FunctionExecutionResult {
-    let context_ref = context.borrow();
-    let mut context_mut_ref = context.borrow_mut();
-    let entry_function = context_ref
-        .package
-        .symbol_table
-        .symbols
-        .iter()
-        .find(|d| d.id == function_id)
-        .unwrap();
+    let (instruction_slice, entry_pos, block_length, entry_function_context) = {
+        let mut context_ref = context.borrow_mut();
+        let entry_function = context_ref
+            .package
+            .symbol_table
+            .symbols
+            .iter()
+            .find(|d| d.id == function_id)
+            .unwrap();
 
-    let entry_function_context = FunctionExecutionContext {
-        function: match &entry_function.value {
-            Symbol::Function(f) => f.clone(),
-            _ => panic!("Invalid symbol type."),
-        },
-        local_data: Vec::new(),
+        let parent_function_opt = if context_ref.stack_frames.len() > 0 {
+            Some(context_ref.stack_frames.back().unwrap().clone())
+        } else {
+            None
+        };
+
+        // Create the function context
+        let mut function_context = FunctionExecutionContext {
+            function: match &entry_function.value {
+                Symbol::Function(f) => f.clone(),
+                _ => panic!("Invalid symbol type."),
+            },
+            local_data: vec![],
+            local_stack: vec![],
+        };
+
+        if let Some(parent_function) = parent_function_opt {
+            let mut parent_function = parent_function.borrow_mut();
+            let current_function_arg_count = function_context.function.parameter_descriptors.len();
+            for _ in 0..current_function_arg_count {
+                let data = parent_function.local_stack.pop().unwrap();
+                function_context.local_stack.push(data.clone());
+            }
+        }
+
+        let entry_pos = function_context.function.entry_pos;
+        let block_length = function_context.function.block_length;
+
+        let instruction_slice = context_ref
+            .package
+            .instructions
+            .iter()
+            .take_while(|i| i.offset >= entry_pos)
+            .map(|i| i.clone())
+            .collect::<Vec<_>>();
+
+        context_ref
+            .stack_frames
+            .push_back(Rc::new(RefCell::new(function_context)));
+        let entry_function_context = context_ref.stack_frames.back().unwrap().clone();
+
+        (instruction_slice, entry_pos, block_length, entry_function_context)
     };
 
-    context_mut_ref
-        .stack_frames
-        .push_back(entry_function_context);
-    let entry_function_context = context_mut_ref.stack_frames.back_mut().unwrap();
+    {
+        if function_id >= 0xa1 && function_id <= 0xff {
+            println!("Executing stdlib function");
 
-    let entry_pos = entry_function_context.function.entry_pos;
-    let block_length = entry_function_context.function.block_length;
+            if function_id == 0xa1 {
+                // Arc::Std::Console::PrintString
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let data = fn_context_ref
+                    .local_stack
+                    .pop()
+                    .unwrap();
 
-    let instruction_slice = context_ref
-        .package
-        .instructions
-        .iter()
-        .take_while(|i| i.offset >= entry_pos)
-        .collect::<Vec<_>>();
+                let data = data.borrow();
+
+                match &data.value {
+                    DataValueType::String(s) => {
+                        println!("{}", s);
+                    }
+                    DataValueType::Bool(b) => {
+                        println!("{}", b);
+                    }
+                    DataValueType::Integer(i) => {
+                        println!("{}", i);
+                    }
+                    DataValueType::Decimal(d) => {
+                        println!("{}", d);
+                    }
+                    DataValueType::Char(c) => {
+                        println!("{}", c);
+                    }
+                    _ => { panic!("Invalid data type") }
+                }
+            }
+        }
+    }
 
     for instruction in instruction_slice {
         if instruction.offset >= entry_pos + block_length {
@@ -114,14 +179,26 @@ pub fn execute_function(
             InstructionType::Invoke(call) => {
                 let call_result = execute_function(call.function_id, context.clone());
                 match call_result {
-                    Success(_) => {}
-                    Failure(x) => panic!("Function execution failed: {}", x.fault_message),
+                    FunctionExecutionResult::Success(ret) => {
+                        entry_function_context
+                            .borrow_mut()
+                            .local_stack
+                            .push(ret.clone());
+                    }
+                    FunctionExecutionResult::Failure(x) => {
+                        panic!("Function execution failed: {}", x.fault_message)
+                    }
                     FunctionExecutionResult::Invalid => {
                         panic!("Invalid function execution result.")
                     }
                 }
             }
-            InstructionType::Ret(_) => {}
+            InstructionType::Ret(ret) => {
+                if ret.with_value {
+                    let data = entry_function_context.borrow_mut().local_stack.pop().unwrap();
+                    return FunctionExecutionResult::Success(data);
+                }
+            }
             InstructionType::Throw => {}
             InstructionType::BTC => {}
             InstructionType::BT => {}
@@ -152,18 +229,37 @@ pub fn execute_function(
             InstructionType::FCall(call) => {
                 let call_result = execute_function(call.function_id, context.clone());
                 match call_result {
-                    Success(_) => {}
-                    Failure(x) => panic!("Function execution failed: {}", x.fault_message),
+                    FunctionExecutionResult::Success(_) => {}
+                    FunctionExecutionResult::Failure(x) => {
+                        panic!("Function execution failed: {}", x.fault_message)
+                    }
                     FunctionExecutionResult::Invalid => {
                         panic!("Invalid function execution result.")
                     }
                 }
             }
-            InstructionType::LdStk(_) => {}
+            InstructionType::LdStk(lsi) => match lsi.source {
+                DataSourceType::ConstantTable => {
+                    let data =
+                        data::get_data_from_constant_table(context.clone(), lsi.location_id, true);
+                    entry_function_context.borrow_mut().local_stack.push(Rc::new(RefCell::new(data)));
+                }
+                DataSourceType::DataSlot => {}
+                DataSourceType::DataHandle => {}
+            },
             InstructionType::SvStk => {}
         }
     }
 
-    context_mut_ref.stack_frames.pop_back();
-    FunctionExecutionResult::Invalid
+    let mut context_ref = context.borrow_mut();
+    context_ref.stack_frames.pop_back();
+    FunctionExecutionResult::Success(Rc::new(RefCell::new(DataValue {
+        data_type: DataTypeEncoding {
+            type_id: 0,
+            is_array: false,
+            mutability: Mutability::Immutable,
+            memory_storage_type: MemoryStorageType::Reference,
+        },
+        value: DataValueType::None,
+    })))
 }

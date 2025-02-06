@@ -7,11 +7,13 @@ pub struct DataSlot {
     pub value: DataValue,
 }
 
+#[derive(Clone)]
 pub struct DataValue {
-    pub data_type: Rc<DataTypeEncoding>,
+    pub data_type: DataTypeEncoding,
     pub value: DataValueType,
 }
 
+#[derive(Clone)]
 pub enum DataValueType {
     Bool(bool),
     Integer(i64),
@@ -23,6 +25,7 @@ pub enum DataValueType {
     Complex(ComplexDataValue),
 }
 
+#[derive(Clone)]
 pub struct ComplexDataValue {
     pub data_type: Rc<DataTypeEncoding>,
     pub values: Vec<Rc<RefCell<DataValue>>>,

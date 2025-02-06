@@ -8,9 +8,13 @@ use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::return_from_block::ReturnInstruction;
 use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
+use std::rc::Rc;
 
-pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> Vec<Instruction> {
-    println!("=== Instructions");
+pub fn decode_instructions(
+    stream: &[u8],
+    package: &Package,
+    verbose: bool,
+) -> Vec<Rc<Instruction>> {
     if verbose {
         println!("=== Instructions");
     }
@@ -41,7 +45,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += 1;
             }
             0x06 => {
-                let (pop_to_slot, len) = PopToSlotInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (pop_to_slot, len) =
+                    PopToSlotInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::PopS(pop_to_slot),
@@ -213,7 +218,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += 1;
             }
             0x1a => {
-                let (return_function, len) = ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (return_function, len) =
+                    ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::FRet(return_function),
@@ -278,7 +284,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += len;
             }
             0x22 => {
-                let (cond_jump, len) = ConditionalJumpInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (cond_jump, len) =
+                    ConditionalJumpInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::JmpC(cond_jump),
@@ -432,7 +439,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += 1;
             }
             0x35 => {
-                let (return_function, len) = ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (return_function, len) =
+                    ReturnInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::FRet(return_function),
@@ -442,7 +450,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += len;
             }
             0x36 => {
-                let (function_call, len) = FunctionCallInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (function_call, len) =
+                    FunctionCallInstruction::decode(&stream[pos..], pos, package).unwrap();
 
                 instruction = Instruction {
                     offset: pos,
@@ -453,7 +462,8 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
                 pos += len;
             }
             0x37 => {
-                let (ldstk, len) = LoadStackInstruction::decode(&stream[pos..], pos, package).unwrap();
+                let (ldstk, len) =
+                    LoadStackInstruction::decode(&stream[pos..], pos, package).unwrap();
 
                 instruction = Instruction {
                     offset: pos,
@@ -469,15 +479,20 @@ pub fn decode_instructions(stream: &[u8], package: &Package, verbose: bool) -> V
             }
         }
 
-        println!("{:?}", instruction);
-        result.push(instruction);
         if verbose {
             println!("{:?}", instruction);
         }
+        result.push(Rc::new(instruction));
     }
 
-    if pos == stream.len() { println!("All instructions decoded successfully!"); }
-    else { println!("Remaining instructions: {:02X?}", &stream[pos..stream.len()]); }
+    if pos == stream.len() {
+        println!("All instructions decoded successfully!");
+    } else {
+        println!(
+            "Remaining instructions: {:02X?}",
+            &stream[pos..stream.len()]
+        );
+    }
 
     result
 }
