@@ -127,19 +127,19 @@ pub fn execute_function(
 
                 match &data.value {
                     DataValueType::String(s) => {
-                        println!("{}", s);
+                        print!("{}", s);
                     }
                     DataValueType::Bool(b) => {
-                        println!("{}", b);
+                        print!("{}", b);
                     }
                     DataValueType::Integer(i) => {
-                        println!("{}", i);
+                        print!("{}", i);
                     }
                     DataValueType::Decimal(d) => {
-                        println!("{}", d);
+                        print!("{}", d);
                     }
                     DataValueType::Char(c) => {
-                        println!("{}", c);
+                        print!("{}", c);
                     }
                     _ => { panic!("Invalid data type") }
                 }
