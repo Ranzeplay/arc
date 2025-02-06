@@ -62,7 +62,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             }
             else if (context.LITERAL_STRING() != null)
             {
-                return new ArcInstantValue(new ArcInstantStringValue(context.LITERAL_STRING().GetText(), false));
+                return new ArcInstantValue(new ArcInstantStringValue(context.LITERAL_STRING().GetText()[1..^1], false));
             }
             else if (context.arc_bool_value() != null)
             {
