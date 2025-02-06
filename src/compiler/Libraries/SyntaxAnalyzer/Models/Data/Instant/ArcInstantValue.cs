@@ -76,7 +76,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 
         public string TypeName => Type switch
         {
-            ValueType.String => "str",
+            ValueType.String => "string",
             ValueType.Integer => "int",
             ValueType.Decimal => "decimal",
             ValueType.Boolean => "bool",
