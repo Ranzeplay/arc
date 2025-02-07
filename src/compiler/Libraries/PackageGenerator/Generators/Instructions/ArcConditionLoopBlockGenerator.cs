@@ -31,7 +31,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Label = ArcRelocationLabelType.BeginLoopBlock,
                 Parameter = -1
             };
-            var jumpBackInstruction = new ArcConditionalJumpInstruction(jumpBackRelocator).Encode(source);
+            var jumpBackInstruction = new ArcUnconditionalJumpInstruction(jumpBackRelocator).Encode(source);
 
             var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndLoopBlock, "end").Encode(source);
 

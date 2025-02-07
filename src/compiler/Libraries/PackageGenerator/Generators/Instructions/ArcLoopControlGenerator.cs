@@ -10,15 +10,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            var jumpCommand = new ArcUnconditionalJumpInstruction()
+            var jumpCommand = new ArcUnconditionalJumpInstruction(new()
             {
-                Target = new()
-                {
-                    TargetType = ArcRelocationTargetType.Label,
-                    Parameter = 1,
-                    Label = ArcRelocationLabelType.EndLoopBlock
-                }
-            };
+                TargetType = ArcRelocationTargetType.Label,
+                Parameter = 1,
+                Label = ArcRelocationLabelType.EndLoopBlock
+            });
 
             result.Append(jumpCommand.Encode(source));
 
@@ -29,15 +26,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            var jumpCommand = new ArcUnconditionalJumpInstruction()
+            var jumpCommand = new ArcUnconditionalJumpInstruction(new()
             {
-                Target = new()
-                {
-                    TargetType = ArcRelocationTargetType.Label,
-                    Parameter = -1,
-                    Label = ArcRelocationLabelType.BeginLoopBlock
-                },
-            };
+                TargetType = ArcRelocationTargetType.Label,
+                Parameter = -1,
+                Label = ArcRelocationLabelType.BeginLoopBlock
+            });
 
             result.Append(jumpCommand.Encode(source));
 
