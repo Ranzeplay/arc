@@ -1,5 +1,5 @@
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::context::ExecutionContext;
+use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use shared::models::execution::data::{DataValue, DataValueType};
 use std::cell::RefCell;
 use std::process::exit;
@@ -65,4 +65,15 @@ pub fn get_data_from_constant_table(
         },
         value: data_content,
     }
+}
+
+pub fn get_data_from_data_slot(context: Rc<RefCell<FunctionExecutionContext>>, slot_id: usize) -> Rc<RefCell<DataValue>> {
+    let context_ref = context.borrow();
+    let slot = context_ref
+        .local_data
+        .iter()
+        .find(|s| s.slot_id == slot_id)
+        .unwrap();
+
+    slot.value.clone()
 }

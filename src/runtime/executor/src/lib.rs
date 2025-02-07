@@ -178,7 +178,12 @@ pub fn execute_function(
             InstructionType::PushC => {}
             InstructionType::PushS => {}
             InstructionType::PopD => {}
-            InstructionType::PopS(_) => {}
+            InstructionType::PopS(pops) => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let data = fn_context_ref.local_stack.pop().unwrap();
+                let mut slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
+                slot.value.replace(data.borrow().clone());
+            }
             InstructionType::Add => {
                 let mut fn_context_ref = entry_function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
@@ -300,7 +305,16 @@ pub fn execute_function(
                         .local_stack
                         .push(Rc::new(RefCell::new(data)));
                 }
-                DataSourceType::DataSlot => {}
+                DataSourceType::DataSlot => {
+                    let data = data::get_data_from_data_slot(
+                        entry_function_context.clone(),
+                        lsi.location_id,
+                    );
+                    entry_function_context
+                        .borrow_mut()
+                        .local_stack
+                        .push(data);
+                }
                 DataSourceType::DataHandle => {}
             },
             InstructionType::SvStk => {}
