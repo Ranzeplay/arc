@@ -22,6 +22,7 @@ if you have more to say, put them to the body.
 - `fix`: Fix an existing issue.
 - `chore`: Routine/automatic operations.
 - `refactor`: Refactor an existing function for better using.
+- `perf`: Performance enhancement.
 - `test`: Add/remove/modify tests.
 - `docs`: Add/remove/modify documents.
 - `ci` : Commits add by CI tools.
