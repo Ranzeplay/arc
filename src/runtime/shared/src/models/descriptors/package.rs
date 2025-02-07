@@ -46,7 +46,7 @@ impl Debug for PackageDescriptor {
 
         writeln!(f, "Name:                                  {}", self.name)?;
         writeln!(f, "Version:                               {}", self.version)?;
-        writeln!(f, "Entrypoint Function ID:                {}", self.entrypoint_function_id)?;
+        writeln!(f, "Entrypoint Function ID:                0x{:016X}", self.entrypoint_function_id)?;
         writeln!(f, "Data Alignment Length:                 {}", self.data_alignment_length)?;
         writeln!(f, "Root Function Table Entry Position:    {}", self.root_function_table_entry_position)?;
         writeln!(f, "Root Constant Table Entry Position:    {}", self.root_constant_table_entry_position)?;
