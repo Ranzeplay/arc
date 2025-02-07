@@ -121,20 +121,41 @@ pub fn execute_function(
         if function_id >= 0xa1 && function_id <= 0xff {
             trace!("Executing stdlib function");
 
-            if function_id == 0xa1 {
-                // Arc::Std::Console::PrintString
-                let mut fn_context_ref = entry_function_context.borrow_mut();
-                let data = fn_context_ref.local_stack.pop().unwrap();
+            match function_id {
+                0xa1 => {
+                    // Arc::Std::Console::PrintString
+                    let mut fn_context_ref = entry_function_context.borrow_mut();
+                    let data = fn_context_ref.local_stack.pop().unwrap();
 
-                let data = data.borrow();
+                    let data = data.borrow();
 
-                match &data.value {
-                    DataValueType::String(s) => {
-                        print!("{}", s);
+                    match &data.value {
+                        DataValueType::String(s) => {
+                            print!("{}", s);
+                        }
+                        _ => {
+                            panic!("Invalid data type")
+                        }
                     }
-                    _ => {
-                        panic!("Invalid data type")
+                },
+                0xa2 => {
+                    // Arc::Std::Console::PrintInteger
+                    let mut fn_context_ref = entry_function_context.borrow_mut();
+                    let data = fn_context_ref.local_stack.pop().unwrap();
+
+                    let data = data.borrow();
+
+                    match &data.value {
+                        DataValueType::Integer(i) => {
+                            print!("{}", i);
+                        }
+                        _ => {
+                            panic!("Invalid data type")
+                        }
                     }
+                },
+                _ => {
+                    panic!("Unknown stdlib function")
                 }
             }
         }
