@@ -50,7 +50,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     Parameter = 1
                 }).Encode(source);
                 var body = ArcSequentialExecutionGenerator.Generate(source, block.Body);
-                var jumpOutInstruction = new ArcConditionalJumpInstruction(new()
+                var jumpOutInstruction = new ArcUnconditionalJumpInstruction(new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
                     Label = ArcRelocationLabelType.EndIfBlock,
