@@ -4,6 +4,6 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
     internal class ArcComparisonValueNotEqualInstruction : ArcPrimitiveInstructionBase
     {
-        public override byte[] Opcode => [0x31];
+        public override byte[] Opcode => [0x39];
     }
 }
