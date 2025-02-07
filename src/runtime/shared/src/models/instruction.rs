@@ -67,6 +67,8 @@ pub enum InstructionType {
     FCall(FunctionCallInstruction),
     LdStk(LoadStackInstruction),
     SvStk,
+    NeqC,
+    NeqR,
 }
 
 impl Debug for InstructionType {

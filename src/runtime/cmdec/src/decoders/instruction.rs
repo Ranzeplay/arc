@@ -474,6 +474,24 @@ pub fn decode_instructions(
 
                 pos += len;
             }
+            0x39 => {
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::NeqC,
+                    raw: stream[pos..pos + 1].to_vec(),
+                };
+
+                pos += 1;
+            }
+            0x40 => {
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::NeqR,
+                    raw: stream[pos..pos + 1].to_vec(),
+                };
+
+                pos += 1;
+            }
             _ => {
                 error!("Unknown instruction: 0x{:02X?} @ {}", stream[pos], pos);
                 break;
