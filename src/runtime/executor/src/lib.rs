@@ -1,7 +1,7 @@
 mod data;
 mod math;
 
-use log::{debug, info, trace};
+use log::{debug, trace};
 use shared::models::descriptors::symbol::{Symbol, SymbolDescriptor};
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
@@ -243,10 +243,55 @@ pub fn execute_function(
             InstructionType::BitOr => {}
             InstructionType::BitNot => {}
             InstructionType::Inv => {}
-            InstructionType::EqC => {}
+            InstructionType::EqC => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_equal(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            }
             InstructionType::EqR => {}
-            InstructionType::CLg => {}
-            InstructionType::CLgE => {}
+            InstructionType::CLg => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_greater(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            }
+            InstructionType::CLgE => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_greater_or_equal(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            }
             InstructionType::CLs => {
                 let mut fn_context_ref = entry_function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
@@ -263,7 +308,22 @@ pub fn execute_function(
                     value: DataValueType::Bool(result),
                 })));
             }
-            InstructionType::CLsE => {}
+            InstructionType::CLsE => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_less_or_equal(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            }
             InstructionType::Invoke(call) => {
                 let call_result = execute_function(call.function_id, context.clone());
                 match call_result {
@@ -433,7 +493,24 @@ pub fn execute_function(
                 }
                 DataSourceType::DataHandle => {}
             },
-            InstructionType::SvStk => {}
+            InstructionType::SvStk => {},
+            InstructionType::NeqC => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_not_equal(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            },
+            InstructionType::NeqR => {},
         }
 
         instruction_offset = next_instruction.offset;
