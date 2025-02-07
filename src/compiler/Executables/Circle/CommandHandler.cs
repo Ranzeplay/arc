@@ -35,6 +35,7 @@ namespace Arc.Compiler.Circle
                 EntrypointFunctionId = 0,
                 DataAlignmentLength = 8
             };
+            context.SetEntrypointFunctionId();
 
             var outputStream = context.DumpFullByteStream();
 

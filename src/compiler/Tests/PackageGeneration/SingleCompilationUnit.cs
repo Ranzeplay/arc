@@ -124,6 +124,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                 EntrypointFunctionId = 0,
                 DataAlignmentLength = 8
             };
+            context.SetEntrypointFunctionId();
             var outputStream = context.DumpFullByteStream();
             Assert.That(outputStream, Is.Not.Null);
         }
