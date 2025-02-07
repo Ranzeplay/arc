@@ -93,3 +93,15 @@ pub fn math_divide_values(a: &DataValue, b: &DataValue) -> DataValue {
         _ => panic!("Cannot divide values of different types"),
     }
 }
+
+pub fn math_compare_less(a: &DataValue, b: &DataValue) -> bool {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot compare values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Integer(ad), DataValueType::Integer(bd)) => ad < bd,
+        (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => ad < bd,
+        _ => panic!("Cannot compare values of different types"),
+    }
+}

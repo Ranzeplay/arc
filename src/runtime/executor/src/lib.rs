@@ -1,7 +1,7 @@
 mod data;
 mod math;
 
-use log::{debug, trace};
+use log::{debug, info, trace};
 use shared::models::descriptors::symbol::{Symbol, SymbolDescriptor};
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
@@ -100,7 +100,7 @@ pub fn execute_function(
             .package
             .instructions
             .iter()
-            .take_while(|i| i.offset >= entry_pos)
+            .take_while(|i| i.offset >= entry_pos && i.offset <= entry_pos + block_length)
             .map(|i| i.clone())
             .collect::<Vec<_>>();
 
@@ -152,10 +152,20 @@ pub fn execute_function(
         }
     }
 
-    for instruction in instruction_slice {
-        if instruction.offset >= entry_pos + block_length {
+    let mut instruction_offset = entry_pos;
+    loop {
+        if instruction_offset >= entry_pos + block_length - 1 {
             break;
         }
+
+        let instructions = instruction_slice
+            .iter()
+            .filter(|i| i.offset >= instruction_offset)
+            .take(2)
+            .collect::<Vec<_>>();
+
+        let instruction = instructions.first().unwrap();
+        let next_instruction = instructions.last().unwrap();
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {
@@ -181,7 +191,7 @@ pub fn execute_function(
             InstructionType::PopS(pops) => {
                 let mut fn_context_ref = entry_function_context.borrow_mut();
                 let data = fn_context_ref.local_stack.pop().unwrap();
-                let mut slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
+                let slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
                 slot.value.replace(data.borrow().clone());
             }
             InstructionType::Add => {
@@ -228,7 +238,22 @@ pub fn execute_function(
             InstructionType::EqR => {}
             InstructionType::CLg => {}
             InstructionType::CLgE => {}
-            InstructionType::CLs => {}
+            InstructionType::CLs => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_compare_less(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: 0x6,
+                        is_array: false,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Bool(result),
+                })));
+            }
             InstructionType::CLsE => {}
             InstructionType::Invoke(call) => {
                 let call_result = execute_function(call.function_id, context.clone());
@@ -263,8 +288,88 @@ pub fn execute_function(
             InstructionType::BC => {}
             InstructionType::BF => {}
             InstructionType::ETC => {}
-            InstructionType::Jmp(_) => {}
-            InstructionType::JmpC(_) => {}
+            InstructionType::Jmp(jump) => {
+                if jump.jump_offset >= 0 {
+                    let target_instruction = instruction_slice
+                        .iter()
+                        .filter(|i| i.offset > instruction.offset)
+                        .filter(|i| match i.instruction_type {
+                            InstructionType::Lbl => true,
+                            _ => false,
+                        })
+                        .take(jump.jump_offset as usize)
+                        .last()
+                        .unwrap();
+
+                    instruction_offset = target_instruction.offset;
+                }
+                else {
+                    let target_instruction = instruction_slice
+                        .iter()
+                        .filter(|i| i.offset < instruction.offset)
+                        .filter(|i| match i.instruction_type {
+                            InstructionType::Lbl => true,
+                            _ => false,
+                        })
+                        .rev()
+                        .take(jump.jump_offset.abs() as usize)
+                        .last()
+                        .unwrap();
+
+                    instruction_offset = target_instruction.offset;
+                }
+
+                continue;
+            }
+            InstructionType::JmpC(jump) => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let condition_data_value_ref = &fn_context_ref
+                    .local_stack
+                    .pop()
+                    .unwrap();
+                let condition_data_value = &condition_data_value_ref
+                    .borrow()
+                    .value;
+
+                let condition = match condition_data_value {
+                    DataValueType::Bool(b) => *b,
+                    _ => panic!("Invalid data type for condition"),
+                };
+
+                if !condition {
+                    if jump.jump_offset >= 0 {
+                        let target_instruction = instruction_slice
+                            .iter()
+                            .filter(|i| i.offset > instruction.offset)
+                            .filter(|i| match i.instruction_type {
+                                InstructionType::Lbl => true,
+                                _ => false,
+                            })
+                            .take(jump.jump_offset as usize)
+                            .last()
+                            .unwrap();
+
+                        instruction_offset = target_instruction.offset;
+                    }
+                    else {
+                        let target_instruction = instruction_slice
+                            .iter()
+                            .filter(|i| i.offset < instruction.offset)
+                            .filter(|i| match i.instruction_type {
+                                InstructionType::Lbl => true,
+                                _ => false,
+                            })
+                            .rev()
+                            .take(jump.jump_offset.abs() as usize)
+                            .last()
+                            .unwrap();
+
+                        instruction_offset = target_instruction.offset;
+                    }
+
+                    continue;
+                }
+            }
             InstructionType::GType => {}
             InstructionType::WAll => {}
             InstructionType::TEvt => {}
@@ -281,7 +386,9 @@ pub fn execute_function(
             InstructionType::CType => {}
             InstructionType::ShL => {}
             InstructionType::ShR => {}
-            InstructionType::Lbl => {}
+            InstructionType::Lbl => {
+                trace!("Found label");
+            }
             InstructionType::BitXor => {}
             InstructionType::FRet(_) => {}
             InstructionType::FCall(call) => {
@@ -289,10 +396,10 @@ pub fn execute_function(
                 match call_result {
                     FunctionExecutionResult::Success(_) => {}
                     FunctionExecutionResult::Failure(x) => {
-                        panic!("Function execution failed: {}", x.fault_message)
+                        panic!("Function execution failed: {}", x.fault_message);
                     }
                     FunctionExecutionResult::Invalid => {
-                        panic!("Invalid function execution result.")
+                        panic!("Invalid function execution result.");
                     }
                 }
             }
@@ -319,6 +426,8 @@ pub fn execute_function(
             },
             InstructionType::SvStk => {}
         }
+
+        instruction_offset = next_instruction.offset;
     }
 
     let mut context_ref = context.borrow_mut();
