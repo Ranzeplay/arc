@@ -1,0 +1,95 @@
+use shared::models::execution::data::{DataValue, DataValueType};
+
+pub fn math_add_values(a: &DataValue, b: &DataValue) -> DataValue {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot add values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Integer(ad), DataValueType::Integer(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Integer(ad + bd),
+            }
+        }
+        (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Decimal(ad + bd),
+            }
+        },
+        (DataValueType::String(ad), DataValueType::String(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::String(format!("{}{}", ad, bd)),
+            }
+        }
+        _ => panic!("Cannot add values of different types"),
+    }
+}
+
+pub fn math_subtract_values(a: &DataValue, b: &DataValue) -> DataValue {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot subtract values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Integer(ad), DataValueType::Integer(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Integer(ad - bd),
+            }
+        }
+        (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Decimal(ad - bd),
+            }
+        },
+        _ => panic!("Cannot subtract values of different types"),
+    }
+}
+
+pub fn math_multiply_values(a: &DataValue, b: &DataValue) -> DataValue {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot multiply values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Integer(ad), DataValueType::Integer(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Integer(ad * bd),
+            }
+        }
+        (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Decimal(ad * bd),
+            }
+        },
+        _ => panic!("Cannot multiply values of different types"),
+    }
+}
+
+pub fn math_divide_values(a: &DataValue, b: &DataValue) -> DataValue {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot divide values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Integer(ad), DataValueType::Integer(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Integer(ad / bd),
+            }
+        }
+        (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => {
+            DataValue {
+                data_type: a.data_type.clone(),
+                value: DataValueType::Decimal(ad / bd),
+            }
+        },
+        _ => panic!("Cannot divide values of different types"),
+    }
+}

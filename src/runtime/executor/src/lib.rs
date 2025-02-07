@@ -1,16 +1,17 @@
 mod data;
+mod math;
 
+use log::{debug, trace};
 use shared::models::descriptors::symbol::{Symbol, SymbolDescriptor};
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::data::{DataValue, DataValueType};
+use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use shared::models::instruction::InstructionType;
 use shared::models::instructions::load_stack::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
-use log::{debug, trace};
 
 pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     debug!("Launching program...");
@@ -108,7 +109,12 @@ pub fn execute_function(
             .push_back(Rc::new(RefCell::new(function_context)));
         let entry_function_context = context_ref.stack_frames.back().unwrap().clone();
 
-        (instruction_slice, entry_pos, block_length, entry_function_context)
+        (
+            instruction_slice,
+            entry_pos,
+            block_length,
+            entry_function_context,
+        )
     };
 
     {
@@ -118,10 +124,7 @@ pub fn execute_function(
             if function_id == 0xa1 {
                 // Arc::Std::Console::PrintString
                 let mut fn_context_ref = entry_function_context.borrow_mut();
-                let data = fn_context_ref
-                    .local_stack
-                    .pop()
-                    .unwrap();
+                let data = fn_context_ref.local_stack.pop().unwrap();
 
                 let data = data.borrow();
 
@@ -141,7 +144,9 @@ pub fn execute_function(
                     DataValueType::Char(c) => {
                         print!("{}", c);
                     }
-                    _ => { panic!("Invalid data type") }
+                    _ => {
+                        panic!("Invalid data type")
+                    }
                 }
             }
         }
@@ -153,16 +158,59 @@ pub fn execute_function(
         }
 
         match &instruction.instruction_type {
-            InstructionType::Decl(_) => {}
+            InstructionType::Decl(decl) => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let slot_id = fn_context_ref.local_data.len();
+                fn_context_ref.local_data.push(DataSlot {
+                    slot_id,
+                    value: Rc::new(RefCell::new(DataValue {
+                        data_type: DataTypeEncoding {
+                            type_id: decl.data_type_id,
+                            is_array: decl.is_array,
+                            mutability: Mutability::Immutable,
+                            memory_storage_type: decl.memory_storage_type.clone(),
+                        },
+                        value: DataValueType::None,
+                    })),
+                });
+            }
             InstructionType::PushI => {}
             InstructionType::PushC => {}
             InstructionType::PushS => {}
             InstructionType::PopD => {}
             InstructionType::PopS(_) => {}
-            InstructionType::Add => {}
-            InstructionType::Sub => {}
-            InstructionType::Mul => {}
-            InstructionType::Div => {}
+            InstructionType::Add => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_add_values(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+            }
+            InstructionType::Sub => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_subtract_values(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+            }
+            InstructionType::Mul => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_multiply_values(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+            }
+            InstructionType::Div => {
+                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let a = fn_context_ref.local_stack.pop().unwrap();
+                let b = fn_context_ref.local_stack.pop().unwrap();
+
+                let result = math::math_divide_values(&b.borrow(), &a.borrow());
+                fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+            }
             InstructionType::Mod => {}
             InstructionType::LogOr => {}
             InstructionType::LogAnd => {}
@@ -196,7 +244,11 @@ pub fn execute_function(
             }
             InstructionType::Ret(ret) => {
                 if ret.with_value {
-                    let data = entry_function_context.borrow_mut().local_stack.pop().unwrap();
+                    let data = entry_function_context
+                        .borrow_mut()
+                        .local_stack
+                        .pop()
+                        .unwrap();
                     return FunctionExecutionResult::Success(data);
                 }
             }
@@ -243,7 +295,10 @@ pub fn execute_function(
                 DataSourceType::ConstantTable => {
                     let data =
                         data::get_data_from_constant_table(context.clone(), lsi.location_id, true);
-                    entry_function_context.borrow_mut().local_stack.push(Rc::new(RefCell::new(data)));
+                    entry_function_context
+                        .borrow_mut()
+                        .local_stack
+                        .push(Rc::new(RefCell::new(data)));
                 }
                 DataSourceType::DataSlot => {}
                 DataSourceType::DataHandle => {}

@@ -1,7 +1,7 @@
-use std::cell::RefCell;
 use crate::models::descriptors::symbol::FunctionSymbol;
 use crate::models::execution::data::{DataSlot, DataValue};
 use crate::models::package::Package;
+use std::cell::RefCell;
 use std::collections::VecDeque;
 use std::rc::Rc;
 

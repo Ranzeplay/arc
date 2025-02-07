@@ -1,10 +1,10 @@
+use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::models::encodings::data_type_enc::DataTypeEncoding;
 
 pub struct DataSlot {
     pub slot_id: usize,
-    pub value: DataValue,
+    pub value: Rc<RefCell<DataValue>>,
 }
 
 #[derive(Clone)]
