@@ -61,6 +61,14 @@ export default defineConfig({
 
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Ranzeplay/arc' }
-    ]
+    ],
+
+    footer: {
+      copyright: 'Copyright © 2023-present Jeb Feng'
+    },
+
+    search: {
+      provider: 'local'
+    }
   }
 })
