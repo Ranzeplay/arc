@@ -132,18 +132,6 @@ pub fn execute_function(
                     DataValueType::String(s) => {
                         print!("{}", s);
                     }
-                    DataValueType::Bool(b) => {
-                        print!("{}", b);
-                    }
-                    DataValueType::Integer(i) => {
-                        print!("{}", i);
-                    }
-                    DataValueType::Decimal(d) => {
-                        print!("{}", d);
-                    }
-                    DataValueType::Char(c) => {
-                        print!("{}", c);
-                    }
                     _ => {
                         panic!("Invalid data type")
                     }
