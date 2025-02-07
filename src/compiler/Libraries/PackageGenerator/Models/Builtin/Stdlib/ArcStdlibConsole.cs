@@ -48,10 +48,44 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                     )
                     .AddChildChained(
                         new ArcScopeTreeBuiltinFunction(
-                            "ReadString",
+                            "PrintInteger",
                             new ArcFunctionDescriptor()
                             {
                                 Id = 0xa2,
+                                Name = "PrintInteger",
+                                Accessibility = ArcAccessibility.Public,
+                                Parameters = [
+                                    new ArcParameterDescriptor()
+                                    {
+                                        DataType = new ArcDataDeclarationDescriptor()
+                                        {
+                                            Type = ArcPersistentData.IntType,
+                                            AllowNone = false,
+                                            IsArray = false,
+                                            MemoryStorageType = ArcMemoryStorageType.Reference,
+                                            Mutability = ArcMutability.Constant,
+                                        },
+                                        RawFullName = "i",
+                                    }
+                                ],
+                                ReturnValueType = new ArcDataDeclarationDescriptor()
+                                {
+                                    Type = ArcPersistentData.NoneType,
+                                    AllowNone = false,
+                                    IsArray = false,
+                                    MemoryStorageType = ArcMemoryStorageType.Reference,
+                                    Mutability = ArcMutability.Constant,
+                                }
+                            }
+                        )
+                        { Id = 0xa2 }
+                    )
+                    .AddChildChained(
+                        new ArcScopeTreeBuiltinFunction(
+                            "ReadString",
+                            new ArcFunctionDescriptor()
+                            {
+                                Id = 0xaf,
                                 Name = "ReadString",
                                 Accessibility = ArcAccessibility.Public,
                                 ReturnValueType = new ArcDataDeclarationDescriptor()
@@ -64,7 +98,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 }
                             }
                         )
-                        { Id = 0xa2 }
+                        { Id = 0xaf }
                     );
         }
     }
