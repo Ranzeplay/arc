@@ -19,8 +19,7 @@ pub fn prepare_and_get_function_info(context: Rc<RefCell<ExecutionContext>>, fun
         .package
         .symbol_table
         .symbols
-        .iter()
-        .find(|d| d.id == function_id)
+        .get(&function_id)
         .unwrap();
 
     let parent_function_opt = if context_ref.stack_frames.len() > 0 {

@@ -1,14 +1,15 @@
+use std::collections::HashMap;
 use shared::models::descriptors::constant::{ConstantDescriptor, ConstantTable};
 
 pub fn decode_constant_table(stream: &[u8]) -> (ConstantTable, usize) {
-    let mut result = vec![];
+    let mut result = HashMap::new();
 
     let mut pos = 0;
     let count = usize::from_le_bytes(stream[0..8].try_into().unwrap());
     pos += 8;
     for _ in 0..count {
         let (constant, len) = decode_constant(&stream[pos..]);
-        result.push(constant);
+        result.insert(constant.id, constant);
         pos += len;
     }
 

@@ -16,17 +16,14 @@ pub fn get_data_from_constant_table(
     let constant = context_ref
         .package
         .constant_table
-        .constants
-        .iter()
-        .find(|c| c.id == constant_id)
+        .constants.get(&constant_id)
         .unwrap();
 
     let data_type_symbol = context_ref
         .package
         .symbol_table
         .symbols
-        .iter()
-        .find(|s| s.id == constant.type_id)
+        .get(&constant.type_id)
         .unwrap();
 
     let data_content = match data_type_symbol.id {

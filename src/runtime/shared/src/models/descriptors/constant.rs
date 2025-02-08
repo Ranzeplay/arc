@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::fmt::Debug;
 
 pub struct ConstantDescriptor {
@@ -16,13 +17,13 @@ impl Debug for ConstantDescriptor {
 }
 
 pub struct ConstantTable {
-    pub constants: Vec<ConstantDescriptor>,
+    pub constants: HashMap<usize, ConstantDescriptor>,
 }
 
 impl Debug for ConstantTable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== Constant table")?;
-        for constant in &self.constants {
+        for constant in self.constants.values() {
             writeln!(f, "{:?}", constant)?;
         }
         Ok(())

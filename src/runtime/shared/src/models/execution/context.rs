@@ -1,4 +1,4 @@
-use crate::models::descriptors::symbol::FunctionSymbol;
+use crate::models::descriptors::symbol::{FunctionSymbol, SymbolDescriptor};
 use crate::models::execution::data::{DataSlot, DataValue};
 use crate::models::package::Package;
 use std::cell::RefCell;

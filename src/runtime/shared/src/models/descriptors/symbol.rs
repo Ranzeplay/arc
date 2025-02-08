@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::fmt::Debug;
 use std::rc::Rc;
@@ -94,13 +95,13 @@ impl Debug for NamespaceSymbol {
 }
 
 pub struct SymbolTable {
-    pub symbols: Vec<SymbolDescriptor>,
+    pub symbols: HashMap<usize, SymbolDescriptor>,
 }
 
 impl Debug for SymbolTable {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== Symbol table")?;
-        for symbol in &self.symbols {
+        for symbol in self.symbols.values() {
             write!(f, "0x{:016X}: ", symbol.id)?;
             match &symbol.value {
                 Symbol::DataType(data_type) => write!(f, "{:?}", data_type)?,

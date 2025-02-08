@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use shared::models::descriptors::symbol::{
     DataTypeSymbol, DerivativeTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol,
     NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable,
@@ -8,7 +9,7 @@ use shared::models::encodings::str_enc::StringEncoding;
 use std::rc::Rc;
 
 pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
-    let mut result = vec![];
+    let mut result = HashMap::new();
 
     let mut pos = 0;
     let count = usize::from_le_bytes(stream[0..8].try_into().unwrap());
@@ -18,7 +19,7 @@ pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
         pos += 8;
 
         let (symbol, len) = decode_symbol(&stream[pos..]);
-        result.push(SymbolDescriptor {
+        result.insert(symbol_id, SymbolDescriptor {
             id: symbol_id,
             value: symbol,
         });

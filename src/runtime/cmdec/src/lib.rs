@@ -37,7 +37,7 @@ impl Cmdec {
         }
 
         let mut group_detail_list = GroupListViewModel { groups: Vec::new() };
-        for symbol in &symbol_table.symbols {
+        for symbol in symbol_table.symbols.values() {
             match &symbol.value {
                 Symbol::Group(group) => {
                     let g = group.clone();
