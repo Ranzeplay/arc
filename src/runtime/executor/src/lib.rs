@@ -1,6 +1,7 @@
 mod data;
 mod math;
 mod instructions;
+mod stdlib;
 
 use log::{debug, trace};
 use shared::models::descriptors::symbol::Symbol;
@@ -16,6 +17,7 @@ use std::rc::Rc;
 use crate::instructions::function_call::execute_function_call;
 use crate::instructions::jump::get_jump_destination;
 use crate::instructions::return_function::wrap_return_value_if_needed;
+use crate::stdlib::execute_stdlib_function;
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -90,46 +92,7 @@ pub fn execute_function(
 
     if function_id >= 0xa1 && function_id <= 0xff {
         trace!("Executing stdlib function");
-
-        let function_context = context.borrow().stack_frames.back().unwrap().clone();
-        match function_id {
-            0xa1 => {
-                // Arc::Std::Console::PrintString
-                let mut fn_context_ref = function_context.borrow_mut();
-                let data = fn_context_ref.local_stack.pop().unwrap();
-
-                let data = data.borrow();
-
-                match &data.value {
-                    DataValueType::String(s) => {
-                        print!("{}", s);
-                    }
-                    _ => {
-                        panic!("Invalid data type")
-                    }
-                }
-            }
-            0xa2 => {
-                // Arc::Std::Console::PrintInteger
-                let mut fn_context_ref = function_context.borrow_mut();
-                let data = fn_context_ref.local_stack.pop().unwrap();
-
-                let data = data.borrow();
-
-                match &data.value {
-                    DataValueType::Integer(i) => {
-                        print!("{}", i);
-                    }
-                    _ => {
-                        panic!("Invalid data type")
-                    }
-                }
-            }
-            _ => {
-                panic!("Unknown stdlib function")
-            }
-        }
-
+        execute_stdlib_function(function_id, &context);
         return FunctionExecutionResult::Success(None);
     }
 
@@ -405,3 +368,5 @@ pub fn execute_function(
         _ => result,
     }
 }
+
+
