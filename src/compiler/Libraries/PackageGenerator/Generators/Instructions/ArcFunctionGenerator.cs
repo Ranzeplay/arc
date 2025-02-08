@@ -30,6 +30,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             result.Append(body);
             result.Append(endBlockLabel);
 
+            source.LocalDataSlots = [];
+
             return result;
         }
 

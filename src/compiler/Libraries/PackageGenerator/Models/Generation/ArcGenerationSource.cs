@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public ArcScopeTreeNodeBase CurrentNode { get; set; }
 
-        public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
+        public List<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
         public ArcPackageDescriptor PackageDescriptor { get; set; }
 
@@ -23,13 +23,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public void Merge(ArcGenerationSource generationSource)
         {
-            LocalDataSlots = LocalDataSlots.Concat(generationSource.LocalDataSlots);
+            LocalDataSlots.AddRange(generationSource.LocalDataSlots);
             AccessibleConstants = AccessibleConstants.Concat(generationSource.AccessibleConstants);
         }
 
         public void Merge(ArcPartialGenerationResult generationResult)
         {
-            LocalDataSlots = LocalDataSlots.Concat(generationResult.DataSlots);
+            LocalDataSlots.AddRange(generationResult.DataSlots);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
         }
     }
