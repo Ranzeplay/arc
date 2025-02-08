@@ -1,7 +1,8 @@
 import { defineConfig } from 'vitepress'
+import { withSidebar } from 'vitepress-sidebar';
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+const vitePressOptions = {
   title: "TAPL Docs",
   description: "The documentation site of The Arc Programming Language",
   themeConfig: {
@@ -15,50 +16,6 @@ export default defineConfig({
       { text: 'Stdlib', link: '/stdlib' }
     ],
 
-    sidebar: {
-      '/development/': [
-        {
-          text: 'Development',
-          items: [
-            { text: 'Index', link: '/development/' },
-            { text: 'Relocation generation', link: '/development/relocation-generation' },
-          ]
-        }
-      ],
-      '/usage/': [
-        {
-          text: 'Usage',
-          items: [
-            { text: 'Index', link: '/usage/' },
-            { text: 'Hello, world!', link: '/usage/hello-world' },
-          ]
-        }
-      ],
-      '/stdlib/': [
-        {
-          text: 'Stdlib',
-          items: [
-            { text: 'Index', link: '/stdlib/' },
-            { text: 'Console', link: '/stdlib/console' },
-          ]
-        }
-      ],
-      '/reference/': [
-        {
-          text: 'References',
-          items: [
-            { text: 'Index', link: '/reference/' },
-            { text: 'Instruction set', link: '/reference/instruction-set' },
-            { text: 'Package descriptor', link: '/reference/package-descriptor' },
-            { text: 'Symbols', link: '/reference/symbol' },
-            { text: 'Data type', link: '/reference/data-type' },
-            { text: 'On-stack data save-load operations', link: '/reference/on-stack-data-sl-operations' },
-            { text: 'Signature', link: '/reference/signature' },
-          ]
-        }
-      ]
-    },
-
     socialLinks: [
       { icon: 'github', link: 'https://github.com/Ranzeplay/arc' }
     ],
@@ -70,5 +27,17 @@ export default defineConfig({
     search: {
       provider: 'local'
     }
-  }
-})
+  },
+
+  lastUpdated: true
+};
+
+const vitePressSidebarOptions = {
+  // VitePress Sidebar's options here...
+  documentRootPath: '/',
+  collapsed: false,
+  capitalizeFirst: true,
+  useTitleFromFrontmatter: true,
+};
+
+export default defineConfig(withSidebar(vitePressOptions, vitePressSidebarOptions));
