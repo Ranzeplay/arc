@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
@@ -20,6 +21,17 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             if (withDeclarationDescriptor)
             {
                 result.OtherSymbols.Add(descriptor);
+            }
+
+            // Add parameters to the local data slots
+            foreach (var param in descriptor.Parameters)
+            {
+                source.LocalDataSlots.Add(new ArcDataSlot()
+                {
+                    Name = "Function param slot",
+                    Declarator = param.Declarator,
+                    SlotId = source.LocalDataSlots.Count
+                });
             }
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, descriptor.RawFullName).Encode(source);
@@ -57,6 +69,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     MemoryStorageType = a.DataType.MemoryStorageType,
                 },
                 RawFullName = a.Identifier.Name,
+                Declarator = a.DataDeclarator,
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {

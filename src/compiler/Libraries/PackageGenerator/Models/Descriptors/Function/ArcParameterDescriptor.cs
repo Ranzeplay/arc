@@ -1,9 +1,13 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
+﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+
+namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
     public class ArcParameterDescriptor
     {
         public ArcDataDeclarationDescriptor DataType { get; set; }
 
         public string RawFullName { get; set; }
+
+        public ArcDataDeclarator Declarator { get; set; }
     }
 }
