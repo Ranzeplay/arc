@@ -31,6 +31,28 @@ macro_rules! push_bool_to_stack {
     };
 }
 
+macro_rules! arithmetic_operation_instruction {
+    ($fn_context:expr, $op_func:expr) => {
+        let mut fn_context_ref = $fn_context.borrow_mut();
+        let a = fn_context_ref.local_stack.pop().unwrap();
+        let b = fn_context_ref.local_stack.pop().unwrap();
+
+        let result = $op_func(&b.borrow(), &a.borrow());
+        fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+    };
+}
+
+macro_rules! comparison_operation_instruction {
+    ($fn_context:expr, $compare_func:expr) => {
+        let mut fn_context_ref = $fn_context.borrow_mut();
+        let a = fn_context_ref.local_stack.pop().unwrap();
+        let b = fn_context_ref.local_stack.pop().unwrap();
+
+        let result = $compare_func(&b.borrow(), &a.borrow());
+        push_bool_to_stack!(fn_context_ref.local_stack, result);
+    };
+}
+
 pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     debug!("Launching program...");
 
@@ -243,44 +265,16 @@ pub fn execute_function(
                 slot.value.replace(data.borrow().clone());
             }
             InstructionType::Add => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_add_values(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(result)));
+                arithmetic_operation_instruction!(function_context, math::math_add_values);
             }
             InstructionType::Sub => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_subtract_values(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(result)));
+                arithmetic_operation_instruction!(function_context, math::math_subtract_values);
             }
             InstructionType::Mul => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_multiply_values(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(result)));
+                arithmetic_operation_instruction!(function_context, math::math_multiply_values);
             }
             InstructionType::Div => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_divide_values(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(result)));
+                arithmetic_operation_instruction!(function_context, math::math_divide_values);
             }
             InstructionType::Mod => {}
             InstructionType::LogOr => {}
@@ -291,46 +285,25 @@ pub fn execute_function(
             InstructionType::BitNot => {}
             InstructionType::Inv => {}
             InstructionType::EqC => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_equal(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
+                comparison_operation_instruction!(function_context, math::math_compare_equal);
             }
             InstructionType::EqR => {}
             InstructionType::CLg => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_greater(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
+                comparison_operation_instruction!(function_context, math::math_compare_greater);
             }
             InstructionType::CLgE => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_greater_or_equal(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
+                comparison_operation_instruction!(function_context, math::math_compare_greater_or_equal);
             }
             InstructionType::CLs => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_less(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
+                comparison_operation_instruction!(function_context, math::math_compare_less);
             }
             InstructionType::CLsE => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_less_or_equal(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
+                comparison_operation_instruction!(function_context, math::math_compare_less_or_equal);
             }
+            InstructionType::NeqC => {
+                comparison_operation_instruction!(function_context, math::math_compare_not_equal);
+            }
+            InstructionType::NeqR => {}
             InstructionType::Invoke(call) => {
                 execute_function_call(context.clone(), function_context.clone(), call.function_id);
             }
@@ -417,15 +390,6 @@ pub fn execute_function(
                 DataSourceType::DataHandle => {}
             },
             InstructionType::SvStk => {}
-            InstructionType::NeqC => {
-                let mut fn_context_ref = function_context.borrow_mut();
-                let a = fn_context_ref.local_stack.pop().unwrap();
-                let b = fn_context_ref.local_stack.pop().unwrap();
-
-                let result = math::math_compare_not_equal(&b.borrow(), &a.borrow());
-                push_bool_to_stack!(fn_context_ref.local_stack, result);
-            }
-            InstructionType::NeqR => {}
         }
 
         instruction_offset = next_instruction.offset;
