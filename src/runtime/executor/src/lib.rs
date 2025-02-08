@@ -36,19 +36,7 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
 pub fn execute(context: Rc<RefCell<ExecutionContext>>) -> FunctionExecutionResult {
     let function_id = {
         let context_ref = context.borrow();
-        let binding = context_ref
-            .package
-            .symbol_table
-            .symbols
-            .iter()
-            .filter(|&d| match d.value {
-                Symbol::Function(_) => true,
-                _ => false,
-            })
-            .collect::<Vec<&SymbolDescriptor>>();
-        let entry_function = *binding.first().unwrap();
-
-        entry_function.id
+        context_ref.package.descriptor.entrypoint_function_id
     };
 
     execute_function(function_id, context.clone())
@@ -58,7 +46,7 @@ pub fn execute_function(
     function_id: usize,
     context: Rc<RefCell<ExecutionContext>>,
 ) -> FunctionExecutionResult {
-    let (instruction_slice, entry_pos, block_length, entry_function_context) = {
+    let (instruction_slice, entry_pos, block_length, function_context) = {
         let mut context_ref = context.borrow_mut();
         let entry_function = context_ref
             .package
@@ -124,7 +112,7 @@ pub fn execute_function(
             match function_id {
                 0xa1 => {
                     // Arc::Std::Console::PrintString
-                    let mut fn_context_ref = entry_function_context.borrow_mut();
+                    let mut fn_context_ref = function_context.borrow_mut();
                     let data = fn_context_ref.local_stack.pop().unwrap();
 
                     let data = data.borrow();
@@ -140,7 +128,7 @@ pub fn execute_function(
                 },
                 0xa2 => {
                     // Arc::Std::Console::PrintInteger
-                    let mut fn_context_ref = entry_function_context.borrow_mut();
+                    let mut fn_context_ref = function_context.borrow_mut();
                     let data = fn_context_ref.local_stack.pop().unwrap();
 
                     let data = data.borrow();
@@ -178,7 +166,7 @@ pub fn execute_function(
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let slot_id = fn_context_ref.local_data.len();
                 fn_context_ref.local_data.push(DataSlot {
                     slot_id,
@@ -198,13 +186,13 @@ pub fn execute_function(
             InstructionType::PushS => {}
             InstructionType::PopD => {}
             InstructionType::PopS(pops) => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let data = fn_context_ref.local_stack.pop().unwrap();
                 let slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
                 slot.value.replace(data.borrow().clone());
             }
             InstructionType::Add => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -212,7 +200,7 @@ pub fn execute_function(
                 fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
             }
             InstructionType::Sub => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -220,7 +208,7 @@ pub fn execute_function(
                 fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
             }
             InstructionType::Mul => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -228,7 +216,7 @@ pub fn execute_function(
                 fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
             }
             InstructionType::Div => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -244,7 +232,7 @@ pub fn execute_function(
             InstructionType::BitNot => {}
             InstructionType::Inv => {}
             InstructionType::EqC => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -261,7 +249,7 @@ pub fn execute_function(
             }
             InstructionType::EqR => {}
             InstructionType::CLg => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -277,7 +265,7 @@ pub fn execute_function(
                 })));
             }
             InstructionType::CLgE => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -293,7 +281,7 @@ pub fn execute_function(
                 })));
             }
             InstructionType::CLs => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -309,7 +297,7 @@ pub fn execute_function(
                 })));
             }
             InstructionType::CLsE => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
@@ -328,7 +316,7 @@ pub fn execute_function(
                 let call_result = execute_function(call.function_id, context.clone());
                 match call_result {
                     FunctionExecutionResult::Success(ret) => {
-                        entry_function_context
+                        function_context
                             .borrow_mut()
                             .local_stack
                             .push(ret.clone());
@@ -343,7 +331,7 @@ pub fn execute_function(
             }
             InstructionType::Ret(ret) => {
                 if ret.with_value {
-                    let data = entry_function_context
+                    let data = function_context
                         .borrow_mut()
                         .local_stack
                         .pop()
@@ -391,7 +379,7 @@ pub fn execute_function(
                 continue;
             }
             InstructionType::JmpC(jump) => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let condition_data_value_ref = &fn_context_ref
                     .local_stack
                     .pop()
@@ -476,17 +464,17 @@ pub fn execute_function(
                 DataSourceType::ConstantTable => {
                     let data =
                         data::get_data_from_constant_table(context.clone(), lsi.location_id, true);
-                    entry_function_context
+                    function_context
                         .borrow_mut()
                         .local_stack
                         .push(Rc::new(RefCell::new(data)));
                 }
                 DataSourceType::DataSlot => {
                     let data = data::get_data_from_data_slot(
-                        entry_function_context.clone(),
+                        function_context.clone(),
                         lsi.location_id,
                     );
-                    entry_function_context
+                    function_context
                         .borrow_mut()
                         .local_stack
                         .push(data);
@@ -495,7 +483,7 @@ pub fn execute_function(
             },
             InstructionType::SvStk => {},
             InstructionType::NeqC => {
-                let mut fn_context_ref = entry_function_context.borrow_mut();
+                let mut fn_context_ref = function_context.borrow_mut();
                 let a = fn_context_ref.local_stack.pop().unwrap();
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
