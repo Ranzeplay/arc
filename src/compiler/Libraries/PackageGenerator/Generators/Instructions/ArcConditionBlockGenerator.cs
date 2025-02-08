@@ -79,7 +79,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end");
 
                 bResult.Append(beginSubBlock.Encode(source));
-                bResult.Append(bResult);
+                bResult.Append(block);
                 bResult.Append(endSubBlock.Encode(source));
 
                 result.Append(bResult);
