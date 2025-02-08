@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 namespace Arc.Compiler.Circle
 {
@@ -12,7 +13,13 @@ namespace Arc.Compiler.Circle
         {
             var logger = LoggerFactory.Create(builder =>
             {
-                builder.AddConsole();
+                builder.AddSimpleConsole(options =>
+                {
+                    options.SingleLine = true;
+                    options.IncludeScopes = false;
+                    options.ColorBehavior = LoggerColorBehavior.Default;
+                    options.UseUtcTimestamp = false;
+                });
                 builder.SetMinimumLevel(logLevel);
             }).CreateLogger("Circle CLI");
 
