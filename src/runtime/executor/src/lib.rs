@@ -1,8 +1,14 @@
 mod data;
-mod math;
+mod func_exec;
 mod instructions;
+mod math;
 mod stdlib;
 
+use crate::func_exec::{end_function, prepare_and_get_function_info};
+use crate::instructions::function_call::execute_function_call;
+use crate::instructions::jump::get_jump_destination;
+use crate::instructions::return_function::wrap_return_value_if_needed;
+use crate::stdlib::execute_stdlib_function;
 use log::{debug, trace};
 use shared::models::descriptors::symbol::Symbol;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
@@ -14,10 +20,6 @@ use shared::models::instructions::load_stack::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::instructions::function_call::execute_function_call;
-use crate::instructions::jump::get_jump_destination;
-use crate::instructions::return_function::wrap_return_value_if_needed;
-use crate::stdlib::execute_stdlib_function;
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -40,7 +42,9 @@ macro_rules! arithmetic_operation_instruction {
         let b = fn_context_ref.local_stack.pop().unwrap();
 
         let result = $op_func(&b.borrow(), &a.borrow());
-        fn_context_ref.local_stack.push(Rc::new(RefCell::new(result)));
+        fn_context_ref
+            .local_stack
+            .push(Rc::new(RefCell::new(result)));
     };
 }
 
@@ -96,90 +100,17 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let (instruction_slice, entry_pos, block_length, function_context) = {
-        let mut context_ref = context.borrow_mut();
-        let current_fn = context_ref
-            .package
-            .symbol_table
-            .symbols
-            .iter()
-            .find(|d| d.id == function_id)
-            .unwrap();
+    let func_info = prepare_and_get_function_info(context.clone(), function_id);
+    let function_context = func_info.function_context.clone();
+    let instruction_slice = func_info.instruction_slice.clone();
 
-        let parent_function_opt = if context_ref.stack_frames.len() > 0 {
-            Some(context_ref.stack_frames.back().unwrap().clone())
-        } else {
-            None
-        };
-
-        // Create the function context
-        let mut function_context = FunctionExecutionContext {
-            function: match &current_fn.value {
-                Symbol::Function(f) => f.clone(),
-                _ => panic!("Invalid symbol type."),
-            },
-            local_data: vec![],
-            local_stack: vec![],
-        };
-
-        if let Some(parent_function) = parent_function_opt {
-            let mut parent_function = parent_function.borrow_mut();
-            let current_function_arg_count = function_context.function.parameter_descriptors.len();
-            for _ in 0..current_function_arg_count {
-                let data = parent_function.local_stack.pop().unwrap();
-                let data = data.borrow();
-                let slot = DataSlot {
-                    slot_id: function_context.local_data.len(),
-                    value: Rc::new(RefCell::new(data.clone())),
-                };
-                function_context.local_data.push(slot);
-            }
-        } else {
-            function_context.local_data.push(DataSlot {
-                slot_id: 0,
-                value: Rc::new(RefCell::new(DataValue {
-                    data_type: DataTypeEncoding {
-                        type_id: 0,
-                        is_array: false,
-                        mutability: Mutability::Immutable,
-                        memory_storage_type: MemoryStorageType::Reference,
-                    },
-                    value: DataValueType::None,
-                })),
-            });
-        }
-
-        let entry_pos = function_context.function.entry_pos;
-        let block_length = function_context.function.block_length;
-
-        let instruction_slice = context_ref
-            .package
-            .instructions
-            .iter()
-            .filter(|&i| i.offset >= entry_pos && i.offset <= entry_pos + block_length)
-            .map(|i| i.clone())
-            .collect::<Vec<_>>();
-
-        context_ref
-            .stack_frames
-            .push_back(Rc::new(RefCell::new(function_context)));
-        let entry_function_context = context_ref.stack_frames.back().unwrap().clone();
-
-        (
-            instruction_slice,
-            entry_pos,
-            block_length,
-            entry_function_context,
-        )
-    };
-
-    let mut instruction_offset = entry_pos;
+    let mut instruction_offset = func_info.entry_pos;
     loop {
-        if instruction_offset >= entry_pos + block_length - 1 {
+        if instruction_offset >= func_info.entry_pos + func_info.block_length - 1 {
             break;
         }
 
-        let instructions = instruction_slice
+        let instructions = func_info.instruction_slice
             .iter()
             .filter(|i| i.offset >= instruction_offset)
             .take(2)
@@ -191,14 +122,6 @@ pub fn execute_function(
 
         let instruction = instructions.first().unwrap();
         let next_instruction = instructions.last().unwrap();
-
-        // {
-        //     info!("Executing instruction: {:?}", &instruction);
-        //     info!(
-        //         "Stack size: {}",
-        //         function_context.borrow().local_stack.len()
-        //     );
-        // }
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {
@@ -255,13 +178,19 @@ pub fn execute_function(
                 comparison_operation_instruction!(function_context, math::math_compare_greater);
             }
             InstructionType::CLgE => {
-                comparison_operation_instruction!(function_context, math::math_compare_greater_or_equal);
+                comparison_operation_instruction!(
+                    function_context,
+                    math::math_compare_greater_or_equal
+                );
             }
             InstructionType::CLs => {
                 comparison_operation_instruction!(function_context, math::math_compare_less);
             }
             InstructionType::CLsE => {
-                comparison_operation_instruction!(function_context, math::math_compare_less_or_equal);
+                comparison_operation_instruction!(
+                    function_context,
+                    math::math_compare_less_or_equal
+                );
             }
             InstructionType::NeqC => {
                 comparison_operation_instruction!(function_context, math::math_compare_not_equal);
@@ -281,11 +210,8 @@ pub fn execute_function(
             InstructionType::BF => {}
             InstructionType::ETC => {}
             InstructionType::Jmp(jump) => {
-                instruction_offset = get_jump_destination(
-                    &instruction_slice,
-                    instruction,
-                    jump.jump_offset,
-                );
+                instruction_offset =
+                    get_jump_destination(&instruction_slice, instruction, jump.jump_offset);
 
                 continue;
             }
@@ -300,11 +226,8 @@ pub fn execute_function(
                 };
 
                 if !condition {
-                    instruction_offset = get_jump_destination(
-                        &instruction_slice,
-                        instruction,
-                        jump.jump_offset,
-                    );
+                    instruction_offset =
+                        get_jump_destination(&instruction_slice, instruction, jump.jump_offset);
 
                     continue;
                 }
@@ -358,15 +281,10 @@ pub fn execute_function(
         instruction_offset = next_instruction.offset;
     }
 
-    {
-        let mut context_ref = context.borrow_mut();
-        context_ref.stack_frames.pop_back();
-    }
+    end_function(context.clone());
 
     match result {
         FunctionExecutionResult::Invalid => FunctionExecutionResult::Success(None),
         _ => result,
     }
 }
-
-
