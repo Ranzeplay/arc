@@ -2,8 +2,7 @@ use crate::command_line_options::Args;
 use crate::dispatcher::cmdec::call_cmdec_decoder;
 use crate::dispatcher::execute::execute;
 use clap::Parser;
-use executor::launch;
-use log::{debug, error, info};
+use log::{error, info};
 use std::process::exit;
 
 mod command_line_options;

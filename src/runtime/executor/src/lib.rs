@@ -1,8 +1,9 @@
 mod data;
 mod math;
+mod instructions;
 
-use log::{debug, info, trace};
-use shared::models::descriptors::symbol::{Symbol, SymbolDescriptor};
+use log::{debug, trace};
+use shared::models::descriptors::symbol::Symbol;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
@@ -12,6 +13,23 @@ use shared::models::instructions::load_stack::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
+use crate::instructions::function_call::execute_function_call;
+use crate::instructions::jump::get_jump_destination;
+use crate::instructions::return_function::wrap_return_value_if_needed;
+
+macro_rules! push_bool_to_stack {
+    ($stack:expr, $result:expr) => {
+        $stack.push(Rc::new(RefCell::new(DataValue {
+            data_type: DataTypeEncoding {
+                type_id: 0x6,
+                is_array: false,
+                mutability: Mutability::Immutable,
+                memory_storage_type: MemoryStorageType::Value,
+            },
+            value: DataValueType::Bool($result),
+        })));
+    };
+}
 
 pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     debug!("Launching program...");
@@ -171,8 +189,7 @@ pub fn execute_function(
     };
 
     let mut instruction_offset = entry_pos;
-    let mut end = false;
-    while !end {
+    loop {
         if instruction_offset >= entry_pos + block_length - 1 {
             break;
         }
@@ -279,17 +296,7 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_equal(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::EqR => {}
             InstructionType::CLg => {
@@ -298,17 +305,7 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_greater(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::CLgE => {
                 let mut fn_context_ref = function_context.borrow_mut();
@@ -316,17 +313,7 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_greater_or_equal(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::CLs => {
                 let mut fn_context_ref = function_context.borrow_mut();
@@ -334,17 +321,7 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_less(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::CLsE => {
                 let mut fn_context_ref = function_context.borrow_mut();
@@ -352,42 +329,13 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_less_or_equal(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::Invoke(call) => {
-                let call_result = execute_function(call.function_id, context.clone());
-                match call_result {
-                    FunctionExecutionResult::Success(data_opt) => {
-                        if let Some(data) = data_opt {
-                            function_context.borrow_mut().local_stack.push(data);
-                        }
-                    }
-                    FunctionExecutionResult::Failure(x) => {
-                        panic!("Function execution failed: {}", x.fault_message);
-                    }
-                    FunctionExecutionResult::Invalid => {
-                        panic!("Invalid function execution result.");
-                    }
-                }
+                execute_function_call(context.clone(), function_context.clone(), call.function_id);
             }
             InstructionType::Ret(ret) => {
-                if ret.with_value {
-                    let data = function_context.borrow_mut().local_stack.pop().unwrap();
-                    result = FunctionExecutionResult::Success(Some(data));
-                } else {
-                    result = FunctionExecutionResult::Success(None);
-                }
-                end = true;
+                result = wrap_return_value_if_needed(&function_context, ret.with_value);
                 break;
             }
             InstructionType::Throw => {}
@@ -397,34 +345,11 @@ pub fn execute_function(
             InstructionType::BF => {}
             InstructionType::ETC => {}
             InstructionType::Jmp(jump) => {
-                if jump.jump_offset >= 0 {
-                    let target_instruction = instruction_slice
-                        .iter()
-                        .filter(|i| i.offset > instruction.offset)
-                        .filter(|i| match i.instruction_type {
-                            InstructionType::Lbl => true,
-                            _ => false,
-                        })
-                        .take(jump.jump_offset as usize)
-                        .last()
-                        .unwrap();
-
-                    instruction_offset = target_instruction.offset;
-                } else {
-                    let target_instruction = instruction_slice
-                        .iter()
-                        .filter(|i| i.offset < instruction.offset)
-                        .filter(|i| match i.instruction_type {
-                            InstructionType::Lbl => true,
-                            _ => false,
-                        })
-                        .rev()
-                        .take(jump.jump_offset.abs() as usize)
-                        .last()
-                        .unwrap();
-
-                    instruction_offset = target_instruction.offset;
-                }
+                instruction_offset = get_jump_destination(
+                    &instruction_slice,
+                    instruction,
+                    jump.jump_offset,
+                );
 
                 continue;
             }
@@ -439,34 +364,11 @@ pub fn execute_function(
                 };
 
                 if !condition {
-                    if jump.jump_offset >= 0 {
-                        let target_instruction = instruction_slice
-                            .iter()
-                            .filter(|i| i.offset > instruction.offset)
-                            .filter(|i| match i.instruction_type {
-                                InstructionType::Lbl => true,
-                                _ => false,
-                            })
-                            .take(jump.jump_offset as usize)
-                            .last()
-                            .unwrap();
-
-                        instruction_offset = target_instruction.offset;
-                    } else {
-                        let target_instruction = instruction_slice
-                            .iter()
-                            .filter(|i| i.offset < instruction.offset)
-                            .filter(|i| match i.instruction_type {
-                                InstructionType::Lbl => true,
-                                _ => false,
-                            })
-                            .rev()
-                            .take(jump.jump_offset.abs() as usize)
-                            .last()
-                            .unwrap();
-
-                        instruction_offset = target_instruction.offset;
-                    }
+                    instruction_offset = get_jump_destination(
+                        &instruction_slice,
+                        instruction,
+                        jump.jump_offset,
+                    );
 
                     continue;
                 }
@@ -492,30 +394,11 @@ pub fn execute_function(
             }
             InstructionType::BitXor => {}
             InstructionType::FRet(ret) => {
-                if ret.with_value {
-                    let data = function_context.borrow_mut().local_stack.pop().unwrap();
-                    result = FunctionExecutionResult::Success(Some(data));
-                } else {
-                    result = FunctionExecutionResult::Success(None);
-                }
-                end = true;
+                result = wrap_return_value_if_needed(&function_context, ret.with_value);
                 break;
             }
             InstructionType::FCall(call) => {
-                let call_result = execute_function(call.function_id, context.clone());
-                match call_result {
-                    FunctionExecutionResult::Success(data_opt) => {
-                        if let Some(data) = data_opt {
-                            function_context.borrow_mut().local_stack.push(data);
-                        }
-                    }
-                    FunctionExecutionResult::Failure(x) => {
-                        panic!("Function execution failed: {}", x.fault_message);
-                    }
-                    FunctionExecutionResult::Invalid => {
-                        panic!("Invalid function execution result.");
-                    }
-                }
+                execute_function_call(context.clone(), function_context.clone(), call.function_id);
             }
             InstructionType::LdStk(lsi) => match lsi.source {
                 DataSourceType::ConstantTable => {
@@ -540,17 +423,7 @@ pub fn execute_function(
                 let b = fn_context_ref.local_stack.pop().unwrap();
 
                 let result = math::math_compare_not_equal(&b.borrow(), &a.borrow());
-                fn_context_ref
-                    .local_stack
-                    .push(Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: 0x6,
-                            is_array: false,
-                            mutability: Mutability::Immutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::Bool(result),
-                    })));
+                push_bool_to_stack!(fn_context_ref.local_stack, result);
             }
             InstructionType::NeqR => {}
         }
