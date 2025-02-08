@@ -4,7 +4,7 @@ use crate::models::execution::data::DataValue;
 
 pub enum FunctionExecutionResult {
     Invalid,
-    Success(Rc<RefCell<DataValue>>),
+    Success(Option<Rc<RefCell<DataValue>>>),
     Failure(FunctionExecutionFault),
 }
 
