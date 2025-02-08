@@ -1,9 +1,10 @@
-use std::process::exit;
 use crate::command_line_options::Args;
 use crate::dispatcher::cmdec::call_cmdec_decoder;
+use crate::dispatcher::execute::execute;
 use clap::Parser;
 use executor::launch;
 use log::{debug, error, info};
+use std::process::exit;
 
 mod command_line_options;
 mod dispatcher;
@@ -34,18 +35,10 @@ fn main() {
     }
     let package = package.unwrap();
 
+    let mut return_value = 0;
     if !args.decode {
-        let result = launch(package, args.verbose);
-        if let Err(e) = result {
-            error!("Error: {}", e);
-            exit(0xffff);
-        } else if let Ok(i) = result {
-            debug!("Program executed gracefully.");
-            exit(i);
-        } else {
-            unreachable!();
-        }
+        return_value = execute(package, args.verbose);
     }
 
-    exit(0);
+    exit(return_value);
 }
