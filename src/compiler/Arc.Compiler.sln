@@ -11,8 +11,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.Circle", "Executables\Circle\Arc.Compiler.Circle.csproj", "{8D67ED94-235A-4137-8AE4-107B2B288085}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Cmdec", "Executables\Cmdec\Arc.Cmdec.csproj", "{5933A38E-D758-43A4-8FDC-C0F743D646B2}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arc.Compiler.SyntaxAnalyzer", "Libraries\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj", "{7174F8D1-6B00-4031-BFDB-B89D16A56C45}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arc.Compiler.PackageGenerator", "Libraries\PackageGenerator\Arc.Compiler.PackageGenerator.csproj", "{B7D4F225-92A4-4D7B-B96C-0FC091EF95BC}"
@@ -31,10 +29,6 @@ Global
 		{8D67ED94-235A-4137-8AE4-107B2B288085}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8D67ED94-235A-4137-8AE4-107B2B288085}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8D67ED94-235A-4137-8AE4-107B2B288085}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5933A38E-D758-43A4-8FDC-C0F743D646B2}.Release|Any CPU.Build.0 = Release|Any CPU
 		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7174F8D1-6B00-4031-BFDB-B89D16A56C45}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -49,7 +43,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{8D67ED94-235A-4137-8AE4-107B2B288085} = {B67C39F8-73B0-47E5-93F7-343CF1A0E760}
-		{5933A38E-D758-43A4-8FDC-C0F743D646B2} = {B67C39F8-73B0-47E5-93F7-343CF1A0E760}
 		{7174F8D1-6B00-4031-BFDB-B89D16A56C45} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 		{B7D4F225-92A4-4D7B-B96C-0FC091EF95BC} = {B7A35133-4E4A-4F27-AB7A-D64D362A4ABC}
 	EndGlobalSection
