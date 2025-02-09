@@ -29,8 +29,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
             {
                 var descriptor = new ArcGroupDescriptor() { Name = nsSignature + "+" + group.GetSignature() };
 
-                var derivativeTypeDescriptor = new ArcDerivativeType(descriptor) { Name = descriptor.Name };
-                var typeNode = new ArcScopeTreeDataTypeNode(derivativeTypeDescriptor);
+                var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
+                var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor);
 
                 var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 node.AddChild(typeNode);

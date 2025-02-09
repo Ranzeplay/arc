@@ -9,7 +9,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {
             IsArray = context.arc_array_indicator() != null;
-            DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Derivative;
+            DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Complex;
             MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_mem_store_type());
             if (DataType == DataMemberType.Primitive)
             {
@@ -17,7 +17,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             }
             else
             {
-                DerivativeType = new ArcDerivativeDataType(context.arc_flexible_identifier());
+                ComplexType = new ArcComplexDataType(context.arc_flexible_identifier());
             }
 
             Context = context;
@@ -28,12 +28,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public enum DataMemberType
         {
             Primitive,
-            Derivative
+            Complex
         }
 
         public ArcPrimitiveDataType? PrimitiveType { get; set; }
 
-        public ArcDerivativeDataType? DerivativeType { get; set; }
+        public ArcComplexDataType? ComplexType { get; set; }
 
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
@@ -44,7 +44,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public string TypeName => DataType switch
         {
             DataMemberType.Primitive => PrimitiveType?.GetTypeName() ?? string.Empty,
-            DataMemberType.Derivative => DerivativeType?.Identifier.ToString() ?? string.Empty,
+            DataMemberType.Complex => ComplexType?.Identifier.ToString() ?? string.Empty,
             _ => string.Empty
         };
 

@@ -4,7 +4,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 {
-    public class ArcDerivativeDataType(ArcSourceCodeParser.Arc_flexible_identifierContext context) : IArcTraceable<ArcSourceCodeParser.Arc_flexible_identifierContext>
+    public class ArcComplexDataType(ArcSourceCodeParser.Arc_flexible_identifierContext context) : IArcTraceable<ArcSourceCodeParser.Arc_flexible_identifierContext>
     {
         public ArcFlexibleIdentifier Identifier { get; set; } = new(context);
 

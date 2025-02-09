@@ -25,15 +25,8 @@ namespace Arc.Compiler.PackageGenerator
 
         public static long GetConstantIdOrCreateConstant(ArcInstantValue value, ref ArcGenerationSource source, ref ArcPartialGenerationResult result)
         {
-            // TODO: Fix duplicated entry (existingConstant is always null)
-            var existingConstant = GetTotalConstants(source, result).FirstOrDefault(c => c.Value.Equals(value));
-            if (existingConstant != null)
-            {
-                return existingConstant.Id;
-            }
-
             var typeId = source.GlobalScopeTree.Symbols.FirstOrDefault(x => x is ArcTypeBase bt && bt.FullName == value.TypeName)?.Id;
-            var id = source.AccessibleConstants.LongCount() + result.AddedConstants.Count;
+            var id = new Random().NextInt64();
             result.AddedConstants.Add(new ArcConstant
             {
                 Id = id,
@@ -175,7 +168,7 @@ namespace Arc.Compiler.PackageGenerator
             }
             else
             {
-                var typeIdentifier = dataType.DerivativeType!.Identifier;
+                var typeIdentifier = dataType.ComplexType!.Identifier;
 
                 if(typeIdentifier.Namespace != null && typeIdentifier.Namespace.Any())
                 {

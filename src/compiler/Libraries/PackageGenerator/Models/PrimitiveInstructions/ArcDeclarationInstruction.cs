@@ -18,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             {
                 Name = "Local data slot",
                 Declarator = DataDeclarator,
-                SlotId = source.LocalDataSlots.Count(),
+                SlotId = source.LocalDataSlots.Count,
             };
 
             var dataType = Utils.GetDataTypeNode(source, DataDeclarator.DataType).DataType;

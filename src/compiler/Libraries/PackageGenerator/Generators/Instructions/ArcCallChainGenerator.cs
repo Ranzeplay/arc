@@ -48,7 +48,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     throw new InvalidDataException("Cannot call a primitive data type");
                 }
 
-                var dataType = (lastTermTypeDecl.Type as ArcDerivativeType)!;
+                var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
                 var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Id == dataType.Id, true)!;
 
                 if (call.Type == ArcCallChainTermType.FunctionCall)

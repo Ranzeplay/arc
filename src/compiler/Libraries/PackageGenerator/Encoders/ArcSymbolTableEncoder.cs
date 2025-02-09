@@ -73,9 +73,9 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                 iterResult.Add((byte)ArcSymbolType.DataType);
                                 iterResult.Add((byte)((typeBase is ArcBaseType) ? 0x00 : 0x01));
                                 iterResult.AddRange(Utils.SerializeString(node.Signature));
-                                if (typeBase is ArcDerivativeType derivativeType)
+                                if (typeBase is ArcComplexType complexType)
                                 {
-                                    iterResult.AddRange(BitConverter.GetBytes(derivativeType.GroupId));
+                                    iterResult.AddRange(BitConverter.GetBytes(complexType.GroupId));
                                 }
                                 break;
                             }
