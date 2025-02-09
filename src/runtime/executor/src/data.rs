@@ -19,14 +19,7 @@ pub fn get_data_from_constant_table(
         .constants.get(&constant_id)
         .unwrap();
 
-    let data_type_symbol = context_ref
-        .package
-        .symbol_table
-        .symbols
-        .get(&constant.type_id)
-        .unwrap();
-
-    let data_content = match data_type_symbol.id {
+        let data_content = match &constant.type_id {
         0 => DataValueType::None,
         1 => DataValueType::Any,
         2 => DataValueType::Integer(i64::from_le_bytes(
@@ -51,7 +44,7 @@ pub fn get_data_from_constant_table(
 
     DataValue {
         data_type: DataTypeEncoding {
-            type_id: data_type_symbol.id,
+            type_id: constant.type_id,
             is_array: constant.is_array,
             mutability: if is_mutable {
                 Mutability::Mutable
