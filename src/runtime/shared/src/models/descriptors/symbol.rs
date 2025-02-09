@@ -18,10 +18,10 @@ pub enum Symbol {
 
 pub enum DataTypeSymbol {
     BaseType(String),
-    DerivativeType(DerivativeTypeSymbol),
+    ComplexType(ComplexTypeSymbol),
 }
 
-pub struct DerivativeTypeSymbol {
+pub struct ComplexTypeSymbol {
     pub signature: String,
     pub group_id: usize,
 }
@@ -29,7 +29,7 @@ pub struct DerivativeTypeSymbol {
 impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
-            DataTypeSymbol::DerivativeType(dt) => writeln!(f, "[DT] {} -> 0x{:016X}", dt.signature, dt.group_id),
+            DataTypeSymbol::ComplexType(dt) => writeln!(f, "[DT] {} -> 0x{:016X}", dt.signature, dt.group_id),
             DataTypeSymbol::BaseType(bt) => writeln!(f, "[DT] {}", bt)
         }
     }

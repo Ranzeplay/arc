@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use shared::models::descriptors::symbol::{
-    DataTypeSymbol, DerivativeTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol,
+    DataTypeSymbol, ComplexTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol,
     NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable,
 };
 use shared::models::encodings::data_type_enc::DataTypeEncoding;
@@ -146,8 +146,8 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
         let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
         (
-            Symbol::DataType(Rc::new(DataTypeSymbol::DerivativeType(
-                DerivativeTypeSymbol {
+            Symbol::DataType(Rc::new(DataTypeSymbol::ComplexType(
+                ComplexTypeSymbol {
                     signature: name_encoding.value,
                     group_id,
                 },
