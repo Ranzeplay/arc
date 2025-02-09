@@ -25,7 +25,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var slot = source.LocalDataSlots.First(s => s.Declarator.Identifier.Name == identifier.Name);
                 locator.LocationId = slot.SlotId;
 
-                if(callChain.Terms.Count() == 1)
+                if (callChain.Terms.Count() == 1)
                 {
                     result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                     return result;

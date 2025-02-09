@@ -171,7 +171,7 @@ namespace Arc.Compiler.PackageGenerator
             {
                 var typeIdentifier = dataType.ComplexType!.Identifier;
 
-                if(typeIdentifier.Namespace != null && typeIdentifier.Namespace.Any())
+                if (typeIdentifier.Namespace != null && typeIdentifier.Namespace.Any())
                 {
                     return source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(typeIdentifier.NameArray);
                 }

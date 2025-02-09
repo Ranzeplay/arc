@@ -18,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
 
             var validSymbolNodes = context.GlobalScopeTree.FlattenedNodes.Where(n => n.GetSymbols().Any());
             result.AddRange(BitConverter.GetBytes(validSymbolNodes.LongCount()));
-            foreach(var node in validSymbolNodes)
+            foreach (var node in validSymbolNodes)
             {
                 foreach (var symbol in node.GetSymbols())
                 {
