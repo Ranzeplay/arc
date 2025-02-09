@@ -2,7 +2,7 @@ use crate::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use crate::models::instructions::decl::DeclInstruction;
 use crate::models::instructions::func_call::FunctionCallInstruction;
 use crate::models::instructions::jump::JumpInstruction;
-use crate::models::instructions::load_stack::LoadStackInstruction;
+use crate::models::instructions::stack_data_operation::{LoadStackInstruction, SaveStackInstruction};
 use crate::models::instructions::pop_to_slot::PopToSlotInstruction;
 use crate::models::instructions::return_from_block::ReturnInstruction;
 use std::fmt::{Debug, Formatter};
@@ -66,7 +66,7 @@ pub enum InstructionType {
     FRet(ReturnInstruction),
     FCall(FunctionCallInstruction),
     LdStk(LoadStackInstruction),
-    SvStk,
+    SvStk(SaveStackInstruction),
     NeqC,
     NeqR,
 }
@@ -82,6 +82,7 @@ impl Debug for InstructionType {
             InstructionType::FRet(x) => write!(f, "{:?}", x),
             InstructionType::FCall(x) => write!(f, "{:?}", x),
             InstructionType::LdStk(x) => write!(f, "{:?}", x),
+            InstructionType::SvStk(x) => write!(f, "{:?}", x),
             _ => write!(f, " "),
         }
     }

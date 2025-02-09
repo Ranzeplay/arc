@@ -15,7 +15,7 @@ use shared::models::execution::context::{ExecutionContext};
 use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use shared::models::instruction::InstructionType;
-use shared::models::instructions::load_stack::DataSourceType;
+use shared::models::instructions::stack_data_operation::DataSourceType;
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -274,7 +274,7 @@ pub fn execute_function(
                 }
                 DataSourceType::DataHandle => {}
             },
-            InstructionType::SvStk => {}
+            InstructionType::SvStk(ssi) => {}
         }
 
         instruction_offset = next_instruction.offset;

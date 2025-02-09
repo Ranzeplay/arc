@@ -4,6 +4,6 @@ pub mod jump;
 pub mod func_call;
 pub mod pop_to_slot;
 pub mod return_from_block;
-pub mod load_stack;
+pub mod stack_data_operation;
 mod pop_stack_slot;
 mod return_function;

@@ -3,7 +3,7 @@ use shared::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use shared::models::instructions::decl::DeclInstruction;
 use shared::models::instructions::func_call::FunctionCallInstruction;
 use shared::models::instructions::jump::JumpInstruction;
-use shared::models::instructions::load_stack::LoadStackInstruction;
+use shared::models::instructions::stack_data_operation::{LoadStackInstruction, SaveStackInstruction};
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::return_from_block::ReturnInstruction;
 use shared::models::package::Package;
@@ -469,6 +469,17 @@ pub fn decode_instructions(
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::LdStk(ldstk),
+                    raw: stream[pos..pos + len].to_vec(),
+                };
+
+                pos += len;
+            }
+            0x38 => {
+                let (svstk, len) =
+                    SaveStackInstruction::decode(&stream[pos..], pos, package).unwrap();
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::SvStk(svstk),
                     raw: stream[pos..pos + len].to_vec(),
                 };
 
