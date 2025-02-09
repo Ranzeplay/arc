@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
@@ -179,6 +180,28 @@ namespace Arc.Compiler.PackageGenerator
                     return source.LinkedNamespaces.SelectMany(n => n.GetChildren<ArcScopeTreeDataTypeNode>(c => c.Name == typeIdentifier.Name, true)).First();
                 }
             }
+        }
+
+        public static ArcScopeTreeDataTypeNode? GetDataTypeNode(ArcGenerationSource source, ArcTypeBase dataType)
+        {
+            return source.GlobalScopeTree.FlattenedNodes.OfType<ArcScopeTreeDataTypeNode>().First(x => x.DataType.Id == dataType.Id);
+        }
+
+        public static ArcScopeTreeGroupNode? GetDataTypeGroupNode(ArcGenerationSource source, ArcDataType dataType)
+        {
+            var typeNode = GetDataTypeNode(source, dataType);
+            return source.GlobalScopeTree
+                .FlattenedNodes
+                .OfType<ArcScopeTreeGroupNode>()
+                .FirstOrDefault(n => n.Descriptor.Id == typeNode.DataType.TypeId);
+        }
+
+        public static ArcScopeTreeGroupNode? GetDataTypeGroupNode(ArcGenerationSource source, ArcComplexType dataType)
+        {
+            return source.GlobalScopeTree
+                .FlattenedNodes
+                .OfType<ArcScopeTreeGroupNode>()
+                .FirstOrDefault(n => n.Descriptor.Id == dataType.GroupId);
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Base
                     ..Opcode,
                     (byte)Locator.Source,
                     ..BitConverter.GetBytes(Locator.LocationId),
-                    ..Utils.SerializeArray(Locator.FieldChain.Select(f => f.Id)),
+                    ..Utils.SerializeArray(Locator.FieldChain.Select(f => f == null ? 0 : f.Id)),
                     ..Locator.Addend
                     ],
             };
