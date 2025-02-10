@@ -64,7 +64,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = Flow.GenerateUnits([unit]);
-            Assert.That(context.Symbols, Has.Count.EqualTo(22));
+            Assert.That(context.Symbols, Has.Count.EqualTo(23));
         }
 
         [Test]
@@ -104,6 +104,64 @@ namespace Arc.Compiler.Tests.PackageGeneration
                 	public func main(var args: val string[]): val int {
                 		call PrintString(""Hello, world!\n"");
                 		return 0;
+                	}
+                }
+            ";
+
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
+            var context = Flow.GenerateUnits([syntaxUnit]);
+            context.PackageDescriptor = new ArcPackageDescriptor()
+            {
+                Type = ArcPackageType.Executable,
+                Name = "Test",
+                Version = 0,
+                RootGroupTableEntryPos = 0,
+                RootFunctionTableEntryPos = 0,
+                RootConstantTableEntryPos = 0,
+                RegionTableEntryPos = 0,
+                EntrypointFunctionId = 0,
+                DataAlignmentLength = 8
+            };
+            context.SetEntrypointFunctionId();
+            var outputStream = context.DumpFullByteStream();
+            Assert.That(outputStream, Is.Not.Null);
+        }
+
+        [Test]
+        public void Fibonacci()
+        {
+            var text = @"
+                link Arc::Std::Console;
+
+                namespace Arc::Program {
+                	# @Export
+                	@Entrypoint
+                	public func main(var args: val string[]): val int {
+                		var i: val int;
+                		i = 0;
+                		while (i < 40)
+                		{
+                			const value: val int;
+                			value = fib(i);
+                			call PrintInteger(value);
+                			call PrintString(""\n"");
+                			i = i + 1;
+                		}
+                
+                		return 0;
+                	}
+                
+                	public func fib(const n: val int): val int
+                	{
+                		if (n <= 1)
+                		{
+                			return 1;
+                		}
+                		else
+                		{
+                			return fib(n - 1) + fib(n - 2);
+                		}
                 	}
                 }
             ";
