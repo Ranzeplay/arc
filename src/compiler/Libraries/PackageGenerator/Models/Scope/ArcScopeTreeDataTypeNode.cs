@@ -3,7 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    internal class ArcScopeTreeDataTypeNode(ArcTypeBase dataType) : ArcScopeTreeNodeBase
+    internal class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
 
-        public string ShortName => DataType.Identifier;
+        public string ShortName { get; set; } = shortName;
 
         public override string Name => DataType.Identifier;
     }

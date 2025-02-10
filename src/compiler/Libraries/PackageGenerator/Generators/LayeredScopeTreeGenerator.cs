@@ -31,6 +31,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
                 var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
                 var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor);
+                var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
 
                 var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 node.AddChild(typeNode);

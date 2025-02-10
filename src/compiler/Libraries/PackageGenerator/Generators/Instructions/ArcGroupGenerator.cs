@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var descriptor = new ArcGroupDescriptor() { Name = source.ParentSignature.GetSignature() };
 
             var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
-            var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor);
+            var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
 
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in group.Functions)
