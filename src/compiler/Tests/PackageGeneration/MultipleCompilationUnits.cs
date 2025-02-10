@@ -72,7 +72,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit1 = new ArcCompilationUnit(compilationUnitContext1, _logger, "test1");
             var unit2 = new ArcCompilationUnit(compilationUnitContext2, _logger, "test2");
 
-            var context = Flow.GenerateUnits([unit1, unit2]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([unit1, unit2]);
 
             context.PackageDescriptor = new ArcPackageDescriptor()
             {

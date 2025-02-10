@@ -51,7 +51,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = Flow.GenerateUnits([syntaxUnit]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit]);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = ArcPackageType.Executable,

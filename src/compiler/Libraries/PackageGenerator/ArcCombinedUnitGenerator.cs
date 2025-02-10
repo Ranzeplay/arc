@@ -9,7 +9,7 @@ using System.Collections.Immutable;
 
 namespace Arc.Compiler.PackageGenerator
 {
-    public class Flow
+    public class ArcCombinedUnitGenerator
     {
         public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits)
         {
@@ -36,15 +36,17 @@ namespace Arc.Compiler.PackageGenerator
                 var unit = structure.CompilationUnit;
 
                 var ns = unit.Namespace;
-                var iterResult = new ArcGeneratorContext
+                var iterContext = new ArcGeneratorContext
                 {
                     Logger = unit.Logger,
                     GlobalScopeTree = globalScopeTree
                 };
 
-                var genSource = iterResult.GenerateSource([unit.Namespace]);
+                var genSource = iterContext.GenerateSource([unit.Namespace]);
 
                 genSource.LinkedNamespaces = structure.LinkedNamespaces;
+
+                // Generate functions
 
                 var funcs = structure.ScopeTree
                     .GetNodes<ArcScopeTreeIndividualFunctionNode>();
@@ -75,14 +77,16 @@ namespace Arc.Compiler.PackageGenerator
                     .ToImmutableList()
                     .ForEach(t =>
                     {
-                        t.Descriptor.EntrypointPos = iterResult.GeneratedData.Count + result.GeneratedData.Count;
+                        // Assign entrypoint location
+                        t.Descriptor.EntrypointPos = iterContext.GeneratedData.Count + result.GeneratedData.Count;
                         if (t.GenerationResult != null)
                         {
-                            iterResult.Append(t.GenerationResult);
+                            // Append the generated data
+                            iterContext.Append(t.GenerationResult);
                         }
                     });
 
-                result.Append(iterResult);
+                result.Append(iterContext);
             }
 
             result.GlobalScopeTree = globalScopeTree;
