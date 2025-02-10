@@ -20,7 +20,7 @@ impl Debug for DeclInstruction {
 
         write!(
             f,
-            "{}/{} {}",
+            "{}/{} 0x{:016X}",
             mst, is_array, self.data_type_id
         )
     }
