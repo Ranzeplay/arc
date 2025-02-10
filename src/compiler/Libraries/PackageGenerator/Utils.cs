@@ -130,21 +130,29 @@ namespace Arc.Compiler.PackageGenerator
             ];
         }
 
-        public static long GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall)
+        public static long GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {
-            if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
+            if(searchUnderGroup == null)
             {
-                var funcDeclarator = source.GlobalScopeTree.GetNode<ArcScopeTreeFunctionNodeBase>(funcCall.Identifier.NameArray)
-                    ?? throw new InvalidOperationException("Invalid function node");
-                return funcDeclarator.Id;
+                if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
+                {
+                    var funcDeclarator = source.GlobalScopeTree.GetNode<ArcScopeTreeFunctionNodeBase>(funcCall.Identifier.NameArray)
+                        ?? throw new InvalidOperationException("Invalid function node");
+                    return funcDeclarator.Id;
+                }
+                else
+                {
+                    var funcNode = source.LinkedNamespaces
+                        .Select(n => n.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(n => n.Name == funcCall.Identifier.Name))
+                        .SkipWhile(n => n == null)
+                        .First()
+                        ?? throw new InvalidOperationException("Invalid function node");
+                    return funcNode.Descriptor.Id;
+                }
             }
             else
             {
-                var funcNode = source.LinkedNamespaces
-                    .Select(n => n.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(n => n.Name == funcCall.Identifier.Name))
-                    .SkipWhile(n => n == null)
-                    .First()
-                    ?? throw new InvalidOperationException("Invalid function node");
+                var funcNode = searchUnderGroup.GetSpecificChild<ArcScopeTreeGroupFunctionNode>(n => n.Name == funcCall.Identifier.Name);
                 return funcNode.Descriptor.Id;
             }
         }
@@ -177,7 +185,9 @@ namespace Arc.Compiler.PackageGenerator
                 }
                 else
                 {
-                    return source.LinkedNamespaces.SelectMany(n => n.GetChildren<ArcScopeTreeDataTypeNode>(c => c.Name == typeIdentifier.Name, true)).First();
+                    return source.LinkedNamespaces
+                        .Select(n => n.GetSpecificChild<ArcScopeTreeDataTypeNode>(c => c.ShortName == typeIdentifier.Name))
+                        .First();
                 }
             }
         }

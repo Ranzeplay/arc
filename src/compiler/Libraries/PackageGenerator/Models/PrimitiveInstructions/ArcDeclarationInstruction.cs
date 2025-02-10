@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
@@ -14,14 +15,21 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
+            var dataType = Utils.GetDataTypeNode(source, DataDeclarator.DataType).DataType;
+
             var slot = new ArcDataSlot
             {
                 Name = "Local data slot",
                 Declarator = DataDeclarator,
+                DeclarationDescriptor = new ArcDataDeclarationDescriptor()
+                {
+                    Type = dataType,
+                    AllowNone = false,
+                    IsArray = DataDeclarator.DataType.IsArray,
+                    MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
+                },
                 SlotId = source.LocalDataSlots.Count,
             };
-
-            var dataType = Utils.GetDataTypeNode(source, DataDeclarator.DataType).DataType;
 
             return new ArcPartialGenerationResult
             {

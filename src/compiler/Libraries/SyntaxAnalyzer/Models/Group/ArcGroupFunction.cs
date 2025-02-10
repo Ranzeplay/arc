@@ -8,7 +8,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
     {
         public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext context) : base()
         {
-            Declarator = new(context.arc_function_block().arc_function_declarator());
+            Declarator = new(context.arc_function_block().arc_function_declarator(), true);
             Body = new(context.arc_function_block().arc_wrapped_function_body());
 
             Context = context;

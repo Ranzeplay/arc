@@ -8,7 +8,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
         public ArcBlockIndependentFunction(ArcSourceCodeParser.Arc_function_blockContext context)
         {
             Context = context;
-            Declarator = new ArcFunctionDeclarator(context.arc_function_declarator());
+            Declarator = new ArcFunctionDeclarator(context.arc_function_declarator(), false);
             Body = new ArcFunctionBody(context.arc_wrapped_function_body());
         }
     }

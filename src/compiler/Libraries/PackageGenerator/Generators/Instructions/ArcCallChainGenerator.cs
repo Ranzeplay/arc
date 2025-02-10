@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain)
         {
             var result = new ArcPartialGenerationResult();
-            ArcDataDeclarationDescriptor lastTermTypeDecl = null!;
+            ArcDataDeclarationDescriptor lastTermTypeDecl;
             var locator = new ArcDataLocator(ArcDataSourceType.Invalid, -1, [], []);
 
             // First term maybe be variant, so handle it separately
@@ -24,6 +24,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var identifier = callChain.Terms.First().Identifier!;
                 var slot = source.LocalDataSlots.First(s => s.Declarator.Identifier.Name == identifier.Name);
                 locator.LocationId = slot.SlotId;
+                lastTermTypeDecl = slot.DeclarationDescriptor;
 
                 if (callChain.Terms.Count() == 1)
                 {
@@ -49,7 +50,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
-                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Id == dataType.Id, true)!;
+                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Descriptor.Id == dataType.GroupId, true)!;
 
                 if (call.Type == ArcCallChainTermType.FunctionCall)
                 {
@@ -60,14 +61,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     }
 
                     // Handle the function call of this term
-                    result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!));
+                    result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, group));
 
                     // Reset locator
                     locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
                 }
                 else if (call.Type == ArcCallChainTermType.Identifier)
                 {
-                    var field = group.Descriptor.Fields.First(f => f.Name == call.Identifier!.Name);
+                    var field = group.Descriptor.Fields.First(f => f.IdentifierName == call.Identifier!.Name);
                     locator.FieldChain.Add(field);
                     lastTermTypeDecl = field.DataType;
                 }

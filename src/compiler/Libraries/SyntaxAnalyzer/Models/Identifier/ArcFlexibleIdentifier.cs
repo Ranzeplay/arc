@@ -31,6 +31,13 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             Context = context;
         }
 
+        public ArcFlexibleIdentifier(IEnumerable<string> names)
+        {
+            Name = names.Last();
+            Namespace = names.Take(names.Count() - 1);
+            Context = null!;
+        }
+
         public ParserRuleContext Context { get; }
 
         public override string? ToString()

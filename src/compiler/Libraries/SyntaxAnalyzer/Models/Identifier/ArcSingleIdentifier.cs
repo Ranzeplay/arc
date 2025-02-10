@@ -3,11 +3,23 @@ using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
 {
-    public class ArcSingleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext context) : IArcTraceable<ArcSourceCodeParser.Arc_single_identifierContext>
+    public class ArcSingleIdentifier : IArcTraceable<ArcSourceCodeParser.Arc_single_identifierContext>
     {
-        public string Name { get; set; } = context.IDENTIFIER().GetText();
+        public string Name { get; set; }
 
-        public ArcSourceCodeParser.Arc_single_identifierContext Context { get; } = context;
+        public ArcSourceCodeParser.Arc_single_identifierContext Context { get; }
+
+        public ArcSingleIdentifier(ArcSourceCodeParser.Arc_single_identifierContext context)
+        {
+            Name = context.IDENTIFIER().GetText();
+            Context = context;
+        }
+
+        public ArcSingleIdentifier(string name)
+        {
+            Name = name;
+            Context = null!;
+        }
 
         public override string ToString() => Name;
     }

@@ -30,6 +30,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     Name = "Function param slot",
                     Declarator = param.Declarator,
+                    DeclarationDescriptor = param.DataType,
                     SlotId = source.LocalDataSlots.Count
                 });
             }
@@ -61,9 +62,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = source.GlobalScopeTree.Symbols
-                        .OfType<ArcTypeBase>()
-                        .First(bt => bt.FullName == a.DataType.TypeName || bt.Identifier == a.DataType.TypeName),
+                    Type = Utils.GetDataTypeNode(source, a.DataType).DataType,
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
@@ -73,9 +72,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = source.GlobalScopeTree.Symbols
-                        .OfType<ArcTypeBase>()
-                        .First(bt => bt.FullName == declarator.ReturnType.TypeName || bt.Identifier == declarator.ReturnType.TypeName),
+                Type = Utils.GetDataTypeNode(source, declarator.ReturnType).DataType,
                 AllowNone = false,
                 IsArray = declarator.ReturnType.IsArray,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
