@@ -9,7 +9,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
-    internal class LayeredScopeTreeGenerator
+    internal class ArcLayeredScopeTreeGenerator
     {
         public static ArcScopeTree GeneratePrimitiveGroups(ArcCompilationUnit unit)
         {

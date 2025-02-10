@@ -52,7 +52,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                             {
                                 iterResult.Add((byte)ArcSymbolType.Group);
                                 iterResult.AddRange(Utils.SerializeString(node.Signature));
-                                iterResult.AddRange(GroupSymbolEncoder.EncodeGroupSymbol(groupDescriptor));
+                                iterResult.AddRange(ArcGroupSymbolEncoder.EncodeGroupSymbol(groupDescriptor));
                                 break;
                             }
                         case ArcGroupFieldDescriptor fieldDescriptor:

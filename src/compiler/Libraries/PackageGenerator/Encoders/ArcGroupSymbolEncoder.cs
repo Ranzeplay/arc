@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {
-    internal class GroupSymbolEncoder
+    internal class ArcGroupSymbolEncoder
     {
         public static IEnumerable<byte> EncodeGroupSymbol(ArcGroupDescriptor group)
         {

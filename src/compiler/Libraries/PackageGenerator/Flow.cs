@@ -12,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator
     {
         public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits)
         {
-            var structures = LayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
+            var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
 
             var result = new ArcGeneratorContext()
             {
