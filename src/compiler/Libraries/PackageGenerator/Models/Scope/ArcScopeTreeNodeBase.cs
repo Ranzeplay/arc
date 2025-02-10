@@ -122,7 +122,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             }
         }
 
-        public IEnumerable<T> GetChildren<T>(Func<ArcScopeTreeNodeBase, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
+        public IEnumerable<T> GetChildren<T>(Func<T, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
         {
             return GetChildren(n => n is T, recursive).Cast<T>();
         }
