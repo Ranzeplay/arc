@@ -111,7 +111,7 @@ pub fn execute_function(
 
         let instructions = func_info.instruction_slice
             .iter()
-            .filter(|i| i.offset >= instruction_offset)
+            .filter(|&i| i.offset >= instruction_offset)
             .take(2)
             .collect::<Vec<_>>();
 
@@ -119,8 +119,8 @@ pub fn execute_function(
             break;
         }
 
-        let instruction = instructions.first().unwrap();
-        let next_instruction = instructions.last().unwrap();
+        let instruction = *instructions.first().unwrap();
+        let next_instruction = *instructions.last().unwrap();
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {

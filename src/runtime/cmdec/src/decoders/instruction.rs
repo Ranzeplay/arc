@@ -510,7 +510,19 @@ pub fn decode_instructions(
         }
 
         if verbose {
-            info!("{:?}", instruction);
+            if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
+                shared::models::descriptors::symbol::Symbol::Function(f) => f.entry_pos == instruction.offset,
+                _ => false,
+            }) {
+                let func = match &symbol.value {
+                    shared::models::descriptors::symbol::Symbol::Function(f) => f,
+                    _ => unreachable!(),
+                };
+
+                info!("Function: {}({}+{})", func.signature, func.entry_pos, func.block_length);
+            }
+
+            info!("\t{:?}", instruction);
         }
         result.push(Rc::new(instruction));
     }
