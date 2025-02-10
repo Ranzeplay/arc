@@ -23,14 +23,16 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             if (assign.CallChain.Terms.Count() == 1)
             {
-                var targetSymbol = source.LocalDataSlots.First(ds => ds.Declarator.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
+                var targetSymbol = source.LocalDataSlots
+                    .First(ds => ds.DeclarationDescriptor.SyntaxTree.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
                 result.Append(new ArcPopToSlotInstruction(targetSymbol).Encode(source));
                 return result;
             }
 
             var identifierSequence = assign.CallChain.Terms.Select(t => t.Identifier!.Name);
-            var initialSlot = source.LocalDataSlots.First(s => s.Declarator.Identifier.Name == identifierSequence.First());
-            var currentDataType = Utils.GetDataTypeNode(source, initialSlot.Declarator.DataType);
+            var initialSlot = source.LocalDataSlots
+                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifierSequence.First());
+            var currentDataType = Utils.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
             var locator = new ArcDataLocator(ArcDataSourceType.DataSlot, initialSlot.SlotId, [], []);
             foreach (var identifier in identifierSequence.Skip(1))

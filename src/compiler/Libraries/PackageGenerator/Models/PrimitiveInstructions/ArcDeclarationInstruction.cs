@@ -20,13 +20,13 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             var slot = new ArcDataSlot
             {
                 Name = "Local data slot",
-                Declarator = DataDeclarator,
                 DeclarationDescriptor = new ArcDataDeclarationDescriptor()
                 {
                     Type = dataType,
                     AllowNone = false,
                     IsArray = DataDeclarator.DataType.IsArray,
                     MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
+                    SyntaxTree = DataDeclarator,
                 },
                 SlotId = source.LocalDataSlots.Count,
             };

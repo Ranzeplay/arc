@@ -7,7 +7,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
         public ArcDataDeclarationDescriptor DataType { get; set; }
 
         public string RawFullName { get; set; }
-
-        public ArcDataDeclarator Declarator { get; set; }
     }
 }

@@ -29,7 +29,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 source.LocalDataSlots.Add(new ArcDataSlot()
                 {
                     Name = "Function param slot",
-                    Declarator = param.Declarator,
                     DeclarationDescriptor = param.DataType,
                     SlotId = source.LocalDataSlots.Count
                 });
@@ -66,9 +65,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
+                    SyntaxTree = a.DataDeclarator,
                 },
                 RawFullName = a.Identifier.Name,
-                Declarator = a.DataDeclarator,
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {

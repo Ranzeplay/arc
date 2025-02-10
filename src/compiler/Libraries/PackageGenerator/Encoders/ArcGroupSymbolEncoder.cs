@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 // Field id list
                 ..BitConverter.GetBytes((long)group.Fields.Count),
                 ..group.Fields.SelectMany(field => BitConverter.GetBytes(field.Id)),
-                // Construtor id list
+                // Constructor id list
                 ..BitConverter.GetBytes((long) group.Constructors.Count),
                 ..group.Constructors.SelectMany(constructor => BitConverter.GetBytes(constructor.Id)),
                 // Destructor id list

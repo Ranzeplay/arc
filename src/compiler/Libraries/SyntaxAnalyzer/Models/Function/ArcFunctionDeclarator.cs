@@ -26,7 +26,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
             Identifier = new(context.arc_single_identifier());
             ReturnType = new(context.arc_data_type());
 
-            if (context.arc_wrapped_arg_list()?.arc_arg_list().arc_self_data_declarator() != null)
+            if (context.arc_wrapped_arg_list().arc_arg_list()?.arc_self_data_declarator() != null)
             {
                 if (allowSelf)
                 {

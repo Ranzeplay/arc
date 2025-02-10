@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcGroupGenerator
     {
-        public static (ArcGroupDescriptor, ArcScopeTreeGroupNode) GenerateGroupDescriptorSkelecton(ArcGenerationSource source, ArcGroup group)
+        public static (ArcGroupDescriptor, ArcScopeTreeGroupNode) GenerateGroupDescriptorFrame(ArcGenerationSource source, ArcGroup group)
         {
             source.ParentSignature.Locators.Add(group);
             var descriptor = new ArcGroupDescriptor() { Name = source.ParentSignature.GetSignature() };

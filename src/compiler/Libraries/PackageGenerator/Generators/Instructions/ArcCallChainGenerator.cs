@@ -22,7 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 locator.Source = ArcDataSourceType.DataSlot;
 
                 var identifier = callChain.Terms.First().Identifier!;
-                var slot = source.LocalDataSlots.First(s => s.Declarator.Identifier.Name == identifier.Name);
+                var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
                 locator.LocationId = slot.SlotId;
                 lastTermTypeDecl = slot.DeclarationDescriptor;
 
@@ -37,8 +37,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var call = callChain.Terms.First().FunctionCall!;
                 result.Append(ArcFunctionCallGenerator.Generate(source, call));
 
-                var targetFunctonId = Utils.GetFunctionId(source, call);
-                var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFunctonId, true);
+                var targetFunctionId = Utils.GetFunctionId(source, call);
+                var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFunctionId, true);
                 lastTermTypeDecl = function.Descriptor.ReturnValueType;
             }
 

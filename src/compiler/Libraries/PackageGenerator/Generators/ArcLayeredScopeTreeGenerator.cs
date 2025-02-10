@@ -27,27 +27,28 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var nsSignature = current.Signature;
             foreach (var group in ns.Groups)
             {
-                var descriptor = new ArcGroupDescriptor() { Name = nsSignature + "+" + group.GetSignature() };
+                var descriptor = new ArcGroupDescriptor { Name = nsSignature + "+" + group.GetSignature() };
 
                 var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
                 var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
-
-                var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 current.AddChild(typeNode);
 
+                var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 current.AddChild(node);
             }
 
             return tree;
         }
 
-        public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
+        public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree,
+            ArcCompilationUnit unit)
         {
             var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace);
             foreach (var fn in unit.Namespace.Functions)
             {
                 var descriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
-                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
+                source.ParentSignature.Locators = source.ParentSignature.Locators
+                    .Take(source.ParentSignature.Locators.Count - 1).ToList();
                 var node = new ArcScopeTreeIndividualFunctionNode(descriptor) { SyntaxTree = fn };
                 namespaceNode.AddChild(node);
             }
@@ -57,20 +58,17 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
         public static IEnumerable<ArcCompilationUnitStructure> GenerateUnitStructure(IEnumerable<ArcCompilationUnit> units)
         {
-            var logger = units.First().Logger;
+            var unitList = units.ToList();
 
-            var pairs = units.Select(u => (u, GeneratePrimitiveGroups(u))).ToList();
+            var logger = unitList.First().Logger;
+
+            var pairs = unitList.Select(u => (u, GeneratePrimitiveGroups(u))).ToList();
             pairs.ForEach(p =>
             {
-                var u = p.u;
+                _ = p.u;
                 var t = p.Item2;
 
-                var availableTree = pairs.Select(p => p.Item2)
-                .Aggregate((a, b) =>
-                {
-                    a.MergeRoot(b);
-                    return a;
-                });
+                var availableTree = GetAvailableTree(pairs);
                 availableTree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
 
                 t.MergeRoot(availableTree, true);
@@ -81,30 +79,25 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var u = p.u;
                 var t = p.Item2;
 
-                var availableTree = pairs.Select(p => p.Item2)
-                .Aggregate((a, b) =>
-                {
-                    a.MergeRoot(b);
-                    return a;
-                });
+                var availableTree = GetAvailableTree(pairs);
 
                 t.FlattenedNodes.OfType<ArcScopeTreeGroupNode>()
-                   .ToList()
-                   .ForEach(n =>
-                   {
-                       var context = new ArcGeneratorContext() { Logger = logger, GlobalScopeTree = t };
-                       var source = context.GenerateSource([u.Namespace], n);
+                    .ToList()
+                    .ForEach(n =>
+                    {
+                        var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = availableTree };
+                        var source = context.GenerateSource([u.Namespace], n);
 
-                       source.LinkedNamespaces = u.LinkedSymbols
-                           .SelectMany(ls => pairs.Select(p => p.Item2)
-                                               .Select(t => t.GetNamespace(ls.Identifier.Namespace))
-                           )
-                           .TakeWhile(n => n != null)
-                           .Append(t.GetNamespace(u.Namespace.Identifier.Namespace))
-                           .Cast<ArcScopeTreeNamespaceNode>() ?? [];
+                        source.LinkedNamespaces = u.LinkedSymbols
+                            .SelectMany(ls => pairs.Select(p => p.Item2)
+                                .Select(it => it.GetNamespace(ls.Identifier.Namespace))
+                            )
+                            .TakeWhile(inNode => inNode != null)
+                            .Append(t.GetNamespace(u.Namespace.Identifier.Namespace))
+                            .Cast<ArcScopeTreeNamespaceNode>() ?? [];
 
-                       n.ExpandSubDescriptors(source);
-                   });
+                        n.ExpandSubDescriptors(source);
+                    });
             });
 
             pairs.ForEach(p =>
@@ -112,14 +105,10 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var u = p.u;
                 var t = p.Item2;
 
-                var availableTree = pairs.Select(p => p.Item2)
-                .Aggregate((a, b) =>
-                {
-                    a.MergeRoot(b); return a;
-                });
+                var availableTree = GetAvailableTree(pairs);
 
                 var namespaceNode = t.GetNamespace(u.Namespace.Identifier.Namespace);
-                var context = new ArcGeneratorContext() { Logger = logger, GlobalScopeTree = t };
+                var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = t };
                 var source = context.GenerateSource([u.Namespace], namespaceNode);
 
                 var individualFunctionTree = GenerateIndividualFunctions(source, t, u);
@@ -129,6 +118,16 @@ namespace Arc.Compiler.PackageGenerator.Generators
             });
 
             return pairs.Select(p => new ArcCompilationUnitStructure(p.Item2, p.u));
+        }
+
+        private static ArcScopeTree GetAvailableTree(List<(ArcCompilationUnit u, ArcScopeTree)> pairs)
+        {
+            return pairs.Select(p => p.Item2)
+                .Aggregate((a, b) =>
+                {
+                    a.MergeRoot(b);
+                    return a;
+                });
         }
     }
 }
