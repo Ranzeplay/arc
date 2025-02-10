@@ -142,10 +142,9 @@ namespace Arc.Compiler.PackageGenerator
                 }
                 else
                 {
-                    var funcNode = source.LinkedNamespaces
-                        .Select(n => n.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(n => n.Name == funcCall.Identifier.Name))
-                        .SkipWhile(n => n == null)
-                        .First()
+                    var funcNode = source.DirectlyAccessibleNodes
+                        .OfType<ArcScopeTreeFunctionNodeBase>()
+                        .FirstOrDefault(n => n.Name == funcCall.Identifier.Name)
                         ?? throw new InvalidOperationException("Invalid function node");
                     return funcNode.Descriptor.Id;
                 }
@@ -161,7 +160,7 @@ namespace Arc.Compiler.PackageGenerator
         {
             if (dataType.DataType == ArcDataType.DataMemberType.Primitive)
             {
-                var candidateTypes = source.GlobalScopeTree.FlattenedNodes.OfType<ArcScopeTreeDataTypeNode>();
+                var candidateTypes = source.DirectlyAccessibleNodes.OfType<ArcScopeTreeDataTypeNode>();
 
                 return dataType.PrimitiveType switch
                 {
@@ -185,9 +184,9 @@ namespace Arc.Compiler.PackageGenerator
                 }
                 else
                 {
-                    return source.LinkedNamespaces
-                        .Select(n => n.GetSpecificChild<ArcScopeTreeDataTypeNode>(c => c.ShortName == typeIdentifier.Name))
-                        .First();
+                    return source.DirectlyAccessibleNodes
+                        .OfType<ArcScopeTreeDataTypeNode>()
+                        .First(c => c.ShortName == typeIdentifier.Name);
                 }
             }
         }

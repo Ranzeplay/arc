@@ -10,6 +10,15 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 
         public ArcScopeTree ScopeTree { get; set; } = scopeTree;
 
+        public List<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
+
+        public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes => [
+            ..ScopeTree.GetNamespace(CompilationUnit.Namespace.Identifier.Namespace).Children,
+            ..LinkedNamespaces.SelectMany(lns => lns.Children)
+            ];
+
+        public ArcScopeTreeNamespaceNode GetCurrentNamespace => ScopeTree.GetNamespace(CompilationUnit.Namespace.Identifier.Namespace);
+
         public List<ArcSymbolBase> Symbols => ScopeTree.FlattenedNodes.SelectMany(n => n.GetSymbols()).ToList();
     }
 }

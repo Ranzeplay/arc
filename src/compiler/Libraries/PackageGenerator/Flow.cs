@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
@@ -23,6 +24,7 @@ namespace Arc.Compiler.PackageGenerator
             var globalScopeTree = structures
                 .Select(s => s.ScopeTree)
                 .Append(ArcStdlib.GetTree())
+                .Append(ArcPersistentData.BaseTypeScopeTree)
                 .Aggregate((a, b) =>
                 {
                     a.MergeRoot(b);
@@ -42,13 +44,7 @@ namespace Arc.Compiler.PackageGenerator
 
                 var genSource = iterResult.GenerateSource([unit.Namespace]);
 
-                genSource.LinkedNamespaces = unit.LinkedSymbols
-                    .SelectMany(ls => structures.Select(s => s.ScopeTree)
-                                        .Select(t => t.GetNamespace(ls.Identifier.Namespace))
-                    )
-                    .TakeWhile(n => n != null)
-                    .Append(structure.ScopeTree.GetNamespace(ns.Identifier.Namespace))
-                    .Cast<ArcScopeTreeNamespaceNode>() ?? [];
+                genSource.LinkedNamespaces = structure.LinkedNamespaces;
 
                 var funcs = structure.ScopeTree
                     .GetNodes<ArcScopeTreeIndividualFunctionNode>();
