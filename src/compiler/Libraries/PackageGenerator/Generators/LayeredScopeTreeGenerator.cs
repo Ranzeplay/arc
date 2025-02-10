@@ -34,8 +34,10 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
                 var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 node.AddChild(typeNode);
+                current.AddChild(typeNode);
 
                 current = current.AddChild(node);
+                current.AddChild(node);
             }
 
             return tree;
