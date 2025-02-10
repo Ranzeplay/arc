@@ -29,7 +29,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
 
-            Assert.That(structure.Symbols, Has.Count.EqualTo(4 + ArcPersistentData.BaseTypeScopeTree.Symbols.Count()));
+            Assert.That(structure.Symbols, Has.Count.EqualTo(5));
         }
 
         [Test]
@@ -55,7 +55,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
-            Assert.That(structure.Symbols, Has.Count.EqualTo(7 + ArcPersistentData.BaseTypeScopeTree.Symbols.Count()));
+            Assert.That(structure.Symbols, Has.Count.EqualTo(8));
         }
     }
 }
