@@ -1,15 +1,14 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use shared::models::execution::context::ExecutionContext;
 use shared::models::execution::data::DataValueType;
+use std::cell::RefCell;
+use std::rc::Rc;
 
-pub fn execute_stdlib_function(function_id: usize, context: &Rc<RefCell<ExecutionContext>>) {
-    let function_context = context.borrow().stack_frames.back().unwrap().clone();
+pub fn execute_stdlib_function(function_id: usize, exec_context: Rc<RefCell<ExecutionContext>>) {
+    let mut exec_context_ref = exec_context.borrow_mut();
     match function_id {
         0xa1 => {
             // Arc::Std::Console::PrintString
-            let mut fn_context_ref = function_context.borrow_mut();
-            let data = fn_context_ref.local_stack.pop().unwrap();
+            let data = exec_context_ref.global_stack.pop().unwrap();
 
             let data = data.borrow();
 
@@ -24,8 +23,7 @@ pub fn execute_stdlib_function(function_id: usize, context: &Rc<RefCell<Executio
         }
         0xa2 => {
             // Arc::Std::Console::PrintInteger
-            let mut fn_context_ref = function_context.borrow_mut();
-            let data = fn_context_ref.local_stack.pop().unwrap();
+            let data = exec_context_ref.global_stack.pop().unwrap();
 
             let data = data.borrow();
 

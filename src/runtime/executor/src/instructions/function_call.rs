@@ -7,13 +7,13 @@ use std::rc::Rc;
 pub fn execute_function_call(
     exec_context: Rc<RefCell<ExecutionContext>>,
     fn_context: Rc<RefCell<FunctionExecutionContext>>,
-    function_id: usize,
+    function_id: usize
 ) {
-    let call_result = execute_function(function_id, exec_context.clone());
+    let call_result = execute_function(function_id, Some(Rc::clone(&fn_context)), Rc::clone(&exec_context));
     match call_result {
         FunctionExecutionResult::Success(data_opt) => {
             if let Some(data) = data_opt {
-                fn_context.borrow_mut().local_stack.push(data);
+                exec_context.borrow_mut().global_stack.push(data);
             }
         }
         FunctionExecutionResult::Failure(x) => {

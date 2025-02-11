@@ -1,20 +1,19 @@
-use crate::models::descriptors::symbol::{FunctionSymbol, SymbolDescriptor};
+use crate::models::descriptors::symbol::FunctionSymbol;
 use crate::models::execution::data::{DataSlot, DataValue};
 use crate::models::package::Package;
 use std::cell::RefCell;
-use std::collections::VecDeque;
 use std::rc::Rc;
 
 pub struct ExecutionContext {
     pub package: Package,
-    pub stack_frames: VecDeque<Rc<RefCell<FunctionExecutionContext>>>,
+    pub global_stack: Vec<Rc<RefCell<DataValue>>>,
 }
 
 impl ExecutionContext {
     pub fn new(package: Package) -> Self {
         ExecutionContext {
             package,
-            stack_frames: VecDeque::new(),
+            global_stack: Vec::with_capacity(100),
         }
     }
 }
@@ -22,5 +21,4 @@ impl ExecutionContext {
 pub struct FunctionExecutionContext {
     pub function: Rc<FunctionSymbol>,
     pub local_data: Vec<DataSlot>,
-    pub local_stack: Vec<Rc<RefCell<DataValue>>>,
 }
