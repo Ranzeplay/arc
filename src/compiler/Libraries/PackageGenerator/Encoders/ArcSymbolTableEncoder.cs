@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
@@ -14,6 +15,8 @@ namespace Arc.Compiler.PackageGenerator.Encoders
     {
         public static IEnumerable<byte> Encode(ArcGeneratorContext context)
         {
+            var stringEncoder = new ArcStringEncoder();
+
             var result = new List<byte>();
 
             var validSymbolNodes = context.GlobalScopeTree.FlattenedNodes.Where(n => n.GetSymbols().Any());
@@ -32,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                 iterResult.Add((byte)ArcSymbolType.Function);
                                 iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.EntrypointPos));
                                 iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.BlockLength));
-                                iterResult.AddRange(Utils.SerializeString(node.Signature));
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
 
                                 // Return type descriptor
                                 iterResult.AddRange(functionDescriptor.ReturnValueType.Encode(context.Symbols.Values));
@@ -51,28 +54,28 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                         case ArcGroupDescriptor groupDescriptor:
                             {
                                 iterResult.Add((byte)ArcSymbolType.Group);
-                                iterResult.AddRange(Utils.SerializeString(node.Signature));
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
                                 iterResult.AddRange(ArcGroupSymbolEncoder.EncodeGroupSymbol(groupDescriptor));
                                 break;
                             }
                         case ArcGroupFieldDescriptor fieldDescriptor:
                             {
                                 iterResult.Add((byte)ArcSymbolType.GroupField);
-                                iterResult.AddRange(Utils.SerializeString(node.Signature));
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
                                 iterResult.AddRange(fieldDescriptor.DataType.Encode(context.Symbols.Values));
                                 break;
                             }
                         case ArcNamespaceDescriptor namespaceDescriptor:
                             {
                                 iterResult.Add((byte)ArcSymbolType.Namespace);
-                                iterResult.AddRange(Utils.SerializeString(node.Signature));
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
                                 break;
                             }
                         case ArcTypeBase typeBase:
                             {
                                 iterResult.Add((byte)ArcSymbolType.DataType);
                                 iterResult.Add((byte)((typeBase is ArcBaseType) ? 0x00 : 0x01));
-                                iterResult.AddRange(Utils.SerializeString(node.Signature));
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
                                 if (typeBase is ArcComplexType complexType)
                                 {
                                     iterResult.AddRange(BitConverter.GetBytes(complexType.GroupId));

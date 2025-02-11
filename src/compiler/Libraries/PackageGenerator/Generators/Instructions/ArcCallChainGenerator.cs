@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
@@ -37,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var call = callChain.Terms.First().FunctionCall!;
                 result.Append(ArcFunctionCallGenerator.Generate(source, call));
 
-                var targetFunctionId = Utils.GetFunctionId(source, call);
+                var targetFunctionId = ArcFunctionHelper.GetFunctionId(source, call);
                 var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFunctionId, true);
                 lastTermTypeDecl = function.Descriptor.ReturnValueType;
             }

@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
@@ -15,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            var dataType = Utils.GetDataTypeNode(source, DataDeclarator.DataType).DataType;
+            var dataType = ArcDataTypeHelper.GetDataTypeNode(source, DataDeclarator.DataType).DataType;
 
             var slot = new ArcDataSlot
             {

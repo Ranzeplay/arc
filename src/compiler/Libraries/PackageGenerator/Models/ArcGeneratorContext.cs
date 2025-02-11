@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
@@ -41,7 +42,7 @@ namespace Arc.Compiler.PackageGenerator.Models
                 // Skip non-label targets
                 if (target.TargetType != ArcRelocationTargetType.Label) continue;
 
-                target.Parameter = Utils.LocateLabelRelativeLocation(Labels, target.Parameter > 0, target, Math.Abs(target.Parameter));
+                target.Parameter = ArcRelocationHelper.LocateLabelRelativeLocation(Labels, target.Parameter > 0, target, Math.Abs(target.Parameter));
 
                 RelocationTargets[i] = target;
             }

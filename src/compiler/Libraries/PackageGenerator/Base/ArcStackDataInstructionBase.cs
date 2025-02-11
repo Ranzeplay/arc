@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Base
@@ -15,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Base
                     ..Opcode,
                     (byte)Locator.Source,
                     ..BitConverter.GetBytes(Locator.LocationId),
-                    ..Utils.SerializeArray(Locator.FieldChain.Select(f => f == null ? 0 : f.Id)),
+                    ..ArcArrayEncoder.SerializeArray(Locator.FieldChain.Select(f => f == null ? 0 : f.Id)),
                     ..Locator.Addend
                     ],
             };

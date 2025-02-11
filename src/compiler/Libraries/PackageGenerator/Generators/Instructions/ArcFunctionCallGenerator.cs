@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
@@ -11,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            long funcId = Utils.GetFunctionId(source, funcCall, searchUnderGroup);
+            long funcId = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
 
             foreach (var arg in funcCall.Arguments.Reverse())
             {

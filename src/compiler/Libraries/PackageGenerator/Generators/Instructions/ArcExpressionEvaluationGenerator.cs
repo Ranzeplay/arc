@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
@@ -34,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 case ArcDataValue.ValueType.InstantValue:
                     {
-                        var dataLocation = Utils.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
+                        var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
                         var locator = new ArcDataLocator(ArcDataSourceType.ConstantTable, dataLocation, [], []);
 
                         result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));

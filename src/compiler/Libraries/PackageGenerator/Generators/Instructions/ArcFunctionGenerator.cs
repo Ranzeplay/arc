@@ -1,5 +1,5 @@
 ﻿using Antlr4.Runtime;
-using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
@@ -61,7 +61,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = Utils.GetDataTypeNode(source, a.DataType).DataType,
+                    Type = ArcDataTypeHelper.GetDataTypeNode(source, a.DataType).DataType,
                     AllowNone = false,
                     IsArray = a.DataType.IsArray,
                     MemoryStorageType = a.DataType.MemoryStorageType,
@@ -71,7 +71,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             });
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = Utils.GetDataTypeNode(source, declarator.ReturnType).DataType,
+                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType).DataType,
                 AllowNone = false,
                 IsArray = declarator.ReturnType.IsArray,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,

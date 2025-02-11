@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
         public ArcMutability Mutability { get; set; }
 
         public ArcMemoryStorageType MemoryStorageType { get; set; }
-        
+
         public ArcDataDeclarator SyntaxTree { get; set; }
     }
 }

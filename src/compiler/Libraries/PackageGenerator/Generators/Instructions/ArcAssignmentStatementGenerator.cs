@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
@@ -32,7 +33,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var identifierSequence = assign.CallChain.Terms.Select(t => t.Identifier!.Name);
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifierSequence.First());
-            var currentDataType = Utils.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
+            var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
             var locator = new ArcDataLocator(ArcDataSourceType.DataSlot, initialSlot.SlotId, [], []);
             foreach (var identifier in identifierSequence.Skip(1))
@@ -44,10 +45,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                 if (currentDataType.DataType is ArcComplexType ct)
                 {
-                    var groupType = Utils.GetDataTypeGroupNode(source, ct);
+                    var groupType = ArcDataTypeHelper.GetDataTypeGroupNode(source, ct);
                     var field = groupType.Descriptor.Fields.First(f => f.IdentifierName == identifier);
                     locator.FieldChain.Add(field);
-                    currentDataType = Utils.GetDataTypeNode(source, field.DataType.Type);
+                    currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataType.Type);
                 }
                 else
                 {

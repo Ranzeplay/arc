@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
@@ -51,7 +52,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Name = source.ParentSignature.GetSignature(),
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = Utils.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
+                    Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
                     AllowNone = false,
                     IsArray = field.DataDeclarator.DataType.IsArray,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,

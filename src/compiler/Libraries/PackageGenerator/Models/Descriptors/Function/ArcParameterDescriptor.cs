@@ -1,6 +1,4 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-
-namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
+﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
     public class ArcParameterDescriptor
     {

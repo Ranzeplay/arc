@@ -113,7 +113,8 @@ namespace Arc.Compiler.PackageGenerator.Generators
             });
 
             // Generate individual functions for each indivudal function node in the compilation unit
-            unitStructures.ForEach(us => {
+            unitStructures.ForEach(us =>
+            {
                 var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = us.ScopeTree };
                 var source = context.GenerateSource([us.CompilationUnit.Namespace], us.GetCurrentNamespace);
                 source.LinkedNamespaces = us.LinkedNamespaces;
