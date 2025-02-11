@@ -1,3 +1,4 @@
+use crate::models::execution::data::DataValueType;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
@@ -6,6 +7,7 @@ pub struct ConstantDescriptor {
     pub type_id: usize,
     pub is_array: bool,
     pub raw_value: Vec<u8>,
+    pub decoded_value: DataValueType,
 }
 
 impl Debug for ConstantDescriptor {
