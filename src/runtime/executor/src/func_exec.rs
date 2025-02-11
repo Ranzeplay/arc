@@ -2,12 +2,10 @@ use shared::models::descriptors::symbol::Symbol;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
-use shared::models::instruction::Instruction;
 use std::cell::RefCell;
 use std::rc::Rc;
 
 pub struct FunctionInfo {
-    pub instruction_slice: Vec<Rc<Instruction>>,
     pub entry_pos: usize,
     pub block_length: usize,
     pub function_context: Rc<RefCell<FunctionExecutionContext>>,
@@ -58,17 +56,7 @@ pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<R
     let entry_pos = function_context.function.entry_pos;
     let block_length = function_context.function.block_length;
 
-    let instruction_slice = exec_context
-        .borrow()
-        .package
-        .instructions
-        .iter()
-        .filter(|&i| i.offset >= entry_pos && i.offset <= entry_pos + block_length)
-        .map(|i| i.clone())
-        .collect::<Vec<_>>();
-
     FunctionInfo {
-        instruction_slice,
         entry_pos,
         block_length,
         function_context: Rc::new(RefCell::new(function_context)),

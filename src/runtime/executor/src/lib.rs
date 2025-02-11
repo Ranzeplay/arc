@@ -4,9 +4,8 @@ mod instructions;
 mod math;
 mod stdlib;
 
-use crate::func_exec::{prepare_and_get_function_info, FunctionInfo};
+use crate::func_exec::prepare_and_get_function_info;
 use crate::instructions::function_call::execute_function_call;
-use crate::instructions::jump::get_jump_destination;
 use crate::instructions::return_function::wrap_return_value_if_needed;
 use crate::stdlib::execute_stdlib_function;
 use log::{debug, trace};
@@ -14,7 +13,7 @@ use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageTy
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
-use shared::models::instruction::{Instruction, InstructionType};
+use shared::models::instruction::InstructionType;
 use shared::models::instructions::stack_data_operation::{DataSourceType, LoadStackInstruction};
 use shared::models::package::Package;
 use std::cell::RefCell;
@@ -79,10 +78,13 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
 }
 
 pub fn execute(package: Package) -> FunctionExecutionResult {
+    let mut context = ExecutionContext::new(package);
+    context.init_jump_destinations();
+
     execute_function(
-        package.descriptor.entrypoint_function_id,
+        context.package.descriptor.entrypoint_function_id,
         None,
-        Rc::new(RefCell::new(ExecutionContext::new(package))),
+        Rc::new(RefCell::new(context)),
     )
 }
 
@@ -99,10 +101,8 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let func_info =
-        prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
+    let func_info = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
     let function_context = Rc::clone(&func_info.function_context);
-    let instruction_slice = &func_info.instruction_slice;
 
     let mut instruction_offset = func_info.entry_pos;
     loop {
@@ -110,14 +110,10 @@ pub fn execute_function(
             break;
         }
 
-        let instructions = get_instructions(&func_info, instruction_offset);
-
-        if instructions.is_empty() {
-            break;
-        }
-
-        let instruction = *instructions.first().unwrap();
-        let next_instruction = *instructions.last().unwrap();
+        let instruction = {
+            let exec_context_ref = exec_context.borrow();
+            exec_context_ref.instructions.get(&instruction_offset).unwrap().clone()
+        };
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {
@@ -190,26 +186,25 @@ pub fn execute_function(
             InstructionType::BC => {}
             InstructionType::BF => {}
             InstructionType::ETC => {}
-            InstructionType::Jmp(jump) => {
-                instruction_offset =
-                    get_jump_destination(&instruction_slice, instruction, jump.jump_offset);
-
+            InstructionType::Jmp(_) => {
+                instruction_offset = exec_context.borrow().jump_destinations[&instruction.offset];
                 continue;
             }
-            InstructionType::JmpC(jump) => {
-                let mut exec_context_ref = exec_context.borrow_mut();
-                let condition_data_value_ref = &exec_context_ref.global_stack.pop().unwrap();
-                let condition_data_value = &condition_data_value_ref.borrow().value;
+            InstructionType::JmpC(_) => {
+                let condition = {
+                    let mut exec_context_ref = exec_context.borrow_mut();
+                    let condition_data = exec_context_ref.global_stack.pop().unwrap();
 
-                let condition = match condition_data_value {
-                    DataValueType::Bool(b) => *b,
-                    _ => panic!("Invalid data type for condition"),
+                    let c = match condition_data.borrow().value {
+                        DataValueType::Bool(b) => b,
+                        _ => panic!("Invalid data type for condition"),
+                    };
+
+                    c
                 };
 
                 if !condition {
-                    instruction_offset =
-                        get_jump_destination(&instruction_slice, instruction, jump.jump_offset);
-
+                    instruction_offset = exec_context.borrow().jump_destinations[&instruction.offset];
                     continue;
                 }
             }
@@ -248,23 +243,13 @@ pub fn execute_function(
             InstructionType::SvStk(_ssi) => {}
         }
 
-        instruction_offset = next_instruction.offset;
+        instruction_offset += instruction.raw.len();
     }
 
     match result {
         FunctionExecutionResult::Invalid => FunctionExecutionResult::Success(None),
         _ => result,
     }
-}
-
-fn get_instructions(func_info: &FunctionInfo, instruction_offset: usize) -> Vec<&Rc<Instruction>> {
-    let instructions = func_info
-        .instruction_slice
-        .iter()
-        .filter(|&i| i.offset >= instruction_offset)
-        .take(2)
-        .collect::<Vec<_>>();
-    instructions
 }
 
 fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, decl: &DeclInstruction) {
