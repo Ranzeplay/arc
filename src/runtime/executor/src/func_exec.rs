@@ -27,6 +27,19 @@ pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<R
         }
     };
 
+    put_fn_args(parent_fn_opt, exec_context, &mut function_context);
+
+    let entry_pos = function_context.function.entry_pos;
+    let block_length = function_context.function.block_length;
+
+    FunctionInfo {
+        entry_pos,
+        block_length,
+        function_context: Rc::new(RefCell::new(function_context)),
+    }
+}
+
+fn put_fn_args(parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>, exec_context: Rc<RefCell<ExecutionContext>>, function_context: &mut FunctionExecutionContext) {
     if let Some(_) = parent_fn_opt {
         let current_function_arg_count = function_context.function.parameter_descriptors.len();
         for _ in 0..current_function_arg_count {
@@ -51,14 +64,5 @@ pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<R
                 value: DataValueType::None,
             })),
         });
-    }
-
-    let entry_pos = function_context.function.entry_pos;
-    let block_length = function_context.function.block_length;
-
-    FunctionInfo {
-        entry_pos,
-        block_length,
-        function_context: Rc::new(RefCell::new(function_context)),
     }
 }

@@ -1,16 +1,16 @@
-use crate::models::descriptors::symbol::FunctionSymbol;
+use crate::models::descriptors::symbol::{FunctionSymbol, Symbol};
 use crate::models::execution::data::{DataSlot, DataValue};
 use crate::models::instruction::{Instruction, InstructionType};
 use crate::models::package::Package;
 use std::cell::RefCell;
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct ExecutionContext {
     pub package: Package,
     pub global_stack: Vec<Rc<RefCell<DataValue>>>,
-    pub instructions: BTreeMap<usize, Rc<Instruction>>,
     pub jump_destinations: HashMap<usize, usize>,
+    pub function_entry_points: HashMap<usize, usize>,
 }
 
 impl ExecutionContext {
@@ -25,40 +25,31 @@ impl ExecutionContext {
             })
             .count();
 
-        let instructions = package
-            .instructions
-            .iter()
-            .map(|i| (i.offset, i.clone()))
-            .collect();
+        let function_count = package
+            .symbol_table
+            .symbols
+            .values()
+            .filter(|symbol| match symbol.value {
+                Symbol::Function(_) => true,
+                _ => false,
+            })
+            .count();
 
         ExecutionContext {
             package,
             global_stack: Vec::with_capacity(100),
             jump_destinations: HashMap::with_capacity(jump_count),
-            instructions,
+            function_entry_points: HashMap::with_capacity(function_count)
         }
     }
 
     pub fn init_jump_destinations(&mut self) {
-        let func = |instruction, offset| {
-            let destination = get_jump_destination_instruction_offset(
-                &self.package.instructions,
-                instruction,
-                offset,
-            );
-            self.package
-                .instructions
-                .iter()
-                .position(|i| i.offset == destination)
-                .unwrap()
-        };
-
-        for instruction in self.package.instructions.iter() {
+        for (index, instruction) in self.package.instructions.iter().enumerate() {
             match &instruction.instruction_type {
                 InstructionType::Jmp(dest) => {
                     _ = self.jump_destinations.insert(
-                        instruction.offset,
-                        get_jump_destination_instruction_offset(
+                        index,
+                        get_jump_destination_instruction_index(
                             &self.package.instructions,
                             instruction,
                             dest.jump_offset,
@@ -67,13 +58,31 @@ impl ExecutionContext {
                 }
                 InstructionType::JmpC(dest) => {
                     _ = self.jump_destinations.insert(
-                        instruction.offset,
-                        get_jump_destination_instruction_offset(
+                        index,
+                        get_jump_destination_instruction_index(
                             &self.package.instructions,
                             instruction,
                             dest.jump_offset,
                         ),
                     )
+                }
+                _ => {}
+            }
+        }
+    }
+
+    pub fn init_function_entry_points(&mut self) {
+        for symbol in self.package.symbol_table.symbols.values() {
+            match &symbol.value {
+                Symbol::Function(f) => {
+                    let entrypoint_instruction_index = self
+                        .package
+                        .instructions
+                        .iter()
+                        .position(|i| i.offset == f.entry_pos)
+                        .unwrap_or(0);
+
+                    self.function_entry_points.insert(symbol.id, entrypoint_instruction_index);
                 }
                 _ => {}
             }
@@ -86,7 +95,7 @@ pub struct FunctionExecutionContext {
     pub local_data: Vec<DataSlot>,
 }
 
-pub fn get_jump_destination_instruction_offset(
+pub fn get_jump_destination_instruction_index(
     instructions: &Vec<Rc<Instruction>>,
     current_instruction: &Rc<Instruction>,
     jump_offset: i64,
@@ -103,7 +112,7 @@ pub fn get_jump_destination_instruction_offset(
             .last()
             .unwrap();
 
-        target_instruction.offset
+        instructions.iter().position(|i| i.offset == target_instruction.offset).unwrap()
     } else {
         let target_instruction = instructions
             .iter()
@@ -117,6 +126,6 @@ pub fn get_jump_destination_instruction_offset(
             .last()
             .unwrap();
 
-        target_instruction.offset
+        instructions.iter().position(|i| i.offset == target_instruction.offset).unwrap()
     }
 }

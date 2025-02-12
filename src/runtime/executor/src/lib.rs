@@ -80,6 +80,7 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
 pub fn execute(package: Package) -> FunctionExecutionResult {
     let mut context = ExecutionContext::new(package);
     context.init_jump_destinations();
+    context.init_function_entry_points();
 
     execute_function(
         context.package.descriptor.entrypoint_function_id,
@@ -104,15 +105,19 @@ pub fn execute_function(
     let func_info = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
     let function_context = Rc::clone(&func_info.function_context);
 
-    let mut instruction_offset = func_info.entry_pos;
-    loop {
-        if instruction_offset >= func_info.entry_pos + func_info.block_length - 1 {
-            break;
-        }
+    let mut instruction_index = {
+        let exec_context_ref = exec_context.borrow();
+        let loc = exec_context_ref.function_entry_points[&function_id];
 
+        loc
+    };
+
+    loop {
         let instruction = {
             let exec_context_ref = exec_context.borrow();
-            exec_context_ref.instructions.get(&instruction_offset).unwrap().clone()
+            let result = exec_context_ref.package.instructions.get(instruction_index).unwrap();
+
+            Rc::clone(&result)
         };
 
         match &instruction.instruction_type {
@@ -187,7 +192,7 @@ pub fn execute_function(
             InstructionType::BF => {}
             InstructionType::ETC => {}
             InstructionType::Jmp(_) => {
-                instruction_offset = exec_context.borrow().jump_destinations[&instruction.offset];
+                instruction_index = exec_context.borrow().jump_destinations[&instruction_index];
                 continue;
             }
             InstructionType::JmpC(_) => {
@@ -204,7 +209,7 @@ pub fn execute_function(
                 };
 
                 if !condition {
-                    instruction_offset = exec_context.borrow().jump_destinations[&instruction.offset];
+                    instruction_index = exec_context.borrow().jump_destinations[&instruction_index];
                     continue;
                 }
             }
@@ -243,7 +248,7 @@ pub fn execute_function(
             InstructionType::SvStk(_ssi) => {}
         }
 
-        instruction_offset += instruction.raw.len();
+        instruction_index += 1;
     }
 
     match result {
