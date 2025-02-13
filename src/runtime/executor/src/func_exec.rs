@@ -5,13 +5,7 @@ use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub struct FunctionInfo {
-    pub entry_pos: usize,
-    pub block_length: usize,
-    pub function_context: Rc<RefCell<FunctionExecutionContext>>,
-}
-
-pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>, exec_context: Rc<RefCell<ExecutionContext>>) -> FunctionInfo {
+pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>, exec_context: Rc<RefCell<ExecutionContext>>) -> Rc<RefCell<FunctionExecutionContext>> {
     let mut function_context = {
         let exec_context_ref = exec_context.borrow();
         let current_fn_symbol_opt = exec_context_ref.package.symbol_table.symbols.get(&function_id);
@@ -29,14 +23,7 @@ pub fn prepare_and_get_function_info(function_id: usize, parent_fn_opt: Option<R
 
     put_fn_args(parent_fn_opt, exec_context, &mut function_context);
 
-    let entry_pos = function_context.function.entry_pos;
-    let block_length = function_context.function.block_length;
-
-    FunctionInfo {
-        entry_pos,
-        block_length,
-        function_context: Rc::new(RefCell::new(function_context)),
-    }
+    Rc::new(RefCell::new(function_context))
 }
 
 fn put_fn_args(parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>, exec_context: Rc<RefCell<ExecutionContext>>, function_context: &mut FunctionExecutionContext) {

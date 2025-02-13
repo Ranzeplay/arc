@@ -11,15 +11,14 @@ use crate::stdlib::execute_stdlib_function;
 use log::{debug, trace};
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
+use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use shared::models::instruction::InstructionType;
-use shared::models::instructions::stack_data_operation::{DataSourceType, LoadStackInstruction};
 use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
-use shared::models::instructions::decl::DeclInstruction;
-use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
+use crate::instructions::data_declaration::declare_data;
+use crate::instructions::stack_operations::{load_stack, pop_to_slot};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -102,8 +101,7 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let func_info = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
-    let function_context = Rc::clone(&func_info.function_context);
+    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
 
     let mut instruction_index = {
         let exec_context_ref = exec_context.borrow();
@@ -122,7 +120,7 @@ pub fn execute_function(
 
         match &instruction.instruction_type {
             InstructionType::Decl(decl) => {
-                declare_data(&function_context, decl);
+                declare_data(&function_context, decl, &exec_context.borrow().package);
             }
             InstructionType::PushI => {}
             InstructionType::PushC => {}
@@ -254,52 +252,5 @@ pub fn execute_function(
     match result {
         FunctionExecutionResult::Invalid => FunctionExecutionResult::Success(None),
         _ => result,
-    }
-}
-
-fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, decl: &DeclInstruction) {
-    let mut fn_context_ref = function_context.borrow_mut();
-    let slot_id = fn_context_ref.local_data.len();
-    fn_context_ref.local_data.push(DataSlot {
-        slot_id,
-        value: Rc::new(RefCell::new(DataValue {
-            data_type: DataTypeEncoding {
-                type_id: decl.data_type_id,
-                is_array: decl.is_array,
-                mutability: Mutability::Immutable,
-                memory_storage_type: decl.memory_storage_type.clone(),
-            },
-            value: DataValueType::None,
-        })),
-    });
-}
-
-fn pop_to_slot(exec_context: &Rc<RefCell<ExecutionContext>>, function_context: &Rc<RefCell<FunctionExecutionContext>>, pops: &PopToSlotInstruction) {
-    let fn_context_ref = function_context.borrow();
-    let mut exec_context_ref = exec_context.borrow_mut();
-    let data = exec_context_ref.global_stack.pop().unwrap();
-    let slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
-    slot.value.replace(data.borrow().to_owned());
-}
-
-fn load_stack(exec_context: &Rc<RefCell<ExecutionContext>>, function_context: Rc<RefCell<FunctionExecutionContext>>, lsi: &LoadStackInstruction) {
-    match lsi.source {
-        DataSourceType::ConstantTable => {
-            let data = data::get_data_from_constant_table(
-                &exec_context.borrow().package,
-                lsi.location_id,
-                true,
-            );
-            exec_context
-                .borrow_mut()
-                .global_stack
-                .push(Rc::new(RefCell::new(data)));
-        }
-        DataSourceType::DataSlot => {
-            let data =
-                data::get_data_from_data_slot(function_context.clone(), lsi.location_id);
-            exec_context.borrow_mut().global_stack.push(data);
-        }
-        DataSourceType::DataHandle => {}
     }
 }
