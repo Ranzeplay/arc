@@ -40,14 +40,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     .. Opcode,
                     DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
                     DataDeclarator.DataType.IsArray ? (byte)0x01 : (byte)0x00,
-                    .. BitConverter.GetBytes((long)0),
-                ],
-                RelocationTargets = [
-                    new() {
-                        Location = 3,
-                        TargetType = ArcRelocationTargetType.Symbol,
-                        Symbol = dataType
-                    }
+                    .. BitConverter.GetBytes(dataType.TypeId),
                 ],
                 DataSlots = [slot]
             };
