@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Generators.Instructions;
+using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
@@ -118,6 +119,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = globalScopeTree };
                         var source = context.GenerateSource([us.CompilationUnit.Namespace], n);
                         source.LinkedNamespaces = us.LinkedNamespaces;
+                        n.Descriptor.Annotations = [.. n.SyntaxTree.Annotations
+                            .Select(a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor)
+                            ];
                         n.ExpandSubDescriptors(source);
                     });
             });

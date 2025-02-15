@@ -47,6 +47,13 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                     iterResult.AddRange(parameter.DataType.Encode(context.Symbols.Values));
                                 }
 
+                                // Annotation descriptors
+                                iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.Annotations.LongCount()));
+                                foreach (var annotation in functionDescriptor.Annotations)
+                                {
+                                    iterResult.AddRange(BitConverter.GetBytes(annotation.Id));
+                                }
+
                                 // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);
                                 // iterResult.AddRange(BitConverter.GetBytes(entryPoint.Location));
                                 break;

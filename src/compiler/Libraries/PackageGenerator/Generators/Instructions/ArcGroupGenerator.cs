@@ -22,6 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
                 },
                 IdentifierName = field.DataDeclarator.Identifier.Name,
+                Annotations = field.Annotations.Select(a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor),
             };
 
             return result;

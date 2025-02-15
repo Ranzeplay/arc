@@ -21,7 +21,10 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 ..group.Functions.SelectMany(function => BitConverter.GetBytes(function.Id)),
                 // Subgroup id list
                 ..BitConverter.GetBytes((long) group.Groups.Count),
-                ..group.Groups.SelectMany(subGroup => BitConverter.GetBytes(subGroup.Id))
+                ..group.Groups.SelectMany(subGroup => BitConverter.GetBytes(subGroup.Id)),
+                // Annotation id list
+                ..BitConverter.GetBytes((long) group.Annotations.Count),
+                ..group.Annotations.SelectMany(annotation => BitConverter.GetBytes(annotation.Id)),
             ];
         }
     }
