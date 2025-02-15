@@ -42,12 +42,13 @@ pub struct FunctionSymbol {
     pub entry_pos: usize,
     pub block_length: usize,
     pub return_value_descriptor: Rc<DataTypeEncoding>,
+    pub annotation_ids: Vec<usize>,
     pub parameter_descriptors: Vec<Rc<DataTypeEncoding>>,
 }
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[FN] {} at {}(+{})", self.signature, self.entry_pos, self.block_length)
+        writeln!(f, "[FN] {} at {}(+{}) A:{}", self.signature, self.entry_pos, self.block_length, self.annotation_ids.len())
     }
 }
 
@@ -59,6 +60,7 @@ pub struct GroupSymbol {
     pub destructor_ids: Vec<usize>,
     pub function_ids: Vec<usize>,
     pub sub_group_ids: Vec<usize>,
+    pub annotation_ids: Vec<usize>,
 }
 
 impl Debug for GroupSymbol {

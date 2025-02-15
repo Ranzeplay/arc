@@ -34,6 +34,11 @@ impl Debug for GroupDetailViewModel {
             writeln!(f, "  {:016X}", subgroup_id)?;
         }
 
+        writeln!(f, "= Annotations:")?;
+        for annotation_id in &self.group.annotation_ids {
+            writeln!(f, "  0x{:016X}", annotation_id)?;
+        }
+
         Ok(())
     }
 }

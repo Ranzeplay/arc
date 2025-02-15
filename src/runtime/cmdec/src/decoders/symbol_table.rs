@@ -65,6 +65,9 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
         parameter_descriptors_vec.push(Rc::new(d));
     }
 
+    let (annotations, annotation_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += annotation_len;
+
     (
         Symbol::Function(Rc::new(FunctionSymbol {
             entry_pos,
@@ -72,6 +75,7 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
             signature,
             return_value_descriptor: Rc::new(return_value_descriptor),
             parameter_descriptors: parameter_descriptors_vec,
+            annotation_ids: annotations,
         })),
         pos,
     )
@@ -86,8 +90,7 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (field_ids, field_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += field_ids_len;
 
-    let (constructor_ids, constructor_ids_len) =
-        SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    let (constructor_ids, constructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += constructor_ids_len;
 
     let (destructor_ids, destructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
@@ -99,6 +102,9 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (sub_group_ids, sub_group_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += sub_group_ids_len;
 
+    let (annotation_ids, annotation_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += annotation_ids_len;
+
     let result = Symbol::Group(Rc::new(GroupSymbol {
         signature,
         field_ids,
@@ -106,6 +112,7 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
         destructor_ids,
         function_ids,
         sub_group_ids,
+        annotation_ids,
     }));
     (result, pos)
 }
