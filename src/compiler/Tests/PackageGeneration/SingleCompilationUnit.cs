@@ -64,7 +64,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([unit]);
-            Assert.That(context.Symbols, Has.Count.EqualTo(23));
+            Assert.That(context.Symbols, Has.Count.EqualTo(24));
         }
 
         [Test]
