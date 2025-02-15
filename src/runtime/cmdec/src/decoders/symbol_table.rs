@@ -1,8 +1,5 @@
 use std::collections::HashMap;
-use shared::models::descriptors::symbol::{
-    DataTypeSymbol, ComplexTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol,
-    NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable,
-};
+use shared::models::descriptors::symbol::{DataTypeSymbol, ComplexTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable, AnnotationSymbol};
 use shared::models::encodings::data_type_enc::DataTypeEncoding;
 use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use shared::models::encodings::str_enc::StringEncoding;
@@ -36,6 +33,7 @@ fn decode_symbol(stream: &[u8]) -> (Symbol, usize) {
         0x03 => decode_group_field_descriptor(&stream[1..]),
         0x04 => decode_data_type_descriptor(&stream[1..]),
         0x06 => decode_group_descriptor(&stream[1..]),
+        0x07 => decode_annotation_descriptor(&stream[1..]),
         _ => unreachable!(),
     };
 
@@ -163,4 +161,17 @@ pub fn decode_namespace_descriptor(stream: &[u8]) -> (Symbol, usize) {
 
     let result = Symbol::Namespace(Rc::new(NamespaceSymbol { signature }));
     (result, name_encoding.total_size)
+}
+
+pub fn decode_annotation_descriptor(stream: &[u8]) -> (Symbol, usize) {
+    let mut pos = 0;
+    let name_encoding = StringEncoding::from_u8(&stream[pos..]);
+    let signature = name_encoding.value;
+    pos += name_encoding.total_size;
+
+    let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    pos += 8;
+
+    let result = Symbol::Annotation(Rc::new(AnnotationSymbol { signature, group_id }));
+    (result, pos)
 }

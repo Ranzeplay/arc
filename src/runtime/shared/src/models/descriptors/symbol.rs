@@ -14,6 +14,7 @@ pub enum Symbol {
     Group(Rc<GroupSymbol>),
     GroupField(Rc<GroupFieldSymbol>),
     Namespace(Rc<NamespaceSymbol>),
+    Annotation(Rc<AnnotationSymbol>),
 }
 
 pub enum DataTypeSymbol {
@@ -94,6 +95,17 @@ impl Debug for NamespaceSymbol {
     }
 }
 
+pub struct AnnotationSymbol {
+    pub signature: String,
+    pub group_id: usize,
+}
+
+impl Debug for AnnotationSymbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "[AN] {} -> 0x{:016X}", self.signature, self.group_id)
+    }
+}
+
 pub struct SymbolTable {
     pub symbols: HashMap<usize, SymbolDescriptor>,
 }
@@ -109,6 +121,7 @@ impl Debug for SymbolTable {
                 Symbol::Group(group) => write!(f, "{:?}", group)?,
                 Symbol::GroupField(group_field) => write!(f, "{:?}", group_field)?,
                 Symbol::Namespace(namespace) => write!(f, "{:?}", namespace)?,
+                Symbol::Annotation(annotation) => write!(f, "{:?}", annotation)?,
             }
         }
         Ok(())
