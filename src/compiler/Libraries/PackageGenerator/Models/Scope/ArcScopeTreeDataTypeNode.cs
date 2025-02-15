@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcTypeBase DataType { get; set; } = dataType;
 
-        public override string SignatureAddend => "T" + DataType.FullName;
+        public override string SignatureAddend => "T" + ShortName;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
 
