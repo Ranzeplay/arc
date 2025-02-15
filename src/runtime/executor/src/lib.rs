@@ -18,7 +18,7 @@ use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
 use crate::instructions::data_declaration::declare_data;
-use crate::instructions::stack_operations::{load_stack, pop_to_slot};
+use crate::instructions::stack_operations::{load_stack, pop_to_slot, save_stack};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -93,7 +93,7 @@ pub fn execute_function(
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
 ) -> FunctionExecutionResult {
-    let mut result = FunctionExecutionResult::Invalid;
+    let result;
 
     if function_id >= 0xa1 && function_id <= 0xff {
         trace!("Executing stdlib function");
@@ -243,7 +243,7 @@ pub fn execute_function(
                 );
             }
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
-            InstructionType::SvStk(_ssi) => {}
+            InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
         }
 
         instruction_index += 1;

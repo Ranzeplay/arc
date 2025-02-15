@@ -32,7 +32,7 @@ pub fn execute_stdlib_function(function_id: usize, exec_context: Rc<RefCell<Exec
                     print!("{}", i);
                 }
                 _ => {
-                    panic!("Invalid data type")
+                    panic!("Invalid data type, unexpected type 0x{:016X}", data.data_type.type_id)
                 }
             }
         }

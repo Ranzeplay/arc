@@ -1,4 +1,4 @@
-use crate::models::descriptors::symbol::Symbol;
+use crate::models::descriptors::symbol::{DataTypeSymbol, Symbol};
 use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -10,13 +10,13 @@ pub struct DataSlot {
     pub value: Rc<RefCell<DataValue>>,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct DataValue {
     pub data_type: DataTypeEncoding,
     pub value: DataValueType,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum DataValueType {
     Bool(bool),
     Integer(i64),
@@ -38,18 +38,33 @@ impl DataValueType {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ComplexDataValue {
     pub data_type: Rc<DataTypeEncoding>,
     pub values: HashMap<usize, Rc<RefCell<DataValue>>>,
 }
 
 impl ComplexDataValue {
-    pub fn init(data_type: &Rc<DataTypeEncoding>, package: &Package) -> ComplexDataValue {
+    pub fn init(data_type_enc: &Rc<DataTypeEncoding>, package: &Package) -> ComplexDataValue {
+        let data_type_symbol = package
+            .symbol_table
+            .symbols
+            .get(&data_type_enc.type_id)
+            .unwrap();
+        let data_type = match &data_type_symbol.value {
+            Symbol::DataType(dt) => dt,
+            _ => panic!("Data type is not a group"),
+        };
+
+        let complex_type = match data_type.as_ref() {
+            DataTypeSymbol::ComplexType(ct) => ct,
+            _ => panic!("Data type is not a complex type"),
+        };
+
         let group_symbol = package
             .symbol_table
             .symbols
-            .get(&data_type.type_id)
+            .get(&complex_type.group_id)
             .unwrap();
         let group = match &group_symbol.value {
             Symbol::Group(group) => group,
@@ -73,7 +88,7 @@ impl ComplexDataValue {
         }
 
         ComplexDataValue {
-            data_type: Rc::clone(data_type),
+            data_type: Rc::clone(data_type_enc),
             values,
         }
     }
