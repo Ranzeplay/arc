@@ -23,12 +23,16 @@ namespace Arc.Compiler.Circle
                 builder.SetMinimumLevel(logLevel);
             }).CreateLogger("Circle CLI");
 
+            logger.LogInformation("Processing {} file(s)", inputs.Length);
+
             // We can ensure that inputs is not empty because of the validator
+            logger.LogInformation("Analyzing source code structure");
             var compilationUnits = inputs
                 .Select(t => new { Content = File.ReadAllText(t), Path = t })
                 .Select(t => new { Context = AntlrAdapter.ParseCompilationUnit(t.Content, logger), t.Path })
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
+            logger.LogInformation("Encoding instructions");
             var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
@@ -44,9 +48,10 @@ namespace Arc.Compiler.Circle
             };
             context.SetEntrypointFunctionId();
 
+            logger.LogInformation("Generating byte stream");
             var outputStream = context.DumpFullByteStream();
 
-            File.WriteAllBytes(output, outputStream.ToArray());
+            File.WriteAllBytes(output, [.. outputStream]);
         }
     }
 }
