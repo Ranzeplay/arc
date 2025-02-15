@@ -8,6 +8,7 @@
         DataType = 0x04,
         Constant = 0x05,
         Group = 0x06,
+        Annotation = 0x07,
         Invalid = 0x00
     }
 }

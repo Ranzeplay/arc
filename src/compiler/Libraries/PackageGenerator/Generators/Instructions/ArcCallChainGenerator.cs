@@ -56,7 +56,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (call.Type == ArcCallChainTermType.FunctionCall)
                 {
                     // Batch select fields
-
                     if (locator.FieldChain.Count > 0 || locator.Source == ArcDataSourceType.DataSlot)
                     {
                         result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));

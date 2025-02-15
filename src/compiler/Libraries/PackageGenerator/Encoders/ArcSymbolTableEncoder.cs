@@ -82,6 +82,13 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                 }
                                 break;
                             }
+                        case ArcAnnotationDescriptor annotationDescriptor:
+                            {
+                                iterResult.Add((byte)ArcSymbolType.Annotation);
+                                iterResult.AddRange(stringEncoder.Encode(node.Signature));
+                                iterResult.AddRange(BitConverter.GetBytes(annotationDescriptor.TargetGroup.Id));
+                                break;
+                            }
                     }
 
                     // Print iterResult in hex

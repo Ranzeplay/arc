@@ -9,6 +9,7 @@
         GroupField,
         IndividualFunction,
         FunctionData,
-        DataType
+        DataType,
+        Annotation
     }
 }

@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
@@ -27,6 +28,15 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
                 var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
                 current.AddChild(typeNode);
+
+                var annotationDescriptor = new ArcAnnotationDescriptor()
+                {
+                    Name = descriptor.Name,
+                    TargetGroup = descriptor,
+                    GroupShortName = group.Identifier.Name
+                };
+                var annotationNode = new ArcScopeTreeAnnotationNode(annotationDescriptor);
+                current.AddChild(annotationNode);
 
                 var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
                 current.AddChild(node);
