@@ -3,7 +3,6 @@ using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions

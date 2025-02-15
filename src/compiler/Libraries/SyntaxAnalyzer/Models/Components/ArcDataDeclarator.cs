@@ -30,7 +30,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
             RegularContext = context;
         }
 
-        public ArcDataDeclarator(ArcSourceCodeParser.Arc_self_data_declaratorContext context) {
+        public ArcDataDeclarator(ArcSourceCodeParser.Arc_self_data_declaratorContext context)
+        {
             MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
             Mutability = ArcMutabilityUtils.FromToken(context.arc_mutability());
             Identifier = new("self");

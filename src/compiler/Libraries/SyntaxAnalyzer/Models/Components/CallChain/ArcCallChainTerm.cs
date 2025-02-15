@@ -19,7 +19,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
                 Type = ArcCallChainTermType.FunctionCall;
                 FunctionCall = new ArcFunctionCall(context.arc_function_call_base());
             }
-            else if(context.KW_SELF() != null)
+            else if (context.KW_SELF() != null)
             {
                 Type = ArcCallChainTermType.Identifier;
                 Identifier = new ArcFlexibleIdentifier(["self"]);
