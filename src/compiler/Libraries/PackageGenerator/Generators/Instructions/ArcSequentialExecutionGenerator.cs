@@ -53,7 +53,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementCall call:
                         {
-                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall);
+                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false);
                             // Discard the result of the function call
                             stepResult.Append(new ArcDiscardStackTopInstruction().Encode(source));
                             break;

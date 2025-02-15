@@ -8,18 +8,20 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcFunctionCallGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, bool isSelfFunction, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {
             var result = new ArcPartialGenerationResult();
 
             long funcId = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
 
-            foreach (var arg in funcCall.Arguments.Reverse())
+            foreach (var arg in funcCall.Arguments)
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression));
             }
 
-            result.Append(new ArcFunctionCallInstruction(funcId, funcCall.Arguments.Count()).Encode(source));
+            var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
+
+            result.Append(new ArcFunctionCallInstruction(funcId, totalArgs).Encode(source));
 
             return result;
         }

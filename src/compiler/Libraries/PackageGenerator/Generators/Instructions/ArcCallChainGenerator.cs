@@ -36,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             else
             {
                 var call = callChain.Terms.First().FunctionCall!;
-                result.Append(ArcFunctionCallGenerator.Generate(source, call));
+                result.Append(ArcFunctionCallGenerator.Generate(source, call, false));
 
                 var targetFunctionId = ArcFunctionHelper.GetFunctionId(source, call);
                 var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFunctionId, true);
@@ -56,13 +56,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (call.Type == ArcCallChainTermType.FunctionCall)
                 {
                     // Batch select fields
-                    if (locator.FieldChain.Count > 0)
+
+                    if (locator.FieldChain.Count > 0 || locator.Source == ArcDataSourceType.DataSlot)
                     {
                         result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                     }
 
                     // Handle the function call of this term
-                    result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, group));
+                    result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, true, group));
 
                     // Reset locator
                     locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
