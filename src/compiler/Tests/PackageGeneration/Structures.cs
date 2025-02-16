@@ -34,7 +34,9 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void SingleCompilationUnitWithGroup()
         {
-            var text = @"namespace Arc::Program {
+            var text = @"
+                        link Arc::Std::Compilation;
+                        namespace Arc::Program {
                             @Export
                         	public group ArcExample {
                         		@Getter

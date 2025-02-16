@@ -12,7 +12,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
     {
         private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<Groups>();
 
-        private readonly string _text = @"			
+        private readonly string _text = @"
+            link Arc::Std::Compilation;
 			namespace Arc::Program {
             	public group Foo {
             		@Getter

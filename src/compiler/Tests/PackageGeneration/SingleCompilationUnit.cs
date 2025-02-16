@@ -14,6 +14,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
         private readonly string _text = @"
 			link Arc::Std;
+            link Arc::Std::Compilation;
 			
 			namespace Arc::Program {
 				@Export
@@ -64,7 +65,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([unit]);
-            Assert.That(context.Symbols, Has.Count.EqualTo(24));
+            Assert.That(context.Symbols, Has.Count.EqualTo(37));
         }
 
         [Test]
@@ -97,10 +98,11 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var text = @"
                 link Arc::Std::Console;
+                link Arc::Std::Compilation;
 
                 namespace Arc::Program {
-                	@Export
-                	@Entrypoint
+                	@Export()
+                	@Entrypoint()
                 	public func main(var args: val string[]): val int {
                 		call PrintString(""Hello, world!\n"");
                 		return 0;
@@ -133,6 +135,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var text = @"
                 link Arc::Std::Console;
+                link Arc::Std::Compilation;
 
                 namespace Arc::Program {
                 	# @Export

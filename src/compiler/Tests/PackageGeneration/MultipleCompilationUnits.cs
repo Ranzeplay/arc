@@ -12,7 +12,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
     {
         private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SingleCompilationUnit>();
 
-        private readonly string _text1 = @"			
+        private readonly string _text1 = @"
+            link Arc::Std::Compilation;
 			namespace Arc::Program {
 				@Export
 				public group ArcExample {
