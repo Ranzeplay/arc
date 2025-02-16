@@ -3,11 +3,13 @@ use crate::models::encodings::data_type_enc::DataTypeEncoding;
 use std::fmt::Debug;
 use std::rc::Rc;
 
+#[derive(Debug, Clone)]
 pub struct SymbolDescriptor {
     pub id: usize,
     pub value: Symbol,
 }
 
+#[derive(Debug, Clone)]
 pub enum Symbol {
     DataType(Rc<DataTypeSymbol>),
     Function(Rc<FunctionSymbol>),
@@ -108,6 +110,7 @@ impl Debug for AnnotationSymbol {
     }
 }
 
+#[derive(Clone)]
 pub struct SymbolTable {
     pub symbols: HashMap<usize, SymbolDescriptor>,
 }

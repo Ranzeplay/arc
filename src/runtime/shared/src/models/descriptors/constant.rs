@@ -2,6 +2,7 @@ use crate::models::execution::data::DataValueType;
 use std::collections::HashMap;
 use std::fmt::Debug;
 
+#[derive(Clone)]
 pub struct ConstantDescriptor {
     pub id: usize,
     pub type_id: usize,
@@ -18,6 +19,7 @@ impl Debug for ConstantDescriptor {
     }
 }
 
+#[derive(Clone)]
 pub struct ConstantTable {
     pub constants: HashMap<usize, ConstantDescriptor>,
 }

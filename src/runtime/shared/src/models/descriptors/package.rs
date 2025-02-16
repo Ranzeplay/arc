@@ -1,11 +1,13 @@
 use std::fmt::Debug;
 
+#[derive(Debug, Clone)]
 pub enum PackageType {
     Library,
     Executable,
     Invalid
 }
 
+#[derive(Clone)]
 pub struct PackageDescriptor {
     pub package_type: PackageType,
     pub name: String,

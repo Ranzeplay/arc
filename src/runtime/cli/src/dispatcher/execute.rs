@@ -1,10 +1,14 @@
 use executor::launch;
 use shared::models::package::Package;
 
-pub fn execute(package: Package, verbose: bool) -> i32 {
-    let result = launch(package, verbose);
-    result.unwrap_or_else(|e| {
-        log::error!("Error: {}", e);
-        0xffff
-    })
+pub fn execute(package: Package, verbose: bool, repeat: u32) -> i32 {
+    for _ in 0..repeat {
+        let result = launch(package.clone(), verbose);
+        if let Err(e) = result {
+            log::error!("Error: {}", e);
+            return 0xffff;
+        }
+    }
+
+    0
 }

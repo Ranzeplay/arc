@@ -36,7 +36,7 @@ fn main() {
 
     let mut return_value = 0;
     if !args.decode {
-        return_value = execute(package, args.verbose);
+        return_value = execute(package, args.verbose, args.repeat);
     }
 
     exit(return_value);

@@ -12,4 +12,6 @@ pub struct Args {
     pub decode: bool,
     #[clap(short, long, help = "Path to the package file")]
     pub path: Option<PathBuf>,
+    #[clap(short, long, help = "Repeat execution for specific times", requires("path"), default_value("1"))]
+    pub repeat: u32,
 }
