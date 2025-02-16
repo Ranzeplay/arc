@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
@@ -148,10 +149,10 @@ namespace Arc.Compiler.PackageGenerator.Models
         {
             if (PackageDescriptor.Type == ArcPackageType.Executable)
             {
-                var entrypoint = GlobalScopeTree.Root
-                    .GetSpecificChild<ArcScopeTreeFunctionNodeBase>(n => n.Name == "main", true)
-                    ?? throw new InvalidOperationException("Entrypoint function not found");
-                PackageDescriptor.EntrypointFunctionId = entrypoint.Id;
+                var targetFunction = GlobalScopeTree.Symbols
+                    .OfType<ArcFunctionDescriptor>()
+                    .First(f => f.Annotations.Any(a => a.Id == 0xb11));
+                PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
             }
         }
     }
