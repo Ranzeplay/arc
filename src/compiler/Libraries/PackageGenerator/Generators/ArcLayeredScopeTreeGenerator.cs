@@ -24,7 +24,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var nsSignature = current.Signature;
             foreach (var group in ns.Groups)
             {
-                var descriptor = new ArcGroupDescriptor { Name = nsSignature + "+" + group.GetSignature() };
+                var descriptor = new ArcGroupDescriptor { Name = nsSignature + "+" + group.GetSignature(), ShortName = group.Identifier.Name };
 
                 var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
                 var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
@@ -34,7 +34,6 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 {
                     Name = descriptor.Name,
                     TargetGroup = descriptor,
-                    GroupShortName = group.Identifier.Name
                 };
                 var annotationNode = new ArcScopeTreeAnnotationNode(annotationDescriptor);
                 current.AddChild(annotationNode);

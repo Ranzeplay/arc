@@ -6,6 +6,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 {
     public class ArcGroupDescriptor : ArcSymbolBase
     {
+        public string ShortName { get; set; }
+
         public List<ArcFunctionDescriptor> Functions { get; set; } = [];
 
         public List<ArcFunctionDescriptor> Constructors { get; set; } = [];

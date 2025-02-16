@@ -16,9 +16,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcGroup SyntaxTree { get; set; }
 
-        public override string SignatureAddend => SyntaxTree.GetSignature();
+        public override string SignatureAddend => Descriptor.ShortName;
 
-        public override string Name => Descriptor.Name;
+        public override string Name => Descriptor.ShortName;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
 

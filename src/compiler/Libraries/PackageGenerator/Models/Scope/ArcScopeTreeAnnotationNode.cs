@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcAnnotationDescriptor Descriptor { get; set; } = descriptor;
 
-        public override string SignatureAddend => "A" + Descriptor.GroupShortName;
+        public override string SignatureAddend => "A" + Descriptor.TargetGroup.ShortName;
 
         public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
     }

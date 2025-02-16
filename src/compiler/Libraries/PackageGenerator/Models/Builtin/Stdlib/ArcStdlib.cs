@@ -10,9 +10,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
             var tree = treeResult.Item1;
             var stdNamespace = treeResult.Item2;
 
-            stdNamespace.AddChild(
-                ArcStdlibConsole.GetNamespace()
-            );
+            stdNamespace
+                .AddChildChained(ArcStdlibConsole.GetNamespace())
+                .AddChildChained(ArcStdlibCompilation.GetNamespace());
 
             return tree;
         }

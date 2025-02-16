@@ -1,4 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
@@ -18,8 +20,29 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             {
                 return source.DirectlyAccessibleNodes
                     .OfType<ArcScopeTreeAnnotationNode>()
-                    .First(c => c.Descriptor.GroupShortName == annotationIdentifier.Name);
+                    .First(c => c.Descriptor.TargetGroup.ShortName == annotationIdentifier.Name);
             }
+        }
+
+        public static IEnumerable<ArcScopeTreeNodeBase> GenerateEmptyAnnotation(string name, long groupId, long annotationId)
+        {
+            var groupDescriptor = new ArcGroupDescriptor
+            {
+                Name = name,
+                Id = groupId,
+                ShortName = name
+            };
+            var annotationDescriptor = new ArcAnnotationDescriptor
+            {
+                Name = name,
+                Id = annotationId,
+                TargetGroup = groupDescriptor
+            };
+
+            var groupNode = new ArcScopeTreeGroupNode(groupDescriptor);
+            var annotationNode = new ArcScopeTreeAnnotationNode(annotationDescriptor);
+
+            return [groupNode, annotationNode];
         }
     }
 }
