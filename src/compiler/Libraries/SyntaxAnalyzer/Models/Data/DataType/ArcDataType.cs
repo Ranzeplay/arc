@@ -8,7 +8,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
     {
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {
-            IsArray = context.arc_array_indicator() != null;
+            Dimension = context.arc_array_indicator().Length;
             DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Complex;
             MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_mem_store_type());
             if (DataType == DataMemberType.Primitive)
@@ -37,7 +37,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
-        public bool IsArray { get; set; }
+        public int Dimension { get; set; }
 
         public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
 
@@ -48,7 +48,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             _ => string.Empty
         };
 
-        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(IsArray ? "A" : "S")}{TypeName}";
+        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(Dimension > 0 ? "A" : "S")}{TypeName}";
 
         public string GetSignature() => ToString();
     }

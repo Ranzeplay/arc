@@ -16,7 +16,7 @@ arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
 arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_NONE | KW_ANY | KW_INFER;
 arc_array_indicator: LBRACKET RBRACKET;
-arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator?;
+arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator*;
 
 arc_data_declarator: arc_mutability arc_single_identifier COLON arc_data_type;
 arc_self_data_declarator: arc_mutability KW_SELF COLON arc_data_type;
@@ -100,6 +100,8 @@ arc_group_constructor: arc_annotation* arc_accessibility KW_CONSTRUCTOR arc_wrap
 arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrapped_function_body;
 arc_group_function: arc_function_block;
 
+arc_index: LBRACKET arc_expression RBRACKET;
+
 // Call chain
 arc_call_chain: arc_call_chain_term (DOT arc_call_chain_term)*;
-arc_call_chain_term: arc_flexible_identifier | arc_function_call_base | KW_SELF;
+arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | KW_SELF) arc_index*;

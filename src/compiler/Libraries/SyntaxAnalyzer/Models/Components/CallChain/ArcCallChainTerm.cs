@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 using System.Diagnostics;
@@ -28,6 +29,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
             {
                 throw new UnreachableException();
             }
+
+            Indices = (context.arc_index() != null && context.arc_index().Length > 0) ?
+                context.arc_index().Select(i => new ArcExpression(i.arc_expression())) :
+                [];
         }
 
         public ArcCallChainTermType Type { get; set; }
@@ -35,5 +40,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
         public ArcFlexibleIdentifier? Identifier { get; set; }
 
         public ArcFunctionCall? FunctionCall { get; set; }
+
+        public IEnumerable<ArcExpression> Indices { get; set; }
     }
 }
