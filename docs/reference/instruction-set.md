@@ -64,3 +64,6 @@ title: Instruction set
 | 0x38   | svstk    | Save data from stack                                                        |
 | 0x39   | neqc     | Compare if two objects on the top of the stack have the different content   |
 | 0x40   | neqr     | Compare if two objects on the top of the stack have the different reference |
+| 0x43   | ldidx    | Load the element of the index of an array to the stack                      |
+| 0x44   | rmidx    | Remove the element of an array from index                                   |
+| 0x45   | psarr    | Push an element to the array                                                |
