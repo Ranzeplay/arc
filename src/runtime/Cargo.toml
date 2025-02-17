@@ -5,6 +5,7 @@ members = [
     "cli",
     "cmdec",
     "executor",
+    "stdlib",
     "shared",
     "tests",
 ]
