@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var dataType = symbols.First(x => x is ArcTypeBase && x.Name == decl.Type.FullName);
             return [
                 decl.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
-                decl.IsArray ? (byte)0x01 : (byte)0x00,
+                .. BitConverter.GetBytes(decl.Dimension),
                 decl.Mutability == ArcMutability.Variable ? (byte)0x01 : (byte)0x00,
                 .. BitConverter.GetBytes(dataType.Id),
             ];

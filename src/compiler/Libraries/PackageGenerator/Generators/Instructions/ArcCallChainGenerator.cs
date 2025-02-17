@@ -64,6 +64,16 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     // Handle the function call of this term
                     result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, true, group));
 
+                    if (call.Indices.Any())
+                    {
+                        foreach (var expr in call.Indices)
+                        {
+                            result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                        }
+                        result.Append(new ArcLoadArrayIndexInstruction(call.Indices.Count()).Encode(source));
+                    }
+                    
+
                     // Reset locator
                     locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
                 }
@@ -72,6 +82,18 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     var field = group.Descriptor.Fields.First(f => f.IdentifierName == call.Identifier!.Name);
                     locator.FieldChain.Add(field);
                     lastTermTypeDecl = field.DataType;
+
+                    if (call.Indices.Any())
+                    {
+                        foreach (var expr in call.Indices)
+                        {
+                            result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                        }
+                        result.Append(new ArcLoadArrayIndexInstruction(call.Indices.Count()).Encode(source));
+
+                        // Reset locator
+                        locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
+                    }
                 }
             }
 

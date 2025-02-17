@@ -8,7 +8,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
     {
         public required ArcTypeBase Type { get; set; }
 
-        public bool IsArray { get; set; }
+        public int Dimension { get; set; }
 
         public bool AllowNone { get; set; }
 

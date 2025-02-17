@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     Type = ArcDataTypeHelper.GetDataTypeNode(source, a.DataType).DataType,
                     AllowNone = false,
-                    IsArray = a.DataType.IsArray,
+                    Dimension = a.DataType.Dimension,
                     MemoryStorageType = a.DataType.MemoryStorageType,
                     SyntaxTree = a.DataDeclarator,
                 },
@@ -73,7 +73,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType).DataType,
                 AllowNone = false,
-                IsArray = declarator.ReturnType.IsArray,
+                Dimension = declarator.ReturnType.Dimension,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
             };
 

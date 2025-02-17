@@ -24,7 +24,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 {
                     Type = dataType,
                     AllowNone = false,
-                    IsArray = DataDeclarator.DataType.IsArray,
+                    Dimension = DataDeclarator.DataType.Dimension,
                     MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
                     SyntaxTree = DataDeclarator,
                 },
@@ -38,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 [
                     .. Opcode,
                     DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
-                    DataDeclarator.DataType.IsArray ? (byte)0x01 : (byte)0x00,
+                    .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
                     .. BitConverter.GetBytes(dataType.TypeId),
                 ],
                 DataSlots = [slot]

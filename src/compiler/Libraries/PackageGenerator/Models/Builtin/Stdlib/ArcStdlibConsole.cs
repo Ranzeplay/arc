@@ -27,7 +27,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                         {
                                             Type = ArcPersistentData.StringType,
                                             AllowNone = false,
-                                            IsArray = false,
+                                            Dimension = 0,
                                             MemoryStorageType = ArcMemoryStorageType.Reference,
                                             Mutability = ArcMutability.Constant,
                                         },
@@ -38,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 {
                                     Type = ArcPersistentData.NoneType,
                                     AllowNone = false,
-                                    IsArray = false,
+                                    Dimension = 0,
                                     MemoryStorageType = ArcMemoryStorageType.Reference,
                                     Mutability = ArcMutability.Constant,
                                 }
@@ -61,7 +61,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                         {
                                             Type = ArcPersistentData.IntType,
                                             AllowNone = false,
-                                            IsArray = false,
+                                            Dimension = 0,
                                             MemoryStorageType = ArcMemoryStorageType.Reference,
                                             Mutability = ArcMutability.Constant,
                                         },
@@ -72,7 +72,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 {
                                     Type = ArcPersistentData.NoneType,
                                     AllowNone = false,
-                                    IsArray = false,
+                                    Dimension = 0,
                                     MemoryStorageType = ArcMemoryStorageType.Reference,
                                     Mutability = ArcMutability.Constant,
                                 }
@@ -92,7 +92,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 {
                                     Type = ArcPersistentData.StringType,
                                     AllowNone = false,
-                                    IsArray = false,
+                                    Dimension = 0,
                                     MemoryStorageType = ArcMemoryStorageType.Value,
                                     Mutability = ArcMutability.Constant,
                                 }

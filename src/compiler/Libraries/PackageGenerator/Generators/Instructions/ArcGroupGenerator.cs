@@ -18,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
                     AllowNone = false,
-                    IsArray = field.DataDeclarator.DataType.IsArray,
+                    Dimension = field.DataDeclarator.DataType.Dimension,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
                 },
                 IdentifierName = field.DataDeclarator.Identifier.Name,
