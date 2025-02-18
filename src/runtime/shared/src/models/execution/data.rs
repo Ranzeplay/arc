@@ -30,7 +30,7 @@ pub enum DataValueType {
 
 impl DataValueType {
     pub fn init(data_type_encoding: Rc<DataTypeEncoding>, package: &Package) -> DataValueType {
-        if data_type_encoding.type_id >= 0 && data_type_encoding.type_id <= 6 {
+        if data_type_encoding.type_id <= 6 {
             DataValueType::None
         } else {
             DataValueType::Complex(ComplexDataValue::init(&data_type_encoding, package))

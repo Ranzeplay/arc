@@ -9,3 +9,7 @@ members = [
     "shared",
     "tests",
 ]
+
+[profile.profiling]
+inherits = "release"
+debug = true
