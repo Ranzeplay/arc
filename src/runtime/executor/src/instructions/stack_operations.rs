@@ -24,26 +24,43 @@ pub fn load_stack(
                 .push(Rc::new(RefCell::new(data)));
         }
         DataSourceType::DataSlot => {
-            let mut data = data::get_data_from_data_slot(function_context.clone(), lsi.location_id);
-
-            let len = lsi.fields.len();
-            if len > 0 {
-                for field_id in &lsi.fields {
-                    let next_data = {
-                        let data_ref = data.borrow();
-                        let complex_data = match &data_ref.value {
-                            DataValueType::Complex(d) => d,
-                            _ => panic!("Invalid data type"),
-                        };
-                        Rc::clone(&complex_data.values[field_id])
-                    };
-                    data = next_data;
-                }
-            }
+            let data = data::get_data_from_data_slot(function_context.clone(), lsi.location_id);
 
             exec_context.borrow_mut().global_stack.push(data);
         }
-        DataSourceType::DataHandle => {}
+        DataSourceType::StackTop => {},
+        DataSourceType::Field => {
+            let mut exec_context_ref = exec_context.borrow_mut();
+            let stack_top = exec_context_ref.global_stack.pop().unwrap();
+            let field_id = lsi.location_id;
+
+            let stack_top_ref = stack_top.borrow();
+            let complex_data = match &stack_top_ref.value {
+                DataValueType::Complex(d) => d,
+                _ => panic!("Invalid data type"),
+            };
+
+            let field_data = Rc::clone(&complex_data.values[&field_id]);
+            exec_context_ref.global_stack.push(field_data);
+        },
+        DataSourceType::ArrayElement => {
+            let mut exec_context_ref = exec_context.borrow_mut();
+            let stack_top_index_value = exec_context_ref.global_stack.pop().unwrap();
+            let index = match &stack_top_index_value.borrow().value {
+                DataValueType::Integer(i) => *i as usize,
+                _ => panic!("Invalid data type"),
+            };
+
+            let stack_top_array_value = exec_context_ref.global_stack.pop().unwrap();
+            let stack_top_array_value = stack_top_array_value.borrow();
+            let array = match &stack_top_array_value.value {
+                DataValueType::Array(a) => a,
+                _ => panic!("Invalid data type"),
+            };
+
+            let element = array[index].clone();
+            exec_context_ref.global_stack.push(Rc::new(RefCell::new(element)));
+        }
     }
 }
 
@@ -64,28 +81,11 @@ pub fn save_stack(
         DataSourceType::DataSlot => {
             let data_slot = data::get_data_from_data_slot(function_context.clone(), ssi.location_id);
 
-            let len = ssi.fields.len();
-            if len > 0 {
-                let mut current_data = data_slot;
-                for field_id in &ssi.fields {
-                    let next_data = {
-                        let data_ref = current_data.borrow();
-                        let complex_data = match &data_ref.value {
-                            DataValueType::Complex(d) => d,
-                            _ => panic!("Invalid data type"),
-                        };
-                        Rc::clone(&complex_data.values[field_id])
-                    };
-                    current_data = next_data;
-                }
-
-                current_data.replace(data.borrow().to_owned());
-
-            } else {
-                data_slot.replace(data.borrow().to_owned());
-            }
+            data_slot.replace(data.borrow().to_owned());
         }
-        DataSourceType::DataHandle => {}
+        DataSourceType::Field => {}
+        DataSourceType::ArrayElement => {}
+        DataSourceType::StackTop => panic!("Cannot overwrite the stack top"),
     }
 }
 

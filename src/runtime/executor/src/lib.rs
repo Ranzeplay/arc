@@ -25,7 +25,7 @@ macro_rules! push_bool_to_stack {
         $stack.push(Rc::new(RefCell::new(DataValue {
             data_type: DataTypeEncoding {
                 type_id: 0x6,
-                is_array: false,
+                dimension: 0,
                 mutability: Mutability::Immutable,
                 memory_storage_type: MemoryStorageType::Value,
             },

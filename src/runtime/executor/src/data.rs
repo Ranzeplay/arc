@@ -14,7 +14,7 @@ pub fn get_data_from_constant_table(
     DataValue {
         data_type: DataTypeEncoding {
             type_id: constant.type_id,
-            is_array: constant.is_array,
+            dimension: constant.is_array as u32,
             mutability: if is_mutable {
                 Mutability::Mutable
             } else {

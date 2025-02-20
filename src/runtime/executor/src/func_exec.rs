@@ -46,7 +46,7 @@ fn put_fn_args(parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>, exe
             value: Rc::new(RefCell::new(DataValue {
                 data_type: DataTypeEncoding {
                     type_id: 0,
-                    is_array: false,
+                    dimension: 0,
                     mutability: Mutability::Immutable,
                     memory_storage_type: MemoryStorageType::Reference,
                 },

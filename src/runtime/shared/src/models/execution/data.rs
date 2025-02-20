@@ -26,14 +26,19 @@ pub enum DataValueType {
     Any,
     None,
     Complex(ComplexDataValue),
+    Array(Vec<DataValue>),
 }
 
 impl DataValueType {
     pub fn init(data_type_encoding: Rc<DataTypeEncoding>, package: &Package) -> DataValueType {
-        if data_type_encoding.type_id <= 6 {
-            DataValueType::None
+        if data_type_encoding.dimension > 0 {
+            DataValueType::Array(Vec::new())
         } else {
-            DataValueType::Complex(ComplexDataValue::init(&data_type_encoding, package))
+            if data_type_encoding.type_id <= 6 {
+                DataValueType::None
+            } else {
+                DataValueType::Complex(ComplexDataValue::init(&data_type_encoding, package))
+            }
         }
     }
 }
