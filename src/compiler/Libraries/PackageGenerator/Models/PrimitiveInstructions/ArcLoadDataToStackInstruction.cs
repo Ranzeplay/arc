@@ -3,7 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class ArcLoadDataToStackInstruction(ArcDataLocator locator) : ArcStackDataInstructionBase(locator)
+    internal class ArcLoadDataToStackInstruction(ArcStackDataOperationDescriptor locator) : ArcStackDataInstructionBase(locator)
     {
         public override byte[] Opcode => [0x37];
     }

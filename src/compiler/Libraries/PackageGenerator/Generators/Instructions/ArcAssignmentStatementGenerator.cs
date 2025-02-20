@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
@@ -12,9 +13,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source)
         {
             var result = new ArcPartialGenerationResult();
-
-            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
-            result.Append(exprResult);
 
             // Pop top element to the target
             if (assign.CallChain.Terms.Any(t => t.Type != ArcCallChainTermType.Identifier))
@@ -30,13 +28,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 return result;
             }
 
-            var identifierSequence = assign.CallChain.Terms.Select(t => t.Identifier!.Name);
             var initialSlot = source.LocalDataSlots
-                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifierSequence.First());
+                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
-            var locator = new ArcDataLocator(ArcDataSourceType.DataSlot, initialSlot.SlotId, [], []);
-            foreach (var identifier in identifierSequence.Skip(1))
+            foreach (var term in assign.CallChain.Terms.Skip(1))
             {
                 if (currentDataType == null)
                 {
@@ -46,8 +42,19 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (currentDataType.DataType is ArcComplexType ct)
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeGroupNode(source, ct);
-                    var field = groupType.Descriptor.Fields.First(f => f.IdentifierName == identifier);
-                    locator.FieldChain.Add(field);
+                    var field = groupType.Descriptor.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
+
+                    var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
+                    result.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
+
+                    foreach (var expr in term.Indices)
+                    {
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, true);
+                        result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                    }
+
                     currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataType.Type);
                 }
                 else
@@ -56,7 +63,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
             }
 
-            result.Append(new ArcSaveDataFromStackInstruction(locator).Encode(source));
+            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
+            result.Append(exprResult);
+
+            var targetOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.StackTop, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
+            result.Append(new ArcSaveDataFromStackInstruction(targetOperation).Encode(source));
 
             return result;
         }

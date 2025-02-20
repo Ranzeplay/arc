@@ -4,9 +4,9 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal abstract class ArcStackDataInstructionBase(ArcDataLocator locator) : ArcPrimitiveInstructionBase
+    internal abstract class ArcStackDataInstructionBase(ArcStackDataOperationDescriptor locator) : ArcPrimitiveInstructionBase
     {
-        public ArcDataLocator Locator { get; set; } = locator;
+        public ArcStackDataOperationDescriptor OperationDescriptor { get; set; } = locator;
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
@@ -14,10 +14,10 @@ namespace Arc.Compiler.PackageGenerator.Base
             {
                 GeneratedData = [
                     ..Opcode,
-                    (byte)Locator.Source,
-                    ..BitConverter.GetBytes(Locator.LocationId),
-                    ..ArcArrayEncoder.SerializeArray(Locator.FieldChain.Select(f => f == null ? 0 : f.Id)),
-                    ..Locator.Addend
+                    (byte)OperationDescriptor.Source,
+                    (byte)OperationDescriptor.StorageType,
+                    ..BitConverter.GetBytes(OperationDescriptor.LocationId),
+                    (byte)(OperationDescriptor.Overwrite ? 0x01 : 0x00),
                     ],
             };
         }

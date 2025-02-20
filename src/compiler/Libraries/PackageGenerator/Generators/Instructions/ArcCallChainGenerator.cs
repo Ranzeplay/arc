@@ -5,6 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
@@ -15,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
             ArcDataDeclarationDescriptor lastTermTypeDecl;
-            var locator = new ArcDataLocator(ArcDataSourceType.Invalid, -1, [], []);
+            var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Invalid, ArcMemoryStorageType.Value, -1, true);
 
             // First term maybe be variant, so handle it separately
             if (callChain.Terms.First().Type == ArcCallChainTermType.Identifier)
@@ -55,52 +56,31 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                 if (call.Type == ArcCallChainTermType.FunctionCall)
                 {
-                    // Batch select fields
-                    if (locator.FieldChain.Count > 0 || locator.Source == ArcDataSourceType.DataSlot)
-                    {
-                        result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
-                    }
-
                     // Handle the function call of this term
                     result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, true, group));
 
-                    if (call.Indices.Any())
+                    foreach (var expr in call.Indices)
                     {
-                        foreach (var expr in call.Indices)
-                        {
-                            result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
-                        }
-                        result.Append(new ArcLoadArrayIndexInstruction(call.Indices.Count()).Encode(source));
-                    }
-                    
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                    // Reset locator
-                    locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, true);
+                        result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                    }
                 }
                 else if (call.Type == ArcCallChainTermType.Identifier)
                 {
                     var field = group.Descriptor.Fields.First(f => f.IdentifierName == call.Identifier!.Name);
-                    locator.FieldChain.Add(field);
-                    lastTermTypeDecl = field.DataType;
+                    var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Value, field.Id, true);
+                    result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
 
-                    if (call.Indices.Any())
+                    foreach (var expr in call.Indices)
                     {
-                        foreach (var expr in call.Indices)
-                        {
-                            result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
-                        }
-                        result.Append(new ArcLoadArrayIndexInstruction(call.Indices.Count()).Encode(source));
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                        // Reset locator
-                        locator = new ArcDataLocator(ArcDataSourceType.StackTop, 0, [], []);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, true);
+                        result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
                 }
-            }
-
-            // Process the remaining fields
-            if (locator.FieldChain.Count > 0)
-            {
-                result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
             }
 
             return result;

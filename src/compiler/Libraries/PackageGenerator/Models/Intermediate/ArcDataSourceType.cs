@@ -4,8 +4,9 @@
     {
         ConstantTable = 0x01,
         DataSlot = 0x02,
-        DataHandle = 0x03,
-        StackTop = 0x04,
+        Field = 0x03,
+        ArrayElement = 0x04,
+        StackTop = 0x05,
         Invalid = 0x00
     }
 }

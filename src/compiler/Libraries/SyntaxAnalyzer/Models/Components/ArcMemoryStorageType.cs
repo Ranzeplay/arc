@@ -5,8 +5,9 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
     public enum ArcMemoryStorageType
     {
-        Reference,
-        Value
+        Reference = 0x00,
+        Value = 0x01,
+        Invalid = 0xFF
     }
 
     public static class ArcMemoryStorageTypeUtils
