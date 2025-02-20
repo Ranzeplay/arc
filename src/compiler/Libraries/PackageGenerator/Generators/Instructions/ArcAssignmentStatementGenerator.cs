@@ -51,7 +51,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     {
                         result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, true);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
                         result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
 

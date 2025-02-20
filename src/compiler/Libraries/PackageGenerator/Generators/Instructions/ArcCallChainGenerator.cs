@@ -31,6 +31,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (callChain.Terms.Count() == 1)
                 {
                     result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
+
+                    foreach (var expr in callChain.Terms.First().Indices)
+                    {
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, false);
+                        result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                    }
+
                     return result;
                 }
             }
@@ -44,7 +53,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 lastTermTypeDecl = function.Descriptor.ReturnValueType;
             }
 
-            foreach (var call in callChain.Terms.Skip(1))
+            foreach (var expr in callChain.Terms.First().Indices)
+            {
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+
+                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, false);
+                result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+            }
+
+            foreach (var term in callChain.Terms.Skip(1))
             {
                 if (lastTermTypeDecl.Type is ArcBaseType)
                 {
@@ -54,30 +71,30 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
                 var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Descriptor.Id == dataType.GroupId, true)!;
 
-                if (call.Type == ArcCallChainTermType.FunctionCall)
+                if (term.Type == ArcCallChainTermType.FunctionCall)
                 {
                     // Handle the function call of this term
-                    result.Append(ArcFunctionCallGenerator.Generate(source, call.FunctionCall!, true, group));
+                    result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, true, group));
 
-                    foreach (var expr in call.Indices)
+                    foreach (var expr in term.Indices)
                     {
                         result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, true);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, false);
                         result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
                 }
-                else if (call.Type == ArcCallChainTermType.Identifier)
+                else if (term.Type == ArcCallChainTermType.Identifier)
                 {
-                    var field = group.Descriptor.Fields.First(f => f.IdentifierName == call.Identifier!.Name);
+                    var field = group.Descriptor.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
                     var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Value, field.Id, true);
                     result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
 
-                    foreach (var expr in call.Indices)
+                    foreach (var expr in term.Indices)
                     {
                         result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, true);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Value, 0, false);
                         result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
                 }
