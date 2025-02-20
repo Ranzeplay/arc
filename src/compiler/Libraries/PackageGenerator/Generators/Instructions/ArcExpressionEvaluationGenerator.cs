@@ -36,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 case ArcDataValue.ValueType.InstantValue:
                     {
                         var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
-                        var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, ArcMemoryStorageType.Value, dataLocation, true);
+                        var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, ArcMemoryStorageType.Value, dataLocation, false);
 
                         result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                         break;

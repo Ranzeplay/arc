@@ -14,23 +14,27 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
+            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
+            result.Append(exprResult);
+
             // Pop top element to the target
             if (assign.CallChain.Terms.Any(t => t.Type != ArcCallChainTermType.Identifier))
             {
                 throw new InvalidDataException("Only simple assignment is supported");
             }
 
-            if (assign.CallChain.Terms.Count() == 1)
-            {
-                var targetSymbol = source.LocalDataSlots
-                    .First(ds => ds.DeclarationDescriptor.SyntaxTree.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
-                result.Append(new ArcPopToSlotInstruction(targetSymbol).Encode(source));
-                return result;
-            }
-
+            var firstTerm = assign.CallChain.Terms.First();
             var initialSlot = source.LocalDataSlots
-                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == assign.CallChain.Terms.First().Identifier!.Name);
+                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
+
+            foreach (var expr in firstTerm.Indices)
+            {
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+
+                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
+                result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+            }
 
             foreach (var term in assign.CallChain.Terms.Skip(1))
             {
@@ -63,11 +67,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
             }
 
-            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
-            result.Append(exprResult);
-
-            var targetOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.StackTop, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
-            result.Append(new ArcSaveDataFromStackInstruction(targetOperation).Encode(source));
+            result.Append(new ArcReplaceStackTopInstruction().Encode(source));
 
             return result;
         }
