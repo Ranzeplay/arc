@@ -503,6 +503,15 @@ pub fn decode_instructions(
 
                 pos += 1;
             }
+            0x41 => {
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::RpStk,
+                    raw: stream[pos..pos + 1].to_vec(),
+                };
+
+                pos += 1;
+            }
             _ => {
                 error!("Unknown instruction: 0x{:02X?} @ {}", stream[pos], pos);
                 break;

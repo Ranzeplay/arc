@@ -244,6 +244,7 @@ pub fn execute_function(
             }
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
+            InstructionType::RpStk => {}
         }
 
         instruction_index += 1;

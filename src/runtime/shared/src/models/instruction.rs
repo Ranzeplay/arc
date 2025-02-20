@@ -71,6 +71,7 @@ pub enum InstructionType {
     SvStk(SaveStackInstruction),
     NeqC,
     NeqR,
+    RpStk
 }
 
 impl Debug for InstructionType {
