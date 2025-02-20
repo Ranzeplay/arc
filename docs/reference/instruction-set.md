@@ -64,3 +64,4 @@ title: Instruction set
 | 0x38   | svstk    | Save data from stack                                                        |
 | 0x39   | neqc     | Compare if two objects on the top of the stack have the different content   |
 | 0x40   | neqr     | Compare if two objects on the top of the stack have the different reference |
+| 0x41   | rpstk    | Replace stack top                                                           |
