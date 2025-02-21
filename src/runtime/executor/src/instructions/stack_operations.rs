@@ -4,7 +4,7 @@ use shared::models::execution::context::{ExecutionContext, FunctionExecutionCont
 use shared::models::execution::data::DataValueType;
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::stack_data_operation::{
-    DataSourceType, LoadStackInstruction, SaveStackInstruction,
+    DataSourceType, StackOperationInstruction
 };
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -12,7 +12,7 @@ use std::rc::Rc;
 pub fn load_stack(
     exec_context: &Rc<RefCell<ExecutionContext>>,
     function_context: Rc<RefCell<FunctionExecutionContext>>,
-    lsi: &LoadStackInstruction,
+    lsi: &StackOperationInstruction,
 ) {
     let package = {
         let exec_context_ref = exec_context.borrow();
@@ -75,7 +75,7 @@ pub fn load_stack(
 pub fn save_stack(
     exec_context: &Rc<RefCell<ExecutionContext>>,
     function_context: Rc<RefCell<FunctionExecutionContext>>,
-    ssi: &SaveStackInstruction,
+    ssi: &StackOperationInstruction,
 ) {
     let data = {
         let mut exec_context_ref = exec_context.borrow_mut();

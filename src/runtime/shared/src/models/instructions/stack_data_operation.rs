@@ -36,14 +36,14 @@ impl From<u8> for DataSourceType {
     }
 }
 
-pub struct LoadStackInstruction {
+pub struct StackOperationInstruction {
     pub source: DataSourceType,
     pub storage_type: MemoryStorageType,
     pub location_id: usize,
     pub overwrite: bool,
 }
 
-impl Debug for LoadStackInstruction {
+impl Debug for StackOperationInstruction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -59,35 +59,12 @@ impl Debug for LoadStackInstruction {
     }
 }
 
-pub struct SaveStackInstruction {
-    pub source: DataSourceType,
-    pub storage_type: MemoryStorageType,
-    pub location_id: usize,
-    pub overwrite: bool,
-}
-
-impl Debug for SaveStackInstruction {
-    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{:?} {} L:0x{:X} {}",
-            self.source,
-            match self.storage_type {
-                MemoryStorageType::Value => "Val",
-                MemoryStorageType::Reference => "Ref",
-            },
-            self.location_id,
-            if self.overwrite { "O" } else { "C" }
-        )
-    }
-}
-
-impl DecodableInstruction<LoadStackInstruction> for LoadStackInstruction {
+impl DecodableInstruction<StackOperationInstruction> for StackOperationInstruction {
     fn decode(
         stream: &[u8],
         _offset: usize,
         _package: &Package,
-    ) -> Option<(LoadStackInstruction, usize)> {
+    ) -> Option<(StackOperationInstruction, usize)> {
         let mut pos = 1;
         let source = DataSourceType::from(stream[pos]);
         pos += 1;
@@ -99,35 +76,7 @@ impl DecodableInstruction<LoadStackInstruction> for LoadStackInstruction {
         pos += 1;
 
         Some((
-            LoadStackInstruction {
-                source,
-                storage_type,
-                location_id,
-                overwrite,
-            },
-            pos,
-        ))
-    }
-}
-
-impl DecodableInstruction<SaveStackInstruction> for SaveStackInstruction {
-    fn decode(
-        stream: &[u8],
-        _offset: usize,
-        _package: &Package,
-    ) -> Option<(SaveStackInstruction, usize)> {
-        let mut pos = 1;
-        let source = DataSourceType::from(stream[pos]);
-        pos += 1;
-        let storage_type = MemoryStorageType::from_u8(stream[pos]);
-        pos += 1;
-        let location_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
-        pos += 8;
-        let overwrite = stream[pos] == 0x01;
-        pos += 1;
-
-        Some((
-            SaveStackInstruction {
+            StackOperationInstruction {
                 source,
                 storage_type,
                 location_id,

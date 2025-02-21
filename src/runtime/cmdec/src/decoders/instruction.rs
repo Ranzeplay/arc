@@ -3,13 +3,13 @@ use shared::models::instructions::conditional_jump::ConditionalJumpInstruction;
 use shared::models::instructions::decl::DeclInstruction;
 use shared::models::instructions::func_call::FunctionCallInstruction;
 use shared::models::instructions::jump::JumpInstruction;
-use shared::models::instructions::stack_data_operation::{LoadStackInstruction, SaveStackInstruction};
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::return_from_block::ReturnInstruction;
 use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
 use std::rc::Rc;
 use log::{error, info, warn};
+use shared::models::instructions::stack_data_operation::StackOperationInstruction;
 
 pub fn decode_instructions(
     stream: &[u8],
@@ -464,7 +464,7 @@ pub fn decode_instructions(
             }
             0x37 => {
                 let (ldstk, len) =
-                    LoadStackInstruction::decode(&stream[pos..], pos, package).unwrap();
+                    StackOperationInstruction::decode(&stream[pos..], pos, package).unwrap();
 
                 instruction = Instruction {
                     offset: pos,
@@ -476,7 +476,7 @@ pub fn decode_instructions(
             }
             0x38 => {
                 let (svstk, len) =
-                    SaveStackInstruction::decode(&stream[pos..], pos, package).unwrap();
+                    StackOperationInstruction::decode(&stream[pos..], pos, package).unwrap();
                 instruction = Instruction {
                     offset: pos,
                     instruction_type: InstructionType::SvStk(svstk),

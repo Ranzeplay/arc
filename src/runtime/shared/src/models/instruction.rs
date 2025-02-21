@@ -4,12 +4,10 @@ use crate::models::instructions::func_call::FunctionCallInstruction;
 use crate::models::instructions::jump::JumpInstruction;
 use crate::models::instructions::pop_to_slot::PopToSlotInstruction;
 use crate::models::instructions::return_from_block::ReturnInstruction;
-use crate::models::instructions::stack_data_operation::{
-    LoadStackInstruction, SaveStackInstruction,
-};
 use pad::PadStr;
 use std::fmt::{Debug, Formatter};
 use strum_macros::AsRefStr;
+use crate::models::instructions::stack_data_operation::StackOperationInstruction;
 
 #[derive(AsRefStr)]
 pub enum InstructionType {
@@ -67,8 +65,8 @@ pub enum InstructionType {
     BitXor,
     FRet(ReturnInstruction),
     FCall(FunctionCallInstruction),
-    LdStk(LoadStackInstruction),
-    SvStk(SaveStackInstruction),
+    LdStk(StackOperationInstruction),
+    SvStk(StackOperationInstruction),
     NeqC,
     NeqR,
     RpStk
