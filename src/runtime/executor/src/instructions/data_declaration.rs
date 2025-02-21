@@ -12,7 +12,7 @@ pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, de
 
     let encoding = DataTypeEncoding {
         type_id: decl.data_type_id,
-        dimension: decl.is_array as u32,
+        dimension: decl.dimension,
         mutability: Mutability::Immutable,
         memory_storage_type: decl.memory_storage_type.clone(),
     };

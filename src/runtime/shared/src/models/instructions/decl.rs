@@ -5,7 +5,7 @@ use crate::traits::instruction::DecodableInstruction;
 
 pub struct DeclInstruction {
     pub data_type_id: usize,
-    pub is_array: bool,
+    pub dimension: u32,
     pub memory_storage_type: MemoryStorageType,
 }
 
@@ -16,7 +16,7 @@ impl Debug for DeclInstruction {
             MemoryStorageType::Reference => 'R',
         };
 
-        let is_array = if self.is_array { 'A' } else { 'S' };
+        let is_array = if self.dimension > 0 { 'A' } else { 'S' };
 
         write!(
             f,
@@ -28,23 +28,23 @@ impl Debug for DeclInstruction {
 
 impl DecodableInstruction<DeclInstruction> for DeclInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(DeclInstruction, usize)> {
-        let memory_storage_type = if stream[1] == 0x01 {
-            MemoryStorageType::Value
-        } else {
-            MemoryStorageType::Reference
-        };
-        let is_array = stream[2] == 0x01;
-        let data_type_id = usize::from_le_bytes(stream[3..3 + 8].try_into().unwrap());
+        let mut pos = 1;
+        let memory_storage_type = MemoryStorageType::from_u8(stream[1]);
+        pos += 1;
 
-        let length = 3 + 8;
+        let dimension = u32::from_le_bytes(stream[pos..pos + 4].try_into().unwrap());
+        pos += 4;
+
+        let data_type_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+        pos += 8;
 
         Some((
             DeclInstruction {
                 data_type_id,
-                is_array,
+                dimension,
                 memory_storage_type,
             },
-            length,
+            pos,
         ))
     }
 }
