@@ -25,8 +25,18 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
-            var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
-            lhsResult.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
+
+            if (assign.CallChain.Terms.Count() == 1 && !assign.CallChain.Terms.First().Indices.Any())
+            {
+                // If lhs has only one term, and it is being accessed direcly, then we can directly put the value into the slot
+                var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
+                lhsResult.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
+            }
+            else
+            {
+                // If lhs has more than one term, then the lhs should be a reference in the stack top
+                lhsResult.Append(new ArcReplaceStackTopInstruction().Encode(source));
+            }
 
             foreach (var expr in firstTerm.Indices)
             {
@@ -70,7 +80,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     throw new InvalidDataException("Base type does not have further fields");
                 }
             }
-            lhsResult.Append(new ArcReplaceStackTopInstruction().Encode(source));
 
             // Handle rhs
             var rhsResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression, memoryStorageType == ArcMemoryStorageType.Reference);
