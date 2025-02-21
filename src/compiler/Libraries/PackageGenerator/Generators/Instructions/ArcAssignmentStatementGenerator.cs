@@ -12,32 +12,32 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
     {
         public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source)
         {
-            var result = new ArcPartialGenerationResult();
-
-            var exprResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression);
-            result.Append(exprResult);
-
-            // Pop top element to the target
-            if (assign.CallChain.Terms.Any(t => t.Type != ArcCallChainTermType.Identifier))
+            if (!assign.CallChain.Terms.All(t => t.Type == ArcCallChainTermType.Identifier))
             {
                 throw new InvalidDataException("Only simple assignment is supported");
             }
 
+            // Handle lhs
+            var lhsResult = new ArcPartialGenerationResult();
+
+            // Handle the first element of the call chain since it is from a data slot
             var firstTerm = assign.CallChain.Terms.First();
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
             var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
-            result.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
+            lhsResult.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
 
             foreach (var expr in firstTerm.Indices)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
 
                 var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
-                result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
             }
 
+            // Handle the rest of the call chain since it is from the stack top
+            var memoryStorageType = ArcMemoryStorageType.Invalid;
             foreach (var term in assign.CallChain.Terms.Skip(1))
             {
                 if (currentDataType == null)
@@ -51,25 +51,34 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     var field = groupType.Descriptor.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
-                    result.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
+                    lhsResult.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
 
                     foreach (var expr in term.Indices)
                     {
-                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                        lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
 
                         var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
-                        result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                        lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
 
                     currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataType.Type);
+
+                    memoryStorageType = field.DataType.MemoryStorageType;
                 }
                 else
                 {
                     throw new InvalidDataException("Base type does not have further fields");
                 }
             }
+            lhsResult.Append(new ArcReplaceStackTopInstruction().Encode(source));
 
-            result.Append(new ArcReplaceStackTopInstruction().Encode(source));
+            // Handle rhs
+            var rhsResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression, memoryStorageType == ArcMemoryStorageType.Reference);
+
+            // Combine the results
+            var result = new ArcPartialGenerationResult();
+            result.Append(rhsResult);
+            result.Append(lhsResult);
 
             return result;
         }

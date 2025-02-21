@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, conditionalBlock.Expression);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, conditionalBlock.Expression, true);
             result.Append(expr);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
@@ -40,7 +40,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             foreach (var block in ifBlock.ConditionalBlocks)
             {
                 var cbResult = new ArcPartialGenerationResult();
-                var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, block.Expression);
+                var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, block.Expression, true);
 
                 var beginSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "next").Encode(source);
                 var jumpNextInstruction = new ArcConditionalJumpInstruction(new()

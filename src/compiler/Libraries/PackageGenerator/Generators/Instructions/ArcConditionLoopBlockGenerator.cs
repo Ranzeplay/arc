@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin").Encode(source);
 
-            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression, true);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
 

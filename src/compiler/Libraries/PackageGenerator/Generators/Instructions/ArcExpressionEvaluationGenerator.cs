@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcExpressionEvaluationGenerator
     {
-        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr)
+        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr, bool forceRefCallChain)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -22,14 +22,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
                 else
                 {
-                    GenerateDataValue(ref source, ref result, term);
+                    GenerateDataValue(ref source, ref result, term, forceRefCallChain);
                 }
             }
 
             return result;
         }
 
-        private static void GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term)
+        private static void GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, bool forceRefCallChain)
         {
             switch (term.DataValue?.Type)
             {
@@ -43,7 +43,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     }
                 case ArcDataValue.ValueType.CallChain:
                     {
-                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!));
+                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, forceRefCallChain ? ArcMemoryStorageType.Reference : ArcMemoryStorageType.Value));
                         break;
                     }
                 default:
