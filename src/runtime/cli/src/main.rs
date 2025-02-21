@@ -2,7 +2,7 @@ use crate::command_line_options::Args;
 use crate::dispatcher::cmdec::call_cmdec_decoder;
 use crate::dispatcher::execute::execute;
 use clap::Parser;
-use log::{error, info};
+use log::{debug, error, info};
 use std::process::exit;
 
 mod command_line_options;
@@ -17,27 +17,27 @@ fn main() {
     }
     log_builder.init();
 
-    if args.path.is_none() {
-        error!("No package file provided.");
-        exit(0xffff);
+    if args.version {
+        println!("Arc Runtime CLI v{}", env!("CARGO_PKG_VERSION"));
     }
 
-    let path = args.path.clone().unwrap();
+    match args.subcommand {
+        Some(subcommand) => match subcommand {
+            command_line_options::Subcommands::Decode(decode_command) => {
+                info!("Decoding package content");
+                call_cmdec_decoder(&decode_command.path, true, args.verbose);
+            }
+            command_line_options::Subcommands::Execute(execute_command) => {
+                debug!("Executing package");
+                let package = call_cmdec_decoder(&execute_command.path, false, args.verbose);
+                if package.is_none() {
+                    error!("Failed to decode package");
+                    exit(1);
+                }
 
-    if args.decode {
-        info!("Decoding package file: {:?}", &path);
+                execute(package.unwrap(), args.verbose, execute_command.repeat);
+            }
+        },
+        None => {}
     }
-    let package = call_cmdec_decoder(&path, args.decode, args.verbose);
-    if package.is_none() {
-        error!("Error decoding package file.");
-        exit(0xffff);
-    }
-    let package = package.unwrap();
-
-    let mut return_value = 0;
-    if !args.decode {
-        return_value = execute(package, args.verbose, args.repeat);
-    }
-
-    exit(return_value);
 }
