@@ -21,7 +21,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var firstTerm = callChain.Terms.First();
             if (firstTerm.Type == ArcCallChainTermType.Identifier)
             {
-
                 var identifier = firstTerm.Identifier!;
                 var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
                 lastTermTypeDecl = slot.DeclarationDescriptor;

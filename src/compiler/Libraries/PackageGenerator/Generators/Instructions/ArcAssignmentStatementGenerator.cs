@@ -27,6 +27,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
+            var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
+            result.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
 
             foreach (var expr in firstTerm.Indices)
             {
