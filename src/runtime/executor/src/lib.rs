@@ -250,8 +250,5 @@ pub fn execute_function(
         instruction_index += 1;
     }
 
-    match result {
-        FunctionExecutionResult::Invalid => FunctionExecutionResult::Success(None),
-        _ => result,
-    }
+    result
 }

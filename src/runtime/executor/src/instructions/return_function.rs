@@ -13,7 +13,7 @@ pub fn wrap_return_value_if_needed(
             .global_stack
             .pop()
             .unwrap();
-        FunctionExecutionResult::Success(Some(data))
+        FunctionExecutionResult::Success(Some(data.to_owned()))
     } else {
         FunctionExecutionResult::Success(None)
     }
