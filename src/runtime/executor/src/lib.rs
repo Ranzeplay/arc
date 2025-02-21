@@ -18,7 +18,7 @@ use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
 use crate::instructions::data_declaration::declare_data;
-use crate::instructions::stack_operations::{load_stack, pop_to_slot, save_stack};
+use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -244,7 +244,7 @@ pub fn execute_function(
             }
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
-            InstructionType::RpStk => {}
+            InstructionType::RpStk => replace_stack_top(&exec_context),
         }
 
         instruction_index += 1;

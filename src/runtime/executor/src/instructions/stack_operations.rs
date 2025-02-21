@@ -109,3 +109,17 @@ pub fn pop_to_slot(
     let slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
     slot.value.replace(data.borrow().to_owned());
 }
+
+pub fn replace_stack_top(exec_context: &Rc<RefCell<ExecutionContext>>){
+    let source = {
+        let mut exec_context_ref = exec_context.borrow_mut();
+        exec_context_ref.global_stack.pop().unwrap()
+    };
+
+    let target = {
+        let exec_context_ref = exec_context.borrow();
+        exec_context_ref.global_stack.last().unwrap().to_owned()
+    };
+
+    target.replace(source.borrow().to_owned());
+}
