@@ -26,7 +26,7 @@ pub enum DataValueType {
     Any,
     None,
     Complex(ComplexDataValue),
-    Array(Vec<DataValue>),
+    Array(Vec<Rc<RefCell<DataValue>>>),
 }
 
 impl DataValueType {
