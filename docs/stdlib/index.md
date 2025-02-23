@@ -11,3 +11,25 @@ title: Stdlib
     - `PrintString`
     
     - `ReadString`
+  
+  - `Compilation`
+    
+    - `Entrypoint`
+    
+    - `Getter`
+    
+    - `Setter`
+    
+    - `Constructor`
+    
+    - `Destructor`
+  
+  - `Array`
+    
+    - `CreateIntArray`
+    
+    - `PushIntArray`
+    
+    - `RemoveElementFromIntArray`
+    
+    - `GetIntArraySize`

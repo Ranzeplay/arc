@@ -26,6 +26,20 @@ public func PrintString(const s: ref string): ref none
 
 None.
 
+### PrintInteger
+
+```csharp
+public func PrintString(const i: ref int): ref none
+```
+
+#### Parameters
+
+- `i`: The integer to print.
+
+#### Returns
+
+None.
+
 ### ReadString
 
 ```csharp
