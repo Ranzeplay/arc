@@ -12,7 +12,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
 
             stdNamespace
                 .AddChildChained(ArcStdlibConsole.GetNamespace())
-                .AddChildChained(ArcStdlibCompilation.GetNamespace());
+                .AddChildChained(ArcStdlibCompilation.GetNamespace())
+                .AddChildChained(ArcStdlibArray.GetNamespace());
 
             return tree;
         }
