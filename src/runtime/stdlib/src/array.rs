@@ -1,8 +1,8 @@
-use std::cell::RefCell;
-use std::rc::Rc;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub struct ArcStdArray {}
 
@@ -19,12 +19,11 @@ impl ArcStdArray {
 
         let value = DataValueType::Array(vec![]);
 
-        let data = DataValue {
-            data_type,
-            value,
-        };
+        let data = DataValue { data_type, value };
 
-        Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(data)))))
+        Ok(FunctionExecutionResult::Success(Some(Rc::new(
+            RefCell::new(data),
+        ))))
     }
 
     pub fn push_int_array(
@@ -34,16 +33,26 @@ impl ArcStdArray {
         let array = args.pop().unwrap();
 
         let mut array = array.borrow_mut();
+        let memory_storage_type = array.data_type.memory_storage_type.clone();
 
         match &mut array.value {
-            DataValueType::Array(array) => {
-                match &value.borrow().value {
-                    DataValueType::Integer(_) => array.push(Rc::clone(&value)),
-                    _ => return Err("Expected integer".to_string()),
-                }
-            }
+            DataValueType::Array(arr) => match &value.borrow().value {
+                DataValueType::Integer(_) => {
+                    let integer_value = {
+                        match memory_storage_type {
+                            MemoryStorageType::Reference => Rc::clone(&value),
+                            MemoryStorageType::Value => {
+                                Rc::new(RefCell::new(value.borrow().clone()))
+                            }
+                        }
+                    };
+
+                    arr.push(integer_value);
+                },
+                _ => return Err("Expected integer".to_string()),
+            },
             _ => return Err("Expected array".to_string()),
-        }
+        };
 
         Ok(FunctionExecutionResult::Success(None))
     }
@@ -57,15 +66,13 @@ impl ArcStdArray {
         let mut array = array.borrow_mut();
 
         match &mut array.value {
-            DataValueType::Array(array) => {
-                match &index.borrow().value {
-                    DataValueType::Integer(i) => {
-                        let i = *i as usize;
-                        array.remove(i);
-                    }
-                    _ => return Err("Expected integer".to_string()),
+            DataValueType::Array(array) => match &index.borrow().value {
+                DataValueType::Integer(i) => {
+                    let i = *i as usize;
+                    array.remove(i);
                 }
-            }
+                _ => return Err("Expected integer".to_string()),
+            },
             _ => return Err("Expected array".to_string()),
         }
 
@@ -91,12 +98,11 @@ impl ArcStdArray {
 
                 let value = DataValueType::Integer(size as i64);
 
-                let data = DataValue {
-                    data_type,
-                    value,
-                };
+                let data = DataValue { data_type, value };
 
-                Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(data)))))
+                Ok(FunctionExecutionResult::Success(Some(Rc::new(
+                    RefCell::new(data),
+                ))))
             }
             _ => Err("Expected array".to_string()),
         }
