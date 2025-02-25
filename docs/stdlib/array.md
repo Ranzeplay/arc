@@ -29,7 +29,7 @@ The array just created.
 ### PushIntArray
 
 ```csharp
-public func PushIntArray(const i: val int): ref none
+public func PushIntArray(var array: ref int[], const i: val int): ref none
 ```
 
 #### Parameters
@@ -43,7 +43,7 @@ None.
 ### RemoveElementFromIntArray
 
 ```csharp
-public func RemoveElementFromIntArray(const index: ref int): ref none
+public func RemoveElementFromIntArray(var array: ref int[], const index: ref int): ref none
 ```
 
 #### Parameters
