@@ -48,6 +48,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                         {
                                             Type = ArcPersistentData.IntType,
                                             AllowNone = false,
+                                            Dimension = 1,
+                                            MemoryStorageType = ArcMemoryStorageType.Value,
+                                            Mutability = ArcMutability.Constant,
+                                        },
+                                        RawFullName = "array",
+                                    },
+                                    new ArcParameterDescriptor()
+                                    {
+                                        DataType = new ArcDataDeclarationDescriptor()
+                                        {
+                                            Type = ArcPersistentData.IntType,
+                                            AllowNone = false,
                                             Dimension = 0,
                                             MemoryStorageType = ArcMemoryStorageType.Value,
                                             Mutability = ArcMutability.Constant,
@@ -76,6 +88,18 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                 Name = "RemoveElementFromIntArray",
                                 Accessibility = ArcAccessibility.Public,
                                 Parameters = [
+                                    new ArcParameterDescriptor()
+                                    {
+                                        DataType = new ArcDataDeclarationDescriptor()
+                                        {
+                                            Type = ArcPersistentData.IntType,
+                                            AllowNone = false,
+                                            Dimension = 1,
+                                            MemoryStorageType = ArcMemoryStorageType.Value,
+                                            Mutability = ArcMutability.Constant,
+                                        },
+                                        RawFullName = "array",
+                                    },
                                     new ArcParameterDescriptor()
                                     {
                                         DataType = new ArcDataDeclarationDescriptor()
