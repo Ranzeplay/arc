@@ -29,9 +29,19 @@ pub fn load_stack(
         DataSourceType::DataSlot => {
             data::get_data_from_data_slot(function_context.clone(), lsi.location_id).to_owned()
         }
-        DataSourceType::StackTop => stack.last().unwrap().to_owned(),
+        DataSourceType::StackTop => {
+            if lsi.overwrite {
+                stack.pop().unwrap().to_owned()
+            } else {
+                stack.last().unwrap().to_owned()
+            }
+        },
         DataSourceType::Field => {
-            let stack_top = stack.last().unwrap().to_owned();
+            let stack_top = if lsi.overwrite {
+                stack.pop().unwrap().to_owned()
+            } else {
+                stack.last().unwrap().to_owned()
+            };
             let field_id = lsi.location_id;
 
             let stack_top_ref = stack_top.borrow();
@@ -43,13 +53,18 @@ pub fn load_stack(
             Rc::clone(&complex_data.values[&field_id])
         }
         DataSourceType::ArrayElement => {
-            let stack_top_index_value = stack.last().unwrap().to_owned();
+            let (stack_top_index_value, stack_top_array_value) = {
+                if lsi.overwrite {
+                    (stack.pop().unwrap().to_owned(), stack.pop().unwrap().to_owned())
+                } else {
+                    (stack.last().unwrap().to_owned(), stack.last().unwrap().to_owned())
+                }
+            };
+
             let index = match &stack_top_index_value.borrow().value {
                 DataValueType::Integer(i) => *i as usize,
                 _ => panic!("Invalid data type"),
             };
-
-            let stack_top_array_value = stack.last().unwrap().to_owned();
             let stack_top_array_value = stack_top_array_value.borrow();
             let array = match &stack_top_array_value.value {
                 DataValueType::Array(a) => a,
