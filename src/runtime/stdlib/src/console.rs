@@ -39,7 +39,7 @@ impl ArcStdConsole {
         match function_id {
             0xa1 => ArcStdConsole::print_string(args),
             0xa2 => ArcStdConsole::print_integer(args),
-            _ => Err("Unknown stdlib function".to_string()),
+            _ => Err("Unknown stdlib console function".to_string()),
         }
     }
 }
