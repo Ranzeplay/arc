@@ -47,7 +47,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
 
             // Handle the rest of the call chain since it is from the stack top
-            var memoryStorageType = ArcMemoryStorageType.Invalid;
+            var memoryStorageType = initialSlot.DeclarationDescriptor.MemoryStorageType;
             foreach (var term in assign.CallChain.Terms.Skip(1))
             {
                 if (currentDataType == null)
