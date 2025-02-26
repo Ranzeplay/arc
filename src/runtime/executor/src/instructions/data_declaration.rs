@@ -17,11 +17,11 @@ pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, de
         memory_storage_type: decl.memory_storage_type.clone(),
     };
 
-    fn_context_ref.local_data.push(DataSlot {
+    fn_context_ref.local_data.push(Rc::new(RefCell::new(DataSlot {
         slot_id,
         value: Rc::new(RefCell::new(DataValue {
             data_type: encoding.clone(),
             value: DataValueType::init(Rc::new(encoding), package),
         })),
-    });
+    })));
 }

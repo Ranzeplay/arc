@@ -1,9 +1,6 @@
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::context::FunctionExecutionContext;
 use shared::models::execution::data::DataValue;
 use shared::models::package::Package;
-use std::cell::RefCell;
-use std::rc::Rc;
 
 pub fn get_data_from_constant_table(
     package: &Package,
@@ -24,17 +21,4 @@ pub fn get_data_from_constant_table(
         },
         value: constant.decoded_value.clone(),
     }
-}
-
-pub fn get_data_from_data_slot(
-    context: Rc<RefCell<FunctionExecutionContext>>,
-    slot_id: usize,
-) -> Rc<RefCell<DataValue>> {
-    let context_ref = context.borrow();
-    let slot = context_ref
-        .local_data
-        .get(slot_id)
-        .unwrap();
-
-    slot.value.clone()
 }

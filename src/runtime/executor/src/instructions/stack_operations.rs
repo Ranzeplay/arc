@@ -27,7 +27,15 @@ pub fn load_stack(
             Rc::new(RefCell::new(value))
         }
         DataSourceType::DataSlot => {
-            data::get_data_from_data_slot(function_context.clone(), lsi.location_id).to_owned()
+            let context_ref = function_context.borrow();
+            let slot = context_ref
+                .local_data
+                .get(lsi.location_id)
+                .unwrap();
+
+            let r = Rc::clone(&slot.borrow().value);
+
+            r
         }
         DataSourceType::StackTop => {
             if lsi.overwrite {
@@ -80,10 +88,6 @@ pub fn load_stack(
         MemoryStorageType::Value => Rc::new(RefCell::new(data.borrow().to_owned().clone())),
     };
 
-    if lsi.overwrite {
-        stack.pop();
-    }
-
     stack.push(data);
 }
 
@@ -92,7 +96,7 @@ pub fn save_stack(
     function_context: Rc<RefCell<FunctionExecutionContext>>,
     ssi: &StackOperationInstruction,
 ) {
-    let data = {
+    let stack_top_data = {
         let mut exec_context_ref = exec_context.borrow_mut();
         exec_context_ref.global_stack.pop().unwrap()
     };
@@ -102,10 +106,22 @@ pub fn save_stack(
             panic!("Cannot overwrite the constant table");
         }
         DataSourceType::DataSlot => {
-            let data_slot =
-                data::get_data_from_data_slot(function_context.clone(), ssi.location_id);
+            let context_ref = function_context.borrow();
+            let slot = context_ref
+                .local_data
+                .get(ssi.location_id)
+                .unwrap();
 
-            data_slot.replace(data.borrow().to_owned());
+            let mut slot_ref = slot.borrow_mut();
+
+            match ssi.storage_type {
+                MemoryStorageType::Reference => {
+                    slot_ref.value = stack_top_data;
+                }
+                MemoryStorageType::Value => {
+                    slot_ref.value = Rc::new(RefCell::new(stack_top_data.borrow().clone()));
+                }
+            }
         }
         DataSourceType::Field => {}
         DataSourceType::ArrayElement => {}
@@ -122,7 +138,9 @@ pub fn pop_to_slot(
     let mut exec_context_ref = exec_context.borrow_mut();
     let data = exec_context_ref.global_stack.pop().unwrap();
     let slot = fn_context_ref.local_data.get(pops.slot_id).unwrap();
-    slot.value.replace(data.borrow().to_owned());
+
+    let mut slot_ref = slot.borrow_mut();
+    slot_ref.value = data;
 }
 
 pub fn replace_stack_top(exec_context: &Rc<RefCell<ExecutionContext>>){

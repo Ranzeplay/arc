@@ -92,7 +92,7 @@ impl ExecutionContext {
 
 pub struct FunctionExecutionContext {
     pub function: Rc<FunctionSymbol>,
-    pub local_data: Vec<DataSlot>,
+    pub local_data: Vec<Rc<RefCell<DataSlot>>>,
 }
 
 pub fn get_jump_destination_instruction_index(

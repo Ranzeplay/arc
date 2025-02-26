@@ -57,12 +57,12 @@ fn put_fn_args(
                     MemoryStorageType::Reference => Rc::clone(&data),
                 }
             };
-            function_context.local_data.push(slot);
+            function_context.local_data.push(Rc::new(RefCell::new(slot)));
         }
 
         function_context.local_data.reverse();
     } else {
-        function_context.local_data.push(DataSlot {
+        function_context.local_data.push(Rc::new(RefCell::new(DataSlot {
             slot_id: 0,
             value: Rc::new(RefCell::new(DataValue {
                 data_type: DataTypeEncoding {
@@ -73,6 +73,6 @@ fn put_fn_args(
                 },
                 value: DataValueType::None,
             })),
-        });
+        })));
     }
 }
