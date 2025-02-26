@@ -151,7 +151,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 var targetFunction = GlobalScopeTree.Symbols
                     .OfType<ArcFunctionDescriptor>()
-                    .First(f => f.Annotations.Any(a => a.Id == 0xb11));
+                    .First(f => f.Annotations.Any(a => a.Key.Id == 0xb11));
                 PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
             }
         }

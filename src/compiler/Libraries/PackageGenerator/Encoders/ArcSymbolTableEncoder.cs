@@ -51,7 +51,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                                 iterResult.AddRange(BitConverter.GetBytes(functionDescriptor.Annotations.LongCount()));
                                 foreach (var annotation in functionDescriptor.Annotations)
                                 {
-                                    iterResult.AddRange(BitConverter.GetBytes(annotation.Id));
+                                    iterResult.AddRange(BitConverter.GetBytes(annotation.Key.Id));
                                 }
 
                                 // var entryPoint = context.Labels.FirstOrDefault(x => x.Type == ArcRelocationLabelType.BeginFunction && x.Name == functionDescriptor.RawFullName);

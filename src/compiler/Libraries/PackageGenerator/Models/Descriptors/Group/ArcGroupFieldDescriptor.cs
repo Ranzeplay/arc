@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 {
@@ -10,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Group
 
         public required ArcDataDeclarationDescriptor DataType { get; set; }
 
-        public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; } = [];
+        public Dictionary<ArcAnnotationDescriptor, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
 
         public ArcAccessibility Accessibility { get; set; }
 

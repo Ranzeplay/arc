@@ -14,7 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
             if (annotationIdentifier.Namespace != null && annotationIdentifier.Namespace.Any())
             {
-                return source.GlobalScopeTree.GetNode<ArcScopeTreeAnnotationNode>(annotationIdentifier.NameArray);
+                return source.GlobalScopeTree
+                    .GetNode<ArcScopeTreeAnnotationNode>(annotationIdentifier.NameArray);
             }
             else
             {

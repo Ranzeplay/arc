@@ -77,7 +77,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
             };
 
-            var annotations = declarator.Annotations.Select(a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor);
+            var annotations = declarator.Annotations
+                .ToDictionary(
+                    a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor,
+                    a => a.CallArguments.Select(ca => ca.Expression)
+                );
 
             return new ArcFunctionDescriptor
             {

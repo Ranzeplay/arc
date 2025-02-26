@@ -22,7 +22,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
                 },
                 IdentifierName = field.DataDeclarator.Identifier.Name,
-                Annotations = field.Annotations.Select(a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor),
+                Annotations = field.Annotations
+                    .ToDictionary(
+                        a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor,
+                        a => a.CallArguments.Select(ca => ca.Expression)
+                    ),
             };
 
             return result;

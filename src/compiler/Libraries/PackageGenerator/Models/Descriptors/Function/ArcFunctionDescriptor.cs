@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 {
@@ -11,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors.Function
 
         public ArcDataDeclarationDescriptor ReturnValueType { get; set; }
 
-        public IEnumerable<ArcAnnotationDescriptor> Annotations { get; set; } = [];
+        public Dictionary<ArcAnnotationDescriptor, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
 
         public long EntrypointPos { get; set; }
 

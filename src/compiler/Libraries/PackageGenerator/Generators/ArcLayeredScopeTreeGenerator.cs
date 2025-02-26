@@ -118,9 +118,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = globalScopeTree };
                         var source = context.GenerateSource([us.CompilationUnit.Namespace], n);
                         source.LinkedNamespaces = us.LinkedNamespaces;
-                        n.Descriptor.Annotations = [.. n.SyntaxTree.Annotations
-                            .Select(a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor)
-                            ];
+                        n.Descriptor.Annotations = n.SyntaxTree.Annotations
+                            .ToDictionary(
+                                a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor,
+                                a => a.CallArguments.Select(ca => ca.Expression)
+                            );
                         n.ExpandSubDescriptors(source);
                     });
             });
