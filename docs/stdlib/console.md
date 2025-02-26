@@ -29,7 +29,7 @@ None.
 ### PrintInteger
 
 ```csharp
-public func PrintString(const i: ref int): ref none
+public func PrintInteger(const i: ref int): ref none
 ```
 
 #### Parameters
