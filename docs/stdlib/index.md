@@ -23,6 +23,18 @@ title: Stdlib
     - `Constructor`
     
     - `Destructor`
+    
+    - `FunctionId`
+    
+    - `DeclaratorOnly`
+    
+    - `WithAnnotation`
+    
+    - `WithAnnotationId`
+    
+    - `NoType`
+    
+    - `GlobalLinked`
   
   - `Array`
     
