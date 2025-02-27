@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -12,7 +11,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override string SignatureAddend => "S" + SyntaxTree.GetSignature();
 
         public override string Name => SyntaxTree.Identifier.Name;
-
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }
 }

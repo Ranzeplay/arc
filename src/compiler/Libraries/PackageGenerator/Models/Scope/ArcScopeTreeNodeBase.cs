@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
@@ -131,7 +130,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         {
             return GetChildren<T>(n => true, recursive);
         }
-
-        public abstract IEnumerable<ArcSymbolBase> GetSymbols();
     }
 }

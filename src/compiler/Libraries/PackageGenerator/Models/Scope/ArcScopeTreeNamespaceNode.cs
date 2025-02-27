@@ -1,9 +1,10 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    public class ArcScopeTreeNamespaceNode(string name) : ArcScopeTreeNodeBase
+    public class ArcScopeTreeNamespaceNode(string name) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.Namespace;
 
@@ -11,7 +12,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string Name => name;
 
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [new ArcNamespaceDescriptor() { Name = Name }];
+        public IEnumerable<byte> Encode(ArcScopeTree tree)
+        {
+            var iterResult = new List<byte>();
+            iterResult.Add((byte)ArcSymbolType.Namespace);
+            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
+
+            return iterResult;
+        }
 
         public ArcScopeTree GetIsolatedTree()
         {

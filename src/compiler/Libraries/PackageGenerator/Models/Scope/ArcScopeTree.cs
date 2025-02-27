@@ -65,7 +65,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         {
             return Root.GetSpecificChild<ArcScopeTreeNodeBase>(n => n.Name == name, true);
         }
-
-        public IEnumerable<ArcSymbolBase> Symbols => FlattenedNodes.SelectMany(n => n.GetSymbols());
     }
 }

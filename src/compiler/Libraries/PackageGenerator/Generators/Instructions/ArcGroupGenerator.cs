@@ -1,19 +1,18 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcGroupGenerator
     {
-        public static ArcGroupFieldDescriptor GenerateFieldDescriptor(ArcGenerationSource source, ArcGroupField field)
+        public static ArcScopeTreeGroupFieldNode GenerateFieldDescriptor(ArcGenerationSource source, ArcGroupField field)
         {
             source.ParentSignature.Locators.Add(field);
-            var result = new ArcGroupFieldDescriptor()
+            var result = new ArcScopeTreeGroupFieldNode()
             {
-                Name = source.ParentSignature.GetSignature(),
                 DataType = new ArcDataDeclarationDescriptor
                 {
                     Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
@@ -24,9 +23,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 IdentifierName = field.DataDeclarator.Identifier.Name,
                 Annotations = field.Annotations
                     .ToDictionary(
-                        a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor,
+                        a => ArcAnnotationHelper.FindAnnotationNode(source, a),
                         a => a.CallArguments.Select(ca => ca.Expression)
                     ),
+                Accessibility = field.Accessibility,
             };
 
             return result;

@@ -18,7 +18,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
             ];
 
         public ArcScopeTreeNamespaceNode GetCurrentNamespace => ScopeTree.GetNamespace(CompilationUnit.Namespace.Identifier.Namespace);
-
-        public List<ArcSymbolBase> Symbols => ScopeTree.FlattenedNodes.SelectMany(n => n.GetSymbols()).ToList();
     }
 }

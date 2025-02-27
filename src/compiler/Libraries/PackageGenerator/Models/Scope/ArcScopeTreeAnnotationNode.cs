@@ -1,18 +1,27 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    class ArcScopeTreeAnnotationNode(ArcAnnotationDescriptor descriptor) : ArcScopeTreeNodeBase
+    public class ArcScopeTreeAnnotationNode : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
     {
-        public override string Name => Descriptor.Name;
+        public override string Name => TargetGroup.ShortName;
 
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.Annotation;
 
-        public ArcAnnotationDescriptor Descriptor { get; set; } = descriptor;
+        public required ArcScopeTreeGroupNode TargetGroup { get; set; }
 
-        public override string SignatureAddend => "A" + Descriptor.TargetGroup.ShortName;
+        public override string SignatureAddend => "A" + TargetGroup.ShortName;
 
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [Descriptor];
+        public IEnumerable<byte> Encode(ArcScopeTree tree)
+        {
+            var iterResult = new List<byte>();
+            iterResult.Add((byte)ArcSymbolType.Annotation);
+            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
+            iterResult.AddRange(BitConverter.GetBytes(TargetGroup.Id));
+
+            return iterResult;
+        }
     }
 }

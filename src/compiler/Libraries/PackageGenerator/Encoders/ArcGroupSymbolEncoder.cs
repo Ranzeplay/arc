@@ -1,10 +1,10 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+﻿using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Encoders
 {
     internal class ArcGroupSymbolEncoder
     {
-        public static IEnumerable<byte> EncodeGroupSymbol(ArcGroupDescriptor group)
+        public static IEnumerable<byte> EncodeGroupSymbol(ArcScopeTreeGroupNode group)
         {
             return [
                 // Field id list

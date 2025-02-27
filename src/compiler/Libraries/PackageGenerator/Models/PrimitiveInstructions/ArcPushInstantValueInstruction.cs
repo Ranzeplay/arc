@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
 using System.Text;
 
@@ -19,7 +20,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             {
                 case ArcInstantValue.ValueType.Integer:
                     {
-                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "int");
+                        var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "int"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(Value.IntegerValue!.Value)],
@@ -35,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.Decimal:
                     {
-                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "decimal");
+                        var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "decimal"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(decimal.ToDouble(Value.DecimalValue!.Value))],
@@ -51,7 +52,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.String:
                     {
-                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "str");
+                        var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "str"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode
@@ -70,7 +71,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     }
                 case ArcInstantValue.ValueType.Boolean:
                     {
-                        var typeSymbol = source.GlobalScopeTree.Symbols.First(x => x is ArcBaseType bt && bt.FullName == "bool");
+                        var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "bool"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode

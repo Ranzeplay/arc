@@ -22,13 +22,13 @@ namespace Arc.Compiler.PackageGenerator.Helpers
                         .OfType<ArcScopeTreeFunctionNodeBase>()
                         .FirstOrDefault(n => n.Name == funcCall.Identifier.Name)
                         ?? throw new InvalidOperationException("Invalid function node");
-                    return funcNode.Descriptor.Id;
+                    return funcNode.Id;
                 }
             }
             else
             {
                 var funcNode = searchUnderGroup.GetSpecificChild<ArcScopeTreeGroupFunctionNode>(n => n.Name == funcCall.Identifier.Name);
-                return funcNode.Descriptor.Id;
+                return funcNode.Id;
             }
         }
     }

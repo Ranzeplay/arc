@@ -58,7 +58,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (currentDataType.DataType is ArcComplexType ct)
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeGroupNode(source, ct);
-                    var field = groupType.Descriptor.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
+                    var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
                     lhsResult.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));

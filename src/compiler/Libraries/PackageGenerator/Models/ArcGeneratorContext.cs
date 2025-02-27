@@ -2,7 +2,6 @@
 using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
@@ -17,11 +16,6 @@ namespace Arc.Compiler.PackageGenerator.Models
         public ArcScopeTree GlobalScopeTree { get; set; }
 
         public List<byte> GeneratedData { get; set; } = [];
-
-        public Dictionary<long, ArcSymbolBase> Symbols =>
-            GlobalScopeTree.FlattenedNodes
-                .SelectMany(n => n.GetSymbols())
-                .ToDictionary(s => s.Id);
 
         public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
@@ -149,8 +143,8 @@ namespace Arc.Compiler.PackageGenerator.Models
         {
             if (PackageDescriptor.Type == ArcPackageType.Executable)
             {
-                var targetFunction = GlobalScopeTree.Symbols
-                    .OfType<ArcFunctionDescriptor>()
+                var targetFunction = GlobalScopeTree.FlattenedNodes
+                    .OfType<ArcScopeTreeIndividualFunctionNode>()
                     .First(f => f.Annotations.Any(a => a.Key.Id == 0xb11));
                 PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
             }

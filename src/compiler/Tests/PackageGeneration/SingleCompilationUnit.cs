@@ -65,7 +65,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([unit]);
-            Assert.That(context.Symbols.Count(x => x.Key < 0xfff), Is.EqualTo(28));
+            Assert.That(context.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(17));
         }
 
         [Test]
@@ -99,14 +99,23 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = @"
                 link Arc::Std::Console;
                 link Arc::Std::Compilation;
-
-                namespace Arc::Program {
-                	@Export()
-                	@Entrypoint()
-                	public func main(var args: val string[]): val int {
-                		call PrintString(""Hello, world!\n"");
+                
+                namespace Program
+                {
+                	@Entrypoint
+                	public func main(var args: val string[]): val int
+                	{
+                		call PrintString(""Hello, world!"");
+                
+                		call PrintString(args[0]);
+                		call PrintString(""\n"");
+                
+                		args[0] = ""Fun"";
+                		call PrintString(args[0]);
+                		call PrintString(""\n"");
+                
                 		return 0;
-                	}
+                	}	
                 }
             ";
 

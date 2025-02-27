@@ -1,20 +1,37 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Generators;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    internal class ArcScopeTreeGroupFieldNode(ArcGroupFieldDescriptor groupField) : ArcScopeTreeNodeBase
+    public class ArcScopeTreeGroupFieldNode : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
     {
-        public override long Id { get => GroupField.Id; set => GroupField.Id = value; }
-
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupField;
 
-        public ArcGroupFieldDescriptor GroupField { get; set; } = groupField;
+        public required ArcDataDeclarationDescriptor DataType { get; set; }
 
-        public override string SignatureAddend => "D" + GroupField.IdentifierName;
+        public Dictionary<ArcScopeTreeAnnotationNode, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
 
-        public override string Name => GroupField.Name;
+        public required ArcAccessibility Accessibility { get; set; }
 
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [GroupField];
+        public required string IdentifierName { get; set; }
+
+        public override string SignatureAddend => "D" + IdentifierName;
+
+        public override string Name => IdentifierName;
+
+        public IEnumerable<byte> Encode(ArcScopeTree tree)
+        {
+            var iterResult = new List<byte>();
+            iterResult.Add((byte)ArcSymbolType.GroupField);
+            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
+            iterResult.AddRange(DataType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()));
+
+            return iterResult;
+        }
     }
 }

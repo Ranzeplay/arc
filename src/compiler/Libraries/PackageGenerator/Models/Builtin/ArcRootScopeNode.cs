@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Scope;
+﻿using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Builtin
 {
@@ -12,7 +11,5 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
         public override string SignatureAddend => "Root";
 
         public override string Name => SignatureAddend;
-
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [];
     }
 }

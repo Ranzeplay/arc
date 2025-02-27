@@ -13,14 +13,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
             return (ArcScopeTreeNamespaceNode)
                 new ArcScopeTreeNamespaceNode("Console")
                     .AddChildChained(
-                        new ArcScopeTreeBuiltinFunction(
-                            "PrintString",
-                            new ArcFunctionDescriptor()
-                            {
-                                Id = 0xa1,
-                                Name = "PrintString",
-                                Accessibility = ArcAccessibility.Public,
-                                Parameters = [
+                        new ArcScopeTreeBuiltinFunction("PrintString")
+                        {
+                            Id = 0xa1,
+                            Accessibility = ArcAccessibility.Public,
+                            Parameters = [
                                     new ArcParameterDescriptor()
                                     {
                                         DataType = new ArcDataDeclarationDescriptor()
@@ -34,27 +31,22 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                         RawFullName = "s",
                                     }
                                 ],
-                                ReturnValueType = new ArcDataDeclarationDescriptor()
-                                {
-                                    Type = ArcPersistentData.NoneType,
-                                    AllowNone = false,
-                                    Dimension = 0,
-                                    MemoryStorageType = ArcMemoryStorageType.Reference,
-                                    Mutability = ArcMutability.Constant,
-                                }
+                            ReturnValueType = new ArcDataDeclarationDescriptor()
+                            {
+                                Type = ArcPersistentData.NoneType,
+                                AllowNone = false,
+                                Dimension = 0,
+                                MemoryStorageType = ArcMemoryStorageType.Reference,
+                                Mutability = ArcMutability.Constant,
                             }
-                        )
-                        { Id = 0xa1 }
+                        }
                     )
                     .AddChildChained(
-                        new ArcScopeTreeBuiltinFunction(
-                            "PrintInteger",
-                            new ArcFunctionDescriptor()
-                            {
-                                Id = 0xa2,
-                                Name = "PrintInteger",
-                                Accessibility = ArcAccessibility.Public,
-                                Parameters = [
+                        new ArcScopeTreeBuiltinFunction("PrintInteger")
+                        {
+                            Id = 0xa2,
+                            Accessibility = ArcAccessibility.Public,
+                            Parameters = [
                                     new ArcParameterDescriptor()
                                     {
                                         DataType = new ArcDataDeclarationDescriptor()
@@ -68,37 +60,30 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib
                                         RawFullName = "i",
                                     }
                                 ],
-                                ReturnValueType = new ArcDataDeclarationDescriptor()
-                                {
-                                    Type = ArcPersistentData.NoneType,
-                                    AllowNone = false,
-                                    Dimension = 0,
-                                    MemoryStorageType = ArcMemoryStorageType.Reference,
-                                    Mutability = ArcMutability.Constant,
-                                }
+                            ReturnValueType = new ArcDataDeclarationDescriptor()
+                            {
+                                Type = ArcPersistentData.NoneType,
+                                AllowNone = false,
+                                Dimension = 0,
+                                MemoryStorageType = ArcMemoryStorageType.Reference,
+                                Mutability = ArcMutability.Constant,
                             }
-                        )
-                        { Id = 0xa2 }
+                        }
                     )
                     .AddChildChained(
-                        new ArcScopeTreeBuiltinFunction(
-                            "ReadString",
-                            new ArcFunctionDescriptor()
+                        new ArcScopeTreeBuiltinFunction("ReadString")
+                        {
+                            Id = 0xaf,
+                            Accessibility = ArcAccessibility.Public,
+                            ReturnValueType = new ArcDataDeclarationDescriptor()
                             {
-                                Id = 0xaf,
-                                Name = "ReadString",
-                                Accessibility = ArcAccessibility.Public,
-                                ReturnValueType = new ArcDataDeclarationDescriptor()
-                                {
-                                    Type = ArcPersistentData.StringType,
-                                    AllowNone = false,
-                                    Dimension = 0,
-                                    MemoryStorageType = ArcMemoryStorageType.Value,
-                                    Mutability = ArcMutability.Constant,
-                                }
+                                Type = ArcPersistentData.StringType,
+                                AllowNone = false,
+                                Dimension = 0,
+                                MemoryStorageType = ArcMemoryStorageType.Value,
+                                Mutability = ArcMutability.Constant,
                             }
-                        )
-                        { Id = 0xaf }
+                        }
                     );
         }
     }

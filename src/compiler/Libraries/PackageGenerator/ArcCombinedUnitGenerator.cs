@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Scope;
+using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using System.Collections.Immutable;
 
@@ -53,8 +54,8 @@ namespace Arc.Compiler.PackageGenerator
                 foreach (var fn in funcs)
                 {
                     genSource.CurrentNode = fn;
-                    var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
-                    fn.Descriptor.BlockLength = fnResult.GeneratedData.Count;
+                    var fnResult = ArcFunctionGenerator.Generate<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode>(genSource, fn, fn.SyntaxTree);
+                    fn.BlockLength = fnResult.GeneratedData.Count;
                     fn.GenerationResult = fnResult;
                 }
 
@@ -66,8 +67,8 @@ namespace Arc.Compiler.PackageGenerator
                     foreach (var fn in groupFns)
                     {
                         genSource.CurrentNode = fn;
-                        var fnResult = ArcFunctionGenerator.Generate(genSource, fn.SyntaxTree, false);
-                        fn.Descriptor.BlockLength = fnResult.GeneratedData.Count;
+                        var fnResult = ArcFunctionGenerator.Generate<ArcSourceCodeParser.Arc_group_functionContext, ArcScopeTreeGroupFunctionNode>(genSource, fn, fn.SyntaxTree);
+                        fn.BlockLength = fnResult.GeneratedData.Count;
                         fn.GenerationResult = fnResult;
                     }
                 }
@@ -78,7 +79,7 @@ namespace Arc.Compiler.PackageGenerator
                     .ForEach(t =>
                     {
                         // Assign entrypoint location
-                        t.Descriptor.EntrypointPos = iterContext.GeneratedData.Count + result.GeneratedData.Count;
+                        t.EntrypointPos = iterContext.GeneratedData.Count + result.GeneratedData.Count;
                         if (t.GenerationResult != null)
                         {
                             // Append the generated data

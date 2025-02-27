@@ -1,7 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
@@ -59,10 +59,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             // Discard the result of the function call
 
                             long funcId = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
-                            var function = source.GlobalScopeTree.Symbols
-                                .OfType<ArcFunctionDescriptor>()
+                            var function = source.GlobalScopeTree.FlattenedNodes
+                                .OfType<ArcScopeTreeFunctionNodeBase>()
                                 .FirstOrDefault(f => f.Id == funcId);
-                            if(function.ReturnValueType.Type.TypeId != 0)
+                            if (function.ReturnValueType.Type.TypeId != 0)
                             {
                                 stepResult.Append(new ArcDiscardStackTopInstruction().Encode(source));
                             }

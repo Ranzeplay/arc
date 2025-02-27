@@ -35,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                 var targetFuncId = ArcFunctionHelper.GetFunctionId(source, call);
                 var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFuncId, true);
-                lastTermTypeDecl = function.Descriptor.ReturnValueType;
+                lastTermTypeDecl = function.ReturnValueType;
             }
 
             foreach (var expr in firstTerm.Indices)
@@ -54,7 +54,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
-                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Descriptor.Id == dataType.GroupId, true)!;
+                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Id == dataType.GroupId, true)!;
 
                 if (term.Type == ArcCallChainTermType.FunctionCall)
                 {
@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
                 else if (term.Type == ArcCallChainTermType.Identifier)
                 {
-                    var field = group.Descriptor.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
+                    var field = group.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
                     var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, requiredMemotyStorageType, field.Id, true);
                     result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
                 }

@@ -20,7 +20,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
 
-            Assert.That(result.Symbols.Count(s => s.Key > 0xfff), Is.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
 
         [Test]
@@ -32,7 +32,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
 
-            Assert.That(result.Symbols.Count(s => s.Key > 0xfff), Is.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
 
         [Test]
@@ -44,7 +44,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
 
-            Assert.That(result.Symbols.Count(s => s.Key > 0xfff), Is.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
 
         [Test]
@@ -62,7 +62,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             Assert.Multiple(() =>
             {
-                Assert.That(result.Symbols.Count(s => s.Key > 0xfff), Is.EqualTo(8));
+                Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
                 Assert.That(result.Constants, Has.Count.EqualTo(3));
             });
         }
@@ -83,7 +83,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
 
-            Assert.That(result.Symbols.Count(s => s.Key > 0xfff), Is.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
     }
 }

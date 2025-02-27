@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Encoders;
-using Arc.Compiler.PackageGenerator.Models.Generation;
+﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Base

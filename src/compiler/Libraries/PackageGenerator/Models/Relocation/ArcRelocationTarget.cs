@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
@@ -90,13 +91,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
             }
         }
 
-        public ArcSymbolBase Symbol
+        public ArcScopeTreeNodeBase Symbol
         {
             get
             {
                 if (TargetType == ArcRelocationTargetType.Symbol)
                 {
-                    return (ArcSymbolBase)_destination;
+                    return (ArcScopeTreeNodeBase)_destination;
                 }
                 else
                 {

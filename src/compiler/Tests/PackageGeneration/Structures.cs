@@ -28,7 +28,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
 
-            Assert.That(structure.Symbols, Has.Count.EqualTo(5));
+            Assert.That(structure.ScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(6));
         }
 
         [Test]
@@ -56,7 +56,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
-            Assert.That(structure.Symbols.Count(x => x.Id < 0xfff), Is.EqualTo(0));
+            Assert.That(structure.ScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(10));
         }
     }
 }

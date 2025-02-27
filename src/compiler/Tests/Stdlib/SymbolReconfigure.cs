@@ -30,7 +30,7 @@ namespace Arc.Compiler.Tests.Stdlib
 
             var context = ArcCombinedUnitGenerator.GenerateUnits([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit], false);
 
-            Assert.That(context.Symbols.ContainsKey(0xa1));
+            Assert.That(context.GlobalScopeTree.FlattenedNodes.Any(x => x.Id == 0xa1));
         }
     }
 }

@@ -3,13 +3,12 @@ using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Descriptors.Group;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
@@ -24,22 +23,19 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var nsSignature = current.Signature;
             foreach (var group in ns.Groups)
             {
-                var descriptor = new ArcGroupDescriptor { Name = nsSignature + "+" + group.GetSignature(), ShortName = group.Identifier.Name };
 
-                var complexTypeDescriptor = new ArcComplexType(descriptor) { Name = descriptor.Name };
-                var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name);
+                var node = new ArcScopeTreeGroupNode { SyntaxTree = group, ShortName = group.Identifier.Name };
+                current.AddChild(node);
+
+                var complexTypeDescriptor = new ArcComplexType(node) { Name = node.Name };
+                var typeNode = new ArcScopeTreeDataTypeNode(complexTypeDescriptor, group.Identifier.Name)
+                {
+                    ComplexTypeGroup = node
+                };
                 current.AddChild(typeNode);
 
-                var annotationDescriptor = new ArcAnnotationDescriptor()
-                {
-                    Name = descriptor.Name,
-                    TargetGroup = descriptor,
-                };
-                var annotationNode = new ArcScopeTreeAnnotationNode(annotationDescriptor);
+                var annotationNode = new ArcScopeTreeAnnotationNode { TargetGroup = node };
                 current.AddChild(annotationNode);
-
-                var node = new ArcScopeTreeGroupNode(descriptor) { SyntaxTree = group };
-                current.AddChild(node);
             }
 
             return tree;
@@ -63,11 +59,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace);
             foreach (var fn in unit.Namespace.Functions)
             {
-                var descriptor = ArcFunctionGenerator.GenerateDescriptor(source, fn.Declarator);
+                var descriptor = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeIndividualFunctionNode>(source, fn.Declarator);
+                descriptor.SyntaxTree = fn;
                 source.ParentSignature.Locators = source.ParentSignature.Locators
                     .Take(source.ParentSignature.Locators.Count - 1).ToList();
-                var node = new ArcScopeTreeIndividualFunctionNode(descriptor) { SyntaxTree = fn };
-                namespaceNode.AddChild(node);
+                namespaceNode.AddChild(descriptor);
             }
 
             return mainTree;
@@ -118,9 +114,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
                         var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = globalScopeTree };
                         var source = context.GenerateSource([us.CompilationUnit.Namespace], n);
                         source.LinkedNamespaces = us.LinkedNamespaces;
-                        n.Descriptor.Annotations = n.SyntaxTree.Annotations
+                        n.Annotations = n.SyntaxTree.Annotations
                             .ToDictionary(
-                                a => ArcAnnotationHelper.FindAnnotationNode(source, a).Descriptor,
+                                a => ArcAnnotationHelper.FindAnnotationNode(source, a),
                                 a => a.CallArguments.Select(ca => ca.Expression)
                             );
                         n.ExpandSubDescriptors(source);

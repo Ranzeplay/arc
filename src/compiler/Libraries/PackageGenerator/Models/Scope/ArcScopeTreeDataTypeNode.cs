@@ -1,9 +1,12 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    internal class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase
+    internal class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
@@ -11,12 +14,26 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcTypeBase DataType { get; set; } = dataType;
 
-        public override string SignatureAddend => "T" + ShortName;
-
-        public override IEnumerable<ArcSymbolBase> GetSymbols() => [DataType];
-
         public string ShortName { get; set; } = shortName;
 
+        public ArcScopeTreeGroupNode? ComplexTypeGroup { get; set; }
+
+        public override string SignatureAddend => "T" + ShortName;
+
         public override string Name => DataType.Identifier;
+
+        public IEnumerable<byte> Encode(ArcScopeTree tree)
+        {
+            var iterResult = new List<byte>();
+            iterResult.Add((byte)ArcSymbolType.DataType);
+            iterResult.Add((byte)(IsInternal ? 0x00 : 0x01));
+            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
+            if (!IsInternal)
+            {
+                iterResult.AddRange(BitConverter.GetBytes(ComplexTypeGroup.Id));
+            }
+
+            return iterResult;
+        }
     }
 }
