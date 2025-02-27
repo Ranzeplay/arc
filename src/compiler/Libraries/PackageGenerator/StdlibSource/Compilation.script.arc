@@ -26,7 +26,7 @@ namespace Arc::Std::Compilation
 
 	@SymbolId(0xb7)
 	@WithAnnotationId(0xb71)
-	public group symbolId
+	public group SymbolId
 	{
 		public const id: val int;
 	}
