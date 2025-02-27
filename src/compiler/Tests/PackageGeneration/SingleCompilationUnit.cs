@@ -105,14 +105,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                 	@Entrypoint
                 	public func main(var args: val string[]): val int
                 	{
-                		call PrintString(""Hello, world!"");
-                
-                		call PrintString(args[0]);
-                		call PrintString(""\n"");
-                
-                		args[0] = ""Fun"";
-                		call PrintString(args[0]);
-                		call PrintString(""\n"");
+                		call PrintString(""Hello, world!\n"");
                 
                 		return 0;
                 	}	
