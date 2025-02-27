@@ -12,12 +12,14 @@ namespace Arc.Compiler.Circle
             var outputOption = new Option<string>(["--output", "-o"], () => "./build.pkg.arc", "The output file path");
             var logLevelOption = new Option<LogLevel>(["--log-level", "-l"], () => LogLevel.Information, "The log level");
             var packageTypeOption = new Option<ArcPackageType>(["--package-type", "-t"], () => ArcPackageType.Executable, "The package type");
+            var noStdOption = new Option<bool>(["--no-std"], "Do not include the standard library");
 
             var command = new RootCommand()
             {
                 inputArgument,
                 outputOption,
                 packageTypeOption,
+                noStdOption,
             };
 
             command.Name = "Circle";
@@ -33,7 +35,7 @@ namespace Arc.Compiler.Circle
                 }
             });
 
-            command.SetHandler(CommandHandler.HandleCommand, inputArgument, outputOption, packageTypeOption, logLevelOption);
+            command.SetHandler(CommandHandler.HandleCommand, inputArgument, outputOption, packageTypeOption, noStdOption, logLevelOption);
             return command;
         }
     }

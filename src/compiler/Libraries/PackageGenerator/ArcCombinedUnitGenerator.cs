@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator
 {
     public class ArcCombinedUnitGenerator
     {
-        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits)
+        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits, bool withStd = true)
         {
             var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
 
@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator
 
             var globalScopeTree = structures
                 .Select(s => s.ScopeTree)
-                .Append(ArcStdlib.GetTree())
+                .Append(withStd ? ArcStdlib.GetTree() : new ArcScopeTree())
                 .Append(ArcPersistentData.BaseTypeScopeTree)
                 .Aggregate((a, b) =>
                 {

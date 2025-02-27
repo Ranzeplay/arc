@@ -9,7 +9,7 @@ namespace Arc.Compiler.Circle
 {
     internal class CommandHandler
     {
-        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, LogLevel logLevel)
+        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel)
         {
             var logger = LoggerFactory.Create(builder =>
             {
@@ -33,7 +33,7 @@ namespace Arc.Compiler.Circle
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
             logger.LogInformation("Encoding instructions");
-            var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits);
+            var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits, !noStd);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = packageType,
