@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
+using Microsoft.Extensions.Logging;
 using System.CommandLine;
 
 namespace Arc.Compiler.Circle
@@ -10,11 +11,13 @@ namespace Arc.Compiler.Circle
             var inputArgument = new Argument<string[]>("input", "The input file path");
             var outputOption = new Option<string>(["--output", "-o"], () => "./build.pkg.arc", "The output file path");
             var logLevelOption = new Option<LogLevel>(["--log-level", "-l"], () => LogLevel.Information, "The log level");
+            var packageTypeOption = new Option<ArcPackageType>(["--package-type", "-t"], () => ArcPackageType.Executable, "The package type");
 
             var command = new RootCommand()
             {
                 inputArgument,
                 outputOption,
+                packageTypeOption,
             };
 
             command.Name = "Circle";
@@ -30,7 +33,7 @@ namespace Arc.Compiler.Circle
                 }
             });
 
-            command.SetHandler(CommandHandler.HandleCommand, inputArgument, outputOption, logLevelOption);
+            command.SetHandler(CommandHandler.HandleCommand, inputArgument, outputOption, packageTypeOption, logLevelOption);
             return command;
         }
     }

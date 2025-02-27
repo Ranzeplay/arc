@@ -9,7 +9,7 @@ namespace Arc.Compiler.Circle
 {
     internal class CommandHandler
     {
-        public static void HandleCommand(string[] inputs, string output, LogLevel logLevel)
+        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, LogLevel logLevel)
         {
             var logger = LoggerFactory.Create(builder =>
             {
@@ -36,7 +36,7 @@ namespace Arc.Compiler.Circle
             var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits);
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
-                Type = ArcPackageType.Executable,
+                Type = packageType,
                 Name = "Test",
                 Version = 0,
                 RootGroupTableEntryPos = 0,
@@ -52,6 +52,8 @@ namespace Arc.Compiler.Circle
             var outputStream = context.DumpFullByteStream();
 
             File.WriteAllBytes(output, [.. outputStream]);
+
+            logger.LogInformation("Done for {}", packageType.ToString().ToLowerInvariant());
         }
     }
 }
