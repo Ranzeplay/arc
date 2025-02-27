@@ -17,7 +17,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
         {
             var typeId = source.GlobalScopeTree
                 .GetNodes<ArcScopeTreeDataTypeNode>()
-                .FirstOrDefault(x => x.Signature == value.TypeName)?.Id;
+                .FirstOrDefault(x => x.ShortName == value.TypeName)?.Id;
             var id = new Random().NextInt64();
             result.AddedConstants.Add(new ArcConstant
             {
