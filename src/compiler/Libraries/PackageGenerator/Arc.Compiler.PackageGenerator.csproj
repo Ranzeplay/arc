@@ -19,4 +19,19 @@
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Models\Builtin\ArcStdlibSource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ArcStdlibSource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Models\Builtin\ArcStdlibSource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ArcStdlibSource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
 </Project>
