@@ -9,9 +9,9 @@ namespace Arc.Compiler.Tests.Stdlib
 {
     [Category("Stdlib")]
     [CancelAfter(1000)]
-    class SymbolReconfigure
+    class SymbolReconfiguration
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SymbolReconfigure>();
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SymbolReconfiguration>();
 
         [Test]
         public void SymbolId()
@@ -30,7 +30,11 @@ namespace Arc.Compiler.Tests.Stdlib
 
             var context = ArcCombinedUnitGenerator.GenerateUnits([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit], false);
 
-            Assert.That(context.GlobalScopeTree.FlattenedNodes.Any(x => x.Id == 0xa1));
+            Assert.Multiple(() =>
+            {
+                Assert.That(context.GlobalScopeTree.FlattenedNodes.Any(x => x.Id == 0xa1));
+                Assert.That(context.GlobalScopeTree.FlattenedNodes.Any(x => x.Id == 0xb41));
+            });
         }
     }
 }
