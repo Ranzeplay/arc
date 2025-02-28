@@ -6,6 +6,7 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
+using Arc.Compiler.PackageGenerator.StdlibSource;
 using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using System.Collections.Immutable;
@@ -18,6 +19,11 @@ namespace Arc.Compiler.PackageGenerator
         {
             var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
 
+            if (withStd)
+            {
+                structures = [..structures, ..ArcStdlibLoader.Load(compilationUnits.First().Logger)];
+            }
+
             var result = new ArcGeneratorContext()
             {
                 Logger = compilationUnits.First().Logger,
@@ -26,7 +32,7 @@ namespace Arc.Compiler.PackageGenerator
 
             var globalScopeTree = structures
                 .Select(s => s.ScopeTree)
-                .Append(withStd ? ArcStdlib.GetTree() : new ArcScopeTree())
+                // .Append(withStd ? ArcStdlib.GetTree() : new ArcScopeTree())
                 .Append(ArcPersistentData.BaseTypeScopeTree)
                 .Aggregate((a, b) =>
                 {

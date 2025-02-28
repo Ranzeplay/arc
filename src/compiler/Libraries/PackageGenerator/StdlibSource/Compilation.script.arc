@@ -62,7 +62,7 @@ namespace Arc::Std::Compilation
 	public group NoType {}
 
 	@NoType
-	@SymbolId(0xbb)
-	@WithAnnotationId(0xbb1)
+	@SymbolId(0xbc)
+	@WithAnnotationId(0xbc1)
 	public group GlobalLinked {}
 }
