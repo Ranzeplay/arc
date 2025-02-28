@@ -7,6 +7,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
     {
         public ArcDataDeclarationDescriptor DeclarationDescriptor { get; set; }
 
-        public long SlotId { get; set; }
+        public ulong SlotId { get; set; }
     }
 }

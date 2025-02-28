@@ -13,16 +13,16 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             return source.AccessibleConstants.Concat(result.AddedConstants);
         }
 
-        public static long GetConstantIdOrCreateConstant(ArcInstantValue value, ref ArcGenerationSource source, ref ArcPartialGenerationResult result)
+        public static ulong GetConstantIdOrCreateConstant(ArcInstantValue value, ref ArcGenerationSource source, ref ArcPartialGenerationResult result)
         {
             var typeId = source.GlobalScopeTree
                 .GetNodes<ArcScopeTreeDataTypeNode>()
-                .FirstOrDefault(x => x.ShortName == value.TypeName)?.Id;
-            var id = new Random().NextInt64();
+                .First(x => x.ShortName == value.TypeName).Id;
+            var id = (ulong)new Random().NextInt64();
             result.AddedConstants.Add(new ArcConstant
             {
                 Id = id,
-                TypeId = typeId ?? -1,
+                TypeId = typeId,
                 IsArray = false,
                 Value = value.GetRawValue(),
                 Encoder = ArcInstantValueEncoder.GetEncoderFromInstantValue(value)

@@ -10,17 +10,17 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 
         public ArcPackageType Type { get; set; }
 
-        public long EntrypointFunctionId { get; set; }
+        public ulong EntrypointFunctionId { get; set; }
 
-        public long DataAlignmentLength { get; set; }
+        public ulong DataAlignmentLength { get; set; }
 
-        public long RootFunctionTableEntryPos { get; set; }
+        public ulong RootFunctionTableEntryPos { get; set; }
 
-        public long RootConstantTableEntryPos { get; set; }
+        public ulong RootConstantTableEntryPos { get; set; }
 
-        public long RootGroupTableEntryPos { get; set; }
+        public ulong RootGroupTableEntryPos { get; set; }
 
-        public long RegionTableEntryPos { get; set; }
+        public ulong RegionTableEntryPos { get; set; }
 
         // Call after name being set.
         public long GetLength()

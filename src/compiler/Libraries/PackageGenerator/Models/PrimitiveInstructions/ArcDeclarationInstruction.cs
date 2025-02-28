@@ -28,7 +28,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
                     SyntaxTree = DataDeclarator,
                 },
-                SlotId = source.LocalDataSlots.Count,
+                SlotId = (uint)source.LocalDataSlots.Count,
             };
 
             return new ArcPartialGenerationResult

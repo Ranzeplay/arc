@@ -58,7 +58,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false);
                             // Discard the result of the function call
 
-                            long funcId = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
+                            var funcId = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
                             var function = source.GlobalScopeTree.FlattenedNodes
                                 .OfType<ArcScopeTreeFunctionNodeBase>()
                                 .FirstOrDefault(f => f.Id == funcId);

@@ -5,11 +5,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     public abstract class ArcScopeTreeNodeBase
     {
-        public virtual long Id { get => ManualId ?? GeneratedId; set => ManualId = value; }
+        public virtual ulong Id { get => ManualId ?? GeneratedId; set => ManualId = value; }
 
-        private long? ManualId { get; set; } = null;
+        private ulong? ManualId { get; set; } = null;
 
-        private long GeneratedId => (long)HashHelper.CalculateHash(Signature);
+        private ulong GeneratedId => HashHelper.CalculateHash(Signature);
 
         public abstract string Name { get; }
 
@@ -136,7 +136,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             return GetChildren<T>(n => true, recursive);
         }
 
-        public void RemoveChild(long id)
+        public void RemoveChild(ulong id)
         {
             Children = [.. Children.Where(n => n.Id != id)];
         }

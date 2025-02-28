@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 {
     internal class ArcFunctionHelper
     {
-        public static long GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        public static ulong GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {
             if (searchUnderGroup == null)
             {

@@ -3,13 +3,13 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class ArcFunctionCallInstruction(long functionSymbolId, int parameterCount) : ArcPrimitiveInstructionBase
+    internal class ArcFunctionCallInstruction(ulong functionSymbolId, uint parameterCount) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x36];
 
-        public long FunctionSymbolId { get; set; } = functionSymbolId;
+        public ulong FunctionSymbolId { get; set; } = functionSymbolId;
 
-        public int ParameterCount { get; set; } = parameterCount;
+        public uint ParameterCount { get; set; } = parameterCount;
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {

@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             }
         }
 
-        public static IEnumerable<ArcScopeTreeNodeBase> GenerateEmptyAnnotation(string name, long groupId, long annotationId)
+        public static IEnumerable<ArcScopeTreeNodeBase> GenerateEmptyAnnotation(string name, ulong groupId, ulong annotationId)
         {
             var groupNode = new ArcScopeTreeGroupNode
             {

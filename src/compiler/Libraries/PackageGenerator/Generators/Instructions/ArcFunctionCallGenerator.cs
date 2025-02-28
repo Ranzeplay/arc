@@ -12,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            long funcId = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
+            var funcId = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
 
             foreach (var arg in funcCall.Arguments)
             {
@@ -21,7 +21,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
 
-            result.Append(new ArcFunctionCallInstruction(funcId, totalArgs).Encode(source));
+            result.Append(new ArcFunctionCallInstruction(funcId, (uint)totalArgs).Encode(source));
 
             return result;
         }

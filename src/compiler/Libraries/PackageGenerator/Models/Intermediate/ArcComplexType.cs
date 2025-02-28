@@ -5,6 +5,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
     internal class ArcComplexType(ArcScopeTreeGroupNode groupDescriptor) : ArcTypeBase(groupDescriptor.Name)
     {
-        public long GroupId { get; set; } = groupDescriptor.Id;
+        public ulong GroupId { get; set; } = groupDescriptor.Id;
     }
 }

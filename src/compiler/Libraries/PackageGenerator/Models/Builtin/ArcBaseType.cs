@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
     {
         public byte[] FieldId => [0x00];
 
-        public ArcBaseType(long id, string identifier) : base(identifier)
+        public ArcBaseType(ulong id, string identifier) : base(identifier)
         {
             Id = id;
             Name = identifier;

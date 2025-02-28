@@ -26,7 +26,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     Name = "Function param slot",
                     DeclarationDescriptor = param.DataType,
-                    SlotId = source.LocalDataSlots.Count
+                    SlotId = (ulong)source.LocalDataSlots.Count
                 });
             }
 

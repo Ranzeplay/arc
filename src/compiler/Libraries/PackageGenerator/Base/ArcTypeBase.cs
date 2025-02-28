@@ -2,7 +2,7 @@
 {
     public class ArcTypeBase(string identifier) : ArcSymbolBase
     {
-        public long TypeId { get => Id; }
+        public ulong TypeId { get => Id; }
 
         public string Identifier { get; set; } = identifier;
 

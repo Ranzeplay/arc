@@ -46,7 +46,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                         .InstantValue!
                         .IntegerValue!
                         .Value;
-                    n.Id = newId;
+                    n.Id = (ulong)newId;
                 });
 
             scopeTree.FlattenedNodes
@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                         .InstantValue!
                         .IntegerValue!
                         .Value;
-                    n.Id = newId;
+                    n.Id = (ulong)newId;
                 });
         }
 
@@ -83,7 +83,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                         .InstantValue!
                         .IntegerValue!
                         .Value;
-                    n.Id = newId;
+                    n.Id = (ulong)newId;
                 });
         }
 

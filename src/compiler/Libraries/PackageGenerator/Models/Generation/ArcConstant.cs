@@ -4,9 +4,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcConstant
     {
-        public long Id { get; set; }
+        public ulong Id { get; set; }
 
-        public long TypeId { get; set; }
+        public ulong TypeId { get; set; }
 
         public required bool IsArray { get; set; }
 
