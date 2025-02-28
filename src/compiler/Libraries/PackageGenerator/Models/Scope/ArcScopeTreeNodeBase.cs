@@ -1,10 +1,15 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
     public abstract class ArcScopeTreeNodeBase
     {
-        public virtual long Id { get; set; } = new Random().NextInt64();
+        public virtual long Id { get => ManualId ?? GeneratedId; set => ManualId = value; }
+
+        private long? ManualId { get; set; } = null;
+
+        private long GeneratedId => (long)HashHelper.CalculateHash(Signature);
 
         public abstract string Name { get; }
 
