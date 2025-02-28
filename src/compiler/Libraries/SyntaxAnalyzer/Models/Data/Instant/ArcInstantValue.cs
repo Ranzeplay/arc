@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using System.ComponentModel;
 using System.Text;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
@@ -58,7 +59,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
                 }
                 else
                 {
-                    return new ArcInstantValue(new ArcInstantIntegerValue(int.Parse(numberText)));
+                    return new ArcInstantValue(new ArcInstantIntegerValue((long)new Int64Converter().ConvertFromString(numberText)));
                 }
             }
             else if (context.LITERAL_STRING() != null)
