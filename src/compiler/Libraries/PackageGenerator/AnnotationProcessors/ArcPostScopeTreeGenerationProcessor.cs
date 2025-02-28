@@ -97,7 +97,11 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                 .ToList()
                 .ForEach(n =>
                 {
-                    n.Parent.RemoveChild(n.Id);
+                    var annotation = n.Parent.Children
+                        .OfType<ArcScopeTreeAnnotationNode>()
+                        .First(a => a.TargetGroup.Id == n.Id);
+
+                    n.Parent.RemoveChild(annotation.Id);
                 });
         }
     }
