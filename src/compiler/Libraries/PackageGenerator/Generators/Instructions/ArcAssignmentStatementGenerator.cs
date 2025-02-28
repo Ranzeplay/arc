@@ -55,9 +55,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     throw new InvalidDataException("Invalid field sequence");
                 }
 
-                if (currentDataType.DataType is ArcComplexType ct)
+                if (currentDataType.DataType is ArcComplexType)
                 {
-                    var groupType = ArcDataTypeHelper.GetDataTypeGroupNode(source, ct);
+                    var groupType = currentDataType.ComplexTypeGroup!;
                     var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);

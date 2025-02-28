@@ -54,7 +54,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
-                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeGroupNode>(g => g.Id == dataType.GroupId, true)!;
+                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?.ComplexTypeGroup!;
 
                 if (term.Type == ArcCallChainTermType.FunctionCall)
                 {
