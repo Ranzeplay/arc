@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Generators;
+﻿using Arc.Compiler.PackageGenerator.AnnotationProcessors;
+using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
@@ -31,6 +32,8 @@ namespace Arc.Compiler.PackageGenerator
                     a.MergeRoot(b);
                     return a;
                 });
+
+            ArcPostScopeTreeGenerationProcessor.All(ref globalScopeTree);
 
             foreach (var structure in structures)
             {

@@ -8,7 +8,6 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {

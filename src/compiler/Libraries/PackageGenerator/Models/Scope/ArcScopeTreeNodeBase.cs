@@ -135,5 +135,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         {
             return GetChildren<T>(n => true, recursive);
         }
+
+        public void RemoveChild(long id)
+        {
+            Children = [.. Children.Where(n => n.Id != id)];
+        }
     }
 }
