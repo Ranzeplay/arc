@@ -28,7 +28,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                                 {
                                     Location = 1,
                                     TargetType = ArcRelocationTargetType.Symbol,
-                                    Symbol = typeSymbol
+                                    Symbol = typeSymbol,
+                                    Layer = Guid.Empty
                                 }
                             ]
                         };
@@ -44,7 +45,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                                 {
                                     Location = 1,
                                     TargetType = ArcRelocationTargetType.Symbol,
-                                    Symbol = typeSymbol
+                                    Symbol = typeSymbol,
+                                    Layer = Guid.Empty
                                 }
                             ]
                         };
@@ -63,7 +65,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                                 {
                                     Location = 1,
                                     TargetType = ArcRelocationTargetType.Symbol,
-                                    Symbol = typeSymbol
+                                    Symbol = typeSymbol,
+                                    Layer = Guid.Empty
                                 }
                             ]
                         };
@@ -81,7 +84,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                                 {
                                     Location = 1,
                                     TargetType = ArcRelocationTargetType.Symbol,
-                                    Symbol = typeSymbol
+                                    Symbol = typeSymbol,
+                                    Layer = Guid.Empty
                                 }
                             ]
                         };

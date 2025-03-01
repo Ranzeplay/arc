@@ -4,7 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class ArcLabellingInstruction(ArcRelocationLabelType labelType, string name) : ArcPrimitiveInstructionBase
+    internal class ArcLabellingInstruction(ArcRelocationLabelType labelType, string name, Guid relocationLayer) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x33];
 
@@ -13,6 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             Name = name,
             Type = labelType,
             Location = 0,
+            Layer = relocationLayer
         };
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)

@@ -12,6 +12,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
 
         public long Parameter { get; set; } = 0;
 
+        public required Guid Layer { get; set; }
+
         public long TargetLocation
         {
             get

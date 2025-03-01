@@ -7,5 +7,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
         public ArcRelocationLabelType Type { get; set; }
 
         public long Location { get; set; }
+
+        public required Guid Layer { get; set; }
     }
 }

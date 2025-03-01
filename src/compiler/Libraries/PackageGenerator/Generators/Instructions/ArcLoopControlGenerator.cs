@@ -14,7 +14,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 TargetType = ArcRelocationTargetType.Label,
                 Parameter = 1,
-                Label = ArcRelocationLabelType.EndLoopBlock
+                Label = ArcRelocationLabelType.EndLoopBlock,
+                Layer = Guid.Empty,
             });
 
             result.Append(jumpCommand.Encode(source));
@@ -30,7 +31,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 TargetType = ArcRelocationTargetType.Label,
                 Parameter = -1,
-                Label = ArcRelocationLabelType.BeginLoopBlock
+                Label = ArcRelocationLabelType.BeginLoopBlock,
+                Layer = Guid.Empty,
             });
 
             result.Append(jumpCommand.Encode(source));

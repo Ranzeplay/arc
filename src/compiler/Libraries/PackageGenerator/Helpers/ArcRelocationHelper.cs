@@ -11,6 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             var sourceLocation = target.Location;
 
             var list = labels.ToList();
+
             var directionList = forwardSearch switch
             {
                 true => list.Where(l => l.Location >= sourceLocation).OrderBy(l => l.Location),
@@ -22,11 +23,13 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             {
                 var l = directionList.ElementAt(i);
 
-                if (l.Type == antiLabel)
+                bool sameLayer = l.Layer == target.Layer || target.Layer == Guid.Empty;
+
+                if (l.Type == antiLabel && sameLayer)
                 {
                     layer++;
                 }
-                else if (l.Type == label)
+                else if (l.Type == label && sameLayer)
                 {
                     layer--;
                     if (layer <= 0)

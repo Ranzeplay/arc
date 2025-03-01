@@ -7,33 +7,13 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcConditionBlockGenerator
     {
-        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditional conditionalBlock)
-        {
-            var result = new ArcPartialGenerationResult();
-
-            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, conditionalBlock.Expression, true);
-            result.Append(expr);
-
-            var body = ArcSequentialExecutionGenerator.Generate(source, conditionalBlock.Body);
-            var bodyLength = body.GeneratedData.Count;
-
-            var jumpOutRelocation = new ArcRelocationTarget
-            {
-                TargetType = ArcRelocationTargetType.Relative,
-                Offset = bodyLength
-            };
-
-            result.Append(new ArcConditionalJumpInstruction(jumpOutRelocation).Encode(source));
-            result.Append(body);
-
-            return result;
-        }
-
         public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockIf ifBlock)
         {
+            var relocationLayer = Guid.NewGuid();
+
             var result = new ArcPartialGenerationResult();
 
-            var beginIfLabelInstruction = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfBlock, "begin").Encode(source);
+            var beginIfLabelInstruction = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfBlock, "begin", relocationLayer).Encode(source);
             result.Append(beginIfLabelInstruction);
 
             var conditionalBlocks = new List<ArcPartialGenerationResult>();
@@ -42,21 +22,23 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var cbResult = new ArcPartialGenerationResult();
                 var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, block.Expression, true);
 
-                var beginSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "next").Encode(source);
+                var beginSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "next", relocationLayer).Encode(source);
                 var jumpNextInstruction = new ArcConditionalJumpInstruction(new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
                     Label = ArcRelocationLabelType.BeginIfSubBlock,
-                    Parameter = 1
+                    Parameter = 1,
+                    Layer = relocationLayer
                 }).Encode(source);
                 var body = ArcSequentialExecutionGenerator.Generate(source, block.Body);
                 var jumpOutInstruction = new ArcUnconditionalJumpInstruction(new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
                     Label = ArcRelocationLabelType.EndIfBlock,
-                    Parameter = 1
+                    Parameter = 1,
+                    Layer = relocationLayer
                 }).Encode(source);
-                var endSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end").Encode(source);
+                var endSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end", relocationLayer).Encode(source);
 
                 cbResult.Append(beginSubBlockLabel);
                 cbResult.Append(expr);
@@ -72,19 +54,19 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             // Now the ElseBlock
             var bResult = new ArcPartialGenerationResult();
-            var beginSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "begin");
+            var beginSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "begin", relocationLayer);
             bResult.Append(beginSubBlock.Encode(source));
             if (ifBlock.ElseBody != null)
             {
                 var block = ArcSequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
                 bResult.Append(block);
             }
-            var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end");
+            var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end", relocationLayer);
             bResult.Append(endSubBlock.Encode(source));
 
             result.Append(bResult);
 
-            var endIfLabelInstruction = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfBlock, "end").Encode(source);
+            var endIfLabelInstruction = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfBlock, "end", relocationLayer).Encode(source);
             result.Append(endIfLabelInstruction);
 
             return result;

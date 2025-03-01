@@ -30,9 +30,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 });
             }
 
-            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, node.Signature).Encode(source);
+            var relocationLayer = Guid.NewGuid();
+
+            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, node.Signature, relocationLayer).Encode(source);
             var body = GenerateBody(source, func.Body);
-            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndFunction, node.Signature).Encode(source);
+            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndFunction, node.Signature, relocationLayer).Encode(source);
 
             result.Append(beginBlockLabel);
             result.Append(body);

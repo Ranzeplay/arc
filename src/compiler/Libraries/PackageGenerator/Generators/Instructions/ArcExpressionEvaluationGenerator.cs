@@ -43,7 +43,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     }
                 case ArcDataValue.ValueType.CallChain:
                     {
-                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, forceRefCallChain ? ArcMemoryStorageType.Reference : ArcMemoryStorageType.Value));
+                        var memoryStorageType = forceRefCallChain ? ArcMemoryStorageType.Reference : ArcMemoryStorageType.Value;
+                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, memoryStorageType));
                         break;
                     }
                 default:

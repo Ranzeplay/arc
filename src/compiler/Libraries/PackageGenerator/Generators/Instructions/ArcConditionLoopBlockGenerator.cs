@@ -9,9 +9,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
     {
         public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditionalLoop clBlock)
         {
+            var relocationLayer = Guid.NewGuid();
+
             var result = new ArcPartialGenerationResult();
 
-            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin").Encode(source);
+            var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin", relocationLayer).Encode(source);
 
             var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression, true);
 
@@ -21,7 +23,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 TargetType = ArcRelocationTargetType.Label,
                 Label = ArcRelocationLabelType.EndLoopBlock,
-                Parameter = 1
+                Parameter = 1,
+                Layer = relocationLayer
             };
             var jumpOutInstruction = new ArcConditionalJumpInstruction(jumpOutRelocator).Encode(source);
 
@@ -29,11 +32,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 TargetType = ArcRelocationTargetType.Label,
                 Label = ArcRelocationLabelType.BeginLoopBlock,
-                Parameter = -1
+                Parameter = -1,
+                Layer = relocationLayer
             };
             var jumpBackInstruction = new ArcUnconditionalJumpInstruction(jumpBackRelocator).Encode(source);
 
-            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndLoopBlock, "end").Encode(source);
+            var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndLoopBlock, "end", relocationLayer).Encode(source);
 
             result.Append(beginBlockLabel);
             result.Append(expr);
