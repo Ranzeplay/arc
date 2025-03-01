@@ -52,4 +52,18 @@ None.
 
 #### Returns
 
-The string read from stdin. 
+The string read from stdin.
+
+### ReadInteger
+
+```csharp
+public func ReadInteger(): val int
+```
+
+#### Parameters
+
+None.
+
+#### Returns
+
+The integer read from stdin.

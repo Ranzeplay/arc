@@ -13,4 +13,8 @@ namespace Arc::Std::Console
 	@DeclaratorOnly
 	@SymbolId(0xa3)
 	public func ReadString(): val string {}
+
+	@DeclaratorOnly
+	@SymbolId(0xa4)
+	public func ReadInteger(): val int {}
 }

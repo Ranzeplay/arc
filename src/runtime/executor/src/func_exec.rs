@@ -5,6 +5,7 @@ use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
+use arc_stdlib::base::STRING_TYPE_ID;
 
 pub fn prepare_and_get_function_info(
     function_id: usize,
@@ -66,12 +67,12 @@ fn put_fn_args(
             slot_id: 0,
             value: Rc::new(RefCell::new(DataValue {
                 data_type: DataTypeEncoding {
-                    type_id: 0,
-                    dimension: 0,
-                    mutability: Mutability::Immutable,
-                    memory_storage_type: MemoryStorageType::Reference,
+                    type_id: *STRING_TYPE_ID,
+                    dimension: 1,
+                    mutability: Mutability::Mutable,
+                    memory_storage_type: MemoryStorageType::Value,
                 },
-                value: DataValueType::None,
+                value: DataValueType::Array(vec![]),
             })),
         })));
     }

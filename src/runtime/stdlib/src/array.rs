@@ -3,6 +3,7 @@ use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
+use crate::base::INTEGER_TYPE_ID;
 
 pub struct ArcStdArray {}
 
@@ -11,7 +12,7 @@ impl ArcStdArray {
         _args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
         let data_type = DataTypeEncoding {
-            type_id: 2,
+            type_id: *INTEGER_TYPE_ID,
             dimension: 1,
             mutability: Mutability::Mutable,
             memory_storage_type: MemoryStorageType::Value,
@@ -90,7 +91,7 @@ impl ArcStdArray {
             DataValueType::Array(array) => {
                 let size = array.len();
                 let data_type = DataTypeEncoding {
-                    type_id: 1,
+                    type_id: *INTEGER_TYPE_ID,
                     dimension: 0,
                     mutability: Mutability::Immutable,
                     memory_storage_type: MemoryStorageType::Value,
