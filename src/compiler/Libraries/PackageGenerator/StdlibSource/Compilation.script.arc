@@ -65,4 +65,9 @@ namespace Arc::Std::Compilation
 	@SymbolId(0xbc)
 	@WithAnnotationId(0xbc1)
 	public group GlobalLinked {}
+
+	@NoType
+	@SymbolId(0xbd)
+	@WithAnnotationId(0xbd1)
+	public group Accessor {}
 }

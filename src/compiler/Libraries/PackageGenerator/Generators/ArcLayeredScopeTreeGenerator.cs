@@ -2,7 +2,6 @@
 using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
-using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
@@ -60,8 +59,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             {
                 var descriptor = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeIndividualFunctionNode>(source, fn.Declarator);
                 descriptor.SyntaxTree = fn;
-                source.ParentSignature.Locators = source.ParentSignature.Locators
-                    .Take(source.ParentSignature.Locators.Count - 1).ToList();
+                source.ParentSignature.Locators = [.. source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1)];
                 namespaceNode.AddChild(descriptor);
             }
 
@@ -76,7 +74,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             var globalScopeTree = new ArcScopeTree();
 
-            globalScopeTree.MergeRoot(ArcStdlib.GetTree());
+            // globalScopeTree.MergeRoot(ArcStdlib.GetTree());
             globalScopeTree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
 
             var unitStructures = unitList.Select(u => new ArcCompilationUnitStructure(new ArcScopeTree(), u)).ToList();

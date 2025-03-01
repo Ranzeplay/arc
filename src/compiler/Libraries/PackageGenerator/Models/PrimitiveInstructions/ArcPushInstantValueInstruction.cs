@@ -1,5 +1,4 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;

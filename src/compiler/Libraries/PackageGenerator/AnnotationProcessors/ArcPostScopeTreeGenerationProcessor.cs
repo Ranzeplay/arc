@@ -91,7 +91,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
         {
             scopeTree.FlattenedNodes
                 .OfType<ArcScopeTreeGroupNode>()
-                .Where(x => !x.Annotations.Keys.Any(k => k.Signature == _withAnnotationSignature) 
+                .Where(x => !x.Annotations.Keys.Any(k => k.Signature == _withAnnotationSignature)
                          && !x.Annotations.Keys.Any(k => k.Signature == _withAnnotationIdSignature)
                 )
                 .ToList()

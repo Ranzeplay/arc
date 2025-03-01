@@ -3,7 +3,6 @@ using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
-using Arc.Compiler.PackageGenerator.Models.Builtin.Stdlib;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.PackageGenerator.StdlibSource;
@@ -17,16 +16,18 @@ namespace Arc.Compiler.PackageGenerator
     {
         public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits, bool withStd = true)
         {
-            var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
+            var logger = compilationUnits.First().Logger;
 
             if (withStd)
             {
-                structures = [..structures, ..ArcStdlibLoader.Load(compilationUnits.First().Logger)];
+                compilationUnits = compilationUnits.Concat(ArcStdlibLoader.LoadSyntax(logger));
             }
+
+            var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
 
             var result = new ArcGeneratorContext()
             {
-                Logger = compilationUnits.First().Logger,
+                Logger = logger,
                 GlobalScopeTree = null!
             };
 

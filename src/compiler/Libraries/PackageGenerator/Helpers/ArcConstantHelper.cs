@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Encoders;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;

@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
 {
     class ArcStdlibLoader
     {
-        public static IEnumerable<ArcCompilationUnitStructure> Load(ILogger logger)
+        public static IEnumerable<ArcCompilationUnit> LoadSyntax(ILogger logger)
         {
             var compilationNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceCompilation);
             var compilerNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(compilationNamespaceSource, logger);
@@ -24,9 +24,9 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
             var consoleNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(consoleNamespaceSource, logger);
             var consoleNamespaceUnit = new ArcCompilationUnit(consoleNamespaceUnitContext, logger, "Arc::Std::Console");
 
-            var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit]);
+            // var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit]);
 
-            return structure;
+            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit];
         }
     }
 }

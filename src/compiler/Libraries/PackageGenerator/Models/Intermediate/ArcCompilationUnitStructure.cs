@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Scope;
+﻿using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
