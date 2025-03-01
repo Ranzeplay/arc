@@ -59,10 +59,10 @@ macro_rules! comparison_operation_instruction {
     };
 }
 
-pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
+pub fn launch(package: Package, _verbose: bool, args: Vec<String>) -> Result<i32, String> {
     debug!("Launching program...");
 
-    let result = execute(package);
+    let result = execute(package, args);
 
     match result {
         FunctionExecutionResult::Success(_) => {
@@ -77,8 +77,8 @@ pub fn launch(package: Package, _verbose: bool) -> Result<i32, String> {
     }
 }
 
-pub fn execute(package: Package) -> FunctionExecutionResult {
-    let mut context = ExecutionContext::new(package);
+pub fn execute(package: Package, args: Vec<String>) -> FunctionExecutionResult {
+    let mut context = ExecutionContext::new(package, args);
     context.init_jump_destinations();
     context.init_function_entry_points();
 

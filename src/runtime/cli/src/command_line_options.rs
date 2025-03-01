@@ -21,7 +21,7 @@ pub enum Subcommands {
 #[derive(Parser, Debug)]
 #[command(about = "Decode package content but not execute")]
 pub struct DecodeCommand {
-    #[clap(short, long, help = "Path to the package file")]
+    #[clap(required = true, help = "Path to the package file")]
     pub path: PathBuf,
 }
 
@@ -29,8 +29,10 @@ pub struct DecodeCommand {
 #[derive(Parser, Debug)]
 #[command(about = "Execute package")]
 pub struct ExecuteCommand {
-    #[clap(short, long, help = "Path to the package file")]
+    #[clap(required = true, help = "Path to the package file")]
     pub path: PathBuf,
     #[clap(short, long, help = "Repeat execution for specific times", default_value("1"))]
     pub repeat: u32,
+    #[clap(help = "Arguments to pass to the package")]
+    pub args: Vec<String>,
 }

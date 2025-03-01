@@ -72,7 +72,17 @@ fn put_fn_args(
                     mutability: Mutability::Mutable,
                     memory_storage_type: MemoryStorageType::Value,
                 },
-                value: DataValueType::Array(vec![]),
+                value: DataValueType::Array(exec_context.borrow().launch_args.iter().map(|arg| {
+                    Rc::new(RefCell::new(DataValue {
+                        data_type: DataTypeEncoding {
+                            type_id: *STRING_TYPE_ID,
+                            dimension: 0,
+                            mutability: Mutability::Mutable,
+                            memory_storage_type: MemoryStorageType::Value,
+                        },
+                        value: DataValueType::String(arg.clone()),
+                    }))
+                }).collect()),
             })),
         })));
     }

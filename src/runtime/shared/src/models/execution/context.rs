@@ -11,10 +11,11 @@ pub struct ExecutionContext {
     pub global_stack: Vec<Rc<RefCell<DataValue>>>,
     pub jump_destinations: HashMap<usize, usize>,
     pub function_entry_points: HashMap<usize, usize>,
+    pub launch_args: Vec<String>,
 }
 
 impl ExecutionContext {
-    pub fn new(package: Package) -> Self {
+    pub fn new(package: Package, launch_args: Vec<String>) -> Self {
         let jump_count = package
             .instructions
             .iter()
@@ -39,7 +40,8 @@ impl ExecutionContext {
             package,
             global_stack: Vec::with_capacity(100),
             jump_destinations: HashMap::with_capacity(jump_count),
-            function_entry_points: HashMap::with_capacity(function_count)
+            function_entry_points: HashMap::with_capacity(function_count),
+            launch_args
         }
     }
 

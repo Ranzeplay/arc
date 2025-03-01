@@ -35,7 +35,7 @@ fn main() {
                     exit(1);
                 }
 
-                execute(package.unwrap(), args.verbose, execute_command.repeat);
+                execute(package.unwrap(), args.verbose, execute_command.repeat, execute_command.args);
             }
         },
         None => {}
