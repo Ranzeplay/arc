@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Generators;
+using Arc.Compiler.PackageGenerator.StdlibSource;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
@@ -55,7 +56,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
-            var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit]).First();
+            var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([unit, ..ArcStdlibLoader.LoadSyntax(_logger)]).First();
             Assert.That(structure.ScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(10));
         }
     }
