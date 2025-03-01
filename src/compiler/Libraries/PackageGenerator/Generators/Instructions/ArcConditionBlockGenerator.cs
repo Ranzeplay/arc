@@ -71,19 +71,18 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             conditionalBlocks.ForEach(result.Append);
 
             // Now the ElseBlock
+            var bResult = new ArcPartialGenerationResult();
+            var beginSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "begin");
+            bResult.Append(beginSubBlock.Encode(source));
             if (ifBlock.ElseBody != null)
             {
-                var bResult = new ArcPartialGenerationResult();
-                var beginSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "begin");
                 var block = ArcSequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
-                var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end");
-
-                bResult.Append(beginSubBlock.Encode(source));
                 bResult.Append(block);
-                bResult.Append(endSubBlock.Encode(source));
-
-                result.Append(bResult);
             }
+            var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end");
+            bResult.Append(endSubBlock.Encode(source));
+
+            result.Append(bResult);
 
             var endIfLabelInstruction = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfBlock, "end").Encode(source);
             result.Append(endIfLabelInstruction);
