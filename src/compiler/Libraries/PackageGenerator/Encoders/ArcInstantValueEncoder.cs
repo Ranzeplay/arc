@@ -13,6 +13,8 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 ArcInstantValue.ValueType.Decimal => new ArcDecimalEncoder(),
                 ArcInstantValue.ValueType.String => new ArcStringEncoder(),
                 ArcInstantValue.ValueType.Boolean => new ArcBooleanEncoder(),
+                ArcInstantValue.ValueType.Any => new ArcEmptyEncoder(),
+                ArcInstantValue.ValueType.None => new ArcEmptyEncoder(),
                 _ => throw new NotImplementedException(),
             };
         }
