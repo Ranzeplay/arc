@@ -36,9 +36,9 @@ arc_wrapped_function_body: LBRACE arc_statement* RBRACE;
 arc_function_block: arc_function_declarator arc_wrapped_function_body;
 
 arc_bool_value: KW_TRUE | KW_FALSE;
-arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value;
+arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
-arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | KW_NONE;
+arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
 
 arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 

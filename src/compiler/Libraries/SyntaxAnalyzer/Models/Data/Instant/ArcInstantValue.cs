@@ -11,7 +11,9 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             String,
             Integer,
             Decimal,
-            Boolean
+            Boolean,
+            None,
+            Any
         }
 
         public ValueType Type { get; set; }
@@ -48,6 +50,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             BooleanValue = booleanValue;
         }
 
+        private ArcInstantValue()
+        {
+        }
+
         public static ArcInstantValue FromTokens(ArcSourceCodeParser.Arc_instant_valueContext context)
         {
             if (context.NUMBER() != null)
@@ -74,6 +80,20 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             {
                 return new ArcInstantValue(new ArcBooleanValue(context.arc_bool_value().KW_TRUE() != null));
             }
+            else if (context.KW_ANY() != null)
+            {
+                return new ArcInstantValue
+                {
+                    Type = ValueType.Any
+                };
+            }
+            else if (context.KW_NONE() != null)
+            {
+                return new ArcInstantValue
+                {
+                    Type = ValueType.None
+                };
+            }
             else
             {
                 throw new NotImplementedException();
@@ -86,6 +106,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             ValueType.Integer => "int",
             ValueType.Decimal => "decimal",
             ValueType.Boolean => "bool",
+            ValueType.None => "none",
+            ValueType.Any => "any",
             _ => throw new NotImplementedException(),
         };
 
@@ -97,6 +119,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
                 ValueType.Integer => IntegerValue!.Value,
                 ValueType.Decimal => DecimalValue!.Value,
                 ValueType.Boolean => BooleanValue!.Value,
+                ValueType.None => Array.Empty<byte>(),
+                ValueType.Any => Array.Empty<byte>(),
                 _ => throw new InvalidCastException(),
             };
         }
