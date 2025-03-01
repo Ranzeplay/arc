@@ -76,3 +76,32 @@ pub fn math_compare_not_equal(a: &DataValue, b: &DataValue) -> bool {
         _ => panic!("Cannot compare values of different types"),
     }
 }
+
+pub fn math_logical_and(a: &DataValue, b: &DataValue) -> bool {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot compare values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Bool(ad), DataValueType::Bool(bd)) => *ad && *bd,
+        _ => panic!("Cannot compare values of different types"),
+    }
+}
+
+pub fn math_logical_or(a: &DataValue, b: &DataValue) -> bool {
+    if a.data_type.type_id != b.data_type.type_id {
+        panic!("Cannot compare values of different types");
+    }
+
+    match (&a.value, &b.value) {
+        (DataValueType::Bool(ad), DataValueType::Bool(bd)) => *ad || *bd,
+        _ => panic!("Cannot compare values of different types"),
+    }
+}
+
+pub fn math_logical_not(a: &DataValue) -> bool {
+    match &a.value {
+        DataValueType::Bool(ad) => !*ad,
+        _ => panic!("Cannot compare values of different types"),
+    }
+}

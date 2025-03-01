@@ -19,6 +19,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use crate::instructions::data_declaration::declare_data;
 use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
+use crate::math::{math_logical_and, math_logical_not};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -144,9 +145,29 @@ pub fn execute_function(
             InstructionType::Mod => {
                 arithmetic_operation_instruction!(exec_context, math::math_modulo_values);
             }
-            InstructionType::LogOr => {}
-            InstructionType::LogAnd => {}
-            InstructionType::LogNot => {}
+            InstructionType::LogOr => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let a = exec_context_ref.global_stack.pop().unwrap();
+                let b = exec_context_ref.global_stack.pop().unwrap();
+
+                let result = math_logical_and(&b.borrow(), &a.borrow());
+                push_bool_to_stack!(exec_context_ref.global_stack, result);
+            }
+            InstructionType::LogAnd => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let a = exec_context_ref.global_stack.pop().unwrap();
+                let b = exec_context_ref.global_stack.pop().unwrap();
+
+                let result = math_logical_and(&b.borrow(), &a.borrow());
+                push_bool_to_stack!(exec_context_ref.global_stack, result);
+            }
+            InstructionType::LogNot => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let a = exec_context_ref.global_stack.pop().unwrap();
+
+                let result = math_logical_not(&a.borrow());
+                push_bool_to_stack!(exec_context_ref.global_stack, result);
+            }
             InstructionType::BitAnd => {}
             InstructionType::BitOr => {}
             InstructionType::BitNot => {}
