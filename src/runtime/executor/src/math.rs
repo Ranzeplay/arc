@@ -24,6 +24,7 @@ arithmetic_operations!(math_add_values, +, "add");
 arithmetic_operations!(math_subtract_values, -, "subtract");
 arithmetic_operations!(math_multiply_values, *, "multiply");
 arithmetic_operations!(math_divide_values, /, "divide");
+arithmetic_operations!(math_modulo_values, %, "modulo");
 
 macro_rules! compare_operations {
     ($name:ident, $op:tt) => {

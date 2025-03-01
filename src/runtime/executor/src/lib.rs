@@ -141,7 +141,9 @@ pub fn execute_function(
             InstructionType::Div => {
                 arithmetic_operation_instruction!(exec_context, math::math_divide_values);
             }
-            InstructionType::Mod => {}
+            InstructionType::Mod => {
+                arithmetic_operation_instruction!(exec_context, math::math_modulo_values);
+            }
             InstructionType::LogOr => {}
             InstructionType::LogAnd => {}
             InstructionType::LogNot => {}
