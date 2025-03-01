@@ -18,9 +18,9 @@ A typical `Hello, world!` program would be like this.
 
 ```
 link Arc::Std::Console;
+link Arc::Std::Compilation;
 
 namespace Arc::Program {
-    @Export
     @Entrypoint
     public func main(var args: val string[]): val int {
         call PrintString("Hello, world!\n");
@@ -29,6 +29,8 @@ namespace Arc::Program {
     }
 }
 ```
+
+### Explanation of the code
 
 Replace the content of `src/main.script.arc` with the content above.
 

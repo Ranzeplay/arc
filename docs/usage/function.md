@@ -1,0 +1,29 @@
+---
+title: Function
+---
+
+# Function
+
+## Syntax
+
+```
+<accessibility> func <name>([parameters]): <return type>
+{
+    <statements>
+}
+```
+
+## Example
+
+```
+public func main(var args: val string[]): val int
+{
+          var a: val Bar;
+          a.bitem = 42;
+
+          var b: val Foo;
+          b = a.getFoo(37413);
+
+          return 0;
+}
+```

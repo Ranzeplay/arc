@@ -1,0 +1,41 @@
+---
+title: Declare data
+---
+
+# Declare data
+
+## Syntax
+
+```
+<mutability> <name>: <memory storage> <type>;
+```
+
+## Example
+
+To create a variable `foo` with an integer value,
+
+```
+var foo: val int;
+```
+
+To create a constant `bar` with an string reference.
+
+```
+const bar: ref string;
+```
+
+## Variable vs. constant
+
+### Variable
+
+You can reassign the value to the variable and change its inner value for multiple times.
+
+### Constant
+
+You cannot reassign the value to the constant or change its inner value once it is initialized or assigned.
+
+## Value vs. reference
+
+See [Wikipedia](https://en.wikipedia.org/wiki/Value_type_and_reference_type)
+
+The language will ensure the ownership of all data, manipulaing and managing them in a safe manner.
