@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 shared = { path = "../shared" }
+lazy_static = "~1.5"
