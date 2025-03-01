@@ -17,6 +17,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 throw new InvalidDataException("Only simple assignment is supported");
             }
 
+            bool isDirectAssignment = assign.CallChain.Terms.Count() == 1 && !assign.CallChain.Terms.First().Indices.Any();
+
             // Handle lhs
             var lhsResult = new ArcPartialGenerationResult();
 
@@ -26,7 +28,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
-            if (assign.CallChain.Terms.Count() == 1 && !assign.CallChain.Terms.First().Indices.Any())
+            var memoryStorageType = initialSlot.DeclarationDescriptor.MemoryStorageType;
+
+            if (isDirectAssignment)
             {
                 // If lhs has only one term, and it is being accessed direcly, then we can directly put the value into the slot
                 var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
@@ -34,51 +38,54 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
             else
             {
-                // If lhs has more than one term, then the lhs should be a reference in the stack top
-                lhsResult.Append(new ArcReplaceStackTopInstruction().Encode(source));
-            }
+                var firstSlotStackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
+                lhsResult.Append(new ArcLoadDataToStackInstruction(firstSlotStackOperation).Encode(source));
 
-            foreach (var expr in firstTerm.Indices)
-            {
-                lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
-
-                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
-                lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
-            }
-
-            // Handle the rest of the call chain since it is from the stack top
-            var memoryStorageType = initialSlot.DeclarationDescriptor.MemoryStorageType;
-            foreach (var term in assign.CallChain.Terms.Skip(1))
-            {
-                if (currentDataType == null)
+                foreach (var expr in firstTerm.Indices)
                 {
-                    throw new InvalidDataException("Invalid field sequence");
+                    lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+
+                    var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, true);
+                    lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                 }
 
-                if (currentDataType.DataType is ArcComplexType)
+                // Handle the rest of the call chain since it is from the stack top
+
+                foreach (var term in assign.CallChain.Terms.Skip(1))
                 {
-                    var groupType = currentDataType.ComplexTypeGroup!;
-                    var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
-
-                    var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, initialSlot.SlotId, true);
-                    lhsResult.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
-
-                    foreach (var expr in term.Indices)
+                    if (currentDataType == null)
                     {
-                        lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
-
-                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
-                        lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                        throw new InvalidDataException("Invalid field sequence");
                     }
 
-                    currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataType.Type);
+                    if (currentDataType.DataType is ArcComplexType)
+                    {
+                        var groupType = currentDataType.ComplexTypeGroup!;
+                        var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
-                    memoryStorageType = field.DataType.MemoryStorageType;
+                        var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, field.Id, true);
+                        lhsResult.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
+
+                        foreach (var expr in term.Indices)
+                        {
+                            lhsResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+
+                            var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
+                            lhsResult.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
+                        }
+
+                        currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataType.Type);
+
+                        memoryStorageType = field.DataType.MemoryStorageType;
+                    }
+                    else
+                    {
+                        throw new InvalidDataException("Base type does not have further fields");
+                    }
                 }
-                else
-                {
-                    throw new InvalidDataException("Base type does not have further fields");
-                }
+
+                // If lhs has more than one term, then the lhs should be a reference in the stack top
+                lhsResult.Append(new ArcReplaceStackTopInstruction().Encode(source));
             }
 
             // Handle rhs
