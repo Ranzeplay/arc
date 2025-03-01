@@ -4,7 +4,7 @@ use shared::models::execution::context::{ExecutionContext, FunctionExecutionCont
 use shared::models::execution::data::DataValueType;
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::stack_data_operation::{
-    DataSourceType, StackOperationInstruction
+    DataSourceType, StackOperationInstruction,
 };
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -28,10 +28,7 @@ pub fn load_stack(
         }
         DataSourceType::DataSlot => {
             let context_ref = function_context.borrow();
-            let slot = context_ref
-                .local_data
-                .get(lsi.location_id)
-                .unwrap();
+            let slot = context_ref.local_data.get(lsi.location_id).unwrap();
 
             let r = Rc::clone(&slot.borrow().value);
 
@@ -43,7 +40,7 @@ pub fn load_stack(
             } else {
                 stack.last().unwrap().to_owned()
             }
-        },
+        }
         DataSourceType::Field => {
             let stack_top = if lsi.overwrite {
                 stack.pop().unwrap().to_owned()
@@ -63,9 +60,15 @@ pub fn load_stack(
         DataSourceType::ArrayElement => {
             let (stack_top_index_value, stack_top_array_value) = {
                 if lsi.overwrite {
-                    (stack.pop().unwrap().to_owned(), stack.pop().unwrap().to_owned())
+                    (
+                        stack.pop().unwrap().to_owned(),
+                        stack.pop().unwrap().to_owned(),
+                    )
                 } else {
-                    (stack.last().unwrap().to_owned(), stack.last().unwrap().to_owned())
+                    (
+                        stack.last().unwrap().to_owned(),
+                        stack.last().unwrap().to_owned(),
+                    )
                 }
             };
 
@@ -107,10 +110,7 @@ pub fn save_stack(
         }
         DataSourceType::DataSlot => {
             let context_ref = function_context.borrow();
-            let slot = context_ref
-                .local_data
-                .get(ssi.location_id)
-                .unwrap();
+            let slot = context_ref.local_data.get(ssi.location_id).unwrap();
 
             let mut slot_ref = slot.borrow_mut();
 
@@ -143,16 +143,12 @@ pub fn pop_to_slot(
     slot_ref.value = data;
 }
 
-pub fn replace_stack_top(exec_context: &Rc<RefCell<ExecutionContext>>){
-    let source = {
-        let mut exec_context_ref = exec_context.borrow_mut();
-        exec_context_ref.global_stack.pop().unwrap()
-    };
+pub fn replace_stack_top(exec_context: &Rc<RefCell<ExecutionContext>>) {
+    let mut exec_context_ref = exec_context.borrow_mut();
 
-    let target = {
-        let exec_context_ref = exec_context.borrow();
-        exec_context_ref.global_stack.last().unwrap().to_owned()
-    };
+    let target = exec_context_ref.global_stack.pop().unwrap().to_owned();
+    let source = exec_context_ref.global_stack.pop().unwrap();
 
     target.replace(source.borrow().to_owned());
+    exec_context_ref.global_stack.push(target);
 }
