@@ -22,12 +22,14 @@ pub fn prepare_and_get_function_info(
         let current_fn = current_fn_symbol_opt.unwrap();
 
         // Create the function context
-        FunctionExecutionContext {
-            function: match &current_fn.value {
-                Symbol::Function(f) => f.clone(),
-                _ => panic!("Invalid symbol type."),
-            },
-            local_data: Vec::with_capacity(20),
+        match &current_fn.value {
+            Symbol::Function(f) => {
+                FunctionExecutionContext {
+                    function: f.clone(),
+                    local_data: Vec::with_capacity(f.data_count),
+                }
+            }
+            _ => panic!("Invalid symbol type."),
         }
     };
 
