@@ -24,6 +24,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public long BlockLength { get; set; }
 
+        public long DataCount { get; set; }
+
         public ArcPartialGenerationResult GenerationResult { get; set; }
 
         public virtual IEnumerable<byte> Encode(ArcScopeTree tree)
@@ -51,6 +53,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             {
                 iterResult.AddRange(BitConverter.GetBytes(annotation.Key.Id));
             }
+
+            iterResult.AddRange(BitConverter.GetBytes(DataCount));
 
             return iterResult;
         }

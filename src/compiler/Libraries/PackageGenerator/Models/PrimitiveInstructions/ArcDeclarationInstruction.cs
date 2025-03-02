@@ -41,7 +41,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
                     .. BitConverter.GetBytes(dataType.TypeId),
                 ],
-                DataSlots = [slot]
+                DataSlots = [slot],
+                TotalGeneratedDataSlotCount = 1,
             };
         }
     }

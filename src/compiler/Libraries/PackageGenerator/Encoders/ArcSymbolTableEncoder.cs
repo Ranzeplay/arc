@@ -17,7 +17,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 .OfType<IArcEncodableScopeTreeNode>()
                 .OfType<ArcScopeTreeNodeBase>()
                 .ToDictionary(x => x.Id, x => (IArcEncodableScopeTreeNode)x);
-            result.AddRange(BitConverter.GetBytes(validSymbolNodes.LongCount()));
+            result.AddRange(BitConverter.GetBytes((long) validSymbolNodes.Count));
             foreach (var node in validSymbolNodes)
             {
                 var iterResult = new List<byte>();

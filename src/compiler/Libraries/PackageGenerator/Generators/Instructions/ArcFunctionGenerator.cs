@@ -41,6 +41,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             result.Append(endBlockLabel);
 
             source.LocalDataSlots = [];
+            node.DataCount = result.TotalGeneratedDataSlotCount + node.Parameters.Count();
 
             return result;
         }

@@ -18,6 +18,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public List<ArcConstant> AddedConstants { get; } = [];
 
+        public long TotalGeneratedDataSlotCount { get; set; }
+
         public void Append(ArcPartialGenerationResult generationResult)
         {
             RelocationTargets.AddRange(generationResult.RelocationTargets.Select(r =>
@@ -42,6 +44,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             GeneratedData.AddRange(generationResult.GeneratedData);
 
             AddedConstants.AddRange(generationResult.AddedConstants);
+
+            TotalGeneratedDataSlotCount += generationResult.TotalGeneratedDataSlotCount;
         }
     }
 }

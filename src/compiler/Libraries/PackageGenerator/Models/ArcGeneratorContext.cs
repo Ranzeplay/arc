@@ -111,7 +111,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 PackageDescriptor = PackageDescriptor,
                 GlobalScopeTree = GlobalScopeTree,
-                ParentSignature = new ArcSignature() { Locators = location.ToList() },
+                ParentSignature = new ArcSignature() { Locators = [.. location] },
                 CurrentNode = node
             };
         }
