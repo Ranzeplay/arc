@@ -46,11 +46,12 @@ pub struct FunctionSymbol {
     pub return_value_descriptor: Rc<DataTypeEncoding>,
     pub annotation_ids: Vec<usize>,
     pub parameter_descriptors: Vec<Rc<DataTypeEncoding>>,
+    pub data_count: usize
 }
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[FN] {} at {}(+{}) A:{}", self.signature, self.entry_pos, self.block_length, self.annotation_ids.len())
+        writeln!(f, "[FN] {} at {}(+{}) A:{} D:{}", self.signature, self.entry_pos, self.block_length, self.annotation_ids.len(), self.data_count)
     }
 }
 

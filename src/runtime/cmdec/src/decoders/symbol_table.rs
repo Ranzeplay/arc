@@ -68,6 +68,9 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotations, annotation_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += annotation_len;
 
+    let data_count = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    pos += 8;
+
     (
         Symbol::Function(Rc::new(FunctionSymbol {
             entry_pos,
@@ -76,6 +79,7 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
             return_value_descriptor: Rc::new(return_value_descriptor),
             parameter_descriptors: parameter_descriptors_vec,
             annotation_ids: annotations,
+            data_count,
         })),
         pos,
     )
