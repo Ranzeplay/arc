@@ -28,35 +28,22 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcPartialGenerationResult GenerationResult { get; set; }
 
-        public virtual IEnumerable<byte> Encode(ArcScopeTree tree)
-        {
-            var iterResult = new List<byte>();
+        public virtual IEnumerable<byte> Encode(ArcScopeTree tree) =>
+            [
+                (byte)ArcSymbolType.Function,
+                ..BitConverter.GetBytes(EntrypointPos),
+                ..BitConverter.GetBytes(BlockLength),
+                ..new ArcStringEncoder().Encode(Signature),
 
-            iterResult.Add((byte)ArcSymbolType.Function);
-            iterResult.AddRange(BitConverter.GetBytes(EntrypointPos));
-            iterResult.AddRange(BitConverter.GetBytes(BlockLength));
-            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
+                ..ReturnValueType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()),
 
-            // Return type descriptor
-            iterResult.AddRange(ReturnValueType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()));
+                ..BitConverter.GetBytes(Parameters.LongCount()),
+                ..Parameters.SelectMany(p => p.DataType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>())),
 
-            // Parameter type descriptors
-            iterResult.AddRange(BitConverter.GetBytes(Parameters.LongCount()));
-            foreach (var parameter in Parameters)
-            {
-                iterResult.AddRange(parameter.DataType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()));
-            }
+                ..BitConverter.GetBytes(Annotations.LongCount()),
+                ..Annotations.SelectMany(a => BitConverter.GetBytes(a.Key.Id)),
 
-            // Annotation descriptors
-            iterResult.AddRange(BitConverter.GetBytes(Annotations.LongCount()));
-            foreach (var annotation in Annotations)
-            {
-                iterResult.AddRange(BitConverter.GetBytes(annotation.Key.Id));
-            }
-
-            iterResult.AddRange(BitConverter.GetBytes(DataCount));
-
-            return iterResult;
-        }
+                ..BitConverter.GetBytes(DataCount)
+            ];
     }
 }

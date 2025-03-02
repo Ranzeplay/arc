@@ -35,15 +35,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcAccessibility Accessibility { get; set; } = ArcAccessibility.Private;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree)
-        {
-            var iterResult = new List<byte>();
-            iterResult.Add((byte)ArcSymbolType.Group);
-            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
-            iterResult.AddRange(ArcGroupSymbolEncoder.EncodeGroupSymbol(this));
-
-            return iterResult;
-        }
+        public IEnumerable<byte> Encode(ArcScopeTree tree) =>
+            [
+                (byte)ArcSymbolType.Group,
+                ..new ArcStringEncoder().Encode(Signature),
+                ..ArcGroupSymbolEncoder.EncodeGroupSymbol(this)
+            ];
 
         public void ExpandSubDescriptors(ArcGenerationSource source)
         {

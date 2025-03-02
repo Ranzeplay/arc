@@ -24,14 +24,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string Name => IdentifierName;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree)
-        {
-            var iterResult = new List<byte>();
-            iterResult.Add((byte)ArcSymbolType.GroupField);
-            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
-            iterResult.AddRange(DataType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()));
-
-            return iterResult;
-        }
+        public IEnumerable<byte> Encode(ArcScopeTree tree) =>
+            [
+                (byte)ArcSymbolType.GroupField,
+                ..new ArcStringEncoder().Encode(Signature),
+                ..DataType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>())
+            ];
     }
 }

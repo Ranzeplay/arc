@@ -12,14 +12,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string Name => name;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree)
-        {
-            var iterResult = new List<byte>();
-            iterResult.Add((byte)ArcSymbolType.Namespace);
-            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
-
-            return iterResult;
-        }
+        public IEnumerable<byte> Encode(ArcScopeTree tree) =>
+            [
+                (byte)ArcSymbolType.Namespace,
+                ..new ArcStringEncoder().Encode(Signature)
+            ];
 
         public ArcScopeTree GetIsolatedTree()
         {

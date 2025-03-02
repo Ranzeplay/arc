@@ -14,14 +14,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string SignatureAddend => "A" + TargetGroup.ShortName;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree)
-        {
-            var iterResult = new List<byte>();
-            iterResult.Add((byte)ArcSymbolType.Annotation);
-            iterResult.AddRange(new ArcStringEncoder().Encode(Signature));
-            iterResult.AddRange(BitConverter.GetBytes(TargetGroup.Id));
-
-            return iterResult;
-        }
+        public IEnumerable<byte> Encode(ArcScopeTree tree) => 
+            [
+                (byte)ArcSymbolType.Annotation,
+                ..new ArcStringEncoder().Encode(Signature),
+                ..BitConverter.GetBytes(TargetGroup.Id)
+            ];
     }
 }
