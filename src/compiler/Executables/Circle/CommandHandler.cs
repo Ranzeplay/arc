@@ -33,19 +33,8 @@ namespace Arc.Compiler.Circle
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
             logger.LogInformation("Encoding instructions");
-            var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits, !noStd);
-            context.PackageDescriptor = new ArcPackageDescriptor()
-            {
-                Type = packageType,
-                Name = "Test",
-                Version = 0,
-                RootGroupTableEntryPos = 0,
-                RootFunctionTableEntryPos = 0,
-                RootConstantTableEntryPos = 0,
-                RegionTableEntryPos = 0,
-                EntrypointFunctionId = 0,
-                DataAlignmentLength = 8
-            };
+            var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits, ArcPackageDescriptor.Default(packageType), !noStd);
+            
             context.SetEntrypointFunctionId();
 
             logger.LogInformation("Generating byte stream");

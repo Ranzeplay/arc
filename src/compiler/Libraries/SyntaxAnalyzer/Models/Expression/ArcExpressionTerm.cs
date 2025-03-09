@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+﻿using Antlr4.Runtime;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
@@ -23,12 +24,16 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
         {
             Type = ExpressionTermType.DataValue;
             DataValue = value;
+            Context = null!;
         }
 
         public ArcExpressionTerm(ArcOperator op)
         {
             Type = ExpressionTermType.Operator;
             Operator = op;
+            Context = null!;
         }
+
+        public ParserRuleContext Context { get; set; }
     }
 }

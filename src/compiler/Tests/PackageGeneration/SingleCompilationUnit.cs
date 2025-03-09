@@ -64,7 +64,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
             Assert.That(context.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(16));
         }
 
@@ -73,7 +73,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
@@ -114,7 +114,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = ArcPackageType.Executable,
@@ -173,7 +173,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit]);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
             context.PackageDescriptor = new ArcPackageDescriptor()
             {
                 Type = ArcPackageType.Executable,

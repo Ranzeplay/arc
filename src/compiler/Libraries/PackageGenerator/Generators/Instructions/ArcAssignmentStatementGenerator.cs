@@ -1,10 +1,12 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
@@ -12,9 +14,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
     {
         public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source)
         {
+            var result = new ArcPartialGenerationResult();
+
             if (!assign.CallChain.Terms.All(t => t.Type == ArcCallChainTermType.Identifier))
             {
-                throw new InvalidDataException("Only simple assignment is supported");
+                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid assignment target", source.Name, assign.CallChain.Context));
             }
 
             bool isDirectAssignment = assign.CallChain.Terms.Count() == 1 && !assign.CallChain.Terms.First().Indices.Any();
@@ -55,7 +59,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     if (currentDataType == null)
                     {
-                        throw new InvalidDataException("Invalid field sequence");
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid field sequence", source.Name, term.Context));
                     }
 
                     if (currentDataType.DataType is ArcComplexType)
@@ -80,7 +84,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     }
                     else
                     {
-                        throw new InvalidDataException("Base type does not have further fields");
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Base type does not have further fields", source.Name, term.Context));
                     }
                 }
 
@@ -92,7 +96,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var rhsResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, assign.Expression, memoryStorageType == ArcMemoryStorageType.Reference);
 
             // Combine the results
-            var result = new ArcPartialGenerationResult();
             result.Append(rhsResult);
             result.Append(lhsResult);
 

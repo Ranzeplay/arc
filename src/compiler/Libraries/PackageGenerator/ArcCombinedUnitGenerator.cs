@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Generators;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.PackageGenerator.StdlibSource;
@@ -14,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator
 {
     public class ArcCombinedUnitGenerator
     {
-        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits, bool withStd = true)
+        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits, ArcPackageDescriptor packageDescriptor, bool withStd = true)
         {
             var logger = compilationUnits.First().Logger;
 
@@ -23,13 +24,16 @@ namespace Arc.Compiler.PackageGenerator
                 compilationUnits = compilationUnits.Concat(ArcStdlibLoader.LoadSyntax(logger));
             }
 
-            var structures = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits);
+            var (structures, structureLogs) = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits, packageDescriptor);
 
             var result = new ArcGeneratorContext()
             {
                 Logger = logger,
-                GlobalScopeTree = null!
+                GlobalScopeTree = null!,
+                PackageDescriptor = packageDescriptor
             };
+
+            result.Logs.AddRange(structureLogs);
 
             var globalScopeTree = structures
                 .Select(s => s.ScopeTree)
@@ -51,7 +55,8 @@ namespace Arc.Compiler.PackageGenerator
                 var iterContext = new ArcGeneratorContext
                 {
                     Logger = unit.Logger,
-                    GlobalScopeTree = globalScopeTree
+                    GlobalScopeTree = globalScopeTree,
+                    PackageDescriptor = packageDescriptor
                 };
 
                 var genSource = iterContext.GenerateSource([unit.Namespace]);

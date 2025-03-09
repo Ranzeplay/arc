@@ -1,21 +1,28 @@
-﻿using Arc.Compiler.PackageGenerator.Helpers;
+﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Group;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcGroupGenerator
     {
-        public static ArcScopeTreeGroupFieldNode GenerateFieldDescriptor(ArcGenerationSource source, ArcGroupField field)
+        public static (ArcScopeTreeGroupFieldNode, IEnumerable<ArcCompilationLogBase>) GenerateFieldDescriptor(ArcGenerationSource source, ArcGroupField field)
         {
             source.ParentSignature.Locators.Add(field);
+
+            var fieldDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType);
+
             var result = new ArcScopeTreeGroupFieldNode()
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType).DataType,
+                    Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType)?.DataType ?? ArcBaseType.Placeholder(),
                     AllowNone = false,
                     Dimension = field.DataDeclarator.DataType.Dimension,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
@@ -29,7 +36,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Accessibility = field.Accessibility,
             };
 
-            return result;
+            if (fieldDataType == null)
+            {
+                return (result, [new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{field.DataDeclarator.DataType}' not found", source.Name, field.DataDeclarator.DataType.Context)]);
+            }
+            else
+            {
+                return (result, []);
+            }
         }
     }
 }

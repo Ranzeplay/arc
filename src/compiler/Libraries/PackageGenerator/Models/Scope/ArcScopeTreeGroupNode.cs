@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
 using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
@@ -42,12 +43,22 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 ..ArcGroupSymbolEncoder.EncodeGroupSymbol(this)
             ];
 
-        public void ExpandSubDescriptors(ArcGenerationSource source)
+        public IEnumerable<ArcCompilationLogBase> ExpandSubDescriptors(ArcGenerationSource source)
         {
+            var logs = new List<ArcCompilationLogBase>();
+
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in SyntaxTree.Functions)
             {
-                var fnDescriptor = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeGroupFunctionNode>(source, fn.Declarator);
+                var (fnDescriptor, iterLogs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeGroupFunctionNode>(source, fn.Declarator);
+
+                logs.AddRange(iterLogs);
+
+                if (fnDescriptor == null)
+                {
+                    continue;
+                }
+
                 fnDescriptor.SyntaxTree = fn;
                 Functions.Add(fnDescriptor);
                 functionNodes.Add(fnDescriptor);
@@ -58,13 +69,22 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             var fieldNodes = new List<ArcScopeTreeGroupFieldNode>();
             foreach (var field in SyntaxTree.Fields)
             {
-                var fieldDescriptor = ArcGroupGenerator.GenerateFieldDescriptor(source, field);
+                var (fieldDescriptor, iterLogs) = ArcGroupGenerator.GenerateFieldDescriptor(source, field);
+
+                logs.AddRange(iterLogs);
+                if (fieldDescriptor == null)
+                {
+                    continue;
+                }
+
                 Fields.Add(fieldDescriptor);
                 fieldNodes.Add(fieldDescriptor);
             }
 
             AddChildren(functionNodes);
             AddChildren(fieldNodes);
+
+            return logs;
         }
     }
 }

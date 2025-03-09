@@ -12,5 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
             Name = identifier;
             Scope = new ArcSymbolScope() { Type = ArcSymbolScopeType.Language };
         }
+
+        public static ArcBaseType Placeholder() => new(0xffffffff, "INVALID") { Name = "INVALID" };
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Arc.Compiler.PackageGenerator;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace Arc.Compiler.Tests.Stdlib
             var consoleNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(consoleNamespaceSource, _logger);
             var consoleNamespaceUnit = new ArcCompilationUnit(consoleNamespaceUnitContext, _logger, "Arc::Std::Console");
 
-            var context = ArcCombinedUnitGenerator.GenerateUnits([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit], false);
+            var context = ArcCombinedUnitGenerator.GenerateUnits([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit], ArcPackageDescriptor.Default(ArcPackageType.Library), false);
 
             Assert.Multiple(() =>
             {

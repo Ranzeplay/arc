@@ -1,9 +1,11 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
@@ -55,14 +57,27 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementCall call:
                         {
+                            if (call.FunctionCall == null)
+                            {
+                                stepResult.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function call not found", source.Name, call.Context));
+                                break;
+                            }
+
                             stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false);
                             // Discard the result of the function call
 
-                            var funcId = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
+                            var (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
+                            stepResult.Logs.AddRange(logs);
                             var function = source.GlobalScopeTree.FlattenedNodes
                                 .OfType<ArcScopeTreeFunctionNodeBase>()
                                 .FirstOrDefault(f => f.Id == funcId);
-                            if (function.ReturnValueType.Type.TypeId != 0)
+
+                            if (function == null)
+                            {
+                                stepResult.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, call.FunctionCall.Context));
+                            }
+
+                            if (function?.ReturnValueType.Type.TypeId != 0)
                             {
                                 stepResult.Append(new ArcDiscardStackTopInstruction().Encode(source));
                             }

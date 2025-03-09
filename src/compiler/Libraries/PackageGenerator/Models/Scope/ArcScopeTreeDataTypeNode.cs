@@ -22,12 +22,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string Name => DataType.Identifier;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree) => 
+        public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [
                 (byte)ArcSymbolType.DataType,
                 (byte)(IsInternal ? 0x00 : 0x01),
                 ..new ArcStringEncoder().Encode(Signature),
-                ..(!IsInternal ? BitConverter.GetBytes(ComplexTypeGroup.Id) : [])
+                ..(!IsInternal ? BitConverter.GetBytes(ComplexTypeGroup?.Id ?? 0xffffffff) : [])
             ];
+
+        public static ArcScopeTreeDataTypeNode Placeholder() => new(ArcBaseType.Placeholder(), "INVALID");
     }
 }

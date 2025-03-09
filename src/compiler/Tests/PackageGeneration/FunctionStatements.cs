@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
@@ -18,7 +19,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(): val none {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
@@ -30,7 +31,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
@@ -42,7 +43,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }
@@ -58,7 +59,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                             }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             Assert.Multiple(() =>
             {
@@ -81,7 +82,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                             }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
-            var result = ArcCombinedUnitGenerator.GenerateUnits([unit]);
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(9));
         }

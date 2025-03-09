@@ -2,6 +2,7 @@
 using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
@@ -22,11 +23,13 @@ namespace Arc.Compiler.PackageGenerator.Models
 
         public List<ArcRelocationLabel> Labels { get; } = [];
 
-        public ArcPackageDescriptor PackageDescriptor { get; set; }
+        public required ArcPackageDescriptor PackageDescriptor { get; set; }
 
         public List<ArcConstant> Constants { get; } = [];
 
         public required ILogger Logger { get; set; }
+
+        public List<ArcCompilationLogBase> Logs { get; set; } = [];
 
         public void TransformLabelRelocationTargets()
         {
@@ -105,14 +108,15 @@ namespace Arc.Compiler.PackageGenerator.Models
             return GenerateSource([], GlobalScopeTree.Root);
         }
 
-        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase node = null!)
+        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase? node = null)
         {
             return new()
             {
                 PackageDescriptor = PackageDescriptor,
                 GlobalScopeTree = GlobalScopeTree,
                 ParentSignature = new ArcSignature() { Locators = [.. location] },
-                CurrentNode = node
+                CurrentNode = node,
+                Name = PackageDescriptor.Name,
             };
         }
 

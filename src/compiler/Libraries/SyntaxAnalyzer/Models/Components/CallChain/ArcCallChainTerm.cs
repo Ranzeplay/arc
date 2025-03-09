@@ -33,6 +33,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
             Indices = (context.arc_index() != null && context.arc_index().Length > 0) ?
                 context.arc_index().Select(i => new ArcExpression(i.arc_expression())) :
                 [];
+
+            Context = context;
         }
 
         public ArcCallChainTermType Type { get; set; }
@@ -42,5 +44,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
         public ArcFunctionCall? FunctionCall { get; set; }
 
         public IEnumerable<ArcExpression> Indices { get; set; }
+
+        public ArcSourceCodeParser.Arc_call_chain_termContext Context { get; set; }
     }
 }

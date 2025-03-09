@@ -1,10 +1,12 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
@@ -18,18 +20,19 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 if (term.IsOperator)
                 {
-                    result.Append(GenerateOperator(source, term.Operator!.Value));
+                    result.Append(GenerateOperator(source, term.Operator!.Value, term));
                 }
                 else
                 {
-                    GenerateDataValue(ref source, ref result, term, forceRefCallChain);
+                    var logs = GenerateDataValue(ref source, ref result, term, forceRefCallChain);
+                    result.Logs.AddRange(logs);
                 }
             }
 
             return result;
         }
 
-        private static void GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, bool forceRefCallChain)
+        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, bool forceRefCallChain)
         {
             switch (term.DataValue?.Type)
             {
@@ -48,11 +51,13 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         break;
                     }
                 default:
-                    throw new NotImplementedException();
+                    return [new ArcSourceLocatableLog(LogLevel.Error, 0, "Data value not implemented", source.Name, term.Context)];
             }
+
+            return [];
         }
 
-        private static ArcPartialGenerationResult GenerateOperator(ArcGenerationSource source, ArcOperator op)
+        private static ArcPartialGenerationResult GenerateOperator(ArcGenerationSource source, ArcOperator op, ArcExpressionTerm term)
         {
             return op switch
             {
@@ -78,7 +83,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 ArcOperator.LogicalAnd => new ArcLogicalAndInstruction().Encode(source),
                 ArcOperator.LogicalOr => new ArcLogicalOrInstruction().Encode(source),
                 ArcOperator.LogicalNot => new ArcLogicalNotInstruction().Encode(source),
-                _ => throw new NotImplementedException("Other operators are not available for now"),
+                _ => ArcPartialGenerationResult.WithLogs([new ArcSourceLocatableLog(LogLevel.Error, 0, "Operator not implemented", source.Name, term.Context)]),
             };
         }
     }

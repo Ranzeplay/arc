@@ -2,11 +2,14 @@
 using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators
 {
@@ -18,7 +21,6 @@ namespace Arc.Compiler.PackageGenerator.Generators
             var current = tree.Root;
             var ns = GenerateUnitNamespace(unit, ref current);
 
-            var nsSignature = current.Signature;
             foreach (var group in ns.Groups)
             {
 
@@ -52,22 +54,40 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return ns;
         }
 
-        public static ArcScopeTree GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
+        public static (ArcScopeTree, IEnumerable<ArcCompilationLogBase>) GenerateIndividualFunctions(ArcGenerationSource source, ArcScopeTree mainTree, ArcCompilationUnit unit)
         {
+            var logs = new List<ArcCompilationLogBase>();
+
             var namespaceNode = mainTree.GetNamespace(unit.Namespace.Identifier.Namespace);
+
+            if (namespaceNode == null)
+            {
+                logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Namespace not found", source.Name, unit.Namespace.Context));
+                return (mainTree, logs);
+            }
+
             foreach (var fn in unit.Namespace.Functions)
             {
-                var descriptor = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeIndividualFunctionNode>(source, fn.Declarator);
+                var (descriptor, iterLogs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeIndividualFunctionNode>(source, fn.Declarator);
+
+                logs.AddRange(iterLogs);
+                if (descriptor == null)
+                {
+                    continue;
+                }
+
                 descriptor.SyntaxTree = fn;
                 source.ParentSignature.Locators = [.. source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1)];
                 namespaceNode.AddChild(descriptor);
             }
 
-            return mainTree;
+            return (mainTree, logs);
         }
 
-        public static IEnumerable<ArcCompilationUnitStructure> GenerateUnitStructure(IEnumerable<ArcCompilationUnit> units)
+        public static (IEnumerable<ArcCompilationUnitStructure>, IEnumerable<ArcCompilationLogBase>) GenerateUnitStructure(IEnumerable<ArcCompilationUnit> units, ArcPackageDescriptor packageDescriptor)
         {
+            var logs = new List<ArcCompilationLogBase>();
+
             var unitList = units.ToList();
 
             var logger = unitList.First().Logger;
@@ -90,12 +110,21 @@ namespace Arc.Compiler.PackageGenerator.Generators
             {
                 us.LinkedNamespaces.Add(globalScopeTree.GetNamespace(["Arc", "Base"])!);
 
-                us.LinkedNamespaces.AddRange(
-                    us.CompilationUnit
+                us.CompilationUnit
                         .LinkedSymbols
                         .Select(ls => ls.Identifier.Namespace)
-                        .Select(globalScopeTree.GetNamespace)
-                );
+                        .ToList()
+                        .ForEach(ns =>
+                        {
+                            var nsResult = globalScopeTree.GetNamespace(ns);
+                            if (nsResult == null)
+                            {
+                                logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Namespace '{ns}' not found", us.CompilationUnit.Name, us.CompilationUnit.Context));
+                                return;
+                            }
+
+                            us.LinkedNamespaces.Add(nsResult);
+                        });
 
                 // Also link the current namespace
                 us.LinkedNamespaces.Add(us.GetCurrentNamespace);
@@ -108,7 +137,12 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     .ToList()
                     .ForEach(n =>
                     {
-                        var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = globalScopeTree };
+                        var context = new ArcGeneratorContext
+                        {
+                            Logger = logger,
+                            GlobalScopeTree = globalScopeTree,
+                            PackageDescriptor = packageDescriptor
+                        };
                         var source = context.GenerateSource([us.CompilationUnit.Namespace], n);
                         source.LinkedNamespaces = us.LinkedNamespaces;
                         n.Annotations = n.SyntaxTree.Annotations
@@ -123,14 +157,20 @@ namespace Arc.Compiler.PackageGenerator.Generators
             // Generate individual functions for each indivudal function node in the compilation unit
             unitStructures.ForEach(us =>
             {
-                var context = new ArcGeneratorContext { Logger = logger, GlobalScopeTree = us.ScopeTree };
+                var context = new ArcGeneratorContext
+                {
+                    Logger = logger,
+                    GlobalScopeTree = us.ScopeTree,
+                    PackageDescriptor = packageDescriptor
+                };
                 var source = context.GenerateSource([us.CompilationUnit.Namespace], us.GetCurrentNamespace);
                 source.LinkedNamespaces = us.LinkedNamespaces;
-                var individualFunctionTree = GenerateIndividualFunctions(source, us.ScopeTree, us.CompilationUnit);
+                var (individualFunctionTree, logs) = GenerateIndividualFunctions(source, us.ScopeTree, us.CompilationUnit);
+
                 us.ScopeTree.MergeRoot(individualFunctionTree, true);
             });
 
-            return unitStructures;
+            return (unitStructures, logs);
         }
     }
 }

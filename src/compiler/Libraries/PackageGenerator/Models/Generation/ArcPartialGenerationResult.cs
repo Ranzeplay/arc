@@ -53,5 +53,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
             TotalGeneratedDataSlotCount += generationResult.TotalGeneratedDataSlotCount;
         }
+
+        public static ArcPartialGenerationResult WithLogs(IEnumerable<ArcCompilationLogBase> logs)
+        {
+            var result = new ArcPartialGenerationResult();
+            result.Logs.AddRange(logs);
+            return result;
+        }
     }
 }

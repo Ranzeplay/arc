@@ -40,5 +40,21 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
             result += 8 * 7;
             return result;
         }
+
+        public static ArcPackageDescriptor Default(ArcPackageType packageType)
+        {
+            return new ArcPackageDescriptor()
+            {
+                Type = packageType,
+                Name = "Default",
+                Version = 0,
+                RootGroupTableEntryPos = 0,
+                RootFunctionTableEntryPos = 0,
+                RootConstantTableEntryPos = 0,
+                RegionTableEntryPos = 0,
+                EntrypointFunctionId = 0,
+                DataAlignmentLength = 8
+            };
+        }
     }
 }

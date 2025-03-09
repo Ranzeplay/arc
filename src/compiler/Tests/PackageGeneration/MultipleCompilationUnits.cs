@@ -73,20 +73,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit1 = new ArcCompilationUnit(compilationUnitContext1, _logger, "test1");
             var unit2 = new ArcCompilationUnit(compilationUnitContext2, _logger, "test2");
 
-            var context = ArcCombinedUnitGenerator.GenerateUnits([unit1, unit2]);
-
-            context.PackageDescriptor = new ArcPackageDescriptor()
-            {
-                Type = ArcPackageType.Executable,
-                Name = "Test",
-                Version = 0,
-                RootGroupTableEntryPos = 0,
-                RootFunctionTableEntryPos = 0,
-                RootConstantTableEntryPos = 0,
-                RegionTableEntryPos = 0,
-                EntrypointFunctionId = 0,
-                DataAlignmentLength = 8
-            };
+            var context = ArcCombinedUnitGenerator.GenerateUnits([unit1, unit2], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
             var outputStream = context.DumpFullByteStream();
 

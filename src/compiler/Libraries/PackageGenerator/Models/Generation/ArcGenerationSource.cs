@@ -6,6 +6,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
     public class ArcGenerationSource
     {
+        public required string Name { get; set; }
+
         public ArcScopeTree GlobalScopeTree { get; set; }
 
         public IEnumerable<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
@@ -16,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public List<ArcDataSlot> LocalDataSlots { get; set; } = [];
 
-        public ArcPackageDescriptor PackageDescriptor { get; set; }
+        public required ArcPackageDescriptor PackageDescriptor { get; set; }
 
         public ArcSignature ParentSignature { get; set; }
 

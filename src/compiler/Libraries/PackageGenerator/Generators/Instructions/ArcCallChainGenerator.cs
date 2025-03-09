@@ -3,10 +3,12 @@ using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
@@ -33,8 +35,22 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var call = firstTerm.FunctionCall!;
                 result.Append(ArcFunctionCallGenerator.Generate(source, call, false));
 
-                var targetFuncId = ArcFunctionHelper.GetFunctionId(source, call);
+                var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
+                if(logs.Any())
+                {
+                    result.Logs.AddRange(logs);
+                    return result;
+                }
+
+
                 var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFuncId, true);
+
+                if (function == null)
+                {
+                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, call.Context));
+                    return result;
+                }
+
                 lastTermTypeDecl = function.ReturnValueType;
             }
 
@@ -50,7 +66,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 if (lastTermTypeDecl.Type is ArcBaseType)
                 {
-                    throw new InvalidDataException("Cannot call a primitive data type");
+                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Cannot access fields of a base type", source.Name, term.Context));
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
@@ -66,6 +82,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     var field = group.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
                     var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, requiredMemotyStorageType, field.Id, true);
                     result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+                }
+                else
+                {
+                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
                 }
 
                 foreach (var expr in term.Indices)

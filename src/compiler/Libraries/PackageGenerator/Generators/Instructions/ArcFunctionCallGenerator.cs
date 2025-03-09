@@ -12,7 +12,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            var funcId = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
+            var (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
+
+            if (logs.Any())
+            {
+                result.Logs.AddRange(logs);
+            }
 
             foreach (var arg in funcCall.Arguments)
             {

@@ -1,13 +1,16 @@
 ﻿using Antlr4.Runtime;
 using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
@@ -51,26 +54,44 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return ArcSequentialExecutionGenerator.Generate(source, body);
         }
 
-        public static T GenerateDescriptor<T>(ArcGenerationSource source, ArcFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
+        public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
         {
+            var logs = new List<ArcCompilationLogBase>();
+
             var signatureSource = source.ParentSignature;
             signatureSource.Locators.Add(declarator);
 
-            var parameters = declarator.Arguments.Select(a => new ArcParameterDescriptor
+            var parameters = declarator.Arguments.Select(a =>
             {
-                DataType = new ArcDataDeclarationDescriptor
+                var paramDataType = ArcDataTypeHelper.GetDataTypeNode(source, a.DataType);
+                if (paramDataType == null)
                 {
-                    Type = ArcDataTypeHelper.GetDataTypeNode(source, a.DataType).DataType,
-                    AllowNone = false,
-                    Dimension = a.DataType.Dimension,
-                    MemoryStorageType = a.DataType.MemoryStorageType,
-                    SyntaxTree = a.DataDeclarator,
-                },
-                RawFullName = a.Identifier.Name,
+                    logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{a.DataType}' not found", source.Name, a.DataType.Context));
+                }
+                
+                return new ArcParameterDescriptor
+                {
+                    DataType = new ArcDataDeclarationDescriptor
+                    {
+                        Type = paramDataType?.DataType ?? ArcBaseType.Placeholder(),
+                        AllowNone = false,
+                        Dimension = a.DataType.Dimension,
+                        MemoryStorageType = a.DataType.MemoryStorageType,
+                        SyntaxTree = a.DataDeclarator,
+                    },
+                    RawFullName = a.Identifier.Name,
+                };
             });
+
+            var returnDataType = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType);
+            if (returnDataType == null)
+            {
+                logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{declarator.ReturnType}' not found", source.Name, declarator.ReturnType.Context));
+            }
+
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType).DataType,
+                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType)?.DataType ?? new ArcBaseType(0xffffffff, "INVALID") { Name = "INVALID"},
                 AllowNone = false,
                 Dimension = declarator.ReturnType.Dimension,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
@@ -82,12 +103,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     a => a.CallArguments.Select(ca => ca.Expression)
                 );
 
-            return new()
-            {
-                ReturnValueType = returnValueType,
-                Parameters = parameters,
-                Annotations = annotations,
-            };
+            return (
+                new()
+                {
+                    ReturnValueType = returnValueType,
+                    Parameters = parameters,
+                    Annotations = annotations,
+                },
+                logs
+            );
         }
     }
 }
