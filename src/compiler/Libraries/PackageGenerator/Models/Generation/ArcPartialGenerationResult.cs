@@ -1,6 +1,8 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
@@ -19,6 +21,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public List<ArcConstant> AddedConstants { get; } = [];
 
         public long TotalGeneratedDataSlotCount { get; set; }
+
+        public List<ArcCompilationLogBase> Logs { get; } = [];
+
+        public bool DiscardResult => Logs.Any(l => l.Level == LogLevel.Error || l.Level == LogLevel.Critical);
 
         public void Append(ArcPartialGenerationResult generationResult)
         {
