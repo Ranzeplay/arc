@@ -148,7 +148,13 @@ namespace Arc.Compiler.PackageGenerator.Models
             {
                 var targetFunction = GlobalScopeTree.FlattenedNodes
                     .OfType<ArcScopeTreeIndividualFunctionNode>()
-                    .First(f => f.Annotations.Any(a => a.Key.Id == 0xb11));
+                    .FirstOrDefault(f => f.Annotations.Any(a => a.Key.Id == 0xb11));
+                if (targetFunction == null)
+                {
+                    Logs.Add(new ArcSourceUnlocatableLog(LogLevel.Error, 0, "No entrypoint function found", string.Empty));
+                    return;
+                }
+
                 PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
             }
         }
