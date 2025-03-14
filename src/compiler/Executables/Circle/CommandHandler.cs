@@ -34,10 +34,21 @@ namespace Arc.Compiler.Circle
 
             logger.LogInformation("Encoding instructions");
             var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits, ArcPackageDescriptor.Default(packageType), !noStd);
-            
+
             context.SetEntrypointFunctionId();
 
+            foreach (var log in context.Logs)
+            {
+                logger.Log(log.Level, "{}", log.FormattedMessage);
+            }
+            if (context.Logs.Any(l => l.Level == LogLevel.Error))
+            {
+                logger.LogError("Failed to generate package due to {} error(s) above", context.Logs.Count(e => e.Level >= LogLevel.Error));
+                return;
+            }
+
             logger.LogInformation("Generating byte stream");
+
             var outputStream = context.DumpFullByteStream();
 
             File.WriteAllBytes(output, [.. outputStream]);
