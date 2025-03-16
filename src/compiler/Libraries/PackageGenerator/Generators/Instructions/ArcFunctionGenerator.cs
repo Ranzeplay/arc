@@ -36,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var relocationLayer = Guid.NewGuid();
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginFunction, node.Signature, relocationLayer).Encode(source);
-            var body = GenerateBody(source, func.Body);
+            var body = GenerateBody(source, func.Body, node);
             var endBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndFunction, node.Signature, relocationLayer).Encode(source);
 
             result.Append(beginBlockLabel);
@@ -49,9 +49,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        public static ArcPartialGenerationResult GenerateBody(ArcGenerationSource source, ArcFunctionBody body)
+        public static ArcPartialGenerationResult GenerateBody(ArcGenerationSource source, ArcFunctionBody body, ArcScopeTreeFunctionNodeBase fnNode)
         {
-            return ArcSequentialExecutionGenerator.Generate(source, body);
+            return ArcSequentialExecutionGenerator.Generate(source, body, fnNode);
         }
 
         public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()

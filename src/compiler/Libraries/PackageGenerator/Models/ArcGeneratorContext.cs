@@ -1,5 +1,7 @@
 ﻿using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.DebuggingInformation;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Logging;
@@ -30,6 +32,8 @@ namespace Arc.Compiler.PackageGenerator.Models
         public required ILogger Logger { get; set; }
 
         public List<ArcCompilationLogBase> Logs { get; set; } = [];
+
+        public ArcPackageSourceInformation SourceInformation { get; set; } = new();
 
         public void TransformLabelRelocationTargets()
         {
@@ -83,6 +87,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             }));
             Constants.AddRange(result.AddedConstants);
             GeneratedData.AddRange(result.GeneratedData);
+            SourceInformation.MergeMappings(result.SourceInformation);
         }
 
         public void Append(ArcGeneratorContext context)
@@ -101,6 +106,7 @@ namespace Arc.Compiler.PackageGenerator.Models
 
             Constants.AddRange(context.Constants);
             GeneratedData.AddRange(context.GeneratedData);
+            SourceInformation.MergeMappings(context.SourceInformation);
         }
 
         public ArcGenerationSource GenerateSource()
@@ -115,7 +121,7 @@ namespace Arc.Compiler.PackageGenerator.Models
                 PackageDescriptor = PackageDescriptor,
                 GlobalScopeTree = GlobalScopeTree,
                 ParentSignature = new ArcSignature() { Locators = [.. location] },
-                CurrentNode = node,
+                CurrentNode = node!,
                 Name = PackageDescriptor.Name,
             };
         }
@@ -156,6 +162,17 @@ namespace Arc.Compiler.PackageGenerator.Models
                 }
 
                 PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
+            }
+        }
+
+        public void UpdateSourceSymbolInformation()
+        {
+            var nodes = GlobalScopeTree.FlattenedNodes
+                .OfType<IArcEncodableScopeTreeNode>()
+                .OfType<ArcScopeTreeNodeBase>();
+            foreach (var node in nodes)
+            {
+                SourceInformation.SymbolMapping.Add(node.Id, node.Signature);
             }
         }
     }

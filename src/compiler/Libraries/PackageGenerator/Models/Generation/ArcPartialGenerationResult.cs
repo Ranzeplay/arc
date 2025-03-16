@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.DebuggingInformation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
@@ -23,6 +24,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public long TotalGeneratedDataSlotCount { get; set; }
 
         public List<ArcCompilationLogBase> Logs { get; } = [];
+
+        public ArcPackageSourceInformation SourceInformation { get; set; } = new();
 
         public bool DiscardResult => Logs.Any(l => l.Level == LogLevel.Error || l.Level == LogLevel.Critical);
 
@@ -52,6 +55,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             AddedConstants.AddRange(generationResult.AddedConstants);
 
             TotalGeneratedDataSlotCount += generationResult.TotalGeneratedDataSlotCount;
+
+            Logs.AddRange(generationResult.Logs);
+
+            SourceInformation.MergeMappings(generationResult.SourceInformation);
         }
 
         public static ArcPartialGenerationResult WithLogs(IEnumerable<ArcCompilationLogBase> logs)

@@ -1,13 +1,14 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcConditionBlockGenerator
     {
-        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockIf ifBlock)
+        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockIf ifBlock, ArcScopeTreeFunctionNodeBase fnNode)
         {
             var relocationLayer = Guid.NewGuid();
 
@@ -30,7 +31,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     Parameter = 1,
                     Layer = relocationLayer
                 }).Encode(source);
-                var body = ArcSequentialExecutionGenerator.Generate(source, block.Body);
+                var body = ArcSequentialExecutionGenerator.Generate(source, block.Body, fnNode);
                 var jumpOutInstruction = new ArcUnconditionalJumpInstruction(new()
                 {
                     TargetType = ArcRelocationTargetType.Label,
@@ -58,7 +59,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             bResult.Append(beginSubBlock.Encode(source));
             if (ifBlock.ElseBody != null)
             {
-                var block = ArcSequentialExecutionGenerator.Generate(source, ifBlock.ElseBody);
+                var block = ArcSequentialExecutionGenerator.Generate(source, ifBlock.ElseBody, fnNode);
                 bResult.Append(block);
             }
             var endSubBlock = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end", relocationLayer);

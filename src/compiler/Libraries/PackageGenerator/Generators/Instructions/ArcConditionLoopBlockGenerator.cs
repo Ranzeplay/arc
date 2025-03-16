@@ -1,13 +1,14 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcConditionLoopBlockGenerator
     {
-        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditionalLoop clBlock)
+        public static ArcPartialGenerationResult Encode(ArcGenerationSource source, ArcBlockConditionalLoop clBlock, ArcScopeTreeFunctionNodeBase fnNode)
         {
             var relocationLayer = Guid.NewGuid();
 
@@ -17,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression, true);
 
-            var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body);
+            var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body, fnNode);
 
             var jumpOutRelocator = new ArcRelocationTarget()
             {

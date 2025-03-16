@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcSequentialExecutionGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockSequentialExecution seqExec)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcBlockSequentialExecution seqExec, ArcScopeTreeFunctionNodeBase fnNode)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -23,6 +23,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     case ArcStatementDeclaration decl:
                         {
                             stepResult = new ArcDeclarationInstruction(decl.DataDeclarator).Encode(source);
+                            stepResult.SourceInformation.FunctionDataSlotMapping[fnNode.Id] = [];
+                            var slot = stepResult.DataSlots.First();
+                            stepResult.SourceInformation.FunctionDataSlotMapping[fnNode.Id][slot.SlotId] = slot.Name;
                             break;
                         }
                     case ArcStatementAssign assign:
@@ -32,12 +35,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcBlockIf ifBlock:
                         {
-                            stepResult = ArcConditionBlockGenerator.Encode(source, ifBlock);
+                            stepResult = ArcConditionBlockGenerator.Encode(source, ifBlock, fnNode);
                             break;
                         }
                     case ArcBlockConditionalLoop conditionalLoop:
                         {
-                            stepResult = ArcConditionLoopBlockGenerator.Encode(source, conditionalLoop);
+                            stepResult = ArcConditionLoopBlockGenerator.Encode(source, conditionalLoop, fnNode);
                             break;
                         }
                     case ArcStatementReturn @return:

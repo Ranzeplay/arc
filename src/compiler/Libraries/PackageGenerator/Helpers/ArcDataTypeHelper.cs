@@ -55,7 +55,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             return source.GlobalScopeTree
                 .FlattenedNodes
                 .OfType<ArcScopeTreeGroupNode>()
-                .FirstOrDefault(n => n.Id == typeNode.DataType.TypeId);
+                .FirstOrDefault(n => n.Id == typeNode?.DataType.TypeId);
         }
 
         public static ArcScopeTreeGroupNode? GetDataTypeGroupNode(ArcGenerationSource source, ArcComplexType dataType)

@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
             var slot = new ArcDataSlot
             {
-                Name = "Local data slot",
+                Name = DataDeclarator.Identifier.Name,
                 DeclarationDescriptor = new ArcDataDeclarationDescriptor()
                 {
                     Type = dataType,
