@@ -17,7 +17,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<byte> Encode(ArcScopeTree tree) => 
             [
                 (byte)ArcSymbolType.Annotation,
-                ..new ArcStringEncoder().Encode(Signature),
                 ..BitConverter.GetBytes(TargetGroup.Id)
             ];
     }

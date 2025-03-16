@@ -26,7 +26,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             [
                 (byte)ArcSymbolType.DataType,
                 (byte)(IsInternal ? 0x00 : 0x01),
-                ..new ArcStringEncoder().Encode(Signature),
                 ..(!IsInternal ? BitConverter.GetBytes(ComplexTypeGroup?.Id ?? 0xffffffff) : [])
             ];
 

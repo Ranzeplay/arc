@@ -39,7 +39,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [
                 (byte)ArcSymbolType.Group,
-                ..new ArcStringEncoder().Encode(Signature),
                 ..ArcGroupSymbolEncoder.EncodeGroupSymbol(this)
             ];
 

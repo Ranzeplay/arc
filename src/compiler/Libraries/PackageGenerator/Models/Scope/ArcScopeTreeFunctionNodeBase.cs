@@ -33,7 +33,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 (byte)ArcSymbolType.Function,
                 ..BitConverter.GetBytes(EntrypointPos),
                 ..BitConverter.GetBytes(BlockLength),
-                ..new ArcStringEncoder().Encode(Signature),
 
                 ..ReturnValueType.Encode(tree.GetNodes<ArcScopeTreeDataTypeNode>()),
 

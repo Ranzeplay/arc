@@ -15,7 +15,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [
                 (byte)ArcSymbolType.Namespace,
-                ..new ArcStringEncoder().Encode(Signature)
             ];
 
         public ArcScopeTree GetIsolatedTree()
