@@ -8,7 +8,6 @@ pub struct GroupDetailViewModel {
 
 impl Debug for GroupDetailViewModel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "{}:", self.group.signature)?;
         writeln!(f, "= Fields:")?;
         for field_id in &self.group.field_ids {
             writeln!(f, "  0x{:016X}", field_id)?;

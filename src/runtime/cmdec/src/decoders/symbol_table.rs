@@ -1,8 +1,7 @@
-use std::collections::HashMap;
-use shared::models::descriptors::symbol::{DataTypeSymbol, ComplexTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable, AnnotationSymbol};
+use shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
 use shared::models::encodings::data_type_enc::DataTypeEncoding;
 use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
-use shared::models::encodings::str_enc::StringEncoding;
+use std::collections::HashMap;
 use std::rc::Rc;
 
 pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
@@ -47,10 +46,6 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let block_length = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
-    let name_encoding = StringEncoding::from_u8(&stream[pos..]);
-    let signature = name_encoding.value;
-    pos += name_encoding.total_size;
-
     let (return_value_descriptor, return_value_descriptor_len) =
         DataTypeEncoding::from_u8(&stream[pos..]);
     pos += return_value_descriptor_len;
@@ -75,7 +70,6 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
         Symbol::Function(Rc::new(FunctionSymbol {
             entry_pos,
             block_length,
-            signature,
             return_value_descriptor: Rc::new(return_value_descriptor),
             parameter_descriptors: parameter_descriptors_vec,
             annotation_ids: annotations,
@@ -86,10 +80,7 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
 }
 
 pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
-    let name_encoding = StringEncoding::from_u8(&stream);
-    let signature = name_encoding.value;
-
-    let mut pos = name_encoding.total_size;
+    let mut pos = 0;
 
     let (field_ids, field_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += field_ids_len;
@@ -110,7 +101,6 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     pos += annotation_ids_len;
 
     let result = Symbol::Group(Rc::new(GroupSymbol {
-        signature,
         field_ids,
         constructor_ids,
         destructor_ids,
@@ -122,16 +112,12 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
 }
 
 pub fn decode_group_field_descriptor(stream: &[u8]) -> (Symbol, usize) {
-    let name_encoding = StringEncoding::from_u8(&stream);
-    let signature = name_encoding.value;
-
-    let mut pos = name_encoding.total_size;
+    let mut pos = 0;
 
     let (data_type, data_type_id_len) = DataTypeEncoding::from_u8(&stream[pos..]);
     pos += data_type_id_len;
 
     let result = Symbol::GroupField(Rc::new(GroupFieldSymbol {
-        signature,
         value_descriptor: data_type,
     }));
     (result, pos)
@@ -143,12 +129,9 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let is_base_type = stream[pos] == 0x00;
     pos += 1;
 
-    let name_encoding = StringEncoding::from_u8(&stream[pos..]);
-    pos += name_encoding.total_size;
-
     if is_base_type {
         (
-            Symbol::DataType(Rc::new(DataTypeSymbol::BaseType(name_encoding.value))),
+            Symbol::DataType(Rc::new(DataTypeSymbol::BaseType)),
             pos,
         )
     } else {
@@ -157,7 +140,6 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
         (
             Symbol::DataType(Rc::new(DataTypeSymbol::ComplexType(
                 ComplexTypeSymbol {
-                    signature: name_encoding.value,
                     group_id,
                 },
             ))),
@@ -166,23 +148,17 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
     }
 }
 
-pub fn decode_namespace_descriptor(stream: &[u8]) -> (Symbol, usize) {
-    let name_encoding = StringEncoding::from_u8(&stream);
-    let signature = name_encoding.value;
-
-    let result = Symbol::Namespace(Rc::new(NamespaceSymbol { signature }));
-    (result, name_encoding.total_size)
+pub fn decode_namespace_descriptor(_stream: &[u8]) -> (Symbol, usize) {
+    let result = Symbol::Namespace(Rc::new(NamespaceSymbol {}));
+    (result, 0)
 }
 
 pub fn decode_annotation_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let mut pos = 0;
-    let name_encoding = StringEncoding::from_u8(&stream[pos..]);
-    let signature = name_encoding.value;
-    pos += name_encoding.total_size;
 
     let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
-    let result = Symbol::Annotation(Rc::new(AnnotationSymbol { signature, group_id }));
+    let result = Symbol::Annotation(Rc::new(AnnotationSymbol { group_id }));
     (result, pos)
 }

@@ -20,27 +20,25 @@ pub enum Symbol {
 }
 
 pub enum DataTypeSymbol {
-    BaseType(String),
+    BaseType,
     ComplexType(ComplexTypeSymbol),
 }
 
 pub struct ComplexTypeSymbol {
-    pub signature: String,
     pub group_id: usize,
 }
 
 impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
-            DataTypeSymbol::ComplexType(dt) => writeln!(f, "[DT] {} -> 0x{:016X}", dt.signature, dt.group_id),
-            DataTypeSymbol::BaseType(bt) => writeln!(f, "[DT] {}", bt)
+            DataTypeSymbol::ComplexType(dt) => writeln!(f, "[DT] Ref 0x{:016X}", dt.group_id),
+            DataTypeSymbol::BaseType => writeln!(f, "[DT]")
         }
     }
 }
 
 #[derive(Clone)]
 pub struct FunctionSymbol {
-    pub signature: String,
     pub entry_pos: usize,
     pub block_length: usize,
     pub return_value_descriptor: Rc<DataTypeEncoding>,
@@ -51,13 +49,12 @@ pub struct FunctionSymbol {
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[FN] {} at {}(+{}) A:{} D:{}", self.signature, self.entry_pos, self.block_length, self.annotation_ids.len(), self.data_count)
+        writeln!(f, "[FN] at {}(+{}) A:{} D:{}", self.entry_pos, self.block_length, self.annotation_ids.len(), self.data_count)
     }
 }
 
 #[derive(Clone)]
 pub struct GroupSymbol {
-    pub signature: String,
     pub field_ids: Vec<usize>,
     pub constructor_ids: Vec<usize>,
     pub destructor_ids: Vec<usize>,
@@ -68,8 +65,7 @@ pub struct GroupSymbol {
 
 impl Debug for GroupSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[GP] {} {}/{}/{}/{}/{}",
-                 self.signature,
+        writeln!(f, "[GP] {}/{}/{}/{}/{}",
                  self.field_ids.len(),
                  self.function_ids.len(),
                  self.constructor_ids.len(),
@@ -80,34 +76,31 @@ impl Debug for GroupSymbol {
 }
 
 pub struct GroupFieldSymbol {
-    pub signature: String,
     pub value_descriptor: DataTypeEncoding
 }
 
 impl Debug for GroupFieldSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[GF] {}", self.signature)
+        writeln!(f, "[GF]")
     }
 }
 
 pub struct NamespaceSymbol {
-    pub signature: String,
 }
 
 impl Debug for NamespaceSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[NS] {}", self.signature)
+        writeln!(f, "[NS]")
     }
 }
 
 pub struct AnnotationSymbol {
-    pub signature: String,
     pub group_id: usize,
 }
 
 impl Debug for AnnotationSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[AN] {} -> 0x{:016X}", self.signature, self.group_id)
+        writeln!(f, "[AN] Ref 0x{:016X}", self.group_id)
     }
 }
 

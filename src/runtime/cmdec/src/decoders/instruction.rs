@@ -528,7 +528,7 @@ pub fn decode_instructions(
                     _ => unreachable!(),
                 };
 
-                info!("Function: {}({}+{})", func.signature, func.entry_pos, func.block_length);
+                info!("Function: at {}+{}", func.entry_pos, func.block_length);
             }
 
             info!("\t{:?}", instruction);
