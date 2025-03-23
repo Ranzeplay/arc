@@ -17,7 +17,7 @@ use shared::models::instruction::InstructionType;
 use std::cell::RefCell;
 use std::rc::Rc;
 use shared::models::options::launch_options::LaunchOptions;
-use crate::instructions::data_declaration::declare_data;
+use crate::instructions::data_declaration::{construct_data, declare_data};
 use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
 use crate::math::{math_logical_and, math_logical_not, math_logical_or};
 
@@ -268,6 +268,12 @@ pub fn execute_function(
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
             InstructionType::RpStk => replace_stack_top(&exec_context),
+            InstructionType::NewObj(no) => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let obj = construct_data(no, &exec_context_ref.package);
+
+                exec_context_ref.global_stack.push(obj);
+            }
         }
 
         instruction_index += 1;

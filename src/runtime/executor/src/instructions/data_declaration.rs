@@ -1,10 +1,11 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-use shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
+use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::FunctionExecutionContext;
 use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use shared::models::instructions::decl::DeclInstruction;
+use shared::models::instructions::new_obj::NewObjectInstruction;
 use shared::models::package::Package;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, decl: &DeclInstruction, package: &Package) {
     let mut fn_context_ref = function_context.borrow_mut();
@@ -24,4 +25,18 @@ pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, de
             value: DataValueType::init(Rc::new(encoding), package),
         })),
     })));
+}
+
+pub fn construct_data(new_obj: &NewObjectInstruction, package: &Package) -> Rc<RefCell<DataValue>> {
+    let encoding = DataTypeEncoding {
+        type_id: new_obj.type_id,
+        dimension: 0,
+        mutability: Mutability::Immutable,
+        memory_storage_type: MemoryStorageType::Value,
+    };
+
+    Rc::new(RefCell::new(DataValue {
+        data_type: encoding.clone(),
+        value: DataValueType::init(Rc::new(encoding), package),
+    }))
 }

@@ -7,6 +7,7 @@ use crate::models::instructions::return_from_block::ReturnInstruction;
 use pad::PadStr;
 use std::fmt::{Debug, Formatter};
 use strum_macros::AsRefStr;
+use crate::models::instructions::new_obj::NewObjectInstruction;
 use crate::models::instructions::stack_data_operation::StackOperationInstruction;
 
 #[derive(AsRefStr)]
@@ -69,7 +70,8 @@ pub enum InstructionType {
     SvStk(StackOperationInstruction),
     NeqC,
     NeqR,
-    RpStk
+    RpStk,
+    NewObj(NewObjectInstruction),
 }
 
 impl Debug for InstructionType {
@@ -84,6 +86,7 @@ impl Debug for InstructionType {
             InstructionType::FCall(x) => write!(f, "{:?}", x),
             InstructionType::LdStk(x) => write!(f, "{:?}", x),
             InstructionType::SvStk(x) => write!(f, "{:?}", x),
+            InstructionType::NewObj(x) => write!(f, "{:?}", x),
             _ => write!(f, " "),
         }
     }

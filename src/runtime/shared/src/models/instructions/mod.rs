@@ -6,3 +6,4 @@ pub mod pop_to_slot;
 pub mod return_from_block;
 pub mod stack_data_operation;
 mod return_function;
+pub mod new_obj;

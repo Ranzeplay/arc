@@ -9,6 +9,7 @@ use shared::models::package::Package;
 use shared::traits::instruction::DecodableInstruction;
 use std::rc::Rc;
 use log::{error, info, warn};
+use shared::models::instructions::new_obj::NewObjectInstruction;
 use shared::models::instructions::stack_data_operation::StackOperationInstruction;
 use shared::models::options::cmdec_options::CmdecOptions;
 
@@ -512,6 +513,18 @@ pub fn decode_instructions(
                 };
 
                 pos += 1;
+            }
+            0x42 => {
+                let (new_obj, len) =
+                    NewObjectInstruction::decode(&stream[pos..], pos, package).unwrap();
+
+                instruction = Instruction {
+                    offset: pos,
+                    instruction_type: InstructionType::NewObj(new_obj),
+                    raw: stream[pos..pos + len].to_vec(),
+                };
+
+                pos += len;
             }
             _ => {
                 error!("Unknown instruction: 0x{:02X?} @ {}", stream[pos], pos);
