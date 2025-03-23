@@ -39,6 +39,11 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
             var transformed = new ArcCompilationUnit(compilationUnit, _logger, "test");
 
             Assert.That(transformed, Is.Not.Null);
+
+            Assert.That(
+                transformed.Namespace.Functions.First().Body,
+                Is.Not.Null
+            );
         }
     }
 }

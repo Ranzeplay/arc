@@ -13,6 +13,11 @@ namespace Arc::Program {
 		}
 
 		public func empty(): val none {}
+
+		public func ctor(): val none {
+			foo = "foo";
+			bar = "bar";
+		}
 	}
 
 	@Export
@@ -29,6 +34,9 @@ namespace Arc::Program {
 		else { c = a - b; }
 
 		call [Console].PrintLn("Hello, world!");
+
+		var d: val ArcExample;
+		d = new ArcExample();
 
 		return 0;
 	}
