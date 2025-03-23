@@ -65,3 +65,4 @@ title: Instruction set
 | 0x39   | neqc     | Compare if two objects on the top of the stack have the different content   |
 | 0x40   | neqr     | Compare if two objects on the top of the stack have the different reference |
 | 0x41   | rpstk    | Replace stack top                                                           |
+| 0x42   | newobj   | Create a new empty object on stack top                                      |
