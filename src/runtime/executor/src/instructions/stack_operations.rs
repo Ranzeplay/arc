@@ -87,7 +87,7 @@ pub fn load_stack(
                         mutability: Mutability::Immutable,
                         memory_storage_type: MemoryStorageType::Value,
                     },
-                    value: DataValueType::Char(s[index])
+                    value: DataValueType::Char(s.chars().nth(index).unwrap()),
                 })),
                 _ => panic!("Invalid data type"),
             };
