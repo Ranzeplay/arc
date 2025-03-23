@@ -23,7 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public long TotalGeneratedDataSlotCount { get; set; }
 
-        public List<ArcCompilationLogBase> Logs { get; } = [];
+        public List<ArcCompilationLogBase> Logs { get; init; } = [];
 
         public ArcPackageSourceInformation SourceInformation { get; set; } = new();
 

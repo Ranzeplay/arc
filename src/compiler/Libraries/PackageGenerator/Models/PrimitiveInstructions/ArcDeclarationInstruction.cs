@@ -3,7 +3,9 @@ using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
@@ -15,14 +17,20 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            var dataType = ArcDataTypeHelper.GetDataTypeNode(source, DataDeclarator.DataType).DataType;
+            var dataType = ArcDataTypeHelper.GetDataTypeNode(source, DataDeclarator.DataType)?.DataType;
+
+            ArcSourceLocatableLog? errorLog = null;
+            if (dataType == null)
+            {
+                errorLog = new ArcSourceLocatableLog(LogLevel.Error, 0, "Data type not found", source.Name, DataDeclarator.Context);
+            }
 
             var slot = new ArcDataSlot
             {
                 Name = DataDeclarator.Identifier.Name,
                 DeclarationDescriptor = new ArcDataDeclarationDescriptor()
                 {
-                    Type = dataType,
+                    Type = dataType ?? null!,
                     AllowNone = false,
                     Dimension = DataDeclarator.DataType.Dimension,
                     MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
@@ -39,10 +47,11 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     .. Opcode,
                     DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
-                    .. BitConverter.GetBytes(dataType.TypeId),
+                    .. BitConverter.GetBytes(dataType?.TypeId ?? 0),
                 ],
                 DataSlots = [slot],
                 TotalGeneratedDataSlotCount = 1,
+                Logs = errorLog == null ? [] : [errorLog],
             };
         }
     }

@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.PackageGenerator.Helpers
 {
@@ -29,18 +30,21 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             }
             else
             {
-                var typeIdentifier = dataType.ComplexType!.Identifier;
+                return GetComplexTypeNode(source, dataType.ComplexType!.Identifier);
+            }
+        }
 
-                if (typeIdentifier.Namespace != null && typeIdentifier.Namespace.Any())
-                {
-                    return source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(typeIdentifier.NameArray);
-                }
-                else
-                {
-                    return source.DirectlyAccessibleNodes
-                        .OfType<ArcScopeTreeDataTypeNode>()
-                        .First(c => c.ShortName == typeIdentifier.Name);
-                }
+        public static ArcScopeTreeDataTypeNode? GetComplexTypeNode(ArcGenerationSource source, ArcFlexibleIdentifier identifier)
+        {
+            if (identifier.Namespace != null && identifier.Namespace.Any())
+            {
+                return source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(identifier.NameArray);
+            }
+            else
+            {
+                return source.DirectlyAccessibleNodes
+                    .OfType<ArcScopeTreeDataTypeNode>()
+                    .First(c => c.ShortName == identifier.Name);
             }
         }
 

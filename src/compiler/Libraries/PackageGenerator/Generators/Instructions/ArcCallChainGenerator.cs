@@ -18,16 +18,32 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
+            ArcDataDeclarationDescriptor? lastTermTypeDecl;
+
+            int skipCount = 0;
             // First term maybe be variant, so handle it separately
-            var (firstTermResult, lastTermTypeDecl) = GenerateFirstTerm(callChain.Terms.First(), source, requiredMemoryStorageType);
+            if (callChain.ConstructorCall == null)
+            {
+                var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source, requiredMemoryStorageType);
+                result.Append(firstTermResult);
+                lastTermTypeDecl = d;
+                skipCount = 1;
+            }
+            else
+            {
+                var (firstTermResult, d) = GenerateFirstTermConstructor(callChain.ConstructorCall, source);
+
+                result.Append(firstTermResult);
+                lastTermTypeDecl = d;
+            }
+
             if (lastTermTypeDecl == null)
             {
-                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Cannot determine the data type", source.Name, callChain.Terms.First().Context));
+                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Cannot determine the data type of the first term", source.Name, callChain.Terms.First().Context));
                 return result;
             }
-            result.Append(firstTermResult);
 
-            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms, lastTermTypeDecl, source, requiredMemoryStorageType);
+            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, requiredMemoryStorageType);
             result.Append(remainingTermsResult);
 
             return result;
@@ -81,10 +97,45 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return (result, termTypeDecl);
         }
 
+        public static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTermConstructor(ArcConstructorCall constructor, ArcGenerationSource source)
+        {
+            var result = new ArcPartialGenerationResult();
+
+            var dataTypeNode = ArcDataTypeHelper.GetComplexTypeNode(source, constructor.DataType); if (dataTypeNode == null)
+            {
+                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Data type not found", source.Name, constructor.Context));
+                return (result, null);
+            }
+            var dataGroup = dataTypeNode.ComplexTypeGroup;
+
+            // Constructor is a function that uses `self`
+            result.Append(new ArcNewObjectInstruction(dataTypeNode).Encode(source));
+            foreach (var param in constructor.Parameters)
+            {
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param, true));
+            }
+
+            // Currently we determine constructor by the number of parameters
+            // TODO: Implement a more robust way to determine the constructor
+            var constructorId = dataGroup!.Constructors.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
+            result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1).Encode(source));
+
+            var dataDeclDesc = new ArcDataDeclarationDescriptor
+            {
+                Type = dataTypeNode.DataType,
+                AllowNone = false,
+                Dimension = 0,
+                MemoryStorageType = ArcMemoryStorageType.Reference,
+                SyntaxTree = null!
+            };
+
+            return (result, dataDeclDesc);
+        }
+
         private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source, ArcMemoryStorageType requiredMemoryStorageType)
         {
             var result = new ArcPartialGenerationResult();
-            foreach (var term in terms.Skip(1))
+            foreach (var term in terms)
             {
                 if (lastTermTypeDecl.Type is ArcBaseType)
                 {
