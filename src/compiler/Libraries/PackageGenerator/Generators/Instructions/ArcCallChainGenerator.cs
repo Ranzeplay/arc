@@ -109,7 +109,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataGroup = dataTypeNode.ComplexTypeGroup;
 
             // Constructor is a function that uses `self`
-            result.Append(new ArcNewObjectInstruction(dataTypeNode).Encode(source));
+            result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType).Encode(source));
             foreach (var param in constructor.Parameters)
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param, true));
