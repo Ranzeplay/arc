@@ -1,13 +1,14 @@
 use crate::data;
-use shared::models::encodings::data_type_enc::MemoryStorageType;
+use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::data::DataValueType;
+use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
 use shared::models::instructions::stack_data_operation::{
     DataSourceType, StackOperationInstruction,
 };
 use std::cell::RefCell;
 use std::rc::Rc;
+use arc_stdlib::base::CHAR_TYPE_ID;
 
 pub fn load_stack(
     exec_context: &Rc<RefCell<ExecutionContext>>,
@@ -77,12 +78,21 @@ pub fn load_stack(
                 _ => panic!("Invalid data type"),
             };
             let stack_top_array_value = stack_top_array_value.borrow();
-            let array = match &stack_top_array_value.value {
-                DataValueType::Array(a) => a,
+            let array_element = match &stack_top_array_value.value {
+                DataValueType::Array(a) => Rc::clone(&a[index]),
+                DataValueType::String(s) => Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: *CHAR_TYPE_ID,
+                        dimension: 0,
+                        mutability: Mutability::Immutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Char(s[index])
+                })),
                 _ => panic!("Invalid data type"),
             };
 
-            Rc::clone(&array[index])
+            array_element
         }
     };
 
