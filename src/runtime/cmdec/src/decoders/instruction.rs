@@ -10,13 +10,14 @@ use shared::traits::instruction::DecodableInstruction;
 use std::rc::Rc;
 use log::{error, info, warn};
 use shared::models::instructions::stack_data_operation::StackOperationInstruction;
+use shared::models::options::cmdec_options::CmdecOptions;
 
 pub fn decode_instructions(
     stream: &[u8],
     package: &Package,
-    verbose: bool,
+    opt: CmdecOptions,
 ) -> Vec<Rc<Instruction>> {
-    if verbose {
+    if opt.verbose {
         info!("=== Instructions");
     }
 
@@ -518,7 +519,7 @@ pub fn decode_instructions(
             }
         }
 
-        if verbose {
+        if opt.verbose {
             if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
                 shared::models::descriptors::symbol::Symbol::Function(f) => f.entry_pos == instruction.offset,
                 _ => false,
@@ -537,7 +538,7 @@ pub fn decode_instructions(
     }
 
     if pos == stream.len() {
-        if verbose {
+        if opt.verbose {
             info!("All instructions decoded successfully!");
         }
     } else {

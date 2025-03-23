@@ -14,9 +14,9 @@ use shared::models::execution::context::{ExecutionContext, FunctionExecutionCont
 use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use shared::models::instruction::InstructionType;
-use shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
+use shared::models::options::launch_options::LaunchOptions;
 use crate::instructions::data_declaration::declare_data;
 use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
 use crate::math::{math_logical_and, math_logical_not, math_logical_or};
@@ -59,10 +59,10 @@ macro_rules! comparison_operation_instruction {
     };
 }
 
-pub fn launch(package: Package, _verbose: bool, args: Vec<String>) -> Result<i32, String> {
+pub fn launch(opt: Rc<LaunchOptions>) -> Result<i32, String> {
     debug!("Launching program...");
 
-    let result = execute(package, args);
+    let result = execute(opt);
 
     match result {
         FunctionExecutionResult::Success(_) => {
@@ -77,8 +77,8 @@ pub fn launch(package: Package, _verbose: bool, args: Vec<String>) -> Result<i32
     }
 }
 
-pub fn execute(package: Package, args: Vec<String>) -> FunctionExecutionResult {
-    let mut context = ExecutionContext::new(package, args);
+pub fn execute(opt: Rc<LaunchOptions>) -> FunctionExecutionResult {
+    let mut context = ExecutionContext::new(Rc::clone(&opt.package), opt.args.clone());
     context.init_jump_destinations();
     context.init_function_entry_points();
 

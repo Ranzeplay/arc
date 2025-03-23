@@ -1,9 +1,12 @@
+use std::rc::Rc;
 use executor::launch;
-use shared::models::package::Package;
+use shared::models::options::launch_options::LaunchOptions;
 
-pub fn execute(package: Package, verbose: bool, repeat: u32, args: Vec<String>) -> i32 {
-    for _ in 0..repeat {
-        let result = launch(package.clone(), verbose, args.clone());
+pub fn execute(opt: LaunchOptions) -> i32 {
+    let opt = Rc::new(opt);
+
+    for _ in 0..opt.repeat {
+        let result = launch(Rc::clone(&opt));
         if let Err(e) = result {
             log::error!("Error: {}", e);
             return 0xffff;

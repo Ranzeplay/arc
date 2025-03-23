@@ -7,7 +7,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 
 pub struct ExecutionContext {
-    pub package: Package,
+    pub package: Rc<Package>,
     pub global_stack: Vec<Rc<RefCell<DataValue>>>,
     pub jump_destinations: HashMap<usize, usize>,
     pub function_entry_points: HashMap<usize, usize>,
@@ -15,7 +15,7 @@ pub struct ExecutionContext {
 }
 
 impl ExecutionContext {
-    pub fn new(package: Package, launch_args: Vec<String>) -> Self {
+    pub fn new(package: Rc<Package>, launch_args: Vec<String>) -> Self {
         let jump_count = package
             .instructions
             .iter()

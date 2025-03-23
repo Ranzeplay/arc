@@ -4,6 +4,9 @@ use crate::dispatcher::execute::execute;
 use clap::Parser;
 use log::{debug, error, info};
 use std::process::exit;
+use std::rc::Rc;
+use shared::models::options::cmdec_options::CmdecOptions;
+use shared::models::options::launch_options::LaunchOptions;
 
 mod command_line_options;
 mod dispatcher;
@@ -25,17 +28,33 @@ fn main() {
         Some(subcommand) => match subcommand {
             command_line_options::Subcommands::Decode(decode_command) => {
                 info!("Decoding package content");
-                call_cmdec_decoder(&decode_command.path, true, args.verbose);
+                let opt = CmdecOptions {
+                    path: decode_command.path,
+                    print_decoding_result: true,
+                    verbose: args.verbose,
+                };
+                call_cmdec_decoder(opt);
             }
             command_line_options::Subcommands::Execute(execute_command) => {
                 debug!("Executing package");
-                let package = call_cmdec_decoder(&execute_command.path, false, args.verbose);
+                let opt = CmdecOptions {
+                    path: execute_command.path,
+                    print_decoding_result: false,
+                    verbose: args.verbose,
+                };
+                let package = call_cmdec_decoder(opt);
                 if package.is_none() {
                     error!("Failed to decode package");
                     exit(1);
                 }
 
-                execute(package.unwrap(), args.verbose, execute_command.repeat, execute_command.args);
+                let opt = LaunchOptions {
+                    package: Rc::new(package.unwrap()),
+                    verbose: args.verbose,
+                    repeat: execute_command.repeat,
+                    args: execute_command.args,
+                };
+                execute(opt);
             }
         },
         None => {}

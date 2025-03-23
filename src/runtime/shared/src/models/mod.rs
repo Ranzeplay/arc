@@ -6,3 +6,4 @@ pub mod instructions;
 pub mod display;
 pub mod execution;
 pub mod source_info;
+pub mod options;

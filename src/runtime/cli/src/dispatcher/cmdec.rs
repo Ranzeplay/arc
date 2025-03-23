@@ -1,8 +1,8 @@
-use std::path::PathBuf;
 use cmdec::Cmdec;
+use shared::models::options::cmdec_options::CmdecOptions;
 use shared::models::package::Package;
 
-pub fn call_cmdec_decoder(path: &PathBuf, print_decoding_result: bool, verbose: bool) -> Option<Package> {
-    let stream = std::fs::read(path).unwrap();
-    Cmdec::decode(&stream, print_decoding_result, verbose)
+pub fn call_cmdec_decoder(opt: CmdecOptions) -> Option<Package> {
+    let stream = std::fs::read(&opt.path).unwrap();
+    Cmdec::decode(&stream, opt)
 }

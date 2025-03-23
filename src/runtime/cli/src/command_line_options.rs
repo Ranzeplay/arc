@@ -23,6 +23,8 @@ pub enum Subcommands {
 pub struct DecodeCommand {
     #[clap(required = true, help = "Path to the package file")]
     pub path: PathBuf,
+    #[clap(short, long, help = "Source information for the package file")]
+    pub source_info: Option<PathBuf>,
 }
 
 // Run subcommand

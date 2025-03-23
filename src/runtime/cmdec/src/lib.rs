@@ -5,6 +5,7 @@ use crate::decoders::package_descriptor::decode_package_descriptor;
 use crate::decoders::symbol_table::decode_symbol_table;
 use shared::models::descriptors::symbol::Symbol;
 use shared::models::display::group::{GroupDetailViewModel, GroupListViewModel};
+use shared::models::options::cmdec_options::CmdecOptions;
 use shared::models::package::Package;
 
 mod decoders;
@@ -12,27 +13,27 @@ mod decoders;
 pub struct Cmdec {}
 
 impl Cmdec {
-    pub fn decode(stream: &[u8], print_decoding_result: bool, verbose: bool) -> Option<Package> {
+    pub fn decode(stream: &[u8], opt: CmdecOptions) -> Option<Package> {
         // Check first 2 bytes
         if stream[0] != 0x20 || stream[1] != 0x24 {
             error!("Invalid Arc package");
             return None;
         }
 
-        if print_decoding_result && verbose {
+        if opt.print_decoding_result && opt.verbose {
             debug!("Raw:\n{:02X?}", stream);
         }
 
         let mut pos = 2;
         let (package_descriptor, len) = decode_package_descriptor(&stream[pos..]);
         pos += len;
-        if print_decoding_result {
+        if opt.print_decoding_result {
             info!("{:?}", package_descriptor);
         }
 
         let (symbol_table, len) = decode_symbol_table(&stream[pos..]);
         pos += len;
-        if print_decoding_result {
+        if opt.print_decoding_result {
             info!("{:?}", symbol_table);
         }
 
@@ -46,13 +47,13 @@ impl Cmdec {
                 _ => {}
             }
         }
-        if print_decoding_result {
+        if opt.print_decoding_result {
             info!("{:?}", group_detail_list);
         }
 
         let (constant_table, len) = decode_constant_table(&stream[pos..]);
         pos += len;
-        if print_decoding_result {
+        if opt.print_decoding_result {
             info!("{:?}", constant_table);
         }
 
@@ -63,7 +64,7 @@ impl Cmdec {
             instructions: Vec::new(),
         };
 
-        package.instructions = decode_instructions(&stream[pos..], &package, print_decoding_result);
+        package.instructions = decode_instructions(&stream[pos..], &package, opt);
 
         Some(package)
     }
