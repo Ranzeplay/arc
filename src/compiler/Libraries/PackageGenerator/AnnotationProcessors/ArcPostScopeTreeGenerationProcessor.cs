@@ -8,6 +8,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
         private static readonly string _symbolIdSignature = "NArc+NStd+NCompilation+ASymbolId";
         private static readonly string _withAnnotationIdSignature = "NArc+NStd+NCompilation+AWithAnnotationId";
         private static readonly string _withAnnotationSignature = "NArc+NStd+NCompilation+AWithAnnotation";
+        private static readonly string _constructorSignature = "NArc+NStd+NCompilation+AConstructor";
 
         public static void All(ref ArcScopeTree scopeTree)
         {
@@ -15,6 +16,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
             ManualSymbolId(ref scopeTree);
             ManualAnnotatonId(ref scopeTree);
             PreserveAnnotations(ref scopeTree);
+            BindConstructors(ref scopeTree);
         }
 
         public static void DataTypeRemoval(ref ArcScopeTree scopeTree)
@@ -102,6 +104,19 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                         .First(a => a.TargetGroup.Id == n.Id);
 
                     n.Parent.RemoveChild(annotation.Id);
+                });
+        }
+
+        public static void BindConstructors(ref ArcScopeTree scopeTree)
+        {
+            scopeTree.FlattenedNodes
+                .OfType<ArcScopeTreeGroupFunctionNode>()
+                .Where(x => x.Annotations.Keys.Any(k => k.Signature == _constructorSignature))
+                .ToList()
+                .ForEach(n =>
+                {
+                    var parent = n.Parent as ArcScopeTreeGroupNode;
+                    parent!.MoveToConstructor(n);
                 });
         }
     }

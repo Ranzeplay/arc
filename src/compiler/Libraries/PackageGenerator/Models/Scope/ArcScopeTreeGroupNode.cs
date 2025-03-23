@@ -85,5 +85,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
             return logs;
         }
+
+        public void MoveToConstructor(ArcScopeTreeGroupFunctionNode constructor)
+        {
+            Constructors.Add(constructor);
+            Functions.Remove(constructor);
+        }
     }
 }
