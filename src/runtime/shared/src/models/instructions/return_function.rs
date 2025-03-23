@@ -2,6 +2,7 @@ use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
 pub struct ReturnFunctionInstruction {
+    #[allow(dead_code)]
     pub with_value: bool,
 }
 
