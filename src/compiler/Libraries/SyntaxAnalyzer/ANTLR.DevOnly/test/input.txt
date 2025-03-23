@@ -8,27 +8,35 @@ namespace Arc::Program {
 		@Accessor
 		public field var bar: val string;
 
-		private method eval(): bool {
+		private func eval(): val bool {
 			return false;
 		}
 
-		public function empty(): none {}
+		public func empty(): val none {}
+
+		public func ctor(): val none {
+			foo = "foo";
+			bar = "bar";
+		}
 	}
 
 	@Export
 	@Entrypoint
-	public function main(var args: val string[]): none {
+	public func main(var args: val string[]): val none {
 		var a: val int;
-		a = Console::readln();
-		var b: val auto;
+		a = [Console].readLn();
+		var b: val infer;
 		a = 4;
 		b = 6;
-		const c: val auto;
+		const c: val infer;
 		if (a > b) { c = a + b; }
 		elif (a < b) { c = a * b; }
 		else { c = a - b; }
 
-		call Console::PrintLn($"abc {c} {args[0]}");
+		call [Console].PrintLn("Hello, world!");
+
+		var d: val ArcExample;
+		d = new ArcExample();
 
 		return 0;
 	}

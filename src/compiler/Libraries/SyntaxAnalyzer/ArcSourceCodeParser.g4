@@ -40,6 +40,8 @@ arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
 arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
 
+arc_constructor_call: KW_NEW arc_flexible_identifier arc_wrapped_param_list;
+
 arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
 arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
@@ -103,5 +105,5 @@ arc_group_function: arc_function_block;
 arc_index: LBRACKET arc_expression RBRACKET;
 
 // Call chain
-arc_call_chain: arc_call_chain_term (DOT arc_call_chain_term)*;
+arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain_term)*;
 arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | KW_SELF) arc_index*;
