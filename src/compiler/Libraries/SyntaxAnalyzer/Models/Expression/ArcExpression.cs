@@ -184,7 +184,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
                 terms.AddRange(new ArcExpression(
                     context.arc_wrapped_expression().arc_expression())
                         .Terms
-                        .Select(t => {t.Context = context; return t; })
+                        .Select(t => { t.Context = context; return t; })
                 );
             }
             else if (context.arc_data_value() != null)

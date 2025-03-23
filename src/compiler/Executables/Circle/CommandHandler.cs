@@ -8,8 +8,14 @@ using System.Text.Json;
 
 namespace Arc.Compiler.Circle
 {
-    internal class CommandHandler
+    internal static class CommandHandler
     {
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        };
+
         public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath)
         {
             var logger = LoggerFactory.Create(builder =>
@@ -70,11 +76,7 @@ namespace Arc.Compiler.Circle
                 logger.LogInformation("Generating source information");
                 context.UpdateSourceSymbolInformation();
 
-                var jsonOptions = new JsonSerializerOptions()
-                {
-                    WriteIndented = true,
-                };
-                var sourceInfoJsonText = JsonSerializer.Serialize(context.SourceInformation, options: jsonOptions);
+                var sourceInfoJsonText = JsonSerializer.Serialize(context.SourceInformation, options: _jsonSerializerOptions);
 
                 File.WriteAllText(sourceInfoPath, sourceInfoJsonText);
             }

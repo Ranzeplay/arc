@@ -58,7 +58,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
             var structure = ArcLayeredScopeTreeGenerator
-                .GenerateUnitStructure([unit, ..ArcStdlibLoader.LoadSyntax(_logger)], ArcPackageDescriptor.Default(ArcPackageType.Library))
+                .GenerateUnitStructure([unit, .. ArcStdlibLoader.LoadSyntax(_logger)], ArcPackageDescriptor.Default(ArcPackageType.Library))
                 .Item1
                 .First();
             Assert.That(structure.ScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(10));

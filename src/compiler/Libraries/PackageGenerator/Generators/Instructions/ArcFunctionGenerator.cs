@@ -68,7 +68,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{a.DataType}' not found", source.Name, a.DataType.Context));
                 }
-                
+
                 return new ArcParameterDescriptor
                 {
                     DataType = new ArcDataDeclarationDescriptor
@@ -91,7 +91,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType)?.DataType ?? new ArcBaseType(0xffffffff, "INVALID") { Name = "INVALID"},
+                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType)?.DataType ?? ArcBaseType.Placeholder(),
                 AllowNone = false,
                 Dimension = declarator.ReturnType.Dimension,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,

@@ -1,5 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Encoders;
-using Arc.Compiler.PackageGenerator.Interfaces;
+﻿using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
@@ -14,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public override string SignatureAddend => "A" + TargetGroup.ShortName;
 
-        public IEnumerable<byte> Encode(ArcScopeTree tree) => 
+        public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [
                 (byte)ArcSymbolType.Annotation,
                 ..BitConverter.GetBytes(TargetGroup.Id)

@@ -4,7 +4,6 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
-using System.Xml.Linq;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {

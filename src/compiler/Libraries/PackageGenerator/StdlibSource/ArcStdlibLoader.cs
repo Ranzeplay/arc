@@ -1,6 +1,4 @@
-﻿using Arc.Compiler.PackageGenerator.Generators;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
-using Arc.Compiler.PackageGenerator.Models.Intermediate;
+﻿using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
