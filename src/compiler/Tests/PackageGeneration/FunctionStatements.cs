@@ -76,7 +76,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                             namespace Arc::Program { 
                                 public func main(): val int { 
                                     if (2 < 3) { var a: val int; a = 1; } 
-                                    else { var b: val int; b = 2; }
+                                    else { var b: val int = 2; }
                                     while (2 < 3) { var c: val int; c = 3; } 
                                 }
                             }";

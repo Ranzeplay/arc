@@ -23,10 +23,9 @@ namespace Arc::Program {
 	@Export
 	@Entrypoint
 	public func main(var args: val string[]): val none {
-		var a: val int;
+		var a: val int = 4;
 		a = [Console].readLn();
 		var b: val infer;
-		a = 4;
 		b = 6;
 		const c: val infer;
 		if (a > b) { c = a + b; }
