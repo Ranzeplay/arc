@@ -22,10 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     case ArcStatementDeclaration decl:
                         {
-                            stepResult = new ArcDeclarationInstruction(decl.DataDeclarator).Encode(source);
-                            stepResult.SourceInformation.FunctionDataSlotMapping[fnNode.Id] = [];
-                            var slot = stepResult.DataSlots.First();
-                            stepResult.SourceInformation.FunctionDataSlotMapping[fnNode.Id][slot.SlotId] = slot.Name;
+                            stepResult = ArcDeclarationStatementGenerator.Generate(decl, source, fnNode);
                             break;
                         }
                     case ArcStatementAssign assign:

@@ -19,7 +19,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
                     if (funcDeclarator == null)
                     {
-                        return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, funcCall.Context)]);
+                        return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function {funcCall.Identifier} not found", source.Name, funcCall.Context)]);
                     }
 
                     return (funcDeclarator.Id, []);
@@ -32,7 +32,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
                     if (funcNode == null)
                     {
-                        return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, funcCall.Context)]);
+                        return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function {funcCall.Identifier} not found", source.Name, funcCall.Context)]);
                     }
 
                     return (funcNode.Id, []);
@@ -44,7 +44,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
                 if (funcNode == null)
                 {
-                    return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, funcCall.Context)]);
+                    return (0, [new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function {funcCall.Identifier} not found", source.Name, funcCall.Context)]);
                 }
 
                 return (funcNode.Id, []);

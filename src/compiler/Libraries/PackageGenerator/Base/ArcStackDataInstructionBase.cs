@@ -17,7 +17,7 @@ namespace Arc.Compiler.PackageGenerator.Base
                     (byte)OperationDescriptor.StorageType,
                     ..BitConverter.GetBytes(OperationDescriptor.LocationId),
                     (byte)(OperationDescriptor.Overwrite ? 0x01 : 0x00),
-                    ],
+                ],
             };
         }
     }
