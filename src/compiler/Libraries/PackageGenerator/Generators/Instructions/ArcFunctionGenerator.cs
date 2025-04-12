@@ -27,7 +27,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 source.LocalDataSlots.Add(new ArcDataSlot()
                 {
-                    Name = "Function param slot",
+                    Name = param.RawFullName,
                     DeclarationDescriptor = param.DataType,
                     SlotId = (ulong)source.LocalDataSlots.Count
                 });

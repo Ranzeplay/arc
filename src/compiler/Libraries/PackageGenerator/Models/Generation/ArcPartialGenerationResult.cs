@@ -17,8 +17,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public List<ArcDataSlot> DataSlots { get; set; } = [];
 
-        public List<ArcSymbolBase> OtherSymbols { get; } = [];
-
         public List<ArcConstant> AddedConstants { get; } = [];
 
         public long TotalGeneratedDataSlotCount { get; set; }
@@ -48,7 +46,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
                 return l;
             }).ToList());
             DataSlots.AddRange(generationResult.DataSlots);
-            OtherSymbols.AddRange(generationResult.OtherSymbols);
 
             GeneratedData.AddRange(generationResult.GeneratedData);
 

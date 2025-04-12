@@ -13,7 +13,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(DataType.Id)],
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes(DataType.TypeId)],
             };
         }
     }

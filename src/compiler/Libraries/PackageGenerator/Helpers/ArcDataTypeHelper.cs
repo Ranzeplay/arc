@@ -18,13 +18,13 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
                 return dataType.PrimitiveType switch
                 {
-                    ArcPrimitiveDataType.Integer => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.IntType.TypeId),
-                    ArcPrimitiveDataType.Decimal => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.DecimalType.TypeId),
-                    ArcPrimitiveDataType.String => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.StringType.TypeId),
-                    ArcPrimitiveDataType.Char => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.CharType.TypeId),
-                    ArcPrimitiveDataType.Bool => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.BoolType.TypeId),
-                    ArcPrimitiveDataType.None => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.NoneType.TypeId),
-                    ArcPrimitiveDataType.Any => candidateTypes.First(x => x.DataType.Id == ArcPersistentData.AnyType.TypeId),
+                    ArcPrimitiveDataType.Integer => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.IntType.TypeId),
+                    ArcPrimitiveDataType.Decimal => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.DecimalType.TypeId),
+                    ArcPrimitiveDataType.String => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.StringType.TypeId),
+                    ArcPrimitiveDataType.Char => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.CharType.TypeId),
+                    ArcPrimitiveDataType.Bool => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.BoolType.TypeId),
+                    ArcPrimitiveDataType.None => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
+                    ArcPrimitiveDataType.Any => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
                     _ => throw new NotImplementedException(),
                 };
             }
@@ -50,7 +50,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
 
         public static ArcScopeTreeDataTypeNode? GetDataTypeNode(ArcGenerationSource source, ArcTypeBase dataType)
         {
-            return source.GlobalScopeTree.FlattenedNodes.OfType<ArcScopeTreeDataTypeNode>().First(x => x.DataType.Id == dataType.Id);
+            return source.GlobalScopeTree.FlattenedNodes.OfType<ArcScopeTreeDataTypeNode>().First(x => x.DataType.TypeId == dataType.TypeId);
         }
 
         public static ArcScopeTreeGroupNode? GetDataTypeGroupNode(ArcGenerationSource source, ArcDataType dataType)

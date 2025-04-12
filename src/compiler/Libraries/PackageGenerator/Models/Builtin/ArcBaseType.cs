@@ -8,11 +8,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
 
         public ArcBaseType(ulong id, string identifier) : base(identifier)
         {
-            Id = id;
-            Name = identifier;
+            TypeId = id;
+            FullName = identifier;
             Scope = new ArcSymbolScope() { Type = ArcSymbolScopeType.Language };
         }
 
-        public static ArcBaseType Placeholder() => new(0xffffffff, "INVALID") { Name = "INVALID" };
+        public static ArcBaseType Placeholder() => new(0xffffffff, "INVALID");
     }
 }

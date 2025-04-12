@@ -14,13 +14,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
             BoolType
         ];
 
-        public static ArcBaseType NoneType => new(0, "none") { Name = "none" };
-        public static ArcBaseType AnyType => new(1, "any") { Name = "any" };
-        public static ArcBaseType IntType => new(2, "int") { Name = "int" };
-        public static ArcBaseType DecimalType => new(3, "decimal") { Name = "decimal" };
-        public static ArcBaseType CharType => new(4, "char") { Name = "char" };
-        public static ArcBaseType StringType => new(5, "string") { Name = "string" };
-        public static ArcBaseType BoolType => new(6, "bool") { Name = "bool" };
+        public static ArcBaseType NoneType => new(0, "none");
+        public static ArcBaseType AnyType => new(1, "any");
+        public static ArcBaseType IntType => new(2, "int");
+        public static ArcBaseType DecimalType => new(3, "decimal");
+        public static ArcBaseType CharType => new(4, "char");
+        public static ArcBaseType StringType => new(5, "string");
+        public static ArcBaseType BoolType => new(6, "bool");
 
         public static ArcScopeTree BaseTypeScopeTree
         {
@@ -31,8 +31,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
                 node = node.AddChild(new ArcScopeTreeNamespaceNode("Base"));
                 node.AddChildren(BaseTypes.Select(t =>
                 {
-                    var node = new ArcScopeTreeDataTypeNode(t, t.Name);
-                    node.Id = t.Id;
+                    var node = new ArcScopeTreeDataTypeNode(t, t.Identifier);
+                    node.Id = t.TypeId;
                     return node;
                 }));
                 return tree;
