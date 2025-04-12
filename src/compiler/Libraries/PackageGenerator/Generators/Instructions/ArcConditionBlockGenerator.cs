@@ -41,6 +41,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
             var beginSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginIfSubBlock, "begin", Guid.NewGuid()).Encode(source);
+            var expression = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, block.Expression, true);
             var jumpNextInstruction = new ArcConditionalJumpInstruction(new()
             {
                 TargetType = ArcRelocationTargetType.Label,
@@ -58,6 +59,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }).Encode(source);
             var endSubBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.EndIfSubBlock, "end", Guid.NewGuid()).Encode(source);
             result.Append(beginSubBlockLabel);
+            result.Append(expression);
             result.Append(jumpNextInstruction);
             result.Append(body);
             result.Append(jumpOutInstruction);
