@@ -34,7 +34,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
         {
             MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
             Mutability = ArcMutabilityUtils.FromToken(context.arc_mutability());
-            Identifier = new("self");
+            Identifier = new(context.arc_self_wrapper());
             DataType = new ArcDataType(context.arc_data_type());
             SelfContext = context;
         }

@@ -19,7 +19,7 @@ arc_array_indicator: LBRACKET RBRACKET;
 arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator*;
 
 arc_data_declarator: arc_mutability arc_single_identifier COLON arc_data_type;
-arc_self_data_declarator: arc_mutability KW_SELF COLON arc_data_type;
+arc_self_data_declarator: arc_mutability arc_self_wrapper COLON arc_data_type;
 
 arc_arg_list: (arc_data_declarator | arc_self_data_declarator) (COMMA arc_data_declarator)*;
 arc_wrapped_arg_list: LPAREN arc_arg_list? RPAREN;
@@ -106,4 +106,6 @@ arc_index: LBRACKET arc_expression RBRACKET;
 
 // Call chain
 arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain_term)*;
-arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | KW_SELF) arc_index*;
+arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | arc_self_wrapper) arc_index*;
+
+arc_self_wrapper: KW_SELF;

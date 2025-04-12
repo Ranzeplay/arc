@@ -22,7 +22,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 
         public ArcFunctionArgument(ArcSourceCodeParser.Arc_self_data_declaratorContext source)
         {
-            Identifier = new ArcSingleIdentifier("self");
+            Identifier = new ArcSingleIdentifier(source.arc_self_wrapper());
             DataType = new ArcDataType(source.arc_data_type());
             DataDeclarator = new ArcDataDeclarator(source);
         }
