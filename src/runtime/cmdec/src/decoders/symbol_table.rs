@@ -1,6 +1,6 @@
-use shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
-use shared::models::encodings::data_type_enc::DataTypeEncoding;
-use shared::models::encodings::sized_array_enc::SizedArrayEncoding;
+use arc_shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
+use arc_shared::models::encodings::data_type_enc::DataTypeEncoding;
+use arc_shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use std::collections::HashMap;
 use std::rc::Rc;
 

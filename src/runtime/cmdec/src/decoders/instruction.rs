@@ -1,17 +1,18 @@
-use shared::models::instruction::{Instruction, InstructionType};
-use shared::models::instructions::conditional_jump::ConditionalJumpInstruction;
-use shared::models::instructions::decl::DeclInstruction;
-use shared::models::instructions::func_call::FunctionCallInstruction;
-use shared::models::instructions::jump::JumpInstruction;
-use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
-use shared::models::instructions::return_from_block::ReturnInstruction;
-use shared::models::package::Package;
-use shared::traits::instruction::DecodableInstruction;
+use arc_shared::models::instruction::{Instruction, InstructionType};
+use arc_shared::models::instructions::conditional_jump::ConditionalJumpInstruction;
+use arc_shared::models::instructions::decl::DeclInstruction;
+use arc_shared::models::instructions::func_call::FunctionCallInstruction;
+use arc_shared::models::instructions::jump::JumpInstruction;
+use arc_shared::models::instructions::pop_to_slot::PopToSlotInstruction;
+use arc_shared::models::instructions::return_from_block::ReturnInstruction;
+use arc_shared::models::package::Package;
+use arc_shared::traits::instruction::DecodableInstruction;
 use std::rc::Rc;
 use log::{error, info, warn};
-use shared::models::instructions::new_obj::NewObjectInstruction;
-use shared::models::instructions::stack_data_operation::StackOperationInstruction;
-use shared::models::options::cmdec_options::CmdecOptions;
+use arc_shared::models::descriptors::symbol::Symbol::Function;
+use arc_shared::models::instructions::new_obj::NewObjectInstruction;
+use arc_shared::models::instructions::stack_data_operation::StackOperationInstruction;
+use arc_shared::models::options::cmdec_options::CmdecOptions;
 
 pub fn decode_instructions(
     stream: &[u8],
@@ -534,11 +535,11 @@ pub fn decode_instructions(
 
         if opt.verbose {
             if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
-                shared::models::descriptors::symbol::Symbol::Function(f) => f.entry_pos == instruction.offset,
+                Function(f) => f.entry_pos == instruction.offset,
                 _ => false,
             }) {
                 let func = match &symbol.value {
-                    shared::models::descriptors::symbol::Symbol::Function(f) => f,
+                    Function(f) => f,
                     _ => unreachable!(),
                 };
 

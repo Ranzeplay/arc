@@ -1,8 +1,8 @@
 use crate::array::ArcStdArray;
 use crate::console::ArcStdConsole;
-use shared::models::execution::context::ExecutionContext;
-use shared::models::execution::result::FunctionExecutionResult;
-use shared::traits::scope_functions::ScopeFunctionDispatcher;
+use arc_shared::models::execution::context::ExecutionContext;
+use arc_shared::models::execution::result::FunctionExecutionResult;
+use arc_shared::traits::scope_functions::ScopeFunctionDispatcher;
 use std::cell::RefCell;
 use std::rc::Rc;
 

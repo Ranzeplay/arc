@@ -36,12 +36,12 @@ pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream
         .collect::<Vec<_>>();
 
     let expanded = quote! {
-        impl shared::traits::scope_functions::ScopeFunctionDispatcher for #impl_type {
+        impl arc_shared::traits::scope_functions::ScopeFunctionDispatcher for #impl_type {
             fn dispatch_scope_functions(
                 &self,
                 function_id: usize,
-                exec_context: std::rc::Rc<std::cell::RefCell<shared::models::execution::context::ExecutionContext>>,
-            ) -> Result<shared::models::execution::result::FunctionExecutionResult, String> {
+                exec_context: std::rc::Rc<std::cell::RefCell<arc_shared::models::execution::context::ExecutionContext>>,
+            ) -> Result<arc_shared::models::execution::result::FunctionExecutionResult, String> {
                 let args = &mut exec_context.borrow_mut().global_stack;
 
                 match function_id {

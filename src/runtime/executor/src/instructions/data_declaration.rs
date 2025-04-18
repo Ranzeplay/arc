@@ -1,9 +1,9 @@
-use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::context::FunctionExecutionContext;
-use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
-use shared::models::instructions::decl::DeclInstruction;
-use shared::models::instructions::new_obj::NewObjectInstruction;
-use shared::models::package::Package;
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::execution::context::FunctionExecutionContext;
+use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
+use arc_shared::models::instructions::decl::DeclInstruction;
+use arc_shared::models::instructions::new_obj::NewObjectInstruction;
+use arc_shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
 

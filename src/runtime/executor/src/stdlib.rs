@@ -1,4 +1,4 @@
-use shared::models::execution::context::ExecutionContext;
+use arc_shared::models::execution::context::ExecutionContext;
 use std::cell::RefCell;
 use std::rc::Rc;
 use arc_stdlib::function_dispatcher::dispatch_stdlib_functions;

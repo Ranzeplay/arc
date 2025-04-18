@@ -1,6 +1,6 @@
 use crate::execute_function;
-use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::result::FunctionExecutionResult;
+use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
+use arc_shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
 

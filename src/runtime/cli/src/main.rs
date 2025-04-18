@@ -5,8 +5,8 @@ use clap::Parser;
 use log::{debug, error, info};
 use std::process::exit;
 use std::rc::Rc;
-use shared::models::options::cmdec_options::CmdecOptions;
-use shared::models::options::launch_options::LaunchOptions;
+use arc_shared::models::options::cmdec_options::CmdecOptions;
+use arc_shared::models::options::launch_options::LaunchOptions;
 
 mod command_line_options;
 mod dispatcher;

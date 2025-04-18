@@ -1,6 +1,6 @@
-use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::data::DataValue;
-use shared::models::package::Package;
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::execution::data::DataValue;
+use arc_shared::models::package::Package;
 
 pub fn get_data_from_constant_table(
     package: &Package,

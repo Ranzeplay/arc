@@ -1,7 +1,7 @@
-use bindings::{arc_function_id, arc_scope_dispatcher};
-use shared::models::execution::data::DataValue;
-use shared::models::execution::result::FunctionExecutionResult;
-use shared::receive_func_args;
+use arc_bindings::{arc_function_id, arc_scope_dispatcher};
+use arc_shared::models::execution::data::DataValue;
+use arc_shared::models::execution::result::FunctionExecutionResult;
+use arc_shared::receive_func_args;
 use std::cell::RefCell;
 use std::rc::Rc;
 

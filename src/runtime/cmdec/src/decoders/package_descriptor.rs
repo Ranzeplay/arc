@@ -1,5 +1,5 @@
-use shared::models::descriptors::package::{PackageDescriptor, PackageType};
-use shared::models::encodings::str_enc::StringEncoding;
+use arc_shared::models::descriptors::package::{PackageDescriptor, PackageType};
+use arc_shared::models::encodings::str_enc::StringEncoding;
 
 pub fn decode_package_descriptor(stream: &[u8]) -> (PackageDescriptor, usize) {
     let mut pos: usize = 0;

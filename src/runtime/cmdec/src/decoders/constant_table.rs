@@ -1,6 +1,6 @@
-use shared::models::descriptors::constant::{ConstantDescriptor, ConstantTable};
-use shared::models::encodings::str_enc::StringEncoding;
-use shared::models::execution::data::DataValueType;
+use arc_shared::models::descriptors::constant::{ConstantDescriptor, ConstantTable};
+use arc_shared::models::encodings::str_enc::StringEncoding;
+use arc_shared::models::execution::data::DataValueType;
 use std::collections::HashMap;
 
 pub fn decode_constant_table(stream: &[u8]) -> (ConstantTable, usize) {

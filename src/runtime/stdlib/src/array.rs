@@ -1,10 +1,10 @@
-use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::data::{DataValue, DataValueType};
-use shared::models::execution::result::FunctionExecutionResult;
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::execution::data::{DataValue, DataValueType};
+use arc_shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
-use bindings::{arc_function_id, arc_scope_dispatcher};
-use shared::base_type_id::INTEGER_TYPE_ID;
+use arc_bindings::{arc_function_id, arc_scope_dispatcher};
+use arc_shared::base_type_id::INTEGER_TYPE_ID;
 
 pub struct ArcStdArray {}
 

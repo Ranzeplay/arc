@@ -1,8 +1,8 @@
-use shared::base_type_id::STRING_TYPE_ID;
-use shared::models::descriptors::symbol::Symbol;
-use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
+use arc_shared::base_type_id::STRING_TYPE_ID;
+use arc_shared::models::descriptors::symbol::Symbol;
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
+use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;

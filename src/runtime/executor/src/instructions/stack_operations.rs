@@ -1,9 +1,9 @@
 use crate::data;
-use shared::models::encodings::data_type_enc::MemoryStorageType;
-use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
-use shared::models::execution::data::{DataValue, DataValueType};
-use shared::models::instructions::pop_to_slot::PopToSlotInstruction;
-use shared::models::instructions::stack_data_operation::{
+use arc_shared::models::encodings::data_type_enc::MemoryStorageType;
+use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
+use arc_shared::models::execution::data::{DataValue, DataValueType};
+use arc_shared::models::instructions::pop_to_slot::PopToSlotInstruction;
+use arc_shared::models::instructions::stack_data_operation::{
     DataSourceType, StackOperationInstruction,
 };
 use std::cell::RefCell;

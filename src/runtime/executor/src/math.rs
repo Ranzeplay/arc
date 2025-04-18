@@ -1,4 +1,4 @@
-use shared::models::execution::data::{DataValue, DataValueType};
+use arc_shared::models::execution::data::{DataValue, DataValueType};
 
 macro_rules! arithmetic_operations {
     ($name:ident, $op:tt, $op_name:expr) => {

@@ -1,12 +1,12 @@
 [package]
-name = "cli"
+name = "arc_cli"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-"shared" = { path = "../shared" }
-"cmdec" = { path = "../cmdec" }
-"executor" = { path = "../executor" }
+"arc_shared" = { path = "../shared" }
+"arc_cmdec" = { path = "../cmdec" }
+"arc_executor" = { path = "../executor" }
 
 clap = { version = "~4.5", features = ["color", "derive"] }
 log = "~0.4"

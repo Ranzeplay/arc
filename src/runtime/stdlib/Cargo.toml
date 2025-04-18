@@ -1,9 +1,9 @@
 [package]
-name = "arc-stdlib"
+name = "arc_stdlib"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-shared = { path = "../shared" }
+arc_shared = { path = "../shared" }
+arc_bindings = { path = "../bindings" }
 lazy_static = "~1.5"
-bindings = { path = "../bindings" }
