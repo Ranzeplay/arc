@@ -3,12 +3,14 @@ use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::{dispatch_func, ArcStdlibScope};
+use bindings::{arc_function_id, arc_scope_dispatcher};
 use crate::base::INTEGER_TYPE_ID;
 
 pub struct ArcStdArray {}
 
+#[arc_scope_dispatcher("Arc::Std::Array")]
 impl ArcStdArray {
+    #[arc_function_id(0xc1)]
     pub fn create_int_array(
         _args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -28,6 +30,7 @@ impl ArcStdArray {
         ))))
     }
 
+    #[arc_function_id(0xc2)]
     pub fn push_int_array(
         args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -59,6 +62,7 @@ impl ArcStdArray {
         Ok(FunctionExecutionResult::Success(None))
     }
 
+    #[arc_function_id(0xc3)]
     pub fn remove_element_from_int_array(
         args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -81,6 +85,7 @@ impl ArcStdArray {
         Ok(FunctionExecutionResult::Success(None))
     }
 
+    #[arc_function_id(0xc4)]
     pub fn get_int_array_size(
         args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -109,14 +114,4 @@ impl ArcStdArray {
             _ => Err("Expected array".to_string()),
         }
     }
-}
-
-impl ArcStdlibScope for ArcStdArray {
-    dispatch_func!(
-        "Arc::Std::Array",
-        (0xc1, Self::create_int_array),
-        (0xc2, Self::push_int_array),
-        (0xc3, Self::remove_element_from_int_array),
-        (0xc4, Self::get_int_array_size),
-    );
 }

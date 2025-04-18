@@ -2,13 +2,15 @@ use shared::models::execution::data::{DataValue, DataValueType};
 use shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
+use bindings::{arc_function_id, arc_scope_dispatcher};
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
-use crate::{dispatch_func, ArcStdlibScope};
 use crate::base::{INTEGER_TYPE_ID, STRING_TYPE_ID};
 
 pub struct ArcStdConsole {}
 
+#[arc_scope_dispatcher("Arc::Std::Console")]
 impl ArcStdConsole {
+    #[arc_function_id(0xa1)]
     pub fn print_string(
         args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -22,6 +24,7 @@ impl ArcStdConsole {
         Ok(FunctionExecutionResult::Success(None))
     }
 
+    #[arc_function_id(0xa2)]
     pub fn print_integer(
         args: &mut Vec<Rc<RefCell<DataValue>>>,
     ) -> Result<FunctionExecutionResult, String> {
@@ -35,6 +38,7 @@ impl ArcStdConsole {
         Ok(FunctionExecutionResult::Success(None))
     }
 
+    #[arc_function_id(0xa3)]
     pub fn read_string(_args: &mut Vec<Rc<RefCell<DataValue>>>) -> Result<FunctionExecutionResult, String> {
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).unwrap();
@@ -51,6 +55,7 @@ impl ArcStdConsole {
         Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(DataValue{ data_type, value })))))
     }
 
+    #[arc_function_id(0xa4)]
     pub fn read_integer(_args: &mut Vec<Rc<RefCell<DataValue>>>) -> Result<FunctionExecutionResult, String> {
         let mut input = String::new();
         std::io::stdin().read_line(&mut input).unwrap();
@@ -67,14 +72,4 @@ impl ArcStdConsole {
 
         Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(DataValue{ data_type, value })))))
     }
-}
-
-impl ArcStdlibScope for ArcStdConsole {
-    dispatch_func!(
-        "Arc::Std::Console",
-        (0xa1, Self::print_string),
-        (0xa2, Self::print_integer),
-        (0xa3, Self::read_string),
-        (0xa4, Self::read_integer),
-    );
 }
