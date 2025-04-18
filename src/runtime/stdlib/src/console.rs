@@ -3,6 +3,7 @@ use shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use crate::{dispatch_func, ArcStdlibScope};
 use crate::base::{INTEGER_TYPE_ID, STRING_TYPE_ID};
 
 pub struct ArcStdConsole {}
@@ -66,17 +67,14 @@ impl ArcStdConsole {
 
         Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(DataValue{ data_type, value })))))
     }
+}
 
-    pub fn execute_function(
-        function_id: usize,
-        args: &mut Vec<Rc<RefCell<DataValue>>>,
-    ) -> Result<FunctionExecutionResult, String> {
-        match function_id {
-            0xa1 => ArcStdConsole::print_string(args),
-            0xa2 => ArcStdConsole::print_integer(args),
-            0xa3 => ArcStdConsole::read_string(args),
-            0xa4 => ArcStdConsole::read_integer(args),
-            _ => Err("Unknown stdlib console function".to_string()),
-        }
-    }
+impl ArcStdlibScope for ArcStdConsole {
+    dispatch_func!(
+        "Arc::Std::Console",
+        (0xa1, Self::print_string),
+        (0xa2, Self::print_integer),
+        (0xa3, Self::read_string),
+        (0xa4, Self::read_integer),
+    );
 }
