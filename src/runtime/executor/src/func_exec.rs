@@ -1,3 +1,4 @@
+use shared::base_type_id::STRING_TYPE_ID;
 use shared::models::descriptors::symbol::Symbol;
 use shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
@@ -5,7 +6,6 @@ use shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
-use arc_stdlib::base::STRING_TYPE_ID;
 
 pub fn prepare_and_get_function_info(
     function_id: usize,
@@ -23,12 +23,10 @@ pub fn prepare_and_get_function_info(
 
         // Create the function context
         match &current_fn.value {
-            Symbol::Function(f) => {
-                FunctionExecutionContext {
-                    function: f.clone(),
-                    local_data: Vec::with_capacity(f.data_count),
-                }
-            }
+            Symbol::Function(f) => FunctionExecutionContext {
+                function: f.clone(),
+                local_data: Vec::with_capacity(f.data_count),
+            },
             _ => panic!("Invalid symbol type."),
         }
     };
@@ -58,34 +56,35 @@ fn put_fn_args(
                         value: data.borrow().value.clone(),
                     })),
                     MemoryStorageType::Reference => Rc::clone(&data),
-                }
+                },
             };
-            function_context.local_data.push(Rc::new(RefCell::new(slot)));
+            function_context
+                .local_data
+                .push(Rc::new(RefCell::new(slot)));
         }
 
         function_context.local_data.reverse();
     } else {
-        function_context.local_data.push(Rc::new(RefCell::new(DataSlot {
-            slot_id: 0,
-            value: Rc::new(RefCell::new(DataValue {
-                data_type: DataTypeEncoding {
-                    type_id: *STRING_TYPE_ID,
-                    dimension: 1,
-                    mutability: Mutability::Mutable,
-                    memory_storage_type: MemoryStorageType::Value,
-                },
-                value: DataValueType::Array(exec_context.borrow().launch_args.iter().map(|arg| {
-                    Rc::new(RefCell::new(DataValue {
-                        data_type: DataTypeEncoding {
-                            type_id: *STRING_TYPE_ID,
-                            dimension: 0,
-                            mutability: Mutability::Mutable,
-                            memory_storage_type: MemoryStorageType::Value,
-                        },
-                        value: DataValueType::String(arg.clone()),
-                    }))
-                }).collect()),
-            })),
-        })));
+        function_context
+            .local_data
+            .push(Rc::new(RefCell::new(DataSlot {
+                slot_id: 0,
+                value: Rc::new(RefCell::new(DataValue {
+                    data_type: DataTypeEncoding {
+                        type_id: *STRING_TYPE_ID,
+                        dimension: 1,
+                        mutability: Mutability::Mutable,
+                        memory_storage_type: MemoryStorageType::Value,
+                    },
+                    value: DataValueType::Array(
+                        exec_context
+                            .borrow()
+                            .launch_args
+                            .iter()
+                            .map(|arg| Rc::new(RefCell::new(DataValue::from(arg.clone()))))
+                            .collect(),
+                    ),
+                })),
+            })));
     }
 }

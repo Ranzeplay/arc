@@ -4,7 +4,7 @@ use shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
 use bindings::{arc_function_id, arc_scope_dispatcher};
-use crate::base::INTEGER_TYPE_ID;
+use shared::base_type_id::INTEGER_TYPE_ID;
 
 pub struct ArcStdArray {}
 
@@ -96,19 +96,9 @@ impl ArcStdArray {
         match &array.value {
             DataValueType::Array(array) => {
                 let size = array.len();
-                let data_type = DataTypeEncoding {
-                    type_id: *INTEGER_TYPE_ID,
-                    dimension: 0,
-                    mutability: Mutability::Immutable,
-                    memory_storage_type: MemoryStorageType::Value,
-                };
-
-                let value = DataValueType::Integer(size as i64);
-
-                let data = DataValue { data_type, value };
 
                 Ok(FunctionExecutionResult::Success(Some(Rc::new(
-                    RefCell::new(data),
+                    RefCell::new(DataValue::from(size as i64)),
                 ))))
             }
             _ => Err("Expected array".to_string()),
