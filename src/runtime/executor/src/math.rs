@@ -105,3 +105,29 @@ pub fn math_logical_not(a: &DataValue) -> bool {
         _ => panic!("Cannot compare values of different types"),
     }
 }
+
+#[macro_export]
+macro_rules! arithmetic_operation_instruction {
+    ($exec_context:expr, $op_func:expr) => {
+        let mut exec_context_ref = $exec_context.borrow_mut();
+        let a = exec_context_ref.global_stack.pop().unwrap();
+        let b = exec_context_ref.global_stack.pop().unwrap();
+
+        let result = $op_func(&b.borrow(), &a.borrow());
+        exec_context_ref
+            .global_stack
+            .push(Rc::new(RefCell::new(result)));
+    };
+}
+
+#[macro_export]
+macro_rules! comparison_operation_instruction {
+    ($fn_context:expr, $compare_func:expr) => {
+        let mut exec_context_ref = $fn_context.borrow_mut();
+        let a = exec_context_ref.global_stack.pop().unwrap();
+        let b = exec_context_ref.global_stack.pop().unwrap();
+
+        let result = $compare_func(&b.borrow(), &a.borrow());
+        push_bool_to_stack!(exec_context_ref.global_stack, result);
+    };
+}
