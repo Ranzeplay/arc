@@ -4,12 +4,13 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use shared::models::execution::result::FunctionExecutionResult;
 use crate::ArcStdlibScope;
+use crate::array::ArcStdArray;
 
 pub fn dispatch_stdlib_functions(function_id: usize, exec_context: Rc<RefCell<ExecutionContext>>) {
     let result = if function_id >= 0xa1 && function_id <= 0xaf {
         exec_func(ArcStdConsole{}, function_id, exec_context.clone()).unwrap()
     } else if function_id >= 0xc1 && function_id <= 0xcf {
-        exec_func(ArcStdConsole{}, function_id, exec_context.clone()).unwrap()
+        exec_func(ArcStdArray{}, function_id, exec_context.clone()).unwrap()
     } else {
         panic!("Unknown stdlib function");
     };
