@@ -8,6 +8,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <None Remove="StdlibSource\Array.script.arc" />
+	  <None Remove="StdlibSource\Compilation.script.arc" />
+	  <None Remove="StdlibSource\Console.script.arc" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
 	</ItemGroup>
 
@@ -17,6 +23,12 @@
 
 	<ItemGroup>
 	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="StdlibSource\Array.script.arc" />
+	  <Resource Include="StdlibSource\Compilation.script.arc" />
+	  <Resource Include="StdlibSource\Console.script.arc" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -17,4 +17,12 @@ namespace Arc::Std::Console
 	@DeclaratorOnly
 	@SymbolId(0xa4)
 	public func ReadInteger(): val int {}
+
+	@DeclaratorOnly
+	@SymbolId(0xa5)
+	public func PrintDecimal(const d: ref decimal): ref none {}
+
+	@DeclaratorOnly
+	@SymbolId(0xa6)
+	public func ReadDecimal(): val decimal {}
 }
