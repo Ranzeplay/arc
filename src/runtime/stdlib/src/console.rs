@@ -46,4 +46,21 @@ impl ArcStdConsole {
 
         Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(DataValue::from(input))))))
     }
+
+    #[arc_function_id(0xa5)]
+    pub fn print_decimal(args: &mut Vec<Rc<RefCell<DataValue>>>) -> Result<FunctionExecutionResult, String> {
+        let d = receive_func_args!(args, f64);
+        print!("{}", d);
+
+        Ok(FunctionExecutionResult::Success(None))
+    }
+
+    #[arc_function_id(0xa6)]
+    pub fn read_decimal(_args: &mut Vec<Rc<RefCell<DataValue>>>) -> Result<FunctionExecutionResult, String> {
+        let mut input = String::new();
+        std::io::stdin().read_line(&mut input).unwrap();
+        let input = input.trim().parse::<f64>().unwrap();
+
+        Ok(FunctionExecutionResult::Success(Some(Rc::new(RefCell::new(DataValue::from(input))))))
+    }
 }
