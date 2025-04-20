@@ -3,6 +3,7 @@ use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 use std::fmt::{Debug, Formatter};
 
+#[derive(PartialEq, Copy, Clone)]
 pub enum DataSourceType {
     ConstantTable,
     DataSlot,
@@ -36,6 +37,7 @@ impl From<u8> for DataSourceType {
     }
 }
 
+#[derive(PartialEq, Copy, Clone)]
 pub struct StackOperationInstruction {
     pub source: DataSourceType,
     pub storage_type: MemoryStorageType,

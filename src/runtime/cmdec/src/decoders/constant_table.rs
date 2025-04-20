@@ -36,7 +36,6 @@ fn decode_constant(stream: &[u8]) -> (ConstantDescriptor, usize) {
     let decoded_value = get_data_value(type_id, &raw_value);
     pos += len;
 
-
     (ConstantDescriptor{
         id,
         type_id,

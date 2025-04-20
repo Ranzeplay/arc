@@ -14,7 +14,7 @@ impl Mutability {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(PartialEq, Debug, Copy, Clone)]
 pub enum MemoryStorageType {
     Reference,
     Value,

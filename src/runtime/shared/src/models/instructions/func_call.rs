@@ -2,6 +2,7 @@ use std::fmt::Debug;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
+#[derive(PartialEq, Copy, Clone)]
 pub struct FunctionCallInstruction {
     pub function_id: usize,
     pub param_count: u32,

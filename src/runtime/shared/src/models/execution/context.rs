@@ -41,7 +41,7 @@ impl ExecutionContext {
             global_stack: Vec::with_capacity(100),
             jump_destinations: HashMap::with_capacity(jump_count),
             function_entry_points: HashMap::with_capacity(function_count),
-            launch_args
+            launch_args,
         }
     }
 
@@ -84,7 +84,8 @@ impl ExecutionContext {
                         .position(|i| i.offset == f.entry_pos)
                         .unwrap_or(0);
 
-                    self.function_entry_points.insert(symbol.id, entrypoint_instruction_index);
+                    self.function_entry_points
+                        .insert(symbol.id, entrypoint_instruction_index);
                 }
                 _ => {}
             }
@@ -105,29 +106,28 @@ pub fn get_jump_destination_instruction_index(
     if jump_offset >= 0 {
         let target_instruction = instructions
             .iter()
-            .filter(|i| i.offset > current_instruction.offset)
-            .filter(|i| match i.instruction_type {
-                InstructionType::Lbl => true,
-                _ => false,
+            .filter(|&i| {
+                i.offset > current_instruction.offset && i.instruction_type == InstructionType::Lbl
             })
-            .take(jump_offset as usize)
-            .last()
+            .nth(jump_offset as usize - 1)
             .unwrap();
 
-        instructions.iter().position(|i| i.offset == target_instruction.offset).unwrap()
+        instructions
+            .iter()
+            .position(|i| i.offset == target_instruction.offset)
+            .unwrap()
     } else {
         let target_instruction = instructions
             .iter()
-            .filter(|i| i.offset < current_instruction.offset)
-            .filter(|i| match i.instruction_type {
-                InstructionType::Lbl => true,
-                _ => false,
+            .filter(|&i| {
+                i.offset < current_instruction.offset && i.instruction_type == InstructionType::Lbl
             })
-            .rev()
-            .take(jump_offset.abs() as usize)
-            .last()
+            .nth_back(jump_offset.abs() as usize - 1)
             .unwrap();
 
-        instructions.iter().position(|i| i.offset == target_instruction.offset).unwrap()
+        instructions
+            .iter()
+            .position(|i| i.offset == target_instruction.offset)
+            .unwrap()
     }
 }

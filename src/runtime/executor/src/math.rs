@@ -3,8 +3,6 @@ use arc_shared::models::execution::data::{DataValue, DataValueType};
 macro_rules! arithmetic_operations {
     ($name:ident, $op:tt, $op_name:expr) => {
         pub fn $name(a: &DataValue, b: &DataValue) -> DataValue {
-            assert_eq!(a.data_type.type_id, b.data_type.type_id, concat!("Cannot ", $op_name, " values of different types"));
-
             match (&a.value, &b.value) {
                 (DataValueType::Integer(ad), DataValueType::Integer(bd)) => DataValue {
                     data_type: a.data_type.clone(),
@@ -14,7 +12,13 @@ macro_rules! arithmetic_operations {
                     data_type: a.data_type.clone(),
                     value: DataValueType::Decimal(ad $op bd),
                 },
-                _ => panic!(concat!("Cannot ", $op_name, " values of different types")),
+                _ => {
+                    panic!("Cannot {} values of different types: 0x{:08X} 0x{:08X}",
+                        $op_name,
+                        a.data_type.type_id,
+                        b.data_type.type_id
+                    )
+                },
             }
         }
     };
@@ -28,6 +32,7 @@ arithmetic_operations!(math_modulo_values, %, "modulo");
 
 macro_rules! compare_operations {
     ($name:ident, $op:tt) => {
+        #[inline]
         pub fn $name(a: &DataValue, b: &DataValue) -> bool {
             if a.data_type.type_id != b.data_type.type_id {
                 panic!(concat!("Cannot compare values of different types"));

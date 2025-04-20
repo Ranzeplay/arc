@@ -3,6 +3,7 @@ use crate::models::encodings::data_type_enc::MemoryStorageType;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
+#[derive(PartialEq, Copy, Clone)]
 pub struct DeclInstruction {
     pub data_type_id: usize,
     pub dimension: u32,
