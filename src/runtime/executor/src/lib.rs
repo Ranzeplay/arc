@@ -19,7 +19,7 @@ use std::rc::Rc;
 use arc_shared::models::options::launch_options::LaunchOptions;
 use crate::instructions::data_declaration::{construct_data, declare_data};
 use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
-use crate::math::{math_logical_and, math_logical_not, math_logical_or};
+use crate::math::{math_bitwise_not, math_logical_and, math_logical_not, math_logical_or};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -144,9 +144,21 @@ pub fn execute_function(
                 let result = math_logical_not(&a.borrow());
                 push_bool_to_stack!(exec_context_ref.global_stack, result);
             }
-            InstructionType::BitAnd => {}
-            InstructionType::BitOr => {}
-            InstructionType::BitNot => {}
+            InstructionType::BitAnd => {
+                arithmetic_operation_instruction!(exec_context, math::math_bitwise_and);
+            }
+            InstructionType::BitOr => {
+                arithmetic_operation_instruction!(exec_context, math::math_bitwise_or);
+            }
+            InstructionType::BitNot => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let a = exec_context_ref.global_stack.pop().unwrap();
+                let result = math_bitwise_not(&a.borrow());
+
+                exec_context_ref
+                    .global_stack
+                    .push(Rc::new(RefCell::new(result)));
+            }
             InstructionType::Inv => {}
             InstructionType::EqC => {
                 comparison_operation_instruction!(exec_context, math::math_compare_equal);
@@ -224,12 +236,18 @@ pub fn execute_function(
             InstructionType::PEfId => {}
             InstructionType::CEfId => {}
             InstructionType::CType => {}
-            InstructionType::ShL => {}
-            InstructionType::ShR => {}
+            InstructionType::ShL => {
+                arithmetic_operation_instruction!(exec_context, math::math_bitwise_left_shift);
+            }
+            InstructionType::ShR => {
+                arithmetic_operation_instruction!(exec_context, math::math_bitwise_right_shift);
+            }
             InstructionType::Lbl => {
                 trace!("Found label");
             }
-            InstructionType::BitXor => {}
+            InstructionType::BitXor => {
+                arithmetic_operation_instruction!(exec_context, math::math_bitwise_xor);
+            }
             InstructionType::FRet(ret) => {
                 result = wrap_return_value_if_needed(exec_context, ret.with_value);
                 break;

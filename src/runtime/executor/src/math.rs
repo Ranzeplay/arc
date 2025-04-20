@@ -41,6 +41,8 @@ macro_rules! compare_operations {
             match (&a.value, &b.value) {
                 (DataValueType::Integer(ad), DataValueType::Integer(bd)) => ad $op bd,
                 (DataValueType::Decimal(ad), DataValueType::Decimal(bd)) => ad $op bd,
+                (DataValueType::Decimal(ad), DataValueType::Integer(bd)) => *ad $op (*bd as f64),
+                (DataValueType::Integer(ad), DataValueType::Decimal(bd)) => (*ad as f64) $op *bd,
                 _ => panic!(concat!("Cannot compare values of different types")),
             }
         }
@@ -108,6 +110,33 @@ pub fn math_logical_not(a: &DataValue) -> bool {
     match &a.value {
         DataValueType::Bool(ad) => !*ad,
         _ => panic!("Cannot compare values of different types"),
+    }
+}
+
+macro_rules! bitwise_operator {
+    ($name:ident, $op:tt) => {
+        pub fn $name(a: &DataValue, b: &DataValue) -> DataValue {
+            let result = match (&a.value, &b.value) {
+                (DataValueType::Integer(ad), DataValueType::Integer(bd)) => *ad $op *bd,
+                _ => panic!("Expected two integers"),
+            };
+
+            DataValue::from(result)
+        }
+    };
+}
+
+bitwise_operator!(math_bitwise_and, &);
+bitwise_operator!(math_bitwise_or, |);
+bitwise_operator!(math_bitwise_xor, ^);
+bitwise_operator!(math_bitwise_left_shift, <<);
+bitwise_operator!(math_bitwise_right_shift, >>);
+
+pub fn math_bitwise_not(a: &DataValue) -> DataValue {
+    match a.value {
+        DataValueType::Bool(ad) => DataValue::from(!ad),
+        DataValueType::Integer(ad) => DataValue::from(!ad),
+        _ => panic!("Expected bool or integer"),
     }
 }
 
