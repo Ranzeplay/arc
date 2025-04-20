@@ -141,7 +141,7 @@ pub fn math_bitwise_not(a: &DataValue) -> DataValue {
 }
 
 #[macro_export]
-macro_rules! arithmetic_operation_instruction {
+macro_rules! binary_operation_instruction {
     ($exec_context:expr, $op_func:expr) => {
         let mut exec_context_ref = $exec_context.borrow_mut();
         let a = exec_context_ref.global_stack.pop().unwrap();

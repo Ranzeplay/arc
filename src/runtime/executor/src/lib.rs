@@ -107,19 +107,19 @@ pub fn execute_function(
                 pop_to_slot(&exec_context, &function_context, pops);
             }
             InstructionType::Add => {
-                arithmetic_operation_instruction!(exec_context, math::math_add_values);
+                binary_operation_instruction!(exec_context, math::math_add_values);
             }
             InstructionType::Sub => {
-                arithmetic_operation_instruction!(exec_context, math::math_subtract_values);
+                binary_operation_instruction!(exec_context, math::math_subtract_values);
             }
             InstructionType::Mul => {
-                arithmetic_operation_instruction!(exec_context, math::math_multiply_values);
+                binary_operation_instruction!(exec_context, math::math_multiply_values);
             }
             InstructionType::Div => {
-                arithmetic_operation_instruction!(exec_context, math::math_divide_values);
+                binary_operation_instruction!(exec_context, math::math_divide_values);
             }
             InstructionType::Mod => {
-                arithmetic_operation_instruction!(exec_context, math::math_modulo_values);
+                binary_operation_instruction!(exec_context, math::math_modulo_values);
             }
             InstructionType::LogOr => {
                 let mut exec_context_ref = exec_context.borrow_mut();
@@ -145,10 +145,10 @@ pub fn execute_function(
                 push_bool_to_stack!(exec_context_ref.global_stack, result);
             }
             InstructionType::BitAnd => {
-                arithmetic_operation_instruction!(exec_context, math::math_bitwise_and);
+                binary_operation_instruction!(exec_context, math::math_bitwise_and);
             }
             InstructionType::BitOr => {
-                arithmetic_operation_instruction!(exec_context, math::math_bitwise_or);
+                binary_operation_instruction!(exec_context, math::math_bitwise_or);
             }
             InstructionType::BitNot => {
                 let mut exec_context_ref = exec_context.borrow_mut();
@@ -237,16 +237,16 @@ pub fn execute_function(
             InstructionType::CEfId => {}
             InstructionType::CType => {}
             InstructionType::ShL => {
-                arithmetic_operation_instruction!(exec_context, math::math_bitwise_left_shift);
+                binary_operation_instruction!(exec_context, math::math_bitwise_left_shift);
             }
             InstructionType::ShR => {
-                arithmetic_operation_instruction!(exec_context, math::math_bitwise_right_shift);
+                binary_operation_instruction!(exec_context, math::math_bitwise_right_shift);
             }
             InstructionType::Lbl => {
                 trace!("Found label");
             }
             InstructionType::BitXor => {
-                arithmetic_operation_instruction!(exec_context, math::math_bitwise_xor);
+                binary_operation_instruction!(exec_context, math::math_bitwise_xor);
             }
             InstructionType::FRet(ret) => {
                 result = wrap_return_value_if_needed(exec_context, ret.with_value);
