@@ -11,6 +11,7 @@
 	  <None Remove="StdlibSource\Array.script.arc" />
 	  <None Remove="StdlibSource\Compilation.script.arc" />
 	  <None Remove="StdlibSource\Console.script.arc" />
+	  <None Remove="StdlibSource\Math.script.arc" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -29,6 +30,7 @@
 	  <Resource Include="StdlibSource\Array.script.arc" />
 	  <Resource Include="StdlibSource\Compilation.script.arc" />
 	  <Resource Include="StdlibSource\Console.script.arc" />
+	  <Resource Include="StdlibSource\Math.script.arc" />
 	</ItemGroup>
 
 	<ItemGroup>

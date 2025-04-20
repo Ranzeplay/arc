@@ -22,9 +22,13 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
             var consoleNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(consoleNamespaceSource, logger);
             var consoleNamespaceUnit = new ArcCompilationUnit(consoleNamespaceUnitContext, logger, "Arc::Std::Console");
 
+            var mathNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceMath);
+            var mathNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(mathNamespaceSource, logger);
+            var mathNamespaceUnit = new ArcCompilationUnit(mathNamespaceUnitContext, logger, "Arc::Std::Math");
+
             // var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit]);
 
-            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit];
+            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit, mathNamespaceUnit];
         }
     }
 }
