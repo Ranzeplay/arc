@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         private ArcDataSlot Slot { get; } = slot;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {

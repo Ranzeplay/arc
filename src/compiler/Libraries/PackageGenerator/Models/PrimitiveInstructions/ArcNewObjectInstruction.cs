@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public ArcTypeBase DataType { get; set; } = dataType;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {

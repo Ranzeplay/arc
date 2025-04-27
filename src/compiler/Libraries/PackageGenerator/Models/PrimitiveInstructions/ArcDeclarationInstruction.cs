@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public ArcDataDeclarator DataDeclarator { get; } = dataDecl;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             var dataType = ArcDataTypeHelper.GetDataTypeNode(source, DataDeclarator.DataType)?.DataType;
 

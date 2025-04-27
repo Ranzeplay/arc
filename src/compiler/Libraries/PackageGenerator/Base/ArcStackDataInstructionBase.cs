@@ -7,7 +7,7 @@ namespace Arc.Compiler.PackageGenerator.Base
     {
         public ArcStackDataOperationDescriptor OperationDescriptor { get; set; } = locator;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {

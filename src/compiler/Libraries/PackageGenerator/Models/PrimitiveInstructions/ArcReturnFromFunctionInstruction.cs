@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public bool WithReturnValue { get; } = withReturnValue;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new()
             {

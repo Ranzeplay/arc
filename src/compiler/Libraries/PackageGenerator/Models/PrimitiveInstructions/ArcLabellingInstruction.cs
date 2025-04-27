@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             Layer = relocationLayer
         };
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new()
             {

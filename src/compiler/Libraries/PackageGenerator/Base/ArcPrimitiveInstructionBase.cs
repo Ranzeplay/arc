@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Base
     {
         public abstract byte[] Opcode { get; }
 
-        public ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public virtual ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {

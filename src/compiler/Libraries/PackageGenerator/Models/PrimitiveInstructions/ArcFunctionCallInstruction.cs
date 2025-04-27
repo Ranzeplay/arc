@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public uint ParameterCount { get; set; } = parameterCount;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {
