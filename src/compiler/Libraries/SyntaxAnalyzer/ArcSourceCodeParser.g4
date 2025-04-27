@@ -42,7 +42,7 @@ arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
 
 arc_constructor_call: KW_NEW arc_flexible_identifier arc_wrapped_param_list;
 
-arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
+arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call | arc_stmt_throw) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
 arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
 arc_stmt_return: KW_RETURN arc_expression?;
@@ -56,6 +56,7 @@ arc_stmt_while: KW_WHILE LPAREN arc_expression RPAREN arc_wrapped_function_body;
 arc_stmt_for: KW_FOR LPAREN arc_stmt_decl SEMICOLON arc_expression SEMICOLON arc_stmt_assign RPAREN arc_wrapped_function_body;
 arc_stmt_loop: KW_LOOP arc_wrapped_function_body;
 arc_stmt_foreach: KW_FOREACH LPAREN arc_data_declarator KW_IN arc_expression RPAREN arc_wrapped_function_body;
+arc_stmt_throw: KW_THROW arc_expression;
 
 arc_stmt_if: KW_IF LPAREN arc_expression RPAREN arc_wrapped_function_body (KW_ELIF LPAREN arc_expression RPAREN arc_wrapped_function_body)* (KW_ELSE arc_wrapped_function_body)?;
 
