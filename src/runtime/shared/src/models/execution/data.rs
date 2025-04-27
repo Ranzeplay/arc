@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use crate::models::package::Package;
 
+#[derive(Debug)]
 pub struct DataSlot {
     pub slot_id: usize,
     pub value: Rc<RefCell<DataValue>>,

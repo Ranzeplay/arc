@@ -93,6 +93,7 @@ impl ExecutionContext {
     }
 }
 
+#[derive(Debug)]
 pub struct FunctionExecutionContext {
     pub function: Rc<FunctionSymbol>,
     pub local_data: Vec<Rc<RefCell<DataSlot>>>,
