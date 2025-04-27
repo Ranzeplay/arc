@@ -83,6 +83,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             }
                             break;
                         }
+                    case ArcStatementThrow stmtThrow:
+                        {
+                            stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression, false));
+                            stepResult.Append(new ArcThrowInstruction().Encode(source));
+                            break;
+                        }
                     default:
                         throw new NotImplementedException();
                 }
