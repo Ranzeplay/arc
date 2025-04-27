@@ -183,28 +183,6 @@ pub fn execute_function(
                 comparison_operation_instruction!(exec_context, math::math_compare_not_equal);
             }
             InstructionType::NeqR => {}
-            InstructionType::Invoke(call) => {
-                let result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
-                match result {
-                    FunctionExecutionResult::Invalid => {
-                        error!("Invalid function(0x{:016X}) execution result", call.function_id);
-                        return FunctionExecutionResult::Invalid;
-                    }
-                    FunctionExecutionResult::Success(data_opt) => {
-                        if let Some(data) = data_opt {
-                            exec_context.borrow_mut().global_stack.push(data);
-                        }
-                    }
-                    FunctionExecutionResult::Failure(exception) => {
-                        {
-                            let mut exception_ref = exception.borrow_mut();
-                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
-                        }
-
-                        return FunctionExecutionResult::Failure(exception);
-                    }
-                }
-            }
             InstructionType::Ret(ret) => {
                 result = wrap_return_value_if_needed(Rc::clone(&exec_context), ret.with_value);
                 break;
