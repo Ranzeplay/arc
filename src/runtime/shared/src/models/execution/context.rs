@@ -19,7 +19,7 @@ impl ExecutionContext {
         let jump_count = package
             .instructions
             .iter()
-            .filter(|instruction| match instruction.instruction_type {
+            .filter(|&instruction| match instruction.instruction_type {
                 InstructionType::Jmp(_) => true,
                 InstructionType::JmpC(_) => true,
                 _ => false,
@@ -30,7 +30,7 @@ impl ExecutionContext {
             .symbol_table
             .symbols
             .values()
-            .filter(|symbol| match symbol.value {
+            .filter(|&symbol| match symbol.value {
                 Symbol::Function(_) => true,
                 _ => false,
             })

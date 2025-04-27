@@ -5,14 +5,13 @@ mod math;
 mod stdlib;
 
 use crate::func_exec::prepare_and_get_function_info;
-use crate::instructions::function_call::execute_function_call;
 use crate::instructions::return_function::wrap_return_value_if_needed;
 use crate::stdlib::execute_stdlib_function;
-use log::{debug, trace};
+use log::{debug, error, trace};
 use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
-use arc_shared::models::execution::result::FunctionExecutionResult;
+use arc_shared::models::execution::result::{FunctionExecutionFault, FunctionExecutionResult, StackTraceLocation};
 use arc_shared::models::instruction::InstructionType;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -43,11 +42,12 @@ pub fn launch(opt: Rc<LaunchOptions>) -> Result<i32, String> {
     match result {
         FunctionExecutionResult::Success(_) => {
             debug!("Program executed successfully.");
-            Ok(0)
+            Ok(0x00)
         }
         FunctionExecutionResult::Failure(fault) => {
-            debug!("Program execution failed: {}", fault.fault_message);
-            Ok(1)
+            error!("Program execution failed.");
+            error!("{}", fault.borrow());
+            Ok(0xff)
         }
         FunctionExecutionResult::Invalid => Ok(0),
     }
@@ -184,17 +184,42 @@ pub fn execute_function(
             }
             InstructionType::NeqR => {}
             InstructionType::Invoke(call) => {
-                execute_function_call(
-                    Rc::clone(&exec_context),
-                    Rc::clone(&function_context),
-                    call.function_id,
-                );
+                let result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                match result {
+                    FunctionExecutionResult::Invalid => {
+                        error!("Invalid function(0x{:016X}) execution result", call.function_id);
+                        return FunctionExecutionResult::Invalid;
+                    }
+                    FunctionExecutionResult::Success(data_opt) => {
+                        if let Some(data) = data_opt {
+                            exec_context.borrow_mut().global_stack.push(data);
+                        }
+                    }
+                    FunctionExecutionResult::Failure(exception) => {
+                        {
+                            let mut exception_ref = exception.borrow_mut();
+                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
+                        }
+
+                        return FunctionExecutionResult::Failure(exception);
+                    }
+                }
             }
             InstructionType::Ret(ret) => {
                 result = wrap_return_value_if_needed(Rc::clone(&exec_context), ret.with_value);
                 break;
             }
-            InstructionType::Throw => {}
+            InstructionType::Throw => {
+                let mut exec_context_ref = exec_context.borrow_mut();
+                let exception = exec_context_ref.global_stack.pop().unwrap();
+
+                return FunctionExecutionResult::Failure(Rc::new(RefCell::new(
+                    FunctionExecutionFault {
+                        stack_trace: vec![StackTraceLocation::new(instruction_index, function_id)],
+                        exception: Rc::clone(&exception),
+                    },
+                )));
+            }
             InstructionType::BTC => {}
             InstructionType::BT => {}
             InstructionType::BC => {}
@@ -253,11 +278,26 @@ pub fn execute_function(
                 break;
             }
             InstructionType::FCall(call) => {
-                execute_function_call(
-                    Rc::clone(&exec_context),
-                    Rc::clone(&function_context),
-                    call.function_id,
-                );
+                let result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                match result {
+                    FunctionExecutionResult::Invalid => {
+                        error!("Invalid function(0x{:016X}) execution result", call.function_id);
+                        return FunctionExecutionResult::Invalid;
+                    }
+                    FunctionExecutionResult::Success(data_opt) => {
+                        if let Some(data) = data_opt {
+                            exec_context.borrow_mut().global_stack.push(data);
+                        }
+                    }
+                    FunctionExecutionResult::Failure(exception) => {
+                        {
+                            let mut exception_ref = exception.borrow_mut();
+                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
+                        }
+
+                        return FunctionExecutionResult::Failure(exception);
+                    }
+                }
             }
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
