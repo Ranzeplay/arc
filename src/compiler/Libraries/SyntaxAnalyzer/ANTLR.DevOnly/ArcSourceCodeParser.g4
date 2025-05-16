@@ -14,7 +14,7 @@ arc_single_identifier: IDENTIFIER;
 arc_full_identifier: arc_namespace_limiter DOT arc_single_identifier;
 arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
-arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_NONE | KW_ANY | KW_INFER;
+arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_NONE | KW_ANY | KW_INFER;
 arc_array_indicator: LBRACKET RBRACKET;
 arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator*;
 

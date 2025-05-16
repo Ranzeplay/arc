@@ -23,6 +23,7 @@ namespace Arc.Compiler.PackageGenerator.Helpers
                     ArcPrimitiveDataType.String => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.StringType.TypeId),
                     ArcPrimitiveDataType.Char => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.CharType.TypeId),
                     ArcPrimitiveDataType.Bool => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.BoolType.TypeId),
+                    ArcPrimitiveDataType.Byte => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.ByteType.TypeId),
                     ArcPrimitiveDataType.None => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
                     ArcPrimitiveDataType.Any => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
                     _ => throw new NotImplementedException(),

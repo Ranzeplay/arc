@@ -11,7 +11,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
             DecimalType,
             CharType,
             StringType,
-            BoolType
+            BoolType,
+            ByteType
         ];
 
         public static ArcBaseType NoneType => new(0, "none");
@@ -21,6 +22,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
         public static ArcBaseType CharType => new(4, "char");
         public static ArcBaseType StringType => new(5, "string");
         public static ArcBaseType BoolType => new(6, "bool");
+        public static ArcBaseType ByteType => new(7, "byte");
+
 
         public static ArcScopeTree BaseTypeScopeTree
         {

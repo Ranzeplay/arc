@@ -116,6 +116,7 @@ KW_ANY: 'any';
 KW_INFER: 'infer';
 KW_CHAR: 'char';
 KW_BOOL: 'bool';
+KW_BYTE: 'byte';
 KW_INT: 'int';
 KW_DECIMAL: 'decimal';
 KW_STRING: 'string';
