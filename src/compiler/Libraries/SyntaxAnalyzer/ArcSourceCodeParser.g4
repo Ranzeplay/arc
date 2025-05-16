@@ -16,7 +16,7 @@ arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
 arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_NONE | KW_ANY | KW_INFER;
 arc_array_indicator: LBRACKET RBRACKET;
-arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator*;
+arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_generic_specialization_wrapper? arc_array_indicator*;
 
 arc_data_declarator: arc_mutability arc_single_identifier COLON arc_data_type;
 arc_self_data_declarator: arc_mutability arc_self_wrapper COLON arc_data_type;
@@ -29,8 +29,8 @@ arc_wrapped_param_list: LPAREN arc_param_list? RPAREN;
 
 arc_annotation: AT arc_flexible_identifier arc_wrapped_param_list?;
 
-arc_function_declarator: arc_annotation* arc_accessibility KW_FUNCTION arc_single_identifier arc_wrapped_arg_list COLON arc_data_type;
-arc_function_call_base: arc_flexible_identifier arc_wrapped_param_list;
+arc_function_declarator: arc_annotation* arc_accessibility KW_FUNCTION arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_arg_list COLON arc_data_type;
+arc_function_call_base: arc_flexible_identifier arc_generic_specialization_wrapper? arc_wrapped_param_list;
 
 arc_wrapped_function_body: LBRACE arc_statement* RBRACE;
 arc_function_block: arc_function_declarator arc_wrapped_function_body;
@@ -40,7 +40,7 @@ arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
 arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
 
-arc_constructor_call: KW_NEW arc_flexible_identifier arc_wrapped_param_list;
+arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper arc_wrapped_param_list;
 
 arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call | arc_stmt_throw) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
@@ -95,7 +95,7 @@ arc_wrapped_expression: LPAREN arc_expression RPAREN;
 arc_namespace_block: arc_namespace_declarator LBRACE arc_namespace_member* RBRACE;
 arc_namespace_member: arc_function_block | arc_group_block;
 
-arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_wrapped_group_member;
+arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_group_member;
 arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
 arc_group_member: arc_group_constructor | arc_group_destructor | arc_group_function | arc_group_field;
 arc_group_field: arc_annotation* arc_accessibility KW_FIELD arc_data_declarator SEMICOLON;
@@ -110,3 +110,6 @@ arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain
 arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | arc_self_wrapper) arc_index*;
 
 arc_self_wrapper: KW_SELF;
+
+arc_generic_declaration_wrapper: COMP_LT arc_single_identifier (COMMA arc_single_identifier)* COMP_GT;
+arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION) COMP_GT;

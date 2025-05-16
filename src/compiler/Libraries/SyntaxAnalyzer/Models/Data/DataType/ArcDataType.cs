@@ -20,6 +20,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
                 ComplexType = new ArcComplexDataType(context.arc_flexible_identifier());
             }
 
+            SpecializedGenericTypes = context.arc_generic_specialization_wrapper()?
+                .arc_data_type()
+                .Select(g => new ArcDataType(g)) ?? [];
+
             Context = context;
         }
 
@@ -38,6 +42,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
         public int Dimension { get; set; }
+
+        public IEnumerable<ArcDataType> SpecializedGenericTypes { get; set; }
 
         public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
 

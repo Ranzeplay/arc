@@ -16,6 +16,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 
         public IEnumerable<ArcFunctionArgument> Arguments { get; set; }
 
+        public IEnumerable<ArcSingleIdentifier> GenericTypes { get; set; }
+
         public ArcDataType ReturnType { get; set; }
 
         public ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context, bool allowSelf)
@@ -25,6 +27,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
             Accessibility = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
             Identifier = new(context.arc_single_identifier());
             ReturnType = new(context.arc_data_type());
+            GenericTypes = context.arc_generic_declaration_wrapper()?.arc_single_identifier().Select(g => new ArcSingleIdentifier(g)) ?? [];
 
             if (context.arc_wrapped_arg_list().arc_arg_list()?.arc_self_data_declarator() != null)
             {
