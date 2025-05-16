@@ -2,9 +2,9 @@ link Arc::Std;
 
 namespace Arc::Program {
 	@Export
-	public group ArcExample {
+	public group ArcExample<T> {
 		@Getter
-		public field const foo: val string;
+		public field const foo: val T;
 		@Accessor
 		public field var bar: val string;
 
@@ -34,8 +34,8 @@ namespace Arc::Program {
 
 		call [Console].PrintLn("Hello, world!");
 
-		var d: val ArcExample;
-		d = new ArcExample();
+		var d: val ArcExample<val string>;
+		d = new ArcExample<val string>();
 
 		return 0;
 	}
