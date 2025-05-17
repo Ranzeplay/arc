@@ -65,7 +65,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
-            Assert.That(context.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(16));
+            Assert.That(context.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(28));
         }
 
         [Test]
