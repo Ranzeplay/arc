@@ -41,6 +41,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [
                 (byte)ArcSymbolType.Group,
+
+                ..BitConverter.GetBytes(GenericTypes.LongCount()),
+                ..GenericTypes.SelectMany(g => BitConverter.GetBytes(g.Id)),
+
                 ..ArcGroupSymbolEncoder.EncodeGroupSymbol(this)
             ];
 

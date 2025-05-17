@@ -43,6 +43,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 ..BitConverter.GetBytes(Annotations.LongCount()),
                 ..Annotations.SelectMany(a => BitConverter.GetBytes(a.Key.Id)),
 
+                ..BitConverter.GetBytes(GenericTypes.LongCount()),
+                ..GenericTypes.SelectMany(g => BitConverter.GetBytes(g.Id)),
+
                 ..BitConverter.GetBytes(DataCount)
             ];
     }
