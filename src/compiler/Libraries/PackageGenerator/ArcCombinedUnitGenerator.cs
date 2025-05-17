@@ -59,17 +59,14 @@ namespace Arc.Compiler.PackageGenerator
                     PackageDescriptor = packageDescriptor
                 };
 
-                var genSource = iterContext.GenerateSource([unit.Namespace]);
-
-                genSource.LinkedNamespaces = structure.LinkedNamespaces;
-
                 // Generate functions
 
                 var funcs = structure.ScopeTree
                     .GetNodes<ArcScopeTreeIndividualFunctionNode>();
                 foreach (var fn in funcs)
                 {
-                    genSource.CurrentNode = fn;
+                    var genSource = iterContext.GenerateSource([unit.Namespace], fn, structure.LinkedNamespaces);
+                    genSource.GenericTypes = fn.GenericTypes;
 
                     if (fn.Annotations.Keys.Any(k => k.Signature == "NArc+NCompilation+ADeclaratorOnly"))
                     {
@@ -91,7 +88,8 @@ namespace Arc.Compiler.PackageGenerator
                     var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
                     foreach (var fn in groupFns)
                     {
-                        genSource.CurrentNode = fn;
+                        var genSource = iterContext.GenerateSource([unit.Namespace], fn, structure.LinkedNamespaces);
+                        genSource.GenericTypes = [..fn.GenericTypes, ..grp.GenericTypes];
 
                         if (fn.Annotations.Keys.Any(k => k.Signature == "NArc+NCompilation+ADeclaratorOnly"))
                         {

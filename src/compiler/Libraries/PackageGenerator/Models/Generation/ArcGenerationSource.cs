@@ -12,6 +12,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public IEnumerable<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
 
+        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes { get; set; } = [];
+
         public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes => LinkedNamespaces.SelectMany(lns => lns.Children);
 
         public ArcScopeTreeNodeBase CurrentNode { get; set; }

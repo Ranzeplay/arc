@@ -5,7 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    internal class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+    public class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 

@@ -10,6 +10,7 @@
         IndividualFunction,
         FunctionData,
         DataType,
+        GenericType,
         Annotation
     }
 }

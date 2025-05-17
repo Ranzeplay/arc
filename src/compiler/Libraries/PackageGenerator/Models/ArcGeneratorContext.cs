@@ -114,14 +114,37 @@ namespace Arc.Compiler.PackageGenerator.Models
             return GenerateSource([], GlobalScopeTree.Root);
         }
 
-        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location, ArcScopeTreeNodeBase? node = null)
+        public ArcGenerationSource GenerateSource(
+            IEnumerable<IArcLocatable> location,
+            ArcScopeTreeNodeBase? node = null,
+            IEnumerable<ArcScopeTreeNamespaceNode>? linkedNamespaces = null
+        )
+        {
+            return GenerateSourceFull(location, node!, linkedNamespaces ?? []);
+        }
+
+        public ArcGenerationSource GenerateSource(
+            IEnumerable<IArcLocatable> location,
+            IEnumerable<ArcScopeTreeNamespaceNode>? linkedNamespaces = null,
+            ArcScopeTreeNodeBase? node = null
+        )
+        {
+            return GenerateSourceFull(location, node!, linkedNamespaces ?? []);
+        }
+
+        private ArcGenerationSource GenerateSourceFull(
+            IEnumerable<IArcLocatable> location,
+            ArcScopeTreeNodeBase node,
+            IEnumerable<ArcScopeTreeNamespaceNode> linkedNamespaces
+        )
         {
             return new()
             {
                 PackageDescriptor = PackageDescriptor,
                 GlobalScopeTree = GlobalScopeTree,
                 ParentSignature = new ArcSignature() { Locators = [.. location] },
-                CurrentNode = node!,
+                CurrentNode = node,
+                LinkedNamespaces = linkedNamespaces,
                 Name = PackageDescriptor.Name,
             };
         }

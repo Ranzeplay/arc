@@ -103,15 +103,18 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     a => a.CallArguments.Select(ca => ca.Expression)
                 );
 
-            return (
-                new()
-                {
-                    ReturnValueType = returnValueType,
-                    Parameters = parameters,
-                    Annotations = annotations,
-                },
-                logs
-            );
+            var genericTypes = declarator.GenericTypes
+                .Select(g => new ArcScopeTreeGenericTypeNode { Identifier = g.Name });
+
+            var descriptor = new T
+            {
+                ReturnValueType = returnValueType,
+                Parameters = parameters,
+                Annotations = annotations,
+            };
+            descriptor.AddChildren(genericTypes);
+
+            return (descriptor, logs);
         }
     }
 }

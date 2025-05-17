@@ -23,7 +23,6 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
             foreach (var group in ns.Groups)
             {
-
                 var node = new ArcScopeTreeGroupNode { SyntaxTree = group, ShortName = group.Identifier.Name };
                 current.AddChild(node);
 
@@ -36,6 +35,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
 
                 var annotationNode = new ArcScopeTreeAnnotationNode { TargetGroup = node };
                 current.AddChild(annotationNode);
+
+                var genericTypeParameters = group.GenericTypes.Select(t => new ArcScopeTreeGenericTypeNode { Identifier = t.Name });
+                current.AddChildren(genericTypeParameters);
             }
 
             return tree;

@@ -19,6 +19,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcAccessibility Accessibility { get; set; }
 
+        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes => Children.OfType<ArcScopeTreeGenericTypeNode>();
+
         public long EntrypointPos { get; set; }
 
         public long BlockLength { get; set; }

@@ -5,6 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
+using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Helpers
 {
@@ -26,12 +27,23 @@ namespace Arc.Compiler.PackageGenerator.Helpers
                     ArcPrimitiveDataType.Byte => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.ByteType.TypeId),
                     ArcPrimitiveDataType.None => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
                     ArcPrimitiveDataType.Any => candidateTypes.First(x => x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
-                    _ => throw new NotImplementedException(),
+                    _ => throw new UnreachableException(),
                 };
             }
             else
             {
-                return GetComplexTypeNode(source, dataType.ComplexType!.Identifier);
+                var identifier = dataType.ComplexType!.Identifier;
+
+                var complexTypeNode = GetComplexTypeNode(source, identifier);
+                if (complexTypeNode != null)
+                {
+                    return complexTypeNode;
+                }
+                else
+                {
+                    // If not found, we assume that it is a generic type
+                    return GetGenericTypeNode(source, identifier)?.ResolvedType;
+                }
             }
         }
 
@@ -46,6 +58,18 @@ namespace Arc.Compiler.PackageGenerator.Helpers
                 return source.DirectlyAccessibleNodes
                     .OfType<ArcScopeTreeDataTypeNode>()
                     .First(c => c.ShortName == identifier.Name);
+            }
+        }
+
+        public static ArcScopeTreeGenericTypeNode? GetGenericTypeNode(ArcGenerationSource source, ArcFlexibleIdentifier identifier)
+        {
+            if (identifier.Namespace != null && identifier.Namespace.Any())
+            {
+                return null;
+            }
+            else
+            {
+                return source.GenericTypes.FirstOrDefault(c => c.Name == identifier.Name);
             }
         }
 
