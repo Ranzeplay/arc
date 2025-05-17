@@ -1,8 +1,10 @@
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
+    [DebuggerDisplay("{Signature} ({NodeType}) ({Id})")]
     public abstract class ArcScopeTreeNodeBase
     {
         public virtual ulong Id { get => ManualId ?? GeneratedId; set => ManualId = value; }
