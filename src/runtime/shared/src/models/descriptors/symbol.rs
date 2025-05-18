@@ -44,6 +44,7 @@ pub struct FunctionSymbol {
     pub return_value_descriptor: Rc<DataTypeEncoding>,
     pub annotation_ids: Vec<usize>,
     pub parameter_descriptors: Vec<Rc<DataTypeEncoding>>,
+    pub generic_type_ids: Vec<usize>,
     pub data_count: usize
 }
 
@@ -61,6 +62,7 @@ pub struct GroupSymbol {
     pub function_ids: Vec<usize>,
     pub sub_group_ids: Vec<usize>,
     pub annotation_ids: Vec<usize>,
+    pub generic_type_ids: Vec<usize>,
 }
 
 impl Debug for GroupSymbol {

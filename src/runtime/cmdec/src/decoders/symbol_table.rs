@@ -63,6 +63,9 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotations, annotation_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += annotation_len;
 
+    let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += generic_type_ids_len;
+
     let data_count = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
@@ -73,6 +76,7 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
             return_value_descriptor: Rc::new(return_value_descriptor),
             parameter_descriptors: parameter_descriptors_vec,
             annotation_ids: annotations,
+            generic_type_ids,
             data_count,
         })),
         pos,
@@ -100,6 +104,9 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotation_ids, annotation_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += annotation_ids_len;
 
+    let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += generic_type_ids_len;
+
     let result = Symbol::Group(Rc::new(GroupSymbol {
         field_ids,
         constructor_ids,
@@ -107,6 +114,7 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
         function_ids,
         sub_group_ids,
         annotation_ids,
+        generic_type_ids,
     }));
     (result, pos)
 }
