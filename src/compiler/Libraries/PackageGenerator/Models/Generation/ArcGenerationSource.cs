@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
+﻿using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 
@@ -13,6 +14,25 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
         public IEnumerable<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
 
         public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes { get; set; } = [];
+
+        public IEnumerable<IArcDataTypeProxy> DirectlyAccessibleTypes
+        {
+            get
+            {
+                var result = LinkedNamespaces.SelectMany(lns => lns.Children).OfType<IArcDataTypeProxy>();
+                if (CurrentNode is ArcScopeTreeFunctionNodeBase functionNodeBase)
+                {
+                    result = result.Concat(functionNodeBase.GenericTypes);
+
+                    if (CurrentNode.Parent is ArcScopeTreeGroupNode groupNode)
+                    {
+                        result = result.Concat(groupNode.GenericTypes);
+                    }
+                }
+
+                return result;
+            }
+        }
 
         public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes => LinkedNamespaces.SelectMany(lns => lns.Children);
 

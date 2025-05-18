@@ -63,11 +63,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var parameters = declarator.Arguments.Select(a =>
             {
-                var paramDataType = ArcDataTypeHelper.GetDataTypeNode(source, a.DataType);
-                if (paramDataType == null)
+                var paramDataTypeProxy = ArcDataTypeHelper.GetDataType(source, a.DataType);
+                if (paramDataTypeProxy == null)
                 {
                     logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{a.DataType}' not found", source.Name, a.DataType.Context));
+                    return new ArcParameterDescriptor();
                 }
+
+                var paramDataType = ArcDataTypeHelper.GetDataTypeNode(source, paramDataTypeProxy.ResolvedType);
 
                 return new ArcParameterDescriptor
                 {
@@ -83,15 +86,17 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 };
             });
 
-            var returnDataType = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType);
-            if (returnDataType == null)
+            var returnTypeProxy = ArcDataTypeHelper.GetDataType(source, declarator.ReturnType);
+            if (returnTypeProxy == null)
             {
                 logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{declarator.ReturnType}' not found", source.Name, declarator.ReturnType.Context));
+                return (default!, logs);
             }
 
+            var returnType = ArcDataTypeHelper.GetDataTypeNode(source, returnTypeProxy.ResolvedType)?.DataType;
             var returnValueType = new ArcDataDeclarationDescriptor
             {
-                Type = ArcDataTypeHelper.GetDataTypeNode(source, declarator.ReturnType)?.DataType ?? ArcBaseType.Placeholder(),
+                Type = returnType ?? ArcBaseType.Placeholder(),
                 AllowNone = false,
                 Dimension = declarator.ReturnType.Dimension,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,

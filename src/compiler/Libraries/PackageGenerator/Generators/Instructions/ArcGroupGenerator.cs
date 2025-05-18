@@ -15,13 +15,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             source.ParentSignature.Locators.Add(field);
 
-            var fieldDataType = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType);
+            var fieldTypeProxy = ArcDataTypeHelper.GetDataType(source, field.DataDeclarator.DataType);
+            var fieldTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, fieldTypeProxy!.ResolvedType);
 
             var result = new ArcScopeTreeGroupFieldNode()
             {
                 DataType = new ArcDataDeclarationDescriptor
                 {
-                    Type = ArcDataTypeHelper.GetDataTypeNode(source, field.DataDeclarator.DataType)?.DataType ?? ArcBaseType.Placeholder(),
+                    Type = fieldTypeNode?.DataType ?? ArcBaseType.Placeholder(),
                     AllowNone = false,
                     Dimension = field.DataDeclarator.DataType.Dimension,
                     MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
@@ -35,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Accessibility = field.Accessibility,
             };
 
-            if (fieldDataType == null)
+            if (fieldTypeProxy == null)
             {
                 return (result, [new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{field.DataDeclarator.DataType}' not found", source.Name, field.DataDeclarator.DataType.Context)]);
             }

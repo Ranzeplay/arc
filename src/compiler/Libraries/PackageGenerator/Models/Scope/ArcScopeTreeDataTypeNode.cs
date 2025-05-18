@@ -5,7 +5,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    public class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+    public class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode, IArcDataTypeProxy
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
@@ -20,6 +20,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public override string SignatureAddend => "T" + ShortName;
 
         public override string Name => DataType.Identifier;
+
+        public string TypeSignature => Signature;
+
+        public ulong ProxyTypeId => Id;
+
+        public ulong ActualTypeId => Id;
+
+        public ArcTypeBase ResolvedType => DataType;
 
         public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [

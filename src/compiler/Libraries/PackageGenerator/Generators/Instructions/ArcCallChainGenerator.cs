@@ -101,12 +101,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            var dataTypeNode = ArcDataTypeHelper.GetComplexTypeNode(source, constructor.DataType); if (dataTypeNode == null)
+            var dataTypeProxy = ArcDataTypeHelper.GetComplexType(source, constructor.DataType);
+            if (dataTypeProxy == null)
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Data type not found", source.Name, constructor.Context));
                 return (result, null);
             }
-            var dataGroup = dataTypeNode.ComplexTypeGroup;
+
+            var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy.ResolvedType)!;
 
             // Constructor is a function that uses `self`
             result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType).Encode(source));
@@ -117,7 +119,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             // Currently we determine constructor by the number of parameters
             // TODO: Implement a more robust way to determine the constructor
-            var constructorId = dataGroup!.Constructors.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
+            var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
+            var constructorId = dataTypeGroup!.Constructors.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
             result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1).Encode(source));
 
             var dataDeclDesc = new ArcDataDeclarationDescriptor

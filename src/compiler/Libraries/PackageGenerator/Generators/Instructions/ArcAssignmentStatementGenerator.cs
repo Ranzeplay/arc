@@ -71,7 +71,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var firstTerm = callChain.Terms.First();
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
-            var currentDataType = ArcDataTypeHelper.GetDataTypeNode(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
+            var currentDataType = ArcDataTypeHelper.GetDataType(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
             var result = new ArcPartialGenerationResult();
 
@@ -95,9 +95,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     break;
                 }
 
-                if (currentDataType.DataType is ArcComplexType)
+                if (currentDataType.ResolvedType is ArcComplexType)
                 {
-                    var groupType = currentDataType.ComplexTypeGroup!;
+                    var groupType = ArcDataTypeHelper.GetDataTypeNode(source, currentDataType.ResolvedType)!.ComplexTypeGroup!;
                     var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, field.Id, true);

@@ -110,6 +110,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
             // Link the namespaces linked by each compilation unit for filtering symbols
             unitStructures.ForEach(us =>
             {
+                us.ScopeTree.MergeRoot(ArcPersistentData.BaseTypeScopeTree);
                 us.LinkedNamespaces.Add(globalScopeTree.GetNamespace(["Arc", "Base"])!);
 
                 us.CompilationUnit
@@ -145,8 +146,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                             GlobalScopeTree = globalScopeTree,
                             PackageDescriptor = packageDescriptor
                         };
-                        var source = context.GenerateSource([us.CompilationUnit.Namespace], n);
-                        source.LinkedNamespaces = us.LinkedNamespaces;
+                        var source = context.GenerateSource([us.CompilationUnit.Namespace], n, us.LinkedNamespaces);
                         n.Annotations = n.SyntaxTree.Annotations
                             .ToDictionary(
                                 a => ArcAnnotationHelper.FindAnnotationNode(source, a),
@@ -165,8 +165,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                     GlobalScopeTree = us.ScopeTree,
                     PackageDescriptor = packageDescriptor
                 };
-                var source = context.GenerateSource([us.CompilationUnit.Namespace], us.GetCurrentNamespace);
-                source.LinkedNamespaces = us.LinkedNamespaces;
+                var source = context.GenerateSource([us.CompilationUnit.Namespace], us.LinkedNamespaces);
                 var (individualFunctionTree, logs) = GenerateIndividualFunctions(source, us.ScopeTree, us.CompilationUnit);
 
                 us.ScopeTree.MergeRoot(individualFunctionTree, true);
