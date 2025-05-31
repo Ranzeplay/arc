@@ -1,12 +1,14 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 
 namespace Arc.Compiler.PackageGenerator.Models.Intermediate
 {
-    internal class ArcDataSlot : ArcSymbolBase
+    public class ArcDataSlot
     {
-        public ArcDataDeclarator Declarator { get; set; }
+        public ArcDataDeclarationDescriptor DeclarationDescriptor { get; set; }
 
-        public long SlotId { get; set; }
+        public ulong SlotId { get; set; }
+
+        public string Name { get; set; }
     }
 }

@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "cli",
+    "cmdec",
+    "executor",
+    "stdlib",
+    "shared",
+    "bindings",
+    "tests",
+]
+
+[profile.profiling]
+inherits = "release"
+debug = true

@@ -21,7 +21,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.DIVIDE() != null)
             {
@@ -31,7 +31,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.PLUS() != null)
             {
@@ -41,7 +41,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.MINUS() != null)
             {
@@ -51,7 +51,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.BITWISE_AND() != null)
             {
@@ -61,7 +61,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.BITWISE_OR() != null)
             {
@@ -71,7 +71,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.BITWISE_XOR() != null)
             {
@@ -81,7 +81,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.BITWISE_NOT() != null)
             {
@@ -89,7 +89,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
                 var op = ArcOperator.BitwiseNot;
 
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.LOGICAL_AND() != null)
             {
@@ -99,7 +99,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.LOGICAL_OR() != null)
             {
@@ -109,7 +109,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.LOGICAL_NOT() != null)
             {
@@ -117,7 +117,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
                 var op = ArcOperator.LogicalNot;
 
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_LT() != null)
             {
@@ -127,7 +127,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_GT() != null)
             {
@@ -137,7 +137,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_LTE() != null)
             {
@@ -147,7 +147,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_GTE() != null)
             {
@@ -157,7 +157,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_OBJ_EQ() != null)
             {
@@ -167,7 +167,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.COMP_OBJ_NEQ() != null)
             {
@@ -177,15 +177,22 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
 
                 terms.AddRange(exprBefore.Terms);
                 terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op));
+                terms.Add(new ArcExpressionTerm(op) { Context = context });
             }
             else if (context.arc_wrapped_expression() != null)
             {
-                terms.AddRange(new ArcExpression(context.arc_wrapped_expression().arc_expression()).Terms);
+                terms.AddRange(new ArcExpression(
+                    context.arc_wrapped_expression().arc_expression())
+                        .Terms
+                        .Select(t => { t.Context = context; return t; })
+                );
             }
             else if (context.arc_data_value() != null)
             {
-                terms.Add(new ArcExpressionTerm(ArcDataValue.FromTokens(context.arc_data_value())));
+                terms.Add(new ArcExpressionTerm(ArcDataValue.FromTokens(context.arc_data_value()))
+                {
+                    Context = context.arc_data_value()
+                });
             }
             else
             {

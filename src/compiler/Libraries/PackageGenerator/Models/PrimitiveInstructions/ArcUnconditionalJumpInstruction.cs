@@ -4,17 +4,18 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
-    internal class ArcUnconditionalJumpInstruction : ArcPrimitiveInstructionBase
+    internal class ArcUnconditionalJumpInstruction(ArcRelocationTarget target) : ArcPrimitiveInstructionBase
     {
         public override byte[] Opcode => [0x21];
 
-        public required ArcRelocationTarget Target { get; set; }
+        public ArcRelocationTarget Target { get; set; } = target;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
+            Target.Location = 1;
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode.Concat(BitConverter.GetBytes((long)0)),
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0)],
                 RelocationTargets = [
                     Target
                 ],

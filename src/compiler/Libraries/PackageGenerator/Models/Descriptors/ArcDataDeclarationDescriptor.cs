@@ -6,14 +6,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
     public class ArcDataDeclarationDescriptor
     {
-        public ArcTypeBase Type { get; set; }
+        public required ArcTypeBase Type { get; set; }
 
-        public bool IsArray { get; set; }
+        public int Dimension { get; set; }
 
         public bool AllowNone { get; set; }
 
         public ArcMutability Mutability { get; set; }
 
         public ArcMemoryStorageType MemoryStorageType { get; set; }
+
+        public ArcDataDeclarator SyntaxTree { get; set; }
     }
 }

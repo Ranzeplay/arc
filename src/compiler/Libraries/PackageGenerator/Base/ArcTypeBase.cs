@@ -1,9 +1,15 @@
-﻿namespace Arc.Compiler.PackageGenerator.Base
-{
-    public class ArcTypeBase : ArcSymbolBase
-    {
-        public long TypeId { get => Id; }
+﻿using Arc.Compiler.PackageGenerator.Models;
 
-        public string FullName { get => Name; set => Name = value; }
+namespace Arc.Compiler.PackageGenerator.Base
+{
+    public class ArcTypeBase(string identifier)
+    {
+        public ulong TypeId { get; set; } = (ulong)new Random().NextInt64();
+
+        public string Identifier { get; set; } = identifier;
+
+        public string FullName { get; set; } = identifier;
+
+        public ArcSymbolScope Scope { get; set; }
     }
 }

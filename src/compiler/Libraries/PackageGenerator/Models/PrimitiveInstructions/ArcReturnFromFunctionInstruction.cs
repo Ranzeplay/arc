@@ -9,11 +9,11 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public bool WithReturnValue { get; } = withReturnValue;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new()
             {
-                GeneratedData = Opcode.Concat([(byte)(WithReturnValue ? 0x01 : 0x00)]),
+                GeneratedData = [.. Opcode, (byte)(WithReturnValue ? 0x01 : 0x00)],
             };
         }
     }

@@ -3,19 +3,21 @@ using Arc.Compiler.PackageGenerator.Models.Intermediate;
 
 namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal abstract class ArcStackDataInstructionBase(ArcDataSourceType dataSourceType, long locationId, long fieldId) : ArcPrimitiveInstructionBase
+    internal abstract class ArcStackDataInstructionBase(ArcStackDataOperationDescriptor locator) : ArcPrimitiveInstructionBase
     {
-        public ArcDataSourceType DataSourceType { get; set; } = dataSourceType;
+        public ArcStackDataOperationDescriptor OperationDescriptor { get; set; } = locator;
 
-        public long LocationId { get; set; } = locationId;
-
-        public long FieldId { get; set; } = fieldId;
-
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode.Concat([(byte)DataSourceType, (byte)LocationId, (byte)FieldId]).ToArray(),
+                GeneratedData = [
+                    ..Opcode,
+                    (byte)OperationDescriptor.Source,
+                    (byte)OperationDescriptor.StorageType,
+                    ..BitConverter.GetBytes(OperationDescriptor.LocationId),
+                    (byte)(OperationDescriptor.Overwrite ? 0x01 : 0x00),
+                ],
             };
         }
     }

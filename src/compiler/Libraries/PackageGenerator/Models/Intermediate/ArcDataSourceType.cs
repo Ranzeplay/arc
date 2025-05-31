@@ -2,8 +2,11 @@
 {
     internal enum ArcDataSourceType
     {
-        ConstantTable,
-        DataSlot,
-        DataHandle
+        ConstantTable = 0x01,
+        DataSlot = 0x02,
+        Field = 0x03,
+        ArrayElement = 0x04,
+        StackTop = 0x05,
+        Invalid = 0x00
     }
 }

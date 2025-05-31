@@ -1,0 +1,74 @@
+---
+title: Group
+---
+
+A group is a way to combine many data and multiple functions.
+
+## Syntax
+
+```
+<accessibility> group <name>
+{
+    <members>
+}
+```
+
+## Example
+
+```
+public group Bar
+{
+      @Getter
+      public field var bitem: val int;
+
+      public func getFoo(var self: ref Bar, var addend: val int): val Foo
+      {
+         var foo: val Foo;
+         foo.fitem = self.bitem + addend;
+
+         return foo;
+      }
+}
+```
+
+## Members
+
+### Field
+
+The syntax of defining a field is similar to declaring data in a function.
+
+```
+<accessibility> field <mutability> <name>: <memory storage> <type>;
+```
+
+#### Annotations
+
+##### Getter
+
+Automatically generate a getter function.
+
+##### Setter
+
+Automatically generate the assignment function.
+
+##### Accessor
+
+Do the work of `Getter` and `Setter`.
+
+### Function
+
+The syntax of defining a function is the same as defining an individual function, and it behaves just like an individual function.
+
+### Method
+
+The syntax of defining a function is similar to defining an individual function, however, its first parameter should be a reference of current `Group` type and be a reference.
+
+## Annotations
+
+#### WithAnnotation
+
+The group can be used as an annotation.
+
+#### NoType
+
+The group will not be used as a type, so it cannot have any methods at the same time.

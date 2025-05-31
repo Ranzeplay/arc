@@ -21,7 +21,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             {
                 Name = context.arc_single_identifier().IDENTIFIER().GetText();
             }
-            
+
             Context = context;
         }
 
@@ -31,11 +31,32 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Identifier
             Context = context;
         }
 
+        public ArcFlexibleIdentifier(IEnumerable<string> names)
+        {
+            Name = names.Last();
+            Namespace = names.Take(names.Count() - 1);
+            Context = null!;
+        }
+
+        public ArcFlexibleIdentifier(ArcSingleIdentifier singleIdentifier)
+        {
+            Name = singleIdentifier.Name;
+            Namespace = [];
+            Context = singleIdentifier.Context;
+        }
+
         public ParserRuleContext Context { get; }
 
         public override string? ToString()
         {
-            return Namespace != null ? $"{string.Join("::", Namespace)}+{Name}" : Name;
+            return Namespace != null ? $"{string.Join(":", Namespace)}+{Name}" : Name;
         }
+
+        public string AsFunctionIdentifier()
+        {
+            return Namespace != null ? $"{string.Join(":", Namespace)}+F{Name}" : Name;
+        }
+
+        public IEnumerable<string> NameArray => Namespace != null ? Namespace.Append(Name) : [Name];
     }
 }

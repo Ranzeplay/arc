@@ -1,18 +1,46 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
+﻿using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcGenerationSource
+    public class ArcGenerationSource
     {
-        public WeakReference<ArcGenerationContext> ContextReference { get; }
+        public required string Name { get; set; }
 
-        public IEnumerable<ArcDataSlot> LocalDataSlots { get; set; } = [];
+        public ArcScopeTree GlobalScopeTree { get; set; }
 
-        public IEnumerable<ArcSymbolBase> AccessibleSymbols { get; set; } = [];
+        public IEnumerable<ArcScopeTreeNamespaceNode> LinkedNamespaces { get; set; } = [];
 
-        public ArcPackageDescriptor PackageDescriptor { get; set; }
+        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes { get; set; } = [];
+
+        public IEnumerable<IArcDataTypeProxy> DirectlyAccessibleTypes
+        {
+            get
+            {
+                var result = LinkedNamespaces.SelectMany(lns => lns.Children).OfType<IArcDataTypeProxy>();
+                if (CurrentNode is ArcScopeTreeFunctionNodeBase functionNodeBase)
+                {
+                    result = result.Concat(functionNodeBase.GenericTypes);
+
+                    if (CurrentNode.Parent is ArcScopeTreeGroupNode groupNode)
+                    {
+                        result = result.Concat(groupNode.GenericTypes);
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes => LinkedNamespaces.SelectMany(lns => lns.Children);
+
+        public ArcScopeTreeNodeBase CurrentNode { get; set; }
+
+        public List<ArcDataSlot> LocalDataSlots { get; set; } = [];
+
+        public required ArcPackageDescriptor PackageDescriptor { get; set; }
 
         public ArcSignature ParentSignature { get; set; }
 
@@ -20,15 +48,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public void Merge(ArcGenerationSource generationSource)
         {
-            LocalDataSlots = LocalDataSlots.Concat(generationSource.LocalDataSlots);
-            AccessibleSymbols = AccessibleSymbols.Concat(generationSource.AccessibleSymbols);
+            LocalDataSlots.AddRange(generationSource.LocalDataSlots);
             AccessibleConstants = AccessibleConstants.Concat(generationSource.AccessibleConstants);
         }
 
         public void Merge(ArcPartialGenerationResult generationResult)
         {
-            LocalDataSlots = LocalDataSlots.Concat(generationResult.DataSlots);
-            AccessibleSymbols = AccessibleSymbols.Concat(generationResult.OtherSymbols);
+            LocalDataSlots.AddRange(generationResult.DataSlots);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
         }
     }

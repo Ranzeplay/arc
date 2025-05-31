@@ -1,0 +1,43 @@
+---
+title: On-stack data save-load operations
+---
+
+## Instruction format
+
+```
+<prefix> <source> <storage_type> <loc_id> <overwrite>
+```
+
+### Source
+
+| Key  | Value          | Remark            |
+| ---- | -------------- | ----------------- |
+| 0x01 | Constant table | Only loading data |
+| 0x02 | Data slot      |                   |
+| 0x03 | Field          |                   |
+| 0x04 | Array element  |                   |
+| 0x05 | Stack top      |                   |
+
+### Storage type
+
+| Key  | Value     | Remark |
+| ---- | --------- | ------ |
+| 0x00 | Reference |        |
+| 0x01 | Value     |        |
+
+### Location Id
+
+| Source type    | Target          | Remark                                                                               |
+| -------------- | --------------- | ------------------------------------------------------------------------------------ |
+| Constant table | Constant ID     |                                                                                      |
+| Data slot      | Data slot index |                                                                                      |
+| Field          | Field ID        |                                                                                      |
+| Array element  | N/A             | Always 0 since the index may be dynamic. So it is the value on the top of the stack. |
+| Stack top      | N/A             | Always 0                                                                             |
+
+### Overwrite
+
+| Key  | Value | Remark                                                            |
+| ---- | ----- | ----------------------------------------------------------------- |
+| 0x00 | False | The value will be pushed into the stack                           |
+| 0x01 | True  | The value will replace the original value on the top of the stack |

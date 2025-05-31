@@ -1,66 +1,202 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-using Arc.Compiler.PackageGenerator.Models.Builtin;
+﻿using Arc.Compiler.PackageGenerator.Encoders;
+using Arc.Compiler.PackageGenerator.Helpers;
+using Arc.Compiler.PackageGenerator.Interfaces;
+using Arc.Compiler.PackageGenerator.Models.DebuggingInformation;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
-using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace Arc.Compiler.PackageGenerator.Models
 {
-    internal class ArcGeneratorContext
+    public class ArcGeneratorContext
     {
-        public IEnumerable<byte> GeneratedData { get; set; } = [];
+        public ArcScopeTree GlobalScopeTree { get; set; }
 
-        public Dictionary<long, ArcSymbolBase> Symbols { get; set; } = [];
+        public List<byte> GeneratedData { get; set; } = [];
 
-        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
+        public List<ArcRelocationTarget> RelocationTargets { get; } = [];
 
-        public IEnumerable<ArcRelocationLabel> Labels { get; set; } = [];
+        public List<ArcMaterializedRelocationTarget> MaterializedRelocationTargets { get; } = [];
 
-        public ArcPackageDescriptor PackageDescriptor { get; set; }
+        public List<ArcRelocationLabel> Labels { get; } = [];
 
-        public IEnumerable<ArcConstant> Constants { get; set; } = [];
+        public required ArcPackageDescriptor PackageDescriptor { get; set; }
 
-        public void ApplyReloation() { }
+        public List<ArcConstant> Constants { get; } = [];
 
-        public void Append(ArcGeneratorContext result) { }
+        public required ILogger Logger { get; set; }
+
+        public List<ArcCompilationLogBase> Logs { get; set; } = [];
+
+        public ArcPackageSourceInformation SourceInformation { get; set; } = new();
+
+        public void TransformLabelRelocationTargets()
+        {
+            for (var i = 0; i < RelocationTargets.Count; i++)
+            {
+                var target = RelocationTargets[i];
+                // Skip non-label targets
+                if (target.TargetType != ArcRelocationTargetType.Label) continue;
+
+                target.Parameter = ArcRelocationHelper.LocateLabelRelativeLocation(Labels, target.Parameter > 0, target, Math.Abs(target.Parameter));
+
+                RelocationTargets[i] = target;
+            }
+        }
+
+        public void ApplyRelocation()
+        {
+            foreach (var target in MaterializedRelocationTargets)
+            {
+                GeneratedData.ReplaceRange((int)target.Location, target.Data);
+            }
+        }
+
+        public void PreApplyRelocation()
+        {
+            foreach (var target in RelocationTargets)
+            {
+                byte[] data = target.TargetType switch
+                {
+                    ArcRelocationTargetType.Relative => BitConverter.GetBytes(target.Parameter),
+                    ArcRelocationTargetType.Absolute => BitConverter.GetBytes(target.TargetLocation),
+                    ArcRelocationTargetType.Symbol => BitConverter.GetBytes(target.Symbol.Id),
+                    ArcRelocationTargetType.Label => BitConverter.GetBytes(target.Parameter),
+                    _ => throw new UnreachableException(),
+                };
+                MaterializedRelocationTargets.Add(new(target.Location, data));
+            }
+        }
 
         public void Append(ArcPartialGenerationResult result)
         {
-            GeneratedData = GeneratedData.Concat(result.GeneratedData);
-            foreach (var symbol in result.OtherSymbols)
+            RelocationTargets.AddRange(result.RelocationTargets.Select(t =>
             {
-                Symbols[symbol.Id] = symbol;
-            }
-            RelocationTargets = RelocationTargets.Concat(result.RelocationTargets);
-            Labels = Labels.Concat(result.RelocationLabels);
-            Constants = Constants.Concat(result.AddedConstants);
+                t.Location += GeneratedData.Count;
+                return t;
+            }));
+            Labels.AddRange(result.RelocationLabels.Select(l =>
+            {
+                l.Location += GeneratedData.Count;
+                return l;
+            }));
+            Constants.AddRange(result.AddedConstants);
+            GeneratedData.AddRange(result.GeneratedData);
+            SourceInformation.MergeMappings(result.SourceInformation);
         }
 
-        public void LoadFromCompilationUnit(ArcCompilationUnit compilationUnit) { }
-
-        public void LoadPrimitiveTypes()
+        public void Append(ArcGeneratorContext context)
         {
-            foreach (var bt in ArcPersistentData.BaseTypes)
+            context.Labels.ForEach(l =>
             {
-                Symbols.Add(bt.TypeId, bt);
-            }
+                l.Location += GeneratedData.Count;
+                Labels.Add(l);
+            });
+
+            context.RelocationTargets.ForEach(t =>
+            {
+                t.Location += GeneratedData.Count;
+                RelocationTargets.Add(t);
+            });
+
+            Constants.AddRange(context.Constants);
+            GeneratedData.AddRange(context.GeneratedData);
+            SourceInformation.MergeMappings(context.SourceInformation);
         }
 
         public ArcGenerationSource GenerateSource()
         {
-            return GenerateSource([]);
+            return GenerateSource([], GlobalScopeTree.Root);
         }
 
-        public ArcGenerationSource GenerateSource(IEnumerable<IArcLocatable> location)
+        public ArcGenerationSource GenerateSource(
+            IEnumerable<IArcLocatable> location,
+            ArcScopeTreeNodeBase? node = null,
+            IEnumerable<ArcScopeTreeNamespaceNode>? linkedNamespaces = null
+        )
+        {
+            return GenerateSourceFull(location, node!, linkedNamespaces ?? []);
+        }
+
+        public ArcGenerationSource GenerateSource(
+            IEnumerable<IArcLocatable> location,
+            IEnumerable<ArcScopeTreeNamespaceNode>? linkedNamespaces = null,
+            ArcScopeTreeNodeBase? node = null
+        )
+        {
+            return GenerateSourceFull(location, node!, linkedNamespaces ?? []);
+        }
+
+        private ArcGenerationSource GenerateSourceFull(
+            IEnumerable<IArcLocatable> location,
+            ArcScopeTreeNodeBase node,
+            IEnumerable<ArcScopeTreeNamespaceNode> linkedNamespaces
+        )
         {
             return new()
             {
-                AccessibleSymbols = Symbols.Values,
                 PackageDescriptor = PackageDescriptor,
-                ParentSignature = new ArcSignature() { Locators = location }
+                GlobalScopeTree = GlobalScopeTree,
+                ParentSignature = new ArcSignature() { Locators = [.. location] },
+                CurrentNode = node,
+                LinkedNamespaces = linkedNamespaces,
+                Name = PackageDescriptor.Name,
             };
+        }
+
+        public IEnumerable<byte> DumpFullByteStream()
+        {
+            Logger.LogInformation("Dumping full byte stream for {}", PackageDescriptor.Name);
+
+            var result = new List<byte>();
+
+            result.AddRange([0x20, 0x24]);
+
+            result.AddRange(ArcPackageDescriptorEncoder.Encode(this));
+            result.AddRange(ArcSymbolTableEncoder.Encode(this));
+            result.AddRange(ArcConstantTableEncoder.Encode(this));
+            TransformLabelRelocationTargets();
+            PreApplyRelocation();
+            ApplyRelocation();
+            result.AddRange(GeneratedData);
+
+            Logger.LogTrace("Generated bytes: {}", BitConverter.ToString([.. GeneratedData]).Replace("-", " "));
+            Logger.LogInformation("Generated {} bytes in total", GeneratedData.Count);
+
+            return result;
+        }
+
+        public void SetEntrypointFunctionId()
+        {
+            if (PackageDescriptor.Type == ArcPackageType.Executable)
+            {
+                var targetFunction = GlobalScopeTree.FlattenedNodes
+                    .OfType<ArcScopeTreeIndividualFunctionNode>()
+                    .FirstOrDefault(f => f.Annotations.Any(a => a.Key.Id == 0xb11));
+                if (targetFunction == null)
+                {
+                    Logs.Add(new ArcSourceUnlocatableLog(LogLevel.Error, 0, "No entrypoint function found", string.Empty));
+                    return;
+                }
+
+                PackageDescriptor.EntrypointFunctionId = targetFunction.Id;
+            }
+        }
+
+        public void UpdateSourceSymbolInformation()
+        {
+            var nodes = GlobalScopeTree.FlattenedNodes
+                .OfType<IArcEncodableScopeTreeNode>()
+                .OfType<ArcScopeTreeNodeBase>();
+            foreach (var node in nodes)
+            {
+                SourceInformation.SymbolMapping.Add(node.Id, node.Signature);
+            }
         }
     }
 }

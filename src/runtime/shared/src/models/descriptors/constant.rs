@@ -1,0 +1,35 @@
+use crate::models::execution::data::DataValueType;
+use std::collections::HashMap;
+use std::fmt::Debug;
+
+#[derive(Clone)]
+pub struct ConstantDescriptor {
+    pub id: usize,
+    pub type_id: usize,
+    pub is_array: bool,
+    pub raw_value: Vec<u8>,
+    pub decoded_value: DataValueType,
+}
+
+impl Debug for ConstantDescriptor {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[I] 0x{:<016X}  ", self.id)?;
+        write!(f, "[T] 0x{:<016X}  ", self.type_id)?;
+        write!(f, "[L] {:02X?}", self.raw_value)
+    }
+}
+
+#[derive(Clone)]
+pub struct ConstantTable {
+    pub constants: HashMap<usize, ConstantDescriptor>,
+}
+
+impl Debug for ConstantTable {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "=== Constant table")?;
+        for constant in self.constants.values() {
+            writeln!(f, "{:?}", constant)?;
+        }
+        Ok(())
+    }
+}

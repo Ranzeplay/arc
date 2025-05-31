@@ -10,6 +10,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         Char,
         String,
         Bool,
+        Byte,
         None,
         Any,
         Infer
@@ -21,6 +22,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         {
             if (context.KW_INFER() != null) return ArcPrimitiveDataType.Infer;
             if (context.KW_BOOL() != null) return ArcPrimitiveDataType.Bool;
+            if (context.KW_BYTE() != null) return ArcPrimitiveDataType.Byte;
             if (context.KW_CHAR() != null) return ArcPrimitiveDataType.Char;
             if (context.KW_INT() != null) return ArcPrimitiveDataType.Integer;
             if (context.KW_DECIMAL() != null) return ArcPrimitiveDataType.Decimal;
@@ -36,6 +38,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             {
                 ArcPrimitiveDataType.Infer => "infer",
                 ArcPrimitiveDataType.Bool => "bool",
+                ArcPrimitiveDataType.Byte => "byte",
                 ArcPrimitiveDataType.Char => "char",
                 ArcPrimitiveDataType.Integer => "int",
                 ArcPrimitiveDataType.Decimal => "decimal",

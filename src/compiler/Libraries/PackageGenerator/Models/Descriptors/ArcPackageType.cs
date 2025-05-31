@@ -1,8 +1,8 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 {
-    internal enum ArcPackageType
+    public enum ArcPackageType
     {
-        Library,
-        Executable,
+        Library = 0x00,
+        Executable = 0x01,
     }
 }

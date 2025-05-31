@@ -1,15 +1,27 @@
-﻿namespace Arc.Compiler.PackageGenerator.Models.Generation
+﻿using Arc.Compiler.PackageGenerator.Interfaces;
+
+namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcConstant
+    public class ArcConstant
     {
-        public long Id { get; set; }
+        public ulong Id { get; set; }
 
-        public long TypeId { get; set; }
+        public ulong TypeId { get; set; }
 
-        public object Value { get; set; }
+        public required bool IsArray { get; set; }
 
-        public IEnumerable<byte> RawData { get; set; } = [];
+        public required object Value { get; set; }
 
-        public IEnumerable<byte> Encode() => BitConverter.GetBytes(TypeId).Concat(RawData);
+        public required IArcConstantEncoder Encoder { get; set; }
+
+        public IEnumerable<byte> RawData => Encoder.Encode(Value);
+
+        public IEnumerable<byte> Encode() => [
+                ..BitConverter.GetBytes(Id),
+                ..BitConverter.GetBytes(TypeId),
+                ..BitConverter.GetBytes(IsArray),
+                ..BitConverter.GetBytes(RawData.LongCount()),
+                ..RawData
+            ];
     }
 }

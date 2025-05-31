@@ -1,45 +1,68 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
+using Arc.Compiler.PackageGenerator.Models.DebuggingInformation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Models.Generation
 {
-    internal class ArcPartialGenerationResult
+    public class ArcPartialGenerationResult
     {
-        public IEnumerable<byte> GeneratedData { get; set; } = [];
+        public List<byte> GeneratedData { get; init; } = [];
 
-        public IEnumerable<ArcRelocationTarget> RelocationTargets { get; set; } = [];
+        public List<ArcRelocationTarget> RelocationTargets { get; init; } = [];
 
-        public IEnumerable<ArcRelocationLabel> RelocationLabels { get; set; } = [];
+        public List<ArcRelocationLabel> RelocationLabels { get; init; } = [];
 
-        public IEnumerable<ArcDataSlot> DataSlots { get; set; } = [];
+        public List<ArcDataSlot> DataSlots { get; set; } = [];
 
-        public IEnumerable<ArcSymbolBase> OtherSymbols { get; set; } = [];
+        public List<ArcConstant> AddedConstants { get; } = [];
 
-        public IEnumerable<ArcConstant> AddedConstants { get; set; } = [];
+        public long TotalGeneratedDataSlotCount { get; set; }
+
+        public List<ArcCompilationLogBase> Logs { get; init; } = [];
+
+        public ArcPackageSourceInformation SourceInformation { get; set; } = new();
+
+        public bool DiscardResult => Logs.Any(l => l.Level == LogLevel.Error || l.Level == LogLevel.Critical);
 
         public void Append(ArcPartialGenerationResult generationResult)
         {
-            RelocationTargets = RelocationTargets.Concat(generationResult.RelocationTargets.Select(r =>
+            RelocationTargets.AddRange(generationResult.RelocationTargets.Select(r =>
             {
                 if (r.TargetType == ArcRelocationTargetType.Absolute)
                 {
-                    r.Location += GeneratedData.LongCount();
+                    r.TargetLocation += GeneratedData.Count;
                 }
 
+                r.Location += GeneratedData.Count;
+
                 return r;
-            }));
-            RelocationLabels = RelocationLabels.Concat(generationResult.RelocationLabels.Select(l =>
+            }).ToList());
+            RelocationLabels.AddRange(generationResult.RelocationLabels.Select(l =>
             {
-                l.Location += GeneratedData.LongCount();
+                l.Location += GeneratedData.Count;
                 return l;
-            }));
-            DataSlots = DataSlots.Concat(generationResult.DataSlots);
-            OtherSymbols = OtherSymbols.Concat(generationResult.OtherSymbols);
+            }).ToList());
+            DataSlots.AddRange(generationResult.DataSlots);
 
-            GeneratedData = GeneratedData.Concat(generationResult.GeneratedData);
+            GeneratedData.AddRange(generationResult.GeneratedData);
 
-            AddedConstants = AddedConstants.Concat(generationResult.AddedConstants);
+            AddedConstants.AddRange(generationResult.AddedConstants);
+
+            TotalGeneratedDataSlotCount += generationResult.TotalGeneratedDataSlotCount;
+
+            Logs.AddRange(generationResult.Logs);
+
+            SourceInformation.MergeMappings(generationResult.SourceInformation);
+        }
+
+        public static ArcPartialGenerationResult WithLogs(IEnumerable<ArcCompilationLogBase> logs)
+        {
+            var result = new ArcPartialGenerationResult();
+            result.Logs.AddRange(logs);
+            return result;
         }
     }
 }

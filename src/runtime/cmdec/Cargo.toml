@@ -1,0 +1,8 @@
+[package]
+name = "arc_cmdec"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+"arc_shared" = { path = "../shared" }
+log = "~0.4"

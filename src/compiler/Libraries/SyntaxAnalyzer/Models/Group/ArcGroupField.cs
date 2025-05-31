@@ -11,7 +11,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
         public ArcAccessibility Accessibility { get; set; }
 
         public ArcDataDeclarator DataDeclarator { get; set; }
-        
+
         public ArcSourceCodeParser.Arc_group_fieldContext Context { get; }
 
         public ArcGroupField(ArcSourceCodeParser.Arc_group_fieldContext context)

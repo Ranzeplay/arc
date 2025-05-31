@@ -1,14 +1,18 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
+﻿using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal class ArcRelocationTarget
+    public class ArcRelocationTarget
     {
         public ArcRelocationTargetType TargetType { get; set; }
 
         public long Location { get; set; }
 
         private object _destination = null!;
+
+        public long Parameter { get; set; } = 0;
+
+        public required Guid Layer { get; set; }
 
         public long TargetLocation
         {
@@ -62,13 +66,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
             }
         }
 
-        public ArcRelocationLabel Label
+        public ArcRelocationLabelType Label
         {
             get
             {
                 if (TargetType == ArcRelocationTargetType.Label)
                 {
-                    return (ArcRelocationLabel)_destination;
+                    return (ArcRelocationLabelType)_destination;
                 }
                 else
                 {
@@ -88,13 +92,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
             }
         }
 
-        public ArcSymbolBase Symbol
+        public ArcScopeTreeNodeBase Symbol
         {
             get
             {
                 if (TargetType == ArcRelocationTargetType.Symbol)
                 {
-                    return (ArcSymbolBase)_destination;
+                    return (ArcScopeTreeNodeBase)_destination;
                 }
                 else
                 {

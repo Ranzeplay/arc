@@ -49,12 +49,16 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
                 {
                     ExecutionSteps.Add(new ArcStatementReturn(entry.arc_stmt_return()));
                 }
+                else if (entry.arc_stmt_throw() != null)
+                {
+                    ExecutionSteps.Add(new ArcStatementThrow(entry.arc_stmt_throw()));
+                }
                 else
                 {
                     throw new NotImplementedException();
                 }
             }
-            
+
             Context = context;
         }
 

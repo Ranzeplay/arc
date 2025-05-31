@@ -1,0 +1,9 @@
+[package]
+name = "arc_executor"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+arc_shared = { path = "../shared" }
+arc_stdlib = { path = "../stdlib" }
+log = "~0.4"

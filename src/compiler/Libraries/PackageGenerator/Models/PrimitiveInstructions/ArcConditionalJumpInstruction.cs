@@ -10,11 +10,12 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public ArcRelocationTarget Target { get; set; } = target;
 
-        public new ArcPartialGenerationResult Encode(ArcGenerationSource source)
+        public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
+            Target.Location = 1;
             return new ArcPartialGenerationResult
             {
-                GeneratedData = Opcode.Concat(BitConverter.GetBytes((long)0)),
+                GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0)],
                 RelocationTargets = [
                     Target
                 ],

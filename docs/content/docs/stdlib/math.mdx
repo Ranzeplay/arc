@@ -1,0 +1,158 @@
+---
+title: Math
+---
+
+`Arc::Std::Math`
+
+## Groups
+
+None.
+
+## Functions
+
+### AbsInt
+
+```csharp
+public func AbsInt(const i: val int): val int
+```
+
+#### Parameters
+
+- `i`: An integer to get the absolute value.
+
+#### Returns
+
+The absolute value of `i`.
+
+### AbsDecimal
+
+```csharp
+public func AbsDecimal(const d: val decimal): val decimal
+```
+
+#### Parameters
+
+None.
+
+#### Returns
+
+The absolute value of `d`.
+
+### MinInt
+
+```csharp
+public func MinInt(const a: ref int, const b: ref int): ref int
+```
+
+#### Parameters
+
+- `a`: The first integer
+- `b`: The second integer
+
+#### Returns
+
+`a` if a is less than `b`, else `b`.
+
+### MaxInt
+
+```csharp
+public func MaxInt(const a: ref int, const b: ref int): ref int
+```
+
+#### Parameters
+
+- `a`: The first integer
+- `b`: The second integer
+
+#### Returns
+
+`a` if a is greater or equal than `b`, else `b`.
+
+### MinDecimal
+
+```csharp
+public func MinDecimal(const a: ref decimal, const b: ref decimal): ref decimal
+```
+
+#### Parameters
+
+- `a`: The first integer
+- `b`: The second integer
+
+#### Returns
+
+`a` if a is less than `b`, else `b`.
+
+### MaxInt
+
+```csharp
+public func MaxDecimal(const a: ref decimal, const b: ref decimal): ref decimal
+```
+
+#### Parameters
+
+- `a`: The first integer
+- `b`: The second integer
+
+#### Returns
+
+`a` if a is greater or equal than `b`, else `b`.
+
+### Deg2Rad
+
+```csharp
+public func Deg2Rad(const deg: ref decimal): val decimal
+```
+
+#### Parameters
+
+- `deg`: A decimal number in degree
+
+#### Returns
+
+The radian form of the value.
+
+### Deg2Rad
+
+```csharp
+public func Rad2Deg(const rad: ref decimal): val decimal
+```
+
+#### Parameters
+
+- `rad`: A decimal number in radian
+
+#### Returns
+
+The degree form of the value.
+
+### Permutation
+
+```csharp
+public func Permutation(const n: val int, const a: val int): val int
+```
+
+#### Parameters
+
+- `n`
+- `a`
+
+#### Returns
+
+$A_n^a$ or $(n)_a$
+
+### Combination
+
+```csharp
+public func Combination(const n: val int, const a: val int): val int
+```
+
+#### Parameters
+
+- `n`
+- `a`
+
+#### Returns
+
+$C_n^a$ or $\binom na$
+

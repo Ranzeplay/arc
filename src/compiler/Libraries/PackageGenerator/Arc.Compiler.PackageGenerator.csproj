@@ -1,11 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net8.0</TargetFramework>
+		<TargetFramework>net9.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<RootNamespace>Arc.Compiler.PackageGenerator</RootNamespace>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Remove="StdlibSource\Array.script.arc" />
+	  <None Remove="StdlibSource\Compilation.script.arc" />
+	  <None Remove="StdlibSource\Console.script.arc" />
+	  <None Remove="StdlibSource\Math.script.arc" />
+	</ItemGroup>
 
 	<ItemGroup>
 	  <ProjectReference Include="..\SyntaxAnalyzer\Arc.Compiler.SyntaxAnalyzer.csproj" />
@@ -13,6 +20,32 @@
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="Arc.Compiler.Tests" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Resource Include="StdlibSource\Array.script.arc" />
+	  <Resource Include="StdlibSource\Compilation.script.arc" />
+	  <Resource Include="StdlibSource\Console.script.arc" />
+	  <Resource Include="StdlibSource\Math.script.arc" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Models\Builtin\ArcStdlibSource.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>ArcStdlibSource.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Models\Builtin\ArcStdlibSource.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>ArcStdlibSource.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

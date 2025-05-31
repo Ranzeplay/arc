@@ -1,148 +1,109 @@
 parser grammar ArcSourceCodeParser;
+options { tokenVocab=ArcSourceCodeLexer; }
 
-options {
-	tokenVocab = ArcSourceCodeLexer;
-}
+arc_compilation_unit: arc_stmt_link* arc_namespace_block EOF;
 
-arc_compilation_unit: arc_stmt_link* arc_namespace EOF;
+arc_accessibility: KW_PUBLIC | KW_INTERNAL | KW_PROTECTED | KW_PRIVATE;
+arc_mutability: KW_CONSTANT | KW_VARIABLE;
+arc_mem_store_type: KW_VALUE | KW_REFERENCE;
 
-arc_qualified_identifier:	IDENTIFIER (SYMBOL_DOT IDENTIFIER)*;
-arc_scoped_identifier:		IDENTIFIER (OPERATOR_SCOPE IDENTIFIER)*;
-arc_single_identifier:		IDENTIFIER;
-arc_stmt_link:				KEYWORD_LINK arc_scoped_identifier SYMBOL_SEMICOLON;
+arc_namespace_identifier: IDENTIFIER (SCOPE IDENTIFIER)*;
+arc_namespace_declarator: KW_NAMESPACE arc_namespace_identifier;
+arc_namespace_limiter: LBRACKET arc_namespace_identifier RBRACKET;
+arc_single_identifier: IDENTIFIER;
+arc_full_identifier: arc_namespace_limiter DOT arc_single_identifier;
+arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
-arc_annotation: SYMBOL_AT arc_scoped_identifier arc_call_args?;
+arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_NONE | KW_ANY | KW_INFER;
+arc_array_indicator: LBRACKET RBRACKET;
+arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_array_indicator*;
 
-arc_accessibility:
-	KEYWORD_PUBLIC
-	| KEYWORD_INTERNAL
-	| KEYWORD_PROTECTED
-	| KEYWORD_PRIVATE;
+arc_data_declarator: arc_mutability arc_single_identifier COLON arc_data_type;
+arc_self_data_declarator: arc_mutability KW_SELF COLON arc_data_type;
 
-arc_reassignability: KEYWORD_CONST | KEYWORD_VAR;
+arc_arg_list: (arc_data_declarator | arc_self_data_declarator) (COMMA arc_data_declarator)*;
+arc_wrapped_arg_list: LPAREN arc_arg_list? RPAREN;
 
-arc_param_type: KEYWORD_REF | KEYWORD_VAL;
+arc_param_list: arc_expression (COMMA arc_expression)*;
+arc_wrapped_param_list: LPAREN arc_param_list? RPAREN;
 
-arc_function_block: arc_function_declarator arc_wrapped_body;
+arc_annotation: AT arc_flexible_identifier arc_wrapped_param_list?;
 
-arc_function_declarator:
-	arc_annotation* arc_accessibility KEYWORD_FUNCTION arc_single_identifier CONTAINER_OPEN_PAREN arc_function_params?
-		CONTAINER_CLOSE_PAREN SYMBOL_COLON arc_data_type;
+arc_function_declarator: arc_annotation* arc_accessibility KW_FUNCTION arc_single_identifier arc_wrapped_arg_list COLON arc_data_type;
+arc_function_call_base: arc_flexible_identifier arc_wrapped_param_list;
 
-arc_function_params:
-	arc_data_declaration (OPERATOR_COMMA arc_data_declaration)*;
+arc_wrapped_function_body: LBRACE arc_statement* RBRACE;
+arc_function_block: arc_function_declarator arc_wrapped_function_body;
 
-arc_wrapped_body:
-	CONTAINER_OPEN_BRACE arc_exec_step* CONTAINER_CLOSE_BRACE;
+arc_bool_value: KW_TRUE | KW_FALSE;
+arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
+arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
+arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
 
-arc_exec_step:
-	arc_statement | arc_block;
+arc_constructor_call: KW_NEW arc_flexible_identifier arc_wrapped_param_list;
 
-arc_statement: (
-		arc_call_stmt
-		| arc_return_stmt
-		| arc_assignment_stmt
-		| arc_declaration_stmt
-		| arc_break_stmt
-		| arc_continue_stmt
-	) SYMBOL_SEMICOLON;
+arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
-arc_call_stmt:			KEYWORD_CALL arc_function_call;
-arc_return_stmt:		KEYWORD_RETURN arc_expression;
-arc_assignment_stmt:	arc_single_identifier OPERATOR_ASSIGN arc_expression;
-arc_declaration_stmt:	arc_data_declaration;
-arc_break_stmt:			KEYWORD_BREAK;
-arc_continue_stmt:		KEYWORD_CONTINUE;
+arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
+arc_stmt_return: KW_RETURN arc_expression?;
+arc_stmt_decl: arc_data_declarator;
+// TODO: incremental
+arc_stmt_assign: arc_call_chain (ASSIGN | ASSIGN_IF_NULL) arc_expression;
+arc_stmt_break: KW_BREAK;
+arc_stmt_continue: KW_CONTINUE;
+arc_stmt_call: KW_CALL (arc_function_call_base | arc_call_chain);
+arc_stmt_while: KW_WHILE LPAREN arc_expression RPAREN arc_wrapped_function_body;
+arc_stmt_for: KW_FOR LPAREN arc_stmt_decl SEMICOLON arc_expression SEMICOLON arc_stmt_assign RPAREN arc_wrapped_function_body;
+arc_stmt_loop: KW_LOOP arc_wrapped_function_body;
+arc_stmt_foreach: KW_FOREACH LPAREN arc_data_declarator KW_IN arc_expression RPAREN arc_wrapped_function_body;
 
-arc_block:
-	arc_conditional_exec_block
-	| arc_conditional_loop_block
-	| arc_loop_block;
+arc_stmt_if: KW_IF LPAREN arc_expression RPAREN arc_wrapped_function_body (KW_ELIF LPAREN arc_expression RPAREN arc_wrapped_function_body)* (KW_ELSE arc_wrapped_function_body)?;
 
-arc_conditional_block:
-	CONTAINER_OPEN_PAREN arc_expression CONTAINER_CLOSE_PAREN arc_wrapped_body;
+// TODO
+arc_expression: 
+    arc_data_value |
+    arc_wrapped_expression |
+    arc_expression MULTIPLY arc_expression |
+    arc_expression DIVIDE arc_expression |
+    arc_expression MODULO arc_expression |
+    arc_expression PLUS arc_expression |
+    arc_expression MINUS arc_expression |
+    arc_expression BITWISE_LSHIFT arc_expression |
+    arc_expression BITWISE_RSHIFT arc_expression |
+    arc_expression BITWISE_AND arc_expression |
+    arc_expression BITWISE_OR arc_expression |
+    arc_expression BITWISE_XOR arc_expression |
+    arc_expression COMP_LT arc_expression |
+    arc_expression COMP_GT arc_expression |
+    arc_expression COMP_LTE arc_expression |
+    arc_expression COMP_GTE arc_expression |
+    arc_expression COMP_OBJ_EQ arc_expression |
+    arc_expression COMP_REF_EQ arc_expression |
+    arc_expression COMP_OBJ_NEQ arc_expression |
+    arc_expression COMP_REF_NEQ arc_expression |
+    arc_expression LOGICAL_AND arc_expression |
+    arc_expression LOGICAL_OR arc_expression |
+    arc_expression QUESTION arc_expression COLON arc_expression |
+    arc_expression RANGE arc_expression |
+    arc_expression ARROW arc_expression |
+    LOGICAL_NOT (arc_data_value | arc_wrapped_expression) |
+    arc_data_value BITWISE_NOT |
+    arc_wrapped_expression BITWISE_NOT;
+arc_wrapped_expression: LPAREN arc_expression RPAREN;
 
-arc_if_block:
-	KEYWORD_IF arc_conditional_block;
-arc_elif_block:	KEYWORD_ELSE_IF arc_conditional_block;
-arc_else_block:	KEYWORD_ELSE arc_wrapped_body;
+arc_namespace_block: arc_namespace_declarator LBRACE arc_namespace_member* RBRACE;
+arc_namespace_member: arc_function_block | arc_group_block;
 
-arc_conditional_exec_block:	arc_if_block arc_elif_block* arc_else_block?;
-arc_conditional_loop_block:	KEYWORD_WHILE arc_conditional_block;
-arc_loop_block:				KEYWORD_LOOP arc_wrapped_body;
-
-arc_data_declaration:
-	arc_reassignability arc_single_identifier SYMBOL_COLON arc_param_type arc_data_type;
-
-arc_interpolation_string:	OPERATOR_DOLLAR LITERAL_STRING;
-arc_string_values:			LITERAL_STRING | arc_interpolation_string;
-arc_bool_values: KEYWORD_TRUE | KEYWORD_FALSE;
-
-arc_instant_value: NUMBER | arc_string_values | arc_bool_values | KEYWORD_NONE;
-
-arc_value: arc_instant_value | arc_single_identifier | arc_function_call;
-
-arc_call_args:
-	CONTAINER_OPEN_PAREN (
-		arc_expression (OPERATOR_COMMA arc_expression)*
-	)? CONTAINER_CLOSE_PAREN;
-
-arc_function_call: arc_scoped_identifier arc_call_args;
-
-arc_data_type: (arc_primitive_data_type | arc_derivative_data_type) arc_array_data_flag?;
-
-arc_primitive_data_type:
-	KEYWORD_NUMBER
-	| KEYWORD_CHAR
-	| KEYWORD_STRING
-	| KEYWORD_BOOL
-	| KEYWORD_NONE
-	| KEYWORD_ANY
-	| KEYWORD_AUTO;
-
-arc_derivative_data_type:
-	arc_scoped_identifier;
-
-arc_array_data_flag:
-	CONTAINER_OPEN_INDEXER CONTAINER_CLOSE_INDEXER;
-
-arc_expression:
-	arc_value
-	| arc_expression OPERATOR_PLUS arc_expression
-	| arc_expression OPERATOR_MINUS arc_expression
-	| arc_expression OPERATOR_MULTIPLY arc_expression
-	| arc_expression OPERATOR_DIVIDE arc_expression
-	| arc_expression OPERATOR_MODULO arc_expression
-	| arc_expression OPERATOR_AND arc_expression
-	| arc_expression OPERATOR_OR arc_expression
-	| OPERATOR_NOT arc_value
-	| arc_value OPERATOR_QUESTION_MARK
-	| arc_expression OPERATOR_REF_EQUALS arc_expression
-	| arc_expression OPERATOR_NOT_EQUALS arc_expression
-	| arc_expression OPERATOR_LESS_THAN_EQUALS arc_expression
-	| arc_expression OPERATOR_GREATER_THAN_EQUALS arc_expression
-	// < LESS_THAN operator
-	| arc_expression CONTAINER_OPEN_SHARP_PAREN arc_expression
-	// > MORE_THAN operator
-	| arc_expression CONTAINER_CLOSE_SHARP_PAREN arc_expression
-	| CONTAINER_OPEN_PAREN arc_expression CONTAINER_CLOSE_PAREN;
-
-arc_group_block:
-	arc_annotation* arc_accessibility KEYWORD_GROUP arc_single_identifier CONTAINER_OPEN_BRACE arc_group_member*
-		CONTAINER_CLOSE_BRACE;
-
-arc_group_member: arc_group_field | arc_group_function | arc_group_method;
-
-arc_group_field:
-	arc_annotation* arc_accessibility KEYWORD_FIELD arc_data_declaration SYMBOL_SEMICOLON;
-
-arc_method_declarator:
-	arc_annotation* arc_accessibility KEYWORD_METHOD arc_single_identifier CONTAINER_OPEN_PAREN arc_function_params?
-		CONTAINER_CLOSE_PAREN SYMBOL_COLON arc_data_type;
-
-arc_group_method: arc_method_declarator arc_wrapped_body;
-
+arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_wrapped_group_member;
+arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
+arc_group_member: arc_group_constructor | arc_group_destructor | arc_group_function | arc_group_field;
+arc_group_field: arc_annotation* arc_accessibility KW_FIELD arc_data_declarator SEMICOLON;
+arc_group_constructor: arc_annotation* arc_accessibility KW_CONSTRUCTOR arc_wrapped_arg_list arc_wrapped_function_body;
+arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrapped_function_body;
 arc_group_function: arc_function_block;
 
-arc_namespace:
-	KEYWORD_NAMESPACE arc_scoped_identifier CONTAINER_OPEN_BRACE (arc_function_block | arc_group_block)* CONTAINER_CLOSE_BRACE;
+arc_index: LBRACKET arc_expression RBRACKET;
+
+// Call chain
+arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain_term)*;
+arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | KW_SELF) arc_index*;

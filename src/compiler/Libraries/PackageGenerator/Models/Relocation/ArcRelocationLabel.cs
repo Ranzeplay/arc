@@ -1,11 +1,13 @@
-﻿using Arc.Compiler.PackageGenerator.Base;
-
-namespace Arc.Compiler.PackageGenerator.Models.Relocation
+﻿namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal class ArcRelocationLabel : ArcSymbolBase
+    public class ArcRelocationLabel
     {
+        public string Name { get; set; } = "UNKNOWN";
+
         public ArcRelocationLabelType Type { get; set; }
 
         public long Location { get; set; }
+
+        public required Guid Layer { get; set; }
     }
 }

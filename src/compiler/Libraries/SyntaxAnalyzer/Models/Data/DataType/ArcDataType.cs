@@ -8,8 +8,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
     {
         public ArcDataType(ArcSourceCodeParser.Arc_data_typeContext context)
         {
-            IsArray = context.arc_array_indicator() != null;
-            DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Derivative;
+            Dimension = context.arc_array_indicator().Length;
+            DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Complex;
             MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_mem_store_type());
             if (DataType == DataMemberType.Primitive)
             {
@@ -17,8 +17,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             }
             else
             {
-                DerivativeType = new ArcDerivativeDataType(context.arc_flexible_identifier());
+                ComplexType = new ArcComplexDataType(context.arc_flexible_identifier());
             }
+
+            SpecializedGenericTypes = context.arc_generic_specialization_wrapper()?
+                .arc_data_type()
+                .Select(g => new ArcDataType(g)) ?? [];
 
             Context = context;
         }
@@ -28,27 +32,29 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         public enum DataMemberType
         {
             Primitive,
-            Derivative
+            Complex
         }
 
         public ArcPrimitiveDataType? PrimitiveType { get; set; }
 
-        public ArcDerivativeDataType? DerivativeType { get; set; }
+        public ArcComplexDataType? ComplexType { get; set; }
 
         public ArcMemoryStorageType MemoryStorageType { get; set; }
 
-        public bool IsArray { get; set; }
+        public int Dimension { get; set; }
+
+        public IEnumerable<ArcDataType> SpecializedGenericTypes { get; set; }
 
         public ArcSourceCodeParser.Arc_data_typeContext Context { get; }
 
         public string TypeName => DataType switch
         {
             DataMemberType.Primitive => PrimitiveType?.GetTypeName() ?? string.Empty,
-            DataMemberType.Derivative => DerivativeType?.Identifier.ToString() ?? string.Empty,
+            DataMemberType.Complex => ComplexType?.Identifier.ToString() ?? string.Empty,
             _ => string.Empty
         };
 
-        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(IsArray ? "A" : "S")}{TypeName}";
+        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(Dimension > 0 ? "A" : "S")}{TypeName}";
 
         public string GetSignature() => ToString();
     }

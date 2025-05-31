@@ -1,6 +1,6 @@
 ﻿namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
-    internal enum ArcRelocationTargetType
+    public enum ArcRelocationTargetType
     {
         Absolute,
         Relative,

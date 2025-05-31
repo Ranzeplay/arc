@@ -1,6 +1,8 @@
 ﻿using Arc.Compiler.PackageGenerator;
+using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer;
 using Arc.Compiler.SyntaxAnalyzer.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.Tests.PackageGeneration
 {
@@ -8,71 +10,81 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [Category("PackageGeneration")]
     internal class FunctionStatements
     {
+        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<FunctionStatements>();
+
         [Test]
         public void EmptyFunction()
         {
+            _logger.LogInformation("Running EmptyFunction test");
             var text = "namespace Arc::Program { public func main(): val none {} }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
-            var result = Flow.GenerateUnit(unit);
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(21));
         }
 
         [Test]
         public void FunctionWithArguments()
         {
+            _logger.LogInformation("Running FunctionWithArguments test");
             var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
-            var result = Flow.GenerateUnit(unit);
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(21));
         }
 
         [Test]
         public void FunctionWithLessStatements()
         {
+            _logger.LogInformation("Running FunctionWithLessStatements test");
             var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
-            var result = Flow.GenerateUnit(unit);
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(21));
         }
 
         [Test]
         public void FunctionWithAssignmentExpression()
         {
+            _logger.LogInformation("Running FunctionWithAssignmentExpression test");
             var text = @"namespace Arc::Program {
-                            public func main(): val int {
-                                var a: val int; a = 2; a = 2 + 3;
-                            }
-                        }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
-            var result = Flow.GenerateUnit(unit);
+                                public func main(): val int {
+                                    var a: val int; a = 2; a = 2 + 3;
+                                }
+                            }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(8));
-            Assert.That(result.Constants.Count(), Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(21));
+                Assert.That(result.Constants, Has.Count.EqualTo(37));
+            });
         }
 
         [Test]
         public void FunctionWithBlockStatements()
         {
+            _logger.LogInformation("Running FunctionWithBlockStatements test");
             var text = @"
-                        namespace Arc::Program { 
-                            public func main(): val int { 
-                                if (2 < 3) { var a: val int; a = 1; } 
-                                else { var b: val int; b = 2; }
-                                while (2 < 3) { var c: val int; c = 3; } 
-                            }
-                        }";
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text);
-            var unit = new ArcCompilationUnit(compilationUnitContext, "test");
-            var result = Flow.GenerateUnit(unit);
+                            namespace Arc::Program { 
+                                public func main(): val int { 
+                                    if (2 < 3) { var a: val int; a = 1; } 
+                                    else { var b: val int = 2; }
+                                    while (2 < 3) { var c: val int; c = 3; } 
+                                }
+                            }";
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.Symbols, Has.Count.EqualTo(8));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(21));
         }
     }
 }

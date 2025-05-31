@@ -1,4 +1,6 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using System.ComponentModel;
+using System.Text;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
@@ -9,7 +11,9 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             String,
             Integer,
             Decimal,
-            Boolean
+            Boolean,
+            None,
+            Any
         }
 
         public ValueType Type { get; set; }
@@ -46,6 +50,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             BooleanValue = booleanValue;
         }
 
+        private ArcInstantValue()
+        {
+        }
+
         public static ArcInstantValue FromTokens(ArcSourceCodeParser.Arc_instant_valueContext context)
         {
             if (context.NUMBER() != null)
@@ -57,16 +65,34 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
                 }
                 else
                 {
-                    return new ArcInstantValue(new ArcInstantIntegerValue(int.Parse(numberText)));
+                    return new ArcInstantValue(new ArcInstantIntegerValue((long)new Int64Converter().ConvertFromString(numberText)));
                 }
             }
             else if (context.LITERAL_STRING() != null)
             {
-                return new ArcInstantValue(new ArcInstantStringValue(context.LITERAL_STRING().GetText(), false));
+                var text = context.LITERAL_STRING().GetText()[1..^1];
+                // Handle escape sequences
+                text = ConvertToEscapedString(text);
+
+                return new ArcInstantValue(new ArcInstantStringValue(text, false));
             }
             else if (context.arc_bool_value() != null)
             {
                 return new ArcInstantValue(new ArcBooleanValue(context.arc_bool_value().KW_TRUE() != null));
+            }
+            else if (context.KW_ANY() != null)
+            {
+                return new ArcInstantValue
+                {
+                    Type = ValueType.Any
+                };
+            }
+            else if (context.KW_NONE() != null)
+            {
+                return new ArcInstantValue
+                {
+                    Type = ValueType.None
+                };
             }
             else
             {
@@ -76,11 +102,96 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 
         public string TypeName => Type switch
         {
-            ValueType.String => "str",
+            ValueType.String => "string",
             ValueType.Integer => "int",
             ValueType.Decimal => "decimal",
             ValueType.Boolean => "bool",
+            ValueType.None => "none",
+            ValueType.Any => "any",
             _ => throw new NotImplementedException(),
         };
+
+        public object GetRawValue()
+        {
+            return Type switch
+            {
+                ValueType.String => StringValue!.Value,
+                ValueType.Integer => IntegerValue!.Value,
+                ValueType.Decimal => DecimalValue!.Value,
+                ValueType.Boolean => BooleanValue!.Value,
+                ValueType.None => Array.Empty<byte>(),
+                ValueType.Any => Array.Empty<byte>(),
+                _ => throw new InvalidCastException(),
+            };
+        }
+
+        public static string ConvertToEscapedString(string input)
+        {
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < input.Length; i++)
+            {
+                // Check for escape sequence
+                if (i < input.Length - 1 && input[i] == '\\')
+                {
+                    char nextChar = input[i + 1];
+                    switch (nextChar)
+                    {
+                        case 'n':
+                            result.Append('\n');
+                            break;
+                        case 'r':
+                            result.Append('\r');
+                            break;
+                        case 't':
+                            result.Append('\t');
+                            break;
+                        case '\\':
+                            result.Append('\\');
+                            break;
+                        case '"':
+                            result.Append('"');
+                            break;
+                        case '\'':
+                            result.Append('\'');
+                            break;
+                        case 'b':
+                            result.Append('\b');
+                            break;
+                        case 'f':
+                            result.Append('\f');
+                            break;
+                        case 'u':
+                            // Handle Unicode escape sequences \uXXXX
+                            if (i + 5 < input.Length)
+                            {
+                                string hex = input.Substring(i + 2, 4);
+                                if (int.TryParse(hex, System.Globalization.NumberStyles.HexNumber, null, out int unicode))
+                                {
+                                    result.Append((char)unicode);
+                                    i += 5; // Skip the unicode sequence
+                                    continue;
+                                }
+                            }
+                            result.Append(nextChar);
+                            break;
+                        default:
+                            // If it's not a recognized escape sequence, keep the backslash and the character
+                            result.Append('\\');
+                            result.Append(nextChar);
+                            break;
+                    }
+                    i++; // Skip the next character since we've already processed it
+                }
+                else
+                {
+                    result.Append(input[i]);
+                }
+            }
+
+            return result.ToString();
+        }
     }
 }
