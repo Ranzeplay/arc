@@ -17,7 +17,6 @@ title: Symbol
 
 | Key       | Type     | Description                    |
 | --------- | -------- | ------------------------------ |
-| Signature | `string` | The signature of the namespace |
 
 ## Function descriptor
 
@@ -25,24 +24,24 @@ title: Symbol
 | ------------------- | ------------ | ----------------------------------------------------------- |
 | Entrypoint position | `u64`        | The signature of the function                               |
 | Block length        | `u64`        | The total length of instruction byte stream of the function |
-| Signature           | `string`     | The signature of the namespace                              |
 | Return value type   | `DataType`   | Data type of return value                                   |
-| Parameter type      | `DataType[]` | Data type of parameters of the function                     |
+| Parameter types     | `DataType[]` | Data type of parameters of the function                     |
+| Annotation types    | `u64[]`      | Annotation id applied to the function                       |
+| Generics types      | `u64[]`      | List of proxy ids of generics types used in the function    |
 
 ## Group field descriptor
 
-| Key                  | Type       | Description                |
-| -------------------- | ---------- | -------------------------- |
-| Signature            | `string`   | The signature of the field |
-| Containing data type | `DataType` | Data type of the field     |
+| Key                  | Type       | Description            |
+| -------------------- | ---------- | ---------------------- |
+| Containing data type | `DataType` | Data type of the field |
 
 ## Data type descriptor
 
-| Key        | Type     | Description                                                                            |
-| ---------- | -------- | -------------------------------------------------------------------------------------- |
-| Category   | `bool`   | Decide whether it is primitive(`true`) or complex(`false`)                             |
-| Signature  | `string` | The signature of the data type                                                         |
-| *Group id* | `u64`    | If it is complex type, then it stores the id of the group which is related to the type |
+| Key                       | Type         | Description                                                                            |
+| ------------------------- | ------------ | -------------------------------------------------------------------------------------- |
+| Category                  | `bool`       | Decide whether it is primitive(`true`) or complex(`false`)                             |
+| *Group id*                | `u64`        | If it is complex type, then it stores the id of the group which is related to the type |
+| Specialized generic types | `DataType[]` | Data type of parameters of the function                                                |
 
 ## Constant descriptor
 
@@ -50,11 +49,12 @@ Currently unused.
 
 ## Group descriptor
 
-| Key            | Type     | Description                             |
-| -------------- | -------- | --------------------------------------- |
-| Signature      | `string` | The signature of the group              |
-| Fields id      | `u64[]`  | List of id of fields in the group       |
-| Constructor id | `u64[]`  | List of id of constructors in the group |
-| Destructor id  | `u64[]`  | List of id of destructors in the group  |
-| Function id    | `u64[]`  | List of id of functions in the group    |
-| Subgroup id    | `u64[]`  | List of id of subgroups in the group    |
+| Key            | Type     | Description                                              |
+| -------------- | -------- | -------------------------------------------------------- |
+| Signature      | `string` | The signature of the group                               |
+| Fields id      | `u64[]`  | List of id of fields in the group                        |
+| Constructor id | `u64[]`  | List of id of constructors in the group                  |
+| Destructor id  | `u64[]`  | List of id of destructors in the group                   |
+| Function id    | `u64[]`  | List of id of functions in the group                     |
+| Subgroup id    | `u64[]`  | List of id of subgroups in the group                     |
+| Generics types | `u64[]`  | List of proxy ids of generics types used in the function |
