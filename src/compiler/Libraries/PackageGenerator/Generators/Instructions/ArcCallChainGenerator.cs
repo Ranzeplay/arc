@@ -111,7 +111,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy.ResolvedType)!;
 
             // Constructor is a function that uses `self`
-            result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType).Encode(source));
+            result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType, constructor.SpecializedGenericTypes).Encode(source));
             foreach (var param in constructor.Parameters)
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param, true));
@@ -121,7 +121,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // TODO: Implement a more robust way to determine the constructor
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
             var constructorId = dataTypeGroup!.Constructors.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
-            result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1).Encode(source));
+            result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1, constructor.SpecializedGenericTypes).Encode(source));
 
             var dataDeclDesc = new ArcDataDeclarationDescriptor
             {

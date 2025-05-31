@@ -26,7 +26,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
 
-            result.Append(new ArcFunctionCallInstruction(funcId, (uint)totalArgs).Encode(source));
+            result.Append(new ArcFunctionCallInstruction(funcId, (uint)totalArgs, funcCall.SpecializedGenericTypes).Encode(source));
 
             return result;
         }

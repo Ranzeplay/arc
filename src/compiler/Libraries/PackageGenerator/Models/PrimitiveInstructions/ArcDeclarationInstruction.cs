@@ -42,6 +42,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 SlotId = (uint)source.LocalDataSlots.Count,
             };
 
+            var specializedGenericTypeId = DataDeclarator.DataType.SpecializedGenericTypes.Select(t => ArcDataTypeHelper.GetDataType(source, t)?.ResolvedType.TypeId ?? 0);
+
             return new ArcPartialGenerationResult
             {
                 // TODO: use bitmask
@@ -51,6 +53,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
                     .. BitConverter.GetBytes(dataTypeNode?.ResolvedType.TypeId ?? 0),
+                    .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes),
                 ],
                 DataSlots = [slot],
                 TotalGeneratedDataSlotCount = 1,
