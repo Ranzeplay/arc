@@ -38,7 +38,7 @@ arc_function_block: arc_function_declarator arc_wrapped_function_body;
 arc_bool_value: KW_TRUE | KW_FALSE;
 arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
-arc_data_value: arc_instant_value | arc_type_value | arc_call_chain;
+arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | arc_enum_accessor;
 
 arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper arc_wrapped_param_list;
 
@@ -93,7 +93,7 @@ arc_expression:
 arc_wrapped_expression: LPAREN arc_expression RPAREN;
 
 arc_namespace_block: arc_namespace_declarator LBRACE arc_namespace_member* RBRACE;
-arc_namespace_member: arc_function_block | arc_group_block;
+arc_namespace_member: arc_function_block | arc_group_block | arc_enum_declarator;
 
 arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_group_member;
 arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
@@ -113,3 +113,7 @@ arc_self_wrapper: KW_SELF;
 
 arc_generic_declaration_wrapper: COMP_LT arc_single_identifier (COMMA arc_single_identifier)* COMP_GT;
 arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION) COMP_GT;
+
+arc_enum_declarator: arc_annotation* arc_accessibility KW_ENUM arc_single_identifier LBRACE (arc_enum_member (COMMA arc_enum_member)*)? RBRACE;
+arc_enum_member: arc_annotation* arc_single_identifier;
+arc_enum_accessor: arc_flexible_identifier DOT arc_single_identifier;

@@ -125,6 +125,7 @@ KW_WITH: 'with';
 KW_LIFETIME: 'lifetime';
 KW_TYPEOF: 'typeof';
 KW_SELF: 'self';
+KW_ENUM: 'enum';
 
 LITERAL_STRING : '"' (~["\r\n\\] | '\\' .)* '"';
 WHITESPACE : [ \t\r\n]+ -> skip ;

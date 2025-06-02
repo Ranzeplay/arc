@@ -1,6 +1,14 @@
 link Arc::Std;
 
 namespace Arc::Program {
+	public enum HttpMethods {
+		GET,
+		POST,
+		PUT,
+		PATCH,
+		DELETE
+	}
+
 	@Export
 	public group ArcExample {
 		@Getter

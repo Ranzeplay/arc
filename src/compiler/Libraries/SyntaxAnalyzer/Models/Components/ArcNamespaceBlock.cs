@@ -14,17 +14,22 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 
         public IEnumerable<ArcBlockIndependentFunction> Functions { get; set; }
 
+        public IEnumerable<ArcBlockEnum> EnumBlocks { get; set; }
+
         public ArcSourceCodeParser.Arc_namespace_blockContext Context { get; }
 
         public ArcNamespaceBlock(ArcSourceCodeParser.Arc_namespace_blockContext context)
         {
             Identifier = new(context.arc_namespace_declarator().arc_namespace_identifier());
-            Functions = context.arc_namespace_member().ToList()
-                .FindAll(f => f.arc_function_block() != null)
+            Functions = context.arc_namespace_member()
+                .Where(f => f.arc_function_block() != null)
                 .Select(f => new ArcBlockIndependentFunction(f.arc_function_block()));
-            Groups = context.arc_namespace_member().ToList()
-                .FindAll(g => g.arc_group_block() != null)
+            Groups = context.arc_namespace_member()
+                .Where(g => g.arc_group_block() != null)
                 .Select(g => new ArcGroup(g.arc_group_block()));
+            EnumBlocks = context.arc_namespace_member()
+                .Where(m => m.arc_enum_declarator() != null)
+                .Select(e => new ArcBlockEnum(e.arc_enum_declarator()));
 
             Context = context;
         }

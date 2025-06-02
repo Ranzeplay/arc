@@ -1,4 +1,5 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
@@ -12,6 +13,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
             InstantValue,
             TypeValue,
             CallChain,
+            EnumAccessor,
             None
         }
 
@@ -22,6 +24,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
         public ArcDataType? TypeValue { get; set; }
 
         public ArcCallChain? CallChain { get; set; }
+
+        public ArcEnumAccessor? EnumAccessor { get; set; }
 
         public ArcDataValue(ArcInstantValue value)
         {
@@ -39,6 +43,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
         {
             Type = ValueType.CallChain;
             CallChain = chain;
+        }
+
+        public ArcDataValue(ArcEnumAccessor enumAccessor)
+        {
+            Type = ValueType.EnumAccessor;
+            EnumAccessor = enumAccessor;
         }
 
         /// <summary>
@@ -62,6 +72,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
             else if (context.arc_call_chain() != null)
             {
                 return new ArcDataValue(new ArcCallChain(context.arc_call_chain()));
+            }
+            else if (context.arc_enum_accessor() != null)
+            {
+                return new ArcDataValue(new ArcEnumAccessor(context.arc_enum_accessor()));
             }
             else
             {
