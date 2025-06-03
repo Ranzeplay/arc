@@ -1,72 +1,91 @@
-# Arc Programming Language Roadmap
+# Roadmap
 
-This roadmap outlines the development plan for the Arc programming language, including key milestones, features, and timeline estimates.
+This roadmap outlines the development plan for the Arc programming language, including key milestones and language features.
 
-## Phase 1: Foundation (1-3 months)
-- [ ] Define core language syntax and semantics
-- [ ] Implement lexer and parser
-- [ ] Create basic AST (Abstract Syntax Tree) representation
-- [ ] Develop simple interpreter for MVP functionality
-- [ ] Set up CI/CD pipeline for testing
-- [ ] Write initial language specification document
+## Work in Progress
 
-## Phase 2: Core Features (3-6 months)
-- [ ] Type system implementation
-  - [ ] Primitive types
-  - [ ] User-defined types
-  - [ ] Type inference
-- [ ] Memory management system
-- [ ] Basic standard library
-  - [ ] I/O operations
-  - [ ] Data structures
-  - [ ] String manipulation
-- [ ] Error handling mechanism
-- [ ] Module/package system
+- Enum support
+- Generics support
+- Reference/value data
+- Code generator error handling
 
-## Phase 3: Compiler Development (6-9 months)
-- [ ] Implement code generation backend
-  - [ ] IR (Intermediate Representation)
-  - [ ] Optimization passes
-- [ ] Target platform compilation (initially x86_64)
-- [ ] Implement basic optimizations
-- [ ] Create toolchain (compiler, linker, etc.)
+## Reviewing
 
-## Phase 4: Advanced Features (9-12 months)
-- [ ] Concurrency model
-- [ ] Advanced type system features
-  - [ ] Generics
-  - [ ] Traits/interfaces
-- [ ] Standard library expansion
-- [ ] Foreign Function Interface (FFI)
-- [ ] Debug tooling
-- [ ] REPL environment
+- Compiler type checking
 
-## Phase 5: Ecosystem Building (12+ months)
-- [ ] Package manager
-- [ ] IDE integration
-  - [ ] Syntax highlighting
-  - [ ] Code completion
-  - [ ] Debugging support
-- [ ] Documentation generation tools
-- [ ] Community building
-  - [ ] Website and documentation
-  - [ ] Example projects
-  - [ ] Tutorials and guides
+## Planned
 
-## Long-term Goals
+### Core Language Features
+
+- Foreign Function Interface (FFI)
+- Module system
+- Standard library design
+  - Operating system interfaces
+  - Networking
+  - File system operations
+  - String manipulation
+  - Elementary data structures (lists, maps, sets, etc.)
+  - Algorithms (sorting, searching, etc.)
+  - Concurrency primitives
+- Concurrency model
+- Generics constraints
+- Type inference
+- Error handling
+- Primitive types
+  - Byte
+
+### Maintenance
+
+- Set up CI/CD pipeline
+- Code formatting and linting tools
+- Version control best practices
+- Documentation standards
+- Code review process
+
+### Ecosystem Development
+
+- Package management system
+- Debugging tools
+- IDE integration
+  - Syntax highlighting
+  - Code completion
+  - Debugging support
+- Documentation generation tools
+- Community building
+  - Website and forums
+  - Example projects
+  - Tutorials and guides
+  - Package registry
+
+## Finished & Inactive
+
+- Grammar and syntax design
+- Initial lexer implementation
+  - Tokenization
+  - Early error detection
+- Basic parser functionality
+  - Abstract Syntax Tree (AST) representation
+  - Parsing error handling
+- Basic package generator
+  - AST to instruction translation
+  - Scope tree construction
+  - Symbol table management
+  - Constant pool management
+  - Package output generation
+- Instruction set design
+- Initial code generation backend
+- Documentation website setup
+- Primitive type system design
+- Group type support
+- Basic memory management
+
+### Long-term Goals
+
 - Cross-platform support
-- Self-hosting compiler
+- Compiler bootstrapping (self-hosting)
 - Performance benchmarking and optimization
+- Optimize grammar and syntax for better coding experience
 - Domain-specific features for target use cases
-
-## Timeline Visualization
-```
-Phase 1 ───────────                                  
-           Phase 2 ───────────────                   
-                       Phase 3 ───────────────        
-                                   Phase 4 ───────────────
-                                                   Phase 5 ───────>
-```
+- REPL (Read-Eval-Print Loop) support via interpreter
 
 This roadmap is subject to change as the project evolves and priorities shift.
-
