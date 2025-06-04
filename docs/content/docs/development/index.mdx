@@ -2,90 +2,12 @@
 title: Development
 ---
 
-## Clone source code repository
+# Arc Development Documentation
 
-```bash
-git clone https://github.com/Ranzeplay/arc
-```
+Welcome to the development documentation for Arc. This section provides the information you need to contribute to Arc development.
 
-## Repository structure
+## Development Guides
 
-We use monorepo structure.
-
-See *README.md* in the root directory of the repository for more information.
-
-## About `SCOPE` file
-
-You will find `SCOPE` file in some directories, it is a plain text file, meaning that the directory and its subdirectories are in the scope it described. When commiting, we need to point out which scope we are changing.
-
-## Commit standard
-
-View *COMMIT_STANDARD.md* in the root directory of the repository.
-
-## Development environment
-
-### Compiler
-
-- .NET SDK 9.0
-
-### Runtime
-
-- Rust (v1.86 or later)
-- Cargo (v1.86 or later)
-
-## Docs
-
-- Node.js (v20.15 or later)
-- PNPM (v10.11 or later)
-
-## Install dependencies
-
-### Compiler
-
-In `src/compiler`, run the following command to install dependencies:
-
-```bash
-dotnet restore
-```
-
-### Runtime
-
-In `src/runtime`, run the following command to install dependencies:
-
-```bash
-cargo fetch
-```
-
-### Docs
-
-In `docs`, run the following command to install dependencies:
-
-```bash
-pnpm install
-```
-
-## Build
-
-### Compiler
-
-In `src/compiler`, run the following command to build the compiler:
-
-```bash
-dotnet build
-```
-
-### Runtime
-
-In `src/runtime`, run the following command to build the runtime:
-
-```bash
-cargo build
-```
-
-### Docs
-
-In `docs`, run the following command to build the documentation:
-
-```bash
-pnpm run build
-```
+- [Getting Started](./getting-started) - Clone repository, understand structure and commit standards
+- [Environment](./environment) - Development environment requirements and dependency installation
+- [Build](./build) - How to build each component of the Arc project

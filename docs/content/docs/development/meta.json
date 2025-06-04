@@ -1,5 +1,11 @@
 {
   "title": "Development",
   "root": true,
-  "icon": "GitBranch"
+  "icon": "GitBranch",
+  "pages": [
+    "index",
+    "getting-started",
+    "environment",
+    "build"
+  ]
 }

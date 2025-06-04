@@ -1,0 +1,45 @@
+---
+title: Environment
+---
+
+## Preliminaries
+
+### Compiler
+
+- .NET SDK 9.0
+
+### Runtime
+
+- Rust (v1.86 or later)
+- Cargo (v1.86 or later)
+
+### Docs
+
+- Node.js (v20.15 or later)
+- PNPM (v10.11 or later)
+
+## Install dependencies
+
+### Compiler
+
+In `src/compiler`, run the following command to install dependencies:
+
+```bash
+dotnet restore
+```
+
+### Runtime
+
+In `src/runtime`, run the following command to install dependencies:
+
+```bash
+cargo fetch
+```
+
+### Docs
+
+In `docs`, run the following command to install dependencies:
+
+```bash
+pnpm install
+```

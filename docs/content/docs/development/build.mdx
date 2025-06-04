@@ -1,0 +1,29 @@
+---
+title: Build
+---
+
+Make sure that you have set up your development environment as described in the [Environment](./environment) guide before proceeding with the build instructions.
+
+## Compiler
+
+In `src/compiler`, run the following command to build the compiler:
+
+```bash
+dotnet build
+```
+
+## Runtime
+
+In `src/runtime`, run the following command to build the runtime:
+
+```bash
+cargo build
+```
+
+## Docs
+
+In `docs`, run the following command to build the documentation:
+
+```bash
+pnpm run build
+```
