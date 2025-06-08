@@ -49,7 +49,7 @@ This documentation site provides comprehensive guides, references, and examples 
 
 ```
 arc-docs/
-├── app/                    # Next.js app directory
+├── app/                   # Next.js app directory
 │   ├── (home)/            # Home page route group
 │   ├── docs/              # Documentation pages
 │   ├── api/               # API routes (search)
@@ -124,7 +124,6 @@ $$
 ## 🔗 Related Links
 
 - [Arc Programming Language Repository](https://github.com/Ranzeplay/arc)
-- [Arc Language Documentation](https://docs.arc-lang.dev) (if deployed)
 - [Fumadocs Documentation](https://fumadocs.vercel.app/)
 
 ## 🤝 Contributing
