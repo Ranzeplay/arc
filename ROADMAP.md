@@ -79,7 +79,7 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Group type support
 - Basic memory management
 
-### Long-term Goals
+## Long-term Goals
 
 - Cross-platform support
 - Compiler bootstrapping (self-hosting)
