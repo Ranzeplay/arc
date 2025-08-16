@@ -25,8 +25,13 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             {
                 errorLog = new ArcSourceLocatableLog(LogLevel.Error, 0, "Data type not found", source.Name, DataDeclarator.Context);
             }
-
+            
             var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy?.ResolvedType!);
+            var dataTypeId = dataTypeNode?.ResolvedType.TypeId ?? ulong.MaxValue;
+            if (dataTypeNode == null)
+            {
+                // Search for enums
+            }
 
             var slot = new ArcDataSlot
             {

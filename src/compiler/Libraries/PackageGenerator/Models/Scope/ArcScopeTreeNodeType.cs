@@ -11,6 +11,8 @@
         FunctionData,
         DataType,
         GenericType,
-        Annotation
+        Annotation,
+        Enum,
+        EnumMember
     }
 }
