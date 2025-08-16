@@ -1,4 +1,5 @@
 link Arc::Std::Console;
+link Arc::Std::Compilation;
 
 namespace Arc::Program {
 	# @Export
