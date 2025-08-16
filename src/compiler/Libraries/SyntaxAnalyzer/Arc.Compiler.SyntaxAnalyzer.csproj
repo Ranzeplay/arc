@@ -25,21 +25,19 @@
 			<Generator>MSBuild:Compile</Generator>
 			<Listener>false</Listener>
 			<GAtn>true</GAtn>
+			<AllowAntlr4cs>true</AllowAntlr4cs>
 		</Antlr4>
 		<Antlr4 Include="ArcSourceCodeParser.g4">
 			<Package>Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR</Package>
 			<Visitor>true</Visitor>
 			<Generator>MSBuild:Compile</Generator>
 			<Listener>false</Listener>
+			<AllowAntlr4cs>true</AllowAntlr4cs>
 		</Antlr4>
 	</ItemGroup>
 
 	<ItemGroup>
 		<InternalsVisibleTo Include="Arc.Compiler.Tests" />
 	</ItemGroup>
-
-	<PropertyGroup>
-		<Antlr4UseCSharpGenerator>True</Antlr4UseCSharpGenerator>
-	</PropertyGroup>
 
 </Project>

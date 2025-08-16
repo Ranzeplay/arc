@@ -14,7 +14,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 
         public IEnumerable<ArcBlockIndependentFunction> Functions { get; set; }
 
-        public IEnumerable<ArcBlockEnum> EnumBlocks { get; set; }
+        public IEnumerable<ArcBlockEnum> Enums { get; set; }
 
         public ArcSourceCodeParser.Arc_namespace_blockContext Context { get; }
 
@@ -27,7 +27,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
             Groups = context.arc_namespace_member()
                 .Where(g => g.arc_group_block() != null)
                 .Select(g => new ArcGroup(g.arc_group_block()));
-            EnumBlocks = context.arc_namespace_member()
+            Enums = context.arc_namespace_member()
                 .Where(m => m.arc_enum_declarator() != null)
                 .Select(e => new ArcBlockEnum(e.arc_enum_declarator()));
 
