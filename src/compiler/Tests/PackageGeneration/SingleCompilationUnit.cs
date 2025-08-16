@@ -73,20 +73,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
-
-            context.PackageDescriptor = new ArcPackageDescriptor()
-            {
-                Type = ArcPackageType.Executable,
-                Name = "Test",
-                Version = 0,
-                RootGroupTableEntryPos = 0,
-                RootFunctionTableEntryPos = 0,
-                RootConstantTableEntryPos = 0,
-                RegionTableEntryPos = 0,
-                EntrypointFunctionId = 0,
-                DataAlignmentLength = 8
-            };
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Executable));
 
             var outputStream = context.DumpFullByteStream();
 
@@ -114,19 +101,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
-            context.PackageDescriptor = new ArcPackageDescriptor()
-            {
-                Type = ArcPackageType.Executable,
-                Name = "Test",
-                Version = 0,
-                RootGroupTableEntryPos = 0,
-                RootFunctionTableEntryPos = 0,
-                RootConstantTableEntryPos = 0,
-                RegionTableEntryPos = 0,
-                EntrypointFunctionId = 0,
-                DataAlignmentLength = 8
-            };
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Executable));
             context.SetEntrypointFunctionId();
             var outputStream = context.DumpFullByteStream();
             Assert.That(outputStream, Is.Not.Null);
@@ -173,19 +148,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
-            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Library));
-            context.PackageDescriptor = new ArcPackageDescriptor()
-            {
-                Type = ArcPackageType.Executable,
-                Name = "Test",
-                Version = 0,
-                RootGroupTableEntryPos = 0,
-                RootFunctionTableEntryPos = 0,
-                RootConstantTableEntryPos = 0,
-                RegionTableEntryPos = 0,
-                EntrypointFunctionId = 0,
-                DataAlignmentLength = 8
-            };
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Executable));
             context.SetEntrypointFunctionId();
             var outputStream = context.DumpFullByteStream();
             Assert.That(outputStream, Is.Not.Null);
