@@ -1,0 +1,12 @@
+namespace Arc::Lib {
+    public enum Status {
+        ONLINE,
+        BUSY,
+        OFFLINE
+    }
+    
+    public func test(): val none {
+        var status: val Status;
+        status = Status.ONLINE;
+    }
+}

@@ -42,7 +42,7 @@ arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | arc_enum_a
 
 arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper arc_wrapped_param_list;
 
-arc_statement: ((arc_stmt_assign | arc_stmt_decl | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call | arc_stmt_throw) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
+arc_statement: ((arc_stmt_decl | arc_stmt_assign | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call | arc_stmt_throw) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
 arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
 arc_stmt_return: KW_RETURN arc_expression?;
