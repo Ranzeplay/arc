@@ -10,14 +10,16 @@ public static class ArcEnumGenerator
         var node = new ArcScopeTreeEnumNode
         {
             SyntaxTree = syntaxTree,
-            Children = syntaxTree.Members
-                .Select(m => new ArcScopeTreeEnumMemberNode
-                    {
-                        SyntaxTree = m
-                    })
-                .OfType<ArcScopeTreeNodeBase>()
-                .ToList()
+            Children = []
         };
+
+        var members = syntaxTree.Members
+            .Select(m => new ArcScopeTreeEnumMemberNode
+            {
+                SyntaxTree = m,
+            });
+
+        node.AddChildren(members);
 
         return node;
     }

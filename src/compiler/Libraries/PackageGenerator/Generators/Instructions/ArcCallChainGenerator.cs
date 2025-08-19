@@ -97,7 +97,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return (result, termTypeDecl);
         }
 
-        public static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTermConstructor(ArcConstructorCall constructor, ArcGenerationSource source)
+        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTermConstructor(ArcConstructorCall constructor, ArcGenerationSource source)
         {
             var result = new ArcPartialGenerationResult();
 

@@ -10,6 +10,6 @@ namespace Arc.Compiler.PackageGenerator.Base
 
         public string FullName { get; set; } = identifier;
 
-        public ArcSymbolScope Scope { get; set; }
+        public ArcSymbolScope Scope { get; set; } = new() { Type = ArcSymbolScopeType.CurrentPackage, Remark = "Default scope for types" };
     }
 }

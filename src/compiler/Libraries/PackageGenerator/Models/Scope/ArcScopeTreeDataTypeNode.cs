@@ -1,21 +1,26 @@
 ﻿using Arc.Compiler.PackageGenerator.Base;
 using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    public class ArcScopeTreeDataTypeNode(ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode, IArcDataTypeProxy
+    public class ArcScopeTreeDataTypeNode(ArcDataTypeType typeType, ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode, IArcDataTypeProxy
     {
         public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
         public bool IsInternal { get; set; } = dataType is ArcBaseType;
+
+        public ArcDataTypeType ArcDataTypeType { get; set; } = typeType;
 
         public ArcTypeBase DataType { get; set; } = dataType;
 
         public string ShortName { get; set; } = shortName;
 
         public ArcScopeTreeGroupNode? ComplexTypeGroup { get; set; }
+
+        public ArcScopeTreeEnumNode? EnumGroup { get; set; }
 
         public override string SignatureAddend => "T" + ShortName;
 
@@ -36,6 +41,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 ..(!IsInternal ? BitConverter.GetBytes(ComplexTypeGroup?.Id ?? 0xffffffff) : [])
             ];
 
-        public static ArcScopeTreeDataTypeNode Placeholder() => new(ArcBaseType.Placeholder(), "INVALID");
+        public static ArcScopeTreeDataTypeNode Placeholder() => new(ArcDataTypeType.Primitive, ArcBaseType.Placeholder(), "INVALID");
     }
 }

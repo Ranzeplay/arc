@@ -27,11 +27,6 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
             }
             
             var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy?.ResolvedType!);
-            var dataTypeId = dataTypeNode?.ResolvedType.TypeId ?? ulong.MaxValue;
-            if (dataTypeNode == null)
-            {
-                // Search for enums
-            }
 
             var slot = new ArcDataSlot
             {

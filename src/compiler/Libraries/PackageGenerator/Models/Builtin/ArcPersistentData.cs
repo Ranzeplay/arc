@@ -1,4 +1,5 @@
-﻿using Arc.Compiler.PackageGenerator.Models.Scope;
+﻿using Arc.Compiler.PackageGenerator.Models.Intermediate;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 
 namespace Arc.Compiler.PackageGenerator.Models.Builtin
 {
@@ -34,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
                 node = node.AddChild(new ArcScopeTreeNamespaceNode("Base"));
                 node.AddChildren(BaseTypes.Select(t =>
                 {
-                    var node = new ArcScopeTreeDataTypeNode(t, t.Identifier);
+                    var node = new ArcScopeTreeDataTypeNode(ArcDataTypeType.Primitive, t, t.Identifier);
                     node.Id = t.TypeId;
                     return node;
                 }));
