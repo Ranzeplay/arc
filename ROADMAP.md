@@ -33,6 +33,9 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Error handling
 - Primitive types
   - Byte
+- Syntactic sugar
+  - Guard statement
+  - Assignment on declaration
 
 ### Maintenance
 
