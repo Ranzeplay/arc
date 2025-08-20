@@ -7,6 +7,7 @@
         Field = 0x03,
         ArrayElement = 0x04,
         StackTop = 0x05,
+        Symbol = 0x06,
         Invalid = 0x00
     }
 }

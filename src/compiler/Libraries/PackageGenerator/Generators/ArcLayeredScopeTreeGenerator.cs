@@ -56,7 +56,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 var typeDesc = new ArcEnumType(node);
                 var typeNode = new ArcScopeTreeDataTypeNode(ArcDataTypeType.Enum, typeDesc, node.Name)
                 {
-                    EnumGroup = node
+                    EnumType = node
                 };
 
                 current.AddChild(typeNode);

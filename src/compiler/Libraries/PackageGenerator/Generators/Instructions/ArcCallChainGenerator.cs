@@ -19,11 +19,22 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var result = new ArcPartialGenerationResult();
 
             ArcDataDeclarationDescriptor? lastTermTypeDecl;
+            
+            // Unable to resolve, resolve as a regular call chain
 
             int skipCount = 0;
             // First term maybe be variant, so handle it separately
             if (callChain.ConstructorCall == null)
             {
+                // Handle as enum member
+                var enumResult = TryResolveAsEnum(source, callChain);
+                if (enumResult != null)
+                {
+                    return enumResult;
+                }
+                
+                // Handle as normal call chain
+                
                 var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source, requiredMemoryStorageType);
                 result.Append(firstTermResult);
                 lastTermTypeDecl = d;
@@ -45,6 +56,56 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, requiredMemoryStorageType);
             result.Append(remainingTermsResult);
+
+            return result;
+        }
+
+        private static ArcPartialGenerationResult? TryResolveAsEnum(ArcGenerationSource source, ArcCallChain callChain)
+        {
+            if (callChain.Terms.Count() != 2)
+            {
+                return null;
+            }
+            
+            var firstTerm = callChain.Terms.First();
+            if (firstTerm.Type != ArcCallChainTermType.Identifier)
+            {
+                return null;
+            }
+            
+            var enumTypeNode = ArcDataTypeHelper.GetComplexType(source, firstTerm.Identifier!) as ArcScopeTreeDataTypeNode;
+            if (enumTypeNode == null)
+            {
+                return null;
+            }
+
+            if (enumTypeNode.ArcDataTypeType != ArcDataTypeType.Enum)
+            {
+                return null;
+            }
+
+            var enumType = enumTypeNode.EnumType!;
+            
+            var secondTerm = callChain.Terms.Last();
+            if (secondTerm is not { Type: ArcCallChainTermType.Identifier })
+            {
+                return null;
+            }
+            
+            var enumMember = enumType.Members.FirstOrDefault(m => m.Name.Equals(secondTerm.Identifier!.Name));
+            if (enumMember == null)
+            {
+                return null;
+            }
+            
+            var result = new ArcPartialGenerationResult();
+            result.Append(new ArcLoadDataToStackInstruction(
+                new(
+                    ArcDataSourceType.Symbol, 
+                    ArcMemoryStorageType.Reference, 
+                    enumMember.Id, false)
+                ).Encode(source)
+            );
 
             return result;
         }
@@ -73,7 +134,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     result.Logs.AddRange(logs);
                     return (result, null);
                 }
-
 
                 var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFuncId, true);
 

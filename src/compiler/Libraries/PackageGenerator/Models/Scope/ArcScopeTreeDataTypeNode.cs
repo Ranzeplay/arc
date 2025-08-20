@@ -20,7 +20,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcScopeTreeGroupNode? ComplexTypeGroup { get; set; }
 
-        public ArcScopeTreeEnumNode? EnumGroup { get; set; }
+        public ArcScopeTreeEnumNode? EnumType { get; set; }
 
         public override string SignatureAddend => "T" + ShortName;
 
