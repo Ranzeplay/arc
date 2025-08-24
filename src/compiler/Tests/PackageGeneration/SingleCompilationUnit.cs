@@ -12,57 +12,57 @@ namespace Arc.Compiler.Tests.PackageGeneration
     {
         private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SingleCompilationUnit>();
 
-        private readonly string _text = @"
-			link Arc::Std;
-            link Arc::Std::Compilation;
-			
-			namespace Arc::Program {
-				@Export
-				public group ArcExample {
-					@Getter
-					public field const foo: val string;
-					@Accessor
-					public field var bar: val string;
-			
-					private func eval(): val bool {
-						return false;
-					}
-			
-					public func empty(): val none {}
-				}
-			
-				@Export
-				@Entrypoint
-				public func main(var args: val string[]): val none {
-					var a: val int;
-					# a = [Console].readLn();
-					var b: val int;
-					a = 114514;
-					b = 1919810;
-					const c: val int;
-					if (a > b) { c = a + b; }
-					elif (a < b) { c = a * b; }
-					else { c = a - b; }
-			
-					# call [Console].PrintLn(""Hello, world!"");
-                    
-                    call test();
+        private const string Text = """
+                                    link Arc::Std;
+                                    link Arc::Std::Compilation;
+                                    
+                                    namespace Arc::Program {
+                                    	@Export
+                                    	public group ArcExample {
+                                    		@Getter
+                                    		public field const foo: val string;
+                                    		@Accessor
+                                    		public field var bar: val string;
+                                    
+                                    		private func eval(): val bool {
+                                    			return false;
+                                    		}
+                                    
+                                    		public func empty(): val none {}
+                                    	}
+                                    
+                                    	@Export
+                                    	@Entrypoint
+                                    	public func main(var args: val string[]): val none {
+                                    		var a: val int;
+                                    		# a = [Console].readLn();
+                                    		var b: val int;
+                                    		a = 114514;
+                                    		b = 1919810;
+                                    		const c: val int;
+                                    		if (a > b) { c = a + b; }
+                                    		elif (a < b) { c = a * b; }
+                                    		else { c = a - b; }
+                                    
+                                    		# call [Console].PrintLn("Hello, world!");
+                                            
+                                            call test();
 
-                    while (1 > 0) { a = 2233; }
-			
-					return [Arc::Program].test();
-				}
-                
-                public func test(): val int {
-        	        return 0;
-    	        }
-			}
-            ";
+                                            while (1 > 0) { a = 2233; }
+                                    
+                                    		return [Arc::Program].test();
+                                    	}
+                                        
+                                        public func test(): val int {
+                                            return 0;
+                                        }
+                                    }
+                                    """;
 
         [Test]
         public void Generation()
         {
-            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(_text, _logger);
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(Text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
             Assert.That(context.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(42));
@@ -71,7 +71,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void DumpTest()
         {
-            var compilationUnit = AntlrAdapter.ParseCompilationUnit(_text, _logger);
+            var compilationUnit = AntlrAdapter.ParseCompilationUnit(Text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
             var context = ArcCombinedUnitGenerator.GenerateUnits([syntaxUnit], ArcPackageDescriptor.Default(ArcPackageType.Executable));
 
@@ -83,21 +83,21 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void HelloWorld()
         {
-            var text = @"
-                link Arc::Std::Console;
-                link Arc::Std::Compilation;
-                
-                namespace Program
-                {
-                	@Entrypoint
-                	public func main(var args: val string[]): val int
-                	{
-                		call PrintString(""Hello, world!\n"");
-                
-                		return 0;
-                	}	
-                }
-            ";
+            const string text = """
+                                link Arc::Std::Console;
+                                link Arc::Std::Compilation;
+                                
+                                namespace Program
+                                {
+                                	@Entrypoint
+                                	public func main(var args: val string[]): val int
+                                	{
+                                		call PrintString("Hello, world!\n");
+                                
+                                		return 0;
+                                	}	
+                                }
+                                """;
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
@@ -110,41 +110,41 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void Fibonacci()
         {
-            var text = @"
-                link Arc::Std::Console;
-                link Arc::Std::Compilation;
+            const string text = """
+                                link Arc::Std::Console;
+                                link Arc::Std::Compilation;
 
-                namespace Arc::Program {
-                	# @Export
-                	@Entrypoint
-                	public func main(var args: val string[]): val int {
-                		var i: val int;
-                		i = 0;
-                		while (i < 40)
-                		{
-                			const value: val int;
-                			value = fib(i);
-                			call PrintInteger(value);
-                			call PrintString(""\n"");
-                			i = i + 1;
-                		}
-                
-                		return 0;
-                	}
-                
-                	public func fib(const n: val int): val int
-                	{
-                		if (n <= 1)
-                		{
-                			return 1;
-                		}
-                		else
-                		{
-                			return fib(n - 1) + fib(n - 2);
-                		}
-                	}
-                }
-            ";
+                                namespace Arc::Program {
+                                	# @Export
+                                	@Entrypoint
+                                	public func main(var args: val string[]): val int {
+                                		var i: val int;
+                                		i = 0;
+                                		while (i < 40)
+                                		{
+                                			const value: val int;
+                                			value = fib(i);
+                                			call PrintInteger(value);
+                                			call PrintString("\n");
+                                			i = i + 1;
+                                		}
+
+                                		return 0;
+                                	}
+
+                                	public func fib(const n: val int): val int
+                                	{
+                                		if (n <= 1)
+                                		{
+                                			return 1;
+                                		}
+                                		else
+                                		{
+                                			return fib(n - 1) + fib(n - 2);
+                                		}
+                                	}
+                                }
+                                """;
 
             var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");

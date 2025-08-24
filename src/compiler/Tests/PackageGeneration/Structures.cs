@@ -16,15 +16,17 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void SingleCompilationUnitWithFunctions()
         {
-            var text = @"namespace Arc::Program {
-                            public func main(var args: val string[]): val int {
-                                var a: val int; a = 2; a = 2 + 3; return 0;
-                            }
-                            public func foo(): val int { return -1; }
-                            public func bar(const lazyFox: ref string): ref bool {
-                                return true;
-                            }
-                        }";
+            const string text = """
+                                namespace Arc::Program {
+                                    public func main(var args: val string[]): val int {
+                                        var a: val int; a = 2; a = 2 + 3; return 0;
+                                    }
+                                    public func foo(): val int { return -1; }
+                                    public func bar(const lazyFox: ref string): ref bool {
+                                        return true;
+                                    }
+                                }
+                                """;
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
 
@@ -36,23 +38,24 @@ namespace Arc.Compiler.Tests.PackageGeneration
         [Test]
         public void SingleCompilationUnitWithGroup()
         {
-            var text = @"
-                        link Arc::Std::Compilation;
-                        namespace Arc::Program {
-                            @Export
-                        	public group ArcExample {
-                        		@Getter
-                        		public field const foo: val string;
-                        		@Accessor
-                        		public field var bar: val string;
-                        
-                        		private func eval(): val bool {
-                        			return false;
-                        		}
-                        
-                        		public func empty(): val none {}
-                        	}
-                        }";
+            const string text = """
+                                link Arc::Std::Compilation;
+                                namespace Arc::Program {
+                                     @Export
+                                	    public group ArcExample {
+                                		    @Getter
+                                		    public field const foo: val string;
+                                		    @Accessor
+                                		    public field var bar: val string;
+
+                                		    private func eval(): val bool {
+                                		    	return false;
+                                		    }
+                                 
+                                		    public func empty(): val none {}
+                                	}
+                                }
+                                """;
 
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");

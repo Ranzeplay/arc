@@ -10,7 +10,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [CancelAfter(1000)]
     internal class MultipleCompilationUnits
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SingleCompilationUnit>();
+        private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<SingleCompilationUnit>();
 
         private readonly string _text1 = @"
             link Arc::Std::Compilation;

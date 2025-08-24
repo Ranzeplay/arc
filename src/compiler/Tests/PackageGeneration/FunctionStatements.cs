@@ -10,13 +10,13 @@ namespace Arc.Compiler.Tests.PackageGeneration
     [Category("PackageGeneration")]
     internal class FunctionStatements
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<FunctionStatements>();
+        private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<FunctionStatements>();
 
         [Test]
         public void EmptyFunction()
         {
             _logger.LogInformation("Running EmptyFunction test");
-            var text = "namespace Arc::Program { public func main(): val none {} }";
+            const string text = "namespace Arc::Program { public func main(): val none {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -28,7 +28,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithArguments()
         {
             _logger.LogInformation("Running FunctionWithArguments test");
-            var text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
+            const string text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -40,7 +40,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithLessStatements()
         {
             _logger.LogInformation("Running FunctionWithLessStatements test");
-            var text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
+            const string text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -52,11 +52,13 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithAssignmentExpression()
         {
             _logger.LogInformation("Running FunctionWithAssignmentExpression test");
-            var text = @"namespace Arc::Program {
-                                public func main(): val int {
-                                    var a: val int; a = 2; a = 2 + 3;
+            const string text = """
+                                namespace Arc::Program {
+                                    public func main(): val int {
+                                        var a: val int; a = 2; a = 2 + 3;
+                                    }
                                 }
-                            }";
+                                """;
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -72,14 +74,15 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithBlockStatements()
         {
             _logger.LogInformation("Running FunctionWithBlockStatements test");
-            var text = @"
-                            namespace Arc::Program { 
-                                public func main(): val int { 
-                                    if (2 < 3) { var a: val int; a = 1; } 
-                                    else { var b: val int = 2; }
-                                    while (2 < 3) { var c: val int; c = 3; } 
+            const string text = """
+                                namespace Arc::Program { 
+                                    public func main(): val int { 
+                                        if (2 < 3) { var a: val int; a = 1; } 
+                                        else { var b: val int = 2; }
+                                        while (2 < 3) { var c: val int; c = 3; } 
+                                    }
                                 }
-                            }";
+                                """;
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));

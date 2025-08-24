@@ -10,20 +10,20 @@ namespace Arc.Compiler.Tests.PackageGeneration;
 [CancelAfter(1000)]
 internal class Enumerations
 {
-    private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<Enumerations>();
+    private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<Enumerations>();
     
     [Test]
     public void Definition()
     {
-        var text = """
-                    namespace Arc::Lib {
-                        public enum Status {
-                            ONLINE,
-                            BUSY,
-                            OFFLINE
-                        }
-                    }
-                   """;
+        const string text = """
+                            namespace Arc::Lib {
+                                public enum Status {
+                                    ONLINE,
+                                    BUSY,
+                                    OFFLINE
+                                }
+                            }
+                            """;
         
         var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);
         var syntaxUnit = new ArcCompilationUnit(compilationUnit, _logger, "test");
@@ -36,18 +36,18 @@ internal class Enumerations
     public void DefinitionAndUsage()
     {
         const string text = """
-                             namespace Arc::Lib {
-                                 public enum Status {
-                                     ONLINE,
-                                     BUSY,
-                                     OFFLINE
-                                 }
-                                 
-                                 public func test(): val none {
-                                     var status: val Status;
-                                     status = Status.ONLINE;
-                                 }
-                             }
+                            namespace Arc::Lib {
+                                public enum Status {
+                                    ONLINE,
+                                    BUSY,
+                                    OFFLINE
+                                }
+                                
+                                public func test(): val none {
+                                    var status: val Status;
+                                    status = Status.ONLINE;
+                                }
+                            }
                             """;
         
         var compilationUnit = AntlrAdapter.ParseCompilationUnit(text, _logger);

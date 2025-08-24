@@ -12,7 +12,7 @@ namespace Arc.Compiler.Tests.Stdlib
     [CancelAfter(1000)]
     class SymbolReconfiguration
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<SymbolReconfiguration>();
+        private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<SymbolReconfiguration>();
 
         [Test]
         public void SymbolId()

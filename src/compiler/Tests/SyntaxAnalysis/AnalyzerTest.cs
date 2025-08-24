@@ -9,7 +9,7 @@ namespace Arc.Compiler.Tests.SyntaxAnalysis
     [Category("SyntaxAnalysis")]
     internal class AnalyzerTest
     {
-        private readonly ILogger _logger = LoggerFactory.Create(builder => { }).CreateLogger<AnalyzerTest>();
+        private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<AnalyzerTest>();
 
         [Test]
         public void AntlrParsing()
