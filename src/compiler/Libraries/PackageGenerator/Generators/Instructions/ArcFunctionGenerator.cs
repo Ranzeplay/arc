@@ -60,7 +60,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var signatureSource = source.ParentSignature;
             signatureSource.Locators.Add(declarator);
-
+            
+            var genericTypes = declarator.GenericTypes
+                .Select(g => new ArcScopeTreeGenericTypeNode { Identifier = g.Name })
+                .ToList();
+            source.GenericTypes = source.GenericTypes.Concat(genericTypes);
+            
             var parameters = declarator.Arguments.Select(a =>
             {
                 var paramDataTypeProxy = ArcDataTypeHelper.GetDataType(source, a.DataType);
@@ -107,9 +112,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     a => ArcAnnotationHelper.FindAnnotationNode(source, a),
                     a => a.CallArguments.Select(ca => ca.Expression)
                 );
-
-            var genericTypes = declarator.GenericTypes
-                .Select(g => new ArcScopeTreeGenericTypeNode { Identifier = g.Name });
 
             var descriptor = new T
             {
