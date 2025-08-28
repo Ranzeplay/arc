@@ -171,4 +171,32 @@ public class Generics
         
         Assert.That(result, Is.Not.Null);
     }
+
+    [Test]
+    public void GenericsOnFunctionCall()
+    {
+        const string text = """
+                            link Arc::Std::Collection;
+                            link Arc::Std::Compilation;
+                            
+                            namespace Arc::Program {
+                                @Entrypoint
+                                public func main(const args: val string[]): val int {
+                                    const list: val List<val string>;
+                                    list = new List<val string>(args);
+                                    
+                                    var size: val int;
+                                    size = list.getSize();
+                                    
+                                    return 0;
+                                }
+                            }
+                            """;
+        
+        var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+        var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+        var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Executable));
+        
+        Assert.That(result, Is.Not.Null);
+    }
 }
