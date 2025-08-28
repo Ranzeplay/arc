@@ -107,12 +107,12 @@ arc_index: LBRACKET arc_expression RBRACKET;
 
 // Call chain
 arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain_term)*;
-arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | arc_self_wrapper) arc_index*;
+arc_call_chain_term: (arc_function_call_base | arc_flexible_identifier | arc_self_wrapper) arc_index*;
 
 arc_self_wrapper: KW_SELF;
 
 arc_generic_declaration_wrapper: COMP_LT arc_single_identifier (COMMA arc_single_identifier)* COMP_GT;
-arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION) COMP_GT;
+arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION | arc_single_identifier) COMP_GT;
 
 arc_enum_declarator: arc_annotation* arc_accessibility KW_ENUM arc_single_identifier LBRACE (arc_enum_member (COMMA arc_enum_member)*)? RBRACE;
 arc_enum_member: arc_annotation* arc_single_identifier;
