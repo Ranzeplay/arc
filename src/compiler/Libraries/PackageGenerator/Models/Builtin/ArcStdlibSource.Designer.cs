@@ -73,6 +73,16 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
+        internal static byte[] NamespaceCollection {
+            get {
+                object obj = ResourceManager.GetObject("NamespaceCollection", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
         internal static byte[] NamespaceCompilation {
             get {
                 object obj = ResourceManager.GetObject("NamespaceCompilation", resourceCulture);

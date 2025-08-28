@@ -4,17 +4,47 @@ namespace Arc::Std::Array
 {
 	@DeclaratorOnly
 	@SymbolId(0xc1)
-	public func CreateIntArray(): val int[] {}
+	public func CreateArray<T>(): val T[] {}
 
 	@DeclaratorOnly
 	@SymbolId(0xc2)
-	public func PushIntArray(var array: ref int[], const i: val int): ref none {}
+	public func PushArray<T>(var array: ref T[], const i: val int): ref none {}
 
 	@DeclaratorOnly
 	@SymbolId(0xc3)
-	public func RemoveElementFromIntArray(var array: ref int[], const index: ref int): ref none {}
+	public func RemoveElementFromArray<T>(var array: ref T[], const index: ref int): ref none {}
 
 	@DeclaratorOnly
 	@SymbolId(0xc4)
-	public func GetIntArraySize(const arr: ref int[]): val int {}
+	public func GetArraySize<T>(const arr: ref T[]): val int {}
+
+	@DeclaratorOnly
+	@SymbolId(0xc5)
+	public func ResizeArray<T>(const arr: ref T[], const capacity: val int): ref none {}
+
+	@DeclaratorOnly
+	@SymbolId(0xc6)
+	public func CreateArray<T>(const size: val int): val T[] {}
+
+	# Preconditions:
+	# - index is within bounds (0 <= index <= size of array)
+	# - array has enough capacity to hold one more element
+	public func InsertElementIntoArray<T>(var array: ref T[], const index: val int, const element: val T): ref none
+	{
+		var size: val int;
+		size = GetArraySize<T>(array);
+		if (index < 0 || index > size)
+		{
+			# TODO: Error handling for out-of-bounds index
+		}
+		var i: val int;
+		i = size;
+		while (i > index)
+		{
+			array[i] = array[i - 1];
+			i = i - 1;
+		}
+		array[index] = element;
+		return none;
+	}
 }
