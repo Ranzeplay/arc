@@ -9,6 +9,8 @@
         Constant = 0x05,
         Group = 0x06,
         Annotation = 0x07,
+        Enum = 0x08,
+        EnumMember = 0x09,
         Invalid = 0x00
     }
 }
