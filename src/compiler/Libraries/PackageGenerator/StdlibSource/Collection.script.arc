@@ -90,27 +90,22 @@ namespace Arc::Std::Collection
 			result = CreateArray<T>(self.size);
 			
 			var i: val int;
-			i = 0;
-			while (i < self.size)
-			{
-				result[i] = self.elements[i];
-				i = i + 1;
-			}
+			for(var i : val int = 0; i < self.size; i = i + 1)
+            {
+                result[i] = self.elements[i];
+            }
 			return result;
 		}
 
 		public func indexOf(const self: ref List<T>, const element: val T): val int
 		{
-			var i: val int;
-            i = 0;
-            while (i < self.size)
+			for (var i : val int = 0; i < self.size; i = i + 1)
             {
-				if (self.elements[i] == element)
-				{
-					return i;
-				}
-				i = i + 1;
-			}
+                if (self.elements[i] == element)
+                {
+                    return i;
+                }
+            }
 			return -1;
 		}
 	}

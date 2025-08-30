@@ -37,13 +37,10 @@ namespace Arc::Std::Array
 		{
 			# TODO: Error handling for out-of-bounds index
 		}
-		var i: val int;
-		i = size;
-		while (i > index)
-		{
-			array[i] = array[i - 1];
-			i = i - 1;
-		}
+		for(var i: val int = size; i > index; i = i - 1)
+        {
+            array[i] = array[i - 1];
+        }
 		array[index] = element;
 		return none;
 	}
