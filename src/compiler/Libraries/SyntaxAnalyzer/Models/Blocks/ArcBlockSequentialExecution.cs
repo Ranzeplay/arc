@@ -53,6 +53,10 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Blocks
                 {
                     ExecutionSteps.Add(new ArcStatementThrow(entry.arc_stmt_throw()));
                 }
+                else if (entry.arc_stmt_for() != null)
+                {
+                    ExecutionSteps.Add(new ArcBlockExtendedConditionalLoop(entry.arc_stmt_for()));
+                }
                 else
                 {
                     throw new NotImplementedException();
