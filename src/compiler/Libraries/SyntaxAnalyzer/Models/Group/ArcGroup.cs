@@ -5,11 +5,13 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    public class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>, IArcLocatable
+    public class ArcGroup : IArcTraceable<ArcSourceCodeParser.Arc_group_blockContext>, IArcLocatable, IArcAccessible
     {
         public ArcSingleIdentifier Identifier { get; set; }
 
         public IEnumerable<ArcAnnotation> Annotations { get; set; }
+        
+        public ArcAccessibility Accessibility { get; set; }
 
         public IEnumerable<ArcGroupField> Fields { get; set; }
 
@@ -23,6 +25,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
         {
             Identifier = new(context.arc_single_identifier());
             Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));
+            Accessibility = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
             Fields = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_field() != null).Select(f => new ArcGroupField(f.arc_group_field()));
             Functions = context.arc_wrapped_group_member().arc_group_member().ToList().FindAll(m => m.arc_group_function() != null).Select(f => new ArcGroupFunction(f.arc_group_function()));
             GenericTypes = context.arc_generic_declaration_wrapper()?.arc_single_identifier().Select(g => new ArcSingleIdentifier(g)) ?? Array.Empty<ArcSingleIdentifier>();

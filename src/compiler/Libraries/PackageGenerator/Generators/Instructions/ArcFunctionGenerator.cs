@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcFunctionGenerator
     {
-        public static ArcPartialGenerationResult Generate<TSyntax, TFunctionNode>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax> func)
+        public static ArcPartialGenerationResult GenerateNamedFunction<TSyntax, TFunctionNode>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, ArcNamedFunctionDeclarator> func)
             where TSyntax : ParserRuleContext
             where TFunctionNode : ArcScopeTreeFunctionNodeBase, new()
         {
@@ -54,7 +54,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return ArcSequentialExecutionGenerator.Generate(source, body, fnNode);
         }
 
-        public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
+        public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcNamedFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
         {
             var logs = new List<ArcCompilationLogBase>();
 

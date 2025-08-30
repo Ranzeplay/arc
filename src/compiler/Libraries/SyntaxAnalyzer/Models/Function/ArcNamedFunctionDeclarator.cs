@@ -1,26 +1,19 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    public class ArcFunctionDeclarator : IArcLocatable
+    public class ArcNamedFunctionDeclarator : ArcFunctionMinimalDeclarator, IArcLocatable, IArcAccessible
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; }
 
+        public ArcSingleIdentifier Identifier { get; set; }
+        
         public ArcAccessibility Accessibility { get; set; }
 
-        public ArcSingleIdentifier Identifier { get; set; }
-
-        public IEnumerable<ArcFunctionArgument> Arguments { get; set; }
-
-        public IEnumerable<ArcSingleIdentifier> GenericTypes { get; set; }
-
-        public ArcDataType ReturnType { get; set; }
-
-        public ArcFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context, bool allowSelf)
+        public ArcNamedFunctionDeclarator(ArcSourceCodeParser.Arc_function_declaratorContext context, bool allowSelf)
         {
 
             Annotations = context.arc_annotation().Select(a => new ArcAnnotation(a));

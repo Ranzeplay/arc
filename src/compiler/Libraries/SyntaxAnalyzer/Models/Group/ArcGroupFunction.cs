@@ -4,9 +4,9 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 {
-    public class ArcGroupFunction : ArcFunctionBase<ArcSourceCodeParser.Arc_group_functionContext>
+    public class ArcGroupFunction : ArcNamedFunction<ArcSourceCodeParser.Arc_group_functionContext>
     {
-        public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext context) : base()
+        public ArcGroupFunction(ArcSourceCodeParser.Arc_group_functionContext context)
         {
             Declarator = new(context.arc_function_block().arc_function_declarator(), true);
             Body = new(context.arc_function_block().arc_wrapped_function_body());

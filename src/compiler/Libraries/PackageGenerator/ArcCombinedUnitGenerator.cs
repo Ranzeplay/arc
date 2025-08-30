@@ -75,7 +75,7 @@ namespace Arc.Compiler.PackageGenerator
                     }
                     else
                     {
-                        var fnResult = ArcFunctionGenerator.Generate<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode>(genSource, fn, fn.SyntaxTree);
+                        var fnResult = ArcFunctionGenerator.GenerateNamedFunction<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode>(genSource, fn, fn.SyntaxTree);
                         fn.BlockLength = fnResult.GeneratedData.Count;
                         fn.GenerationResult = fnResult;
                     }
@@ -98,7 +98,7 @@ namespace Arc.Compiler.PackageGenerator
                         }
                         else
                         {
-                            var fnResult = ArcFunctionGenerator.Generate<ArcSourceCodeParser.Arc_group_functionContext, ArcScopeTreeGroupFunctionNode>(genSource, fn, fn.SyntaxTree);
+                            var fnResult = ArcFunctionGenerator.GenerateNamedFunction<ArcSourceCodeParser.Arc_group_functionContext, ArcScopeTreeGroupFunctionNode>(genSource, fn, fn.SyntaxTree);
                             fn.BlockLength = fnResult.GeneratedData.Count;
                             fn.GenerationResult = fnResult;
                         }
