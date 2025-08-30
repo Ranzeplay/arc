@@ -6,6 +6,8 @@
         Namespace,
         Group,
         GroupFunction,
+        GroupConstructor,
+        GroupDestructor,
         GroupField,
         IndividualFunction,
         FunctionData,

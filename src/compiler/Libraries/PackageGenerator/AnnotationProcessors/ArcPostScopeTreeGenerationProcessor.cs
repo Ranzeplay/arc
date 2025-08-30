@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
             ManualSymbolId(ref scopeTree);
             ManualAnnotatonId(ref scopeTree);
             PreserveAnnotations(ref scopeTree);
-            BindConstructors(ref scopeTree);
+            // BindConstructors(ref scopeTree);
         }
 
         public static void DataTypeRemoval(ref ArcScopeTree scopeTree)
@@ -109,15 +109,19 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
 
         public static void BindConstructors(ref ArcScopeTree scopeTree)
         {
-            scopeTree.FlattenedNodes
-                .OfType<ArcScopeTreeGroupFunctionNode>()
-                .Where(x => x.Annotations.Keys.Any(k => k.Signature == _constructorSignature))
-                .ToList()
-                .ForEach(n =>
-                {
-                    var parent = n.Parent as ArcScopeTreeGroupNode;
-                    parent!.MoveToConstructor(n);
-                });
+            /*
+              scopeTree.FlattenedNodes
+                  .OfType<ArcScopeTreeGroupFunctionNode>()
+                  .Where(x => x.Annotations.Keys.Any(k => k.Signature == _constructorSignature))
+                  .ToList()
+                  .ForEach(n =>
+                  {
+                      var parent = n.Parent as ArcScopeTreeGroupNode;
+                      parent!.MoveToConstructor(n);
+                  });
+             */
+            
+            throw new InvalidOperationException();
         }
     }
 }

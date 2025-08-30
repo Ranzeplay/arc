@@ -54,16 +54,16 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return ArcSequentialExecutionGenerator.Generate(source, body, fnNode);
         }
 
-        public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcNamedFunctionDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
+        public static (T, IEnumerable<ArcCompilationLogBase>) GenerateDescriptor<T>(ArcGenerationSource source, ArcFunctionMinimalDeclarator declarator) where T : ArcScopeTreeFunctionNodeBase, new()
         {
             var logs = new List<ArcCompilationLogBase>();
 
             var signatureSource = source.ParentSignature;
             signatureSource.Locators.Add(declarator);
             
-            var genericTypes = declarator.GenericTypes
+            var genericTypes = declarator.GenericTypes?
                 .Select(g => new ArcScopeTreeGenericTypeNode { Identifier = g.Name })
-                .ToList();
+                ?? [];
             source.GenericTypes = source.GenericTypes.Concat(genericTypes);
             
             var parameters = declarator.Arguments.Select(a =>
@@ -106,19 +106,24 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Dimension = declarator.ReturnType.Dimension,
                 MemoryStorageType = declarator.ReturnType.MemoryStorageType,
             };
-
-            var annotations = declarator.Annotations
-                .ToDictionary(
-                    a => ArcAnnotationHelper.FindAnnotationNode(source, a),
-                    a => a.CallArguments.Select(ca => ca.Expression)
-                );
-
+            
             var descriptor = new T
             {
                 ReturnValueType = returnValueType,
                 Parameters = parameters,
-                Annotations = annotations,
             };
+            
+            if (declarator is ArcNamedFunctionDeclarator d)
+            {
+                var annotations = d.Annotations
+                    .ToDictionary(
+                        a => ArcAnnotationHelper.FindAnnotationNode(source, a),
+                        a => a.CallArguments.Select(ca => ca.Expression)
+                    );
+                
+                descriptor.Annotations = annotations;
+            }
+            
             descriptor.AddChildren(genericTypes);
 
             return (descriptor, logs);

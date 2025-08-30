@@ -9,16 +9,14 @@ namespace Arc::Std::Collection
 		private field var capacity: val int;
 		private field var size: val int;
 
-        @Constructor
-		public func ctor1(var self: ref List<T>): ref List<T>
+		public constructor(var self: ref List<T>): ref List<T>
 		{
 			self.capacity = 4;
 			self.size = 0;
 			self.elements = CreateArray<T>(self.capacity);
 		}
 
-        @Constructor
-		public func ctor2(var self: ref List<T>, const data: val T[]): ref List<T>
+		public constructor(var self: ref List<T>, const data: val T[]): ref List<T>
 		{
 			self.capacity = GetArraySize<T>(data);
 			self.size = self.capacity;

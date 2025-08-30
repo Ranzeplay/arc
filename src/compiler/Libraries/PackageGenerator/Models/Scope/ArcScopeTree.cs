@@ -6,7 +6,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
     {
         public ArcScopeTreeNodeBase Root { get; set; } = root ?? new ArcRootScopeNode();
 
-        public ICollection<ArcScopeTreeNodeBase> FlattenedNodes => ArcScopeTreeHelpers.FlattenNodes(Root);
+        public ICollection<ArcScopeTreeNodeBase> FlattenedNodes => ArcScopeTreeHelpers.FlattenNodes(Root).DistinctBy(n => n.Id).ToList();
 
         public void MergeRoot(ArcScopeTree other, bool overwrite = false) => Root = ArcScopeTreeHelpers.MergeTree(this, other, overwrite).Root;
 

@@ -37,7 +37,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                 current.AddChild(annotationNode);
 
                 var genericTypeParameters = group.GenericTypes.Select(t => new ArcScopeTreeGenericTypeNode { Identifier = t.Name });
-                current.AddChildren(genericTypeParameters);
+                node.AddChildren(genericTypeParameters);
             }
 
             return tree;
@@ -153,6 +153,7 @@ namespace Arc.Compiler.PackageGenerator.Generators
                             PackageDescriptor = packageDescriptor
                         };
                         var source = context.GenerateSource([us.CompilationUnit.Namespace], n, us.LinkedNamespaces);
+                        source.GenericTypes = source.GenericTypes.Concat(n.GenericTypes);
                         n.Annotations = n.SyntaxTree.Annotations
                             .ToDictionary(
                                 a => ArcAnnotationHelper.FindAnnotationNode(source, a),

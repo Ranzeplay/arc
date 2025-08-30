@@ -5,7 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
 {
-    public class ArcNamedFunctionDeclarator : ArcFunctionMinimalDeclarator, IArcLocatable, IArcAccessible
+    public class ArcNamedFunctionDeclarator : ArcFunctionMinimalDeclarator, IArcAccessible
     {
         public IEnumerable<ArcAnnotation> Annotations { get; set; }
 
@@ -42,6 +42,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Function
             }
         }
 
-        public string GetSignature() => $"F{Identifier}@{string.Join('&', Arguments.Select(a => a.DataType.GetSignature()))}*{ReturnType.GetSignature()}";
+        public override string GetSignature() => $"F{Identifier}@{string.Join('&', Arguments.Select(a => a.DataType.GetSignature()))}*{ReturnType.GetSignature()}";
     }
 }
