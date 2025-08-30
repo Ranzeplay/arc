@@ -37,7 +37,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcBlockConditionalLoop conditionalLoop:
                         {
-                            stepResult = ArcConditionLoopBlockGenerator.Encode(source, conditionalLoop, fnNode);
+                            stepResult = ArcConditionLoopBlockGenerator.EncodeWhileLoop(source, conditionalLoop, fnNode);
                             break;
                         }
                     case ArcStatementReturn @return:
@@ -87,6 +87,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         {
                             stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression, false));
                             stepResult.Append(new ArcThrowInstruction().Encode(source));
+                            break;
+                        }
+                    case ArcBlockExtendedConditionalLoop forLoop:
+                        {
+                            stepResult = ArcConditionLoopBlockGenerator.EncodeForLoop(source, forLoop, fnNode);
                             break;
                         }
                     default:

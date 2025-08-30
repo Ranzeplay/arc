@@ -35,8 +35,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             return current as ArcScopeTreeNamespaceNode;
         }
 
-        public ArcScopeTreeNodeBase? GetNode(IEnumerable<string> names) => GetNode(names);
-
         public T? GetNode<T>(IEnumerable<string> names) where T : ArcScopeTreeNodeBase
         {
             var current = Root;
