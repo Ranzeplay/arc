@@ -89,5 +89,23 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
         }
+        
+        [Test]
+        public void FunctionWithIntegratedDeclarationAssignmentStatements()
+        {
+            _logger.LogInformation("Running FunctionWithBlockStatements test");
+            const string text = """
+                                namespace Arc::Program { 
+                                    public func main(): val none { 
+                                        var a: val int = 1;
+                                    }
+                                }
+                                """;
+            var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
+            var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
+            var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
+
+            Assert.That(result, Is.Not.Null);
+        }
     }
 }
