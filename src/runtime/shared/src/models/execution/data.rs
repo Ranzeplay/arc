@@ -1,5 +1,5 @@
-use crate::models::descriptors::symbol::{DataTypeSymbol, Symbol};
-use crate::models::encodings::data_type_enc::DataTypeEncoding;
+use crate::models::descriptors::symbol::{DataTypeSymbol, Symbol, SymbolDescriptor};
+use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -17,6 +17,20 @@ pub struct DataValue {
     pub value: DataValueType,
 }
 
+impl From<&Rc<SymbolDescriptor>> for DataValue {
+    fn from(value: &Rc<SymbolDescriptor>) -> Self {
+        DataValue {
+            data_type: DataTypeEncoding {
+                type_id: 0xffffffff,
+                dimension: 0,
+                mutability: Mutability::Immutable,
+                memory_storage_type: MemoryStorageType::Reference,
+            },
+            value: DataValueType::Symbol(Rc::clone(value)),
+        }
+    }
+}
+
 #[derive(Clone, Debug)]
 pub enum DataValueType {
     Bool(bool),
@@ -28,6 +42,7 @@ pub enum DataValueType {
     None,
     Complex(ComplexDataValue),
     Array(Vec<Rc<RefCell<DataValue>>>),
+    Symbol(Rc<SymbolDescriptor>),
 }
 
 impl DataValueType {

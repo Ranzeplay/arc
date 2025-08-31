@@ -10,6 +10,7 @@ pub enum DataSourceType {
     Field,
     ArrayElement,
     StackTop,
+    Symbol,
 }
 
 impl Debug for DataSourceType {
@@ -20,6 +21,7 @@ impl Debug for DataSourceType {
             Self::Field => write!(f, "FD"),
             Self::ArrayElement => write!(f, "AE"),
             Self::StackTop => write!(f, "ST"),
+            Self::Symbol => write!(f, "SY"),
         }
     }
 }
@@ -32,6 +34,7 @@ impl From<u8> for DataSourceType {
             0x03 => Self::Field,
             0x04 => Self::ArrayElement,
             0x05 => Self::StackTop,
+            0x06 => Self::Symbol,
             _ => unreachable!(),
         }
     }

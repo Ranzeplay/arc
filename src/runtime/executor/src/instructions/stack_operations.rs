@@ -85,6 +85,16 @@ pub fn load_stack(
 
             array_element
         }
+        DataSourceType::Symbol => {
+            let symbol_id = lsi.location_id;
+
+            let symbol = package.symbol_table.symbols.get(&symbol_id).unwrap_or_else(|| {
+                panic!("Symbol 0x{:X} not found", symbol_id);
+            });
+
+            // TODO: reduce performance impact of cloning here
+            Rc::new(RefCell::new(DataValue::from(&Rc::new(symbol.clone()))))
+        }
     };
 
     let data = match &lsi.storage_type {
@@ -127,6 +137,7 @@ pub fn save_stack(
         DataSourceType::Field => {}
         DataSourceType::ArrayElement => {}
         DataSourceType::StackTop => panic!("Cannot overwrite the stack top"),
+        DataSourceType::Symbol => panic!("Cannot overwrite the symbol"),
     }
 }
 

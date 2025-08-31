@@ -17,6 +17,8 @@ pub enum Symbol {
     GroupField(Rc<GroupFieldSymbol>),
     Namespace(Rc<NamespaceSymbol>),
     Annotation(Rc<AnnotationSymbol>),
+    Enum(Rc<EnumSymbol>),
+    EnumMember(Rc<EnumMemberSymbol>),
 }
 
 pub enum DataTypeSymbol {
@@ -106,6 +108,27 @@ impl Debug for AnnotationSymbol {
     }
 }
 
+pub struct EnumSymbol {
+    pub annotation_ids: Vec<usize>,
+    pub member_ids: Vec<usize>,
+}
+
+impl Debug for EnumSymbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "[EN] {}/{}", self.annotation_ids.len(), self.member_ids.len())
+    }
+}
+
+pub struct EnumMemberSymbol {
+    pub annotation_ids: Vec<usize>,
+}
+
+impl Debug for EnumMemberSymbol {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "[EM] {}", self.annotation_ids.len())
+    }
+}
+
 #[derive(Clone)]
 pub struct SymbolTable {
     pub symbols: HashMap<usize, SymbolDescriptor>,
@@ -123,6 +146,8 @@ impl Debug for SymbolTable {
                 Symbol::GroupField(group_field) => write!(f, "{:?}", group_field)?,
                 Symbol::Namespace(namespace) => write!(f, "{:?}", namespace)?,
                 Symbol::Annotation(annotation) => write!(f, "{:?}", annotation)?,
+                Symbol::Enum(e) => write!(f, "{:?}", e)?,
+                Symbol::EnumMember(em) => write!(f, "{:?}", em)?,
             }
         }
         Ok(())

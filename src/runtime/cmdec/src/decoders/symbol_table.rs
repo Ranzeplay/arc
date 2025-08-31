@@ -31,8 +31,11 @@ fn decode_symbol(stream: &[u8]) -> (Symbol, usize) {
         0x02 => decode_function_descriptor(&stream[1..]),
         0x03 => decode_group_field_descriptor(&stream[1..]),
         0x04 => decode_data_type_descriptor(&stream[1..]),
+        0x05 => unimplemented!(),
         0x06 => decode_group_descriptor(&stream[1..]),
         0x07 => decode_annotation_descriptor(&stream[1..]),
+        0x08 => decode_enum_descriptor(&stream[1..]),
+        0x09 => decode_enum_member_descriptor(&stream[1..]),
         _ => unreachable!(),
     };
 
@@ -169,4 +172,26 @@ pub fn decode_annotation_descriptor(stream: &[u8]) -> (Symbol, usize) {
 
     let result = Symbol::Annotation(Rc::new(AnnotationSymbol { group_id }));
     (result, pos)
+}
+
+pub fn decode_enum_descriptor(stream: &[u8]) -> (Symbol, usize) {
+    let (annotations, annotations_len) = SizedArrayEncoding::with_usize_data(&stream);
+    let (members, members_len) = SizedArrayEncoding::with_usize_data(&stream[annotations_len..]);
+    (
+        Symbol::Enum(Rc::new(arc_shared::models::descriptors::symbol::EnumSymbol {
+            annotation_ids: annotations,
+            member_ids: members,
+        })),
+        annotations_len + members_len,
+    )
+}
+
+pub fn decode_enum_member_descriptor(stream: &[u8]) -> (Symbol, usize) {
+    let (annotations, annotations_len) = SizedArrayEncoding::with_usize_data(&stream);
+    (
+        Symbol::EnumMember(Rc::new(arc_shared::models::descriptors::symbol::EnumMemberSymbol {
+            annotation_ids: annotations,
+        })),
+        annotations_len,
+    )
 }

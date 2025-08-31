@@ -5,7 +5,6 @@ use arc_shared::models::encodings::data_type_enc::{
 };
 use arc_shared::models::execution::data::{DataValue, DataValueType};
 use arc_shared::models::execution::result::FunctionExecutionResult;
-use std::any::TypeId;
 use std::cell::RefCell;
 use std::rc::Rc;
 
