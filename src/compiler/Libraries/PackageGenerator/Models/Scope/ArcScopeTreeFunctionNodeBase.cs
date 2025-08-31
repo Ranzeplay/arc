@@ -4,12 +4,13 @@ using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Descriptors.Function;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Models.Scope
 {
-    public abstract class ArcScopeTreeFunctionNodeBase : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+    public abstract class ArcScopeTreeFunctionNodeBase : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode, IArcAccessible
     {
         public IEnumerable<ArcParameterDescriptor> Parameters { get; set; } = [];
 

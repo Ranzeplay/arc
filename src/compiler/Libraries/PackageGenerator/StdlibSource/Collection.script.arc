@@ -89,7 +89,6 @@ namespace Arc::Std::Collection
 			var result: val T[];
 			result = CreateArray<T>(self.size);
 			
-			var i: val int;
 			for(var i : val int = 0; i < self.size; i = i + 1)
             {
                 result[i] = self.elements[i];
