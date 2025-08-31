@@ -40,13 +40,13 @@ arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
 arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | arc_enum_accessor;
 
-arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper arc_wrapped_param_list;
+arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper? arc_wrapped_param_list;
 
 arc_statement: ((arc_stmt_decl | arc_stmt_assign | arc_stmt_return | arc_stmt_assign | arc_stmt_break | arc_stmt_continue | arc_stmt_call | arc_stmt_throw) SEMICOLON) | (arc_stmt_while | arc_stmt_loop | arc_stmt_for | arc_stmt_foreach | arc_stmt_if);
 
 arc_stmt_link: KW_LINK arc_namespace_identifier SEMICOLON;
 arc_stmt_return: KW_RETURN arc_expression?;
-arc_stmt_decl: arc_data_declarator (COMP_OBJ_EQ arc_expression)?;
+arc_stmt_decl: arc_data_declarator (ASSIGN arc_expression)?;
 // TODO: incremental
 arc_stmt_assign: arc_call_chain (ASSIGN | ASSIGN_IF_NULL) arc_expression;
 arc_stmt_break: KW_BREAK;
@@ -60,7 +60,7 @@ arc_stmt_throw: KW_THROW arc_expression;
 
 arc_stmt_if: KW_IF LPAREN arc_expression RPAREN arc_wrapped_function_body (KW_ELIF LPAREN arc_expression RPAREN arc_wrapped_function_body)* (KW_ELSE arc_wrapped_function_body)?;
 
-// TODO
+// TODO: 
 arc_expression: 
     arc_data_value |
     arc_wrapped_expression |
@@ -99,20 +99,20 @@ arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifie
 arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
 arc_group_member: arc_group_constructor | arc_group_destructor | arc_group_function | arc_group_field;
 arc_group_field: arc_annotation* arc_accessibility KW_FIELD arc_data_declarator SEMICOLON;
-arc_group_constructor: arc_annotation* arc_accessibility KW_CONSTRUCTOR arc_wrapped_arg_list arc_wrapped_function_body;
-arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR arc_wrapped_function_body;
+arc_group_constructor: arc_annotation* arc_accessibility KW_CONSTRUCTOR arc_wrapped_arg_list COLON arc_data_type arc_wrapped_function_body;
+arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR COLON arc_data_type arc_wrapped_function_body;
 arc_group_function: arc_function_block;
 
 arc_index: LBRACKET arc_expression RBRACKET;
 
 // Call chain
 arc_call_chain: (arc_call_chain_term | arc_constructor_call) (DOT arc_call_chain_term)*;
-arc_call_chain_term: (arc_flexible_identifier | arc_function_call_base | arc_self_wrapper) arc_index*;
+arc_call_chain_term: (arc_function_call_base | arc_flexible_identifier | arc_self_wrapper) arc_index*;
 
 arc_self_wrapper: KW_SELF;
 
 arc_generic_declaration_wrapper: COMP_LT arc_single_identifier (COMMA arc_single_identifier)* COMP_GT;
-arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION) COMP_GT;
+arc_generic_specialization_wrapper: COMP_LT ((arc_data_type (COMMA arc_data_type)*) | QUESTION | arc_single_identifier) COMP_GT;
 
 arc_enum_declarator: arc_annotation* arc_accessibility KW_ENUM arc_single_identifier LBRACE (arc_enum_member (COMMA arc_enum_member)*)? RBRACE;
 arc_enum_member: arc_annotation* arc_single_identifier;
