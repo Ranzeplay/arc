@@ -57,6 +57,8 @@ impl Cmdec {
             info!("{:?}", constant_table);
         }
 
+        info!("Header length: {:?}", pos);
+
         let mut package = Package {
             descriptor: package_descriptor,
             symbol_table,

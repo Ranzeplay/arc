@@ -1,10 +1,12 @@
 use std::fmt::Debug;
+use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Clone)]
 pub struct NewObjectInstruction {
-    pub type_id: usize
+    pub type_id: usize,
+    pub generic_type_ids: Vec<usize>,
 }
 
 impl Debug for NewObjectInstruction {
@@ -15,14 +17,19 @@ impl Debug for NewObjectInstruction {
 
 impl DecodableInstruction<NewObjectInstruction> for NewObjectInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(NewObjectInstruction, usize)> {
-        let type_id = usize::from_le_bytes(stream[1..9].try_into().unwrap());
-        let length = 9;
+        let mut pos = 1;
+        let type_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+        pos += 8;
+
+        let (generic_type_ids, generic_types_len) = SizedArrayEncoding::with_usize_data(stream[pos..].try_into().unwrap());
+        pos += generic_types_len;
 
         Some((
             NewObjectInstruction {
                 type_id,
+                generic_type_ids,
             },
-            length,
+            pos,
         ))
     }
 }

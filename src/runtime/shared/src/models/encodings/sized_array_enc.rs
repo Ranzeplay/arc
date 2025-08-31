@@ -5,7 +5,7 @@ pub struct SizedArrayEncoding{}
 impl SizedArrayEncoding {
     pub fn with_usize_data(data: &[u8]) -> (Vec<usize>, usize) {
         let mut pos = 0;
-        let mut result = Vec::new();
+        let mut result = vec![];
         let size = usize::from_le_bytes(data[pos..pos + 8].try_into().unwrap());
         pos += 8;
         for _ in 0..size {
@@ -18,7 +18,7 @@ impl SizedArrayEncoding {
 
     pub fn with_data_type_data(data: &[u8]) -> (Vec<DataTypeEncoding>, usize) {
         let mut pos = 0;
-        let mut result = Vec::new();
+        let mut result = vec![];
         let size = usize::from_le_bytes(data[pos..pos + 8].try_into().unwrap());
         pos += 8;
         for _ in 0..size {

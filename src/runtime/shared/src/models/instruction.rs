@@ -10,7 +10,7 @@ use strum_macros::AsRefStr;
 use crate::models::instructions::new_obj::NewObjectInstruction;
 use crate::models::instructions::stack_data_operation::StackOperationInstruction;
 
-#[derive(AsRefStr, PartialEq, Copy, Clone)]
+#[derive(AsRefStr, PartialEq, Clone)]
 pub enum InstructionType {
     Decl(DeclInstruction),
     PushI,
