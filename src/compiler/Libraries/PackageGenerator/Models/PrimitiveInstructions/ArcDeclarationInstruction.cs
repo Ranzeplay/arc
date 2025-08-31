@@ -53,6 +53,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
                     .. BitConverter.GetBytes(dataTypeNode?.ResolvedType.TypeId ?? 0),
+                    
+                    .. BitConverter.GetBytes(specializedGenericTypeId.LongCount()),
                     .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes),
                 ],
                 DataSlots = [slot],
