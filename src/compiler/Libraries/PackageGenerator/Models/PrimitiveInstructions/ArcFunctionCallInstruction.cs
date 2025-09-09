@@ -24,8 +24,10 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 GeneratedData = [
                     .. Opcode, 
                     .. BitConverter.GetBytes(FunctionSymbolId), 
-                    .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes), 
-                    .. BitConverter.GetBytes(ParameterCount)
+                    .. BitConverter.GetBytes(ParameterCount),
+                    
+                    .. BitConverter.GetBytes(SpecializedGenericTypes.LongCount()),
+                    .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes)
                 ],
             };
         }
