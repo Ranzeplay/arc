@@ -21,6 +21,11 @@ export const linkItems: LinkItemType[] = [
     text: 'Development',
     url: '/docs/development',
     icon: <GitBranch />
+  },
+  {
+    text: 'Articles',
+    url: '/docs/article',
+    icon: <GitBranch />
   }
 ]
 

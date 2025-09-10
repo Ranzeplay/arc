@@ -1,0 +1,90 @@
+---
+title: 'Discussion on the design of Generics'
+---
+
+# Current type system
+
+`<memory storage type> <type name> [array indicator]`
+
+We manually specify which data is a value and which data is a reference.
+
+## Examples
+- `val string`
+- `ref int[]`
+
+# Hard to use with generics
+
+Consider a list of type T `List<T>`, we need a list of strings.
+
+## T as a full type specifier
+
+When T is a full type specifier, we do the following
+
+- `val List<val int>`
+- `val List<ref int>`
+
+In this case, `T` is `val int` or `ref int`.
+
+But in case of a function, let us say a function with a generic parameter:
+
+	`func foo<T>(const bar: T): ...`
+
+When using it, we write the following:
+
+	`call foo<val int>(2);`
+
+First thing is the incompatibility of the current grammar and syntax.
+
+- It lacks memory storage type.
+
+Also leads to the following doubts on restrictions of type T.
+
+- What if the function requires a reference of T? The parameter itself cannot restrict it.
+
+## T as a type name specifier
+
+When T is a type name specifier, we do the following
+
+- `val List<int>`
+- `val List<int>`
+
+The disadvantage is obvious: what if I need it to store a reference to some integers?
+
+# Solutions
+
+> Currently we prefer solution A.
+
+## A. Turn references into a type and handle it during runtime
+
+Remove the usage of marking a data as a reference using keyword `ref`.
+
+Introduce type `Ref<T>` that refers to a reference type.
+
+We can still use keyword `ref` to get the reference of a data and use `val` to get its value or dereference.
+
+- `const r: Ref<Foo> = ref foo;` : `r` is a reference to an existing variable/constant `foo`.
+- `var v: Foo = val r;` : `v` is the value of the reference `r`, it is dereferenced and being shallow copied.
+
+### Advantages
+
+- No need to distinguish reference and value during runtime.
+- Shorter type specifier.
+
+### Disadvantages
+
+- Need extra care for the special type `Ref<T>`.
+- Need to bind keyword `ref`, `val` and `clone` to the type.
+
+### Extra
+
+- Use `clone val` keyword to clone(deep copy) an existing value inside the reference.
+- Use `clone` keyword to clone an existing value.
+- Allow developer to customize the behavior of `val` and `clone`.
+- ~Consider `Ref<T>` to be a new base type, we can also call it `ref<T>`.~
+
+## B. Require memory storage type requirements to be specified on definition-side and match on usage-side
+
+*To be done...*
+
+<div className="ml-auto mr-0 self-end text-right text-fd-muted-foreground">Jeb Feng</div>
+<div className="ml-auto mr-0 self-end text-right text-fd-muted-foreground">9/10/2025</div>
