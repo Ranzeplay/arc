@@ -5,25 +5,25 @@ namespace Arc::Std::Collection
 {
 	public group List<T>
 	{
-		private field var elements: val T[];
-		private field var capacity: val int;
-		private field var size: val int;
+		private field var elements: T[];
+		private field var capacity: int;
+		private field var size: int;
 
-		public constructor(var self: ref List<T>): ref List<T>
+		public constructor(var self: List<T>): List<T>
 		{
 			self.capacity = 4;
 			self.size = 0;
 			self.elements = CreateArray<T>(self.capacity);
 		}
 
-		public constructor(var self: ref List<T>, const data: val T[]): ref List<T>
+		public constructor(var self: List<T>, const data: T[]): List<T>
 		{
 			self.capacity = GetArraySize<T>(data);
 			self.size = self.capacity;
 			self.elements = data;
 		}
 
-		public func append(var self: ref List<T>, const element: val T): ref none
+		public func append(var self: List<T>, const element: T): none
 		{
 			if (self.size >= self.capacity)
 			{
@@ -35,7 +35,7 @@ namespace Arc::Std::Collection
 			return none;
 		}
 
-		public func removeAt(var self: ref List<T>, const index: val int): ref none
+		public func removeAt(var self: List<T>, const index: int): none
 		{
 			if (index < 0 || index >= self.size)
 			{
@@ -46,7 +46,7 @@ namespace Arc::Std::Collection
 			return none;
 		}
 
-		public func clear(var self: ref List<T>): ref none
+		public func clear(var self: List<T>): none
 		{
 			self.size = 0;
 			self.capacity = 4;
@@ -54,7 +54,7 @@ namespace Arc::Std::Collection
 			return none;
 		}
 
-		public func insertAt(var self: ref List<T>, const index: val int, const element: val T): ref none
+		public func insertAt(var self: List<T>, const index: int, const element: T): none
 		{
 			if (index < 0 || index > self.size)
 			{
@@ -70,12 +70,12 @@ namespace Arc::Std::Collection
 			return none;
 		}
 
-		public func getSize(const self: ref List<T>): val int
+		public func getSize(const self: List<T>): int
 		{
 			return self.size;
 		}
 
-		public func at(const self: ref List<T>, const index: val int): val T
+		public func at(const self: List<T>, const index: int): T
 		{
 			if (index < 0 || index >= self.size)
 			{
@@ -84,21 +84,21 @@ namespace Arc::Std::Collection
 			return self.elements[index];
 		}
 
-		public func toArray(const self: ref List<T>): val T[]
+		public func toArray(const self: List<T>): T[]
 		{
-			var result: val T[];
+			var result: T[];
 			result = CreateArray<T>(self.size);
 			
-			for(var i : val int = 0; i < self.size; i = i + 1)
+			for(var i : int = 0; i < self.size; i = i + 1)
             {
                 result[i] = self.elements[i];
             }
 			return result;
 		}
 
-		public func indexOf(const self: ref List<T>, const element: val T): val int
+		public func indexOf(const self: List<T>, const element: T): int
 		{
-			for (var i : val int = 0; i < self.size; i = i + 1)
+			for (var i : int = 0; i < self.size; i = i + 1)
             {
                 if (self.elements[i] == element)
                 {

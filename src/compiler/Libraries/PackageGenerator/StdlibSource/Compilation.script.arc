@@ -35,7 +35,7 @@ namespace Arc::Std::Compilation
 	@WithAnnotationId(0xb71)
 	public group SymbolId
 	{
-		public const id: val int;
+		public const id: int;
 	}
 
 	@NoType
@@ -53,7 +53,7 @@ namespace Arc::Std::Compilation
 	@WithAnnotationId(0xba1)
 	public group WithAnnotationId
 	{
-		public const id: val int;
+		public const id: int;
 	}
 
 	@NoType

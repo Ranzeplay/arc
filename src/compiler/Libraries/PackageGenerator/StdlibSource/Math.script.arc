@@ -1,6 +1,6 @@
 namespace Arc::Std::Math
 {
-	public func AbsInt(const i: val int): val int
+	public func AbsInt(const i: int): int
 	{
 		if (i >= 0)
 		{
@@ -12,7 +12,7 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func AbsDecimal(const d: val decimal): val decimal
+	public func AbsDecimal(const d: decimal): decimal
 	{
 		if (d >= 0)
 		{
@@ -24,7 +24,7 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func MinInt(const a: ref int, const b: ref int): ref int
+	public func MinInt(const a: int, const b: int): int
 	{
 		if(a >= b)
 		{
@@ -36,7 +36,7 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func MaxInt(const a: ref int, const b: ref int): ref int
+	public func MaxInt(const a: int, const b: int): int
 	{
 		if(a >= b)
 		{
@@ -48,7 +48,7 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func MinDecimal(const a: ref decimal, const b: ref decimal): ref decimal
+	public func MinDecimal(const a: decimal, const b: decimal): decimal
 	{
 		if(a >= b)
 		{
@@ -60,7 +60,7 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func MaxDecimal(const a: ref decimal, const b: ref decimal): ref decimal
+	public func MaxDecimal(const a: decimal, const b: decimal): decimal
 	{
 		if(a >= b)
 		{
@@ -72,19 +72,19 @@ namespace Arc::Std::Math
 		}
 	}
 
-	public func Deg2Rad(const deg: ref decimal): val decimal
+	public func Deg2Rad(const deg: decimal): decimal
 	{
 		return deg * 3.14159 / 180.0;
 	}
 
-	public func Rad2Deg(const rad: ref decimal): val decimal
+	public func Rad2Deg(const rad: decimal): decimal
 	{
 		return rad * 180.0 / 3.14159;
 	}
 
-	public func Factorial(var n: val int): val int
+	public func Factorial(var n: int): int
 	{
-		var fac: val int;
+		var fac: int;
 		fac = 1;
 		while(n >= 1)
 		{
@@ -95,11 +95,11 @@ namespace Arc::Std::Math
 		return fac;
 	}
 
-	public func Permutation(const n: val int, const a: val int): val int
+	public func Permutation(const n: int, const a: int): int
 	{
-		var perm: val int;
+		var perm: int;
 		perm = 1;
-		var i: val int;
+		var i: int;
 		i = n;
 		while(i > n - a)
 		{
@@ -110,11 +110,11 @@ namespace Arc::Std::Math
 		return perm;
 	}
 
-	public func Combination(const n: val int, const a: val int): val int
+	public func Combination(const n: int, const a: int): int
 	{
-		var comb: val int;
+		var comb: int;
 		comb = 1;
-		var i: val int = 0;
+		var i: int = 0;
 		while(i < a)
 		{
 			comb = comb * (n - i);
