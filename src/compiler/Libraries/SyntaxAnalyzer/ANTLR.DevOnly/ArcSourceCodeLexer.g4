@@ -101,6 +101,7 @@ KW_CONSTANT: 'const';
 KW_VARIABLE: 'var';
 KW_VALUE: 'val';
 KW_REFERENCE: 'ref';
+KW_CLONE: 'clone';
 KW_CALL: 'call';
 KW_NEW: 'new';
 KW_DEFER: 'defer';
