@@ -3,5 +3,7 @@
 public enum ArcGroupLifecycleStageType
 {
     Construction,
-    Destruction
+    Destruction,
+    DeepCopy,
+    ShallowCopy
 }

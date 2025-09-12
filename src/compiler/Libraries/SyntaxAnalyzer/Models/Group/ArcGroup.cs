@@ -1,8 +1,6 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
-using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
-using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
@@ -19,9 +17,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
 
         public IEnumerable<ArcGroupFunction> Functions { get; set; }
         
-        public IEnumerable<ArcGroupConstructor> Constructors { get; set; }
-        
-        public IEnumerable<ArcGroupDestructor> Destructors { get; set; }
+        public IEnumerable<ArcGroupLifecycleFunction> LifecycleFunctions { get; set; }
 
         public IEnumerable<ArcSingleIdentifier> GenericTypes { get; set; }
 
@@ -42,16 +38,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
                 .ToList()
                 .FindAll(m => m.arc_group_function() != null)
                 .Select(f => new ArcGroupFunction(f.arc_group_function()));
-            Constructors = context.arc_wrapped_group_member()
+            LifecycleFunctions = context.arc_wrapped_group_member()
                 .arc_group_member()
                 .ToList()
-                .FindAll(m => m.arc_group_constructor() != null)
-                .Select(f => new ArcGroupConstructor(f.arc_group_constructor()));
-            Destructors = context.arc_wrapped_group_member()
-                .arc_group_member()
-                .ToList()
-                .FindAll(m => m.arc_group_destructor() != null)
-                .Select(f => new ArcGroupDestructor(f.arc_group_destructor()));
+                .FindAll(m => m.arc_group_lifecycle_function() != null)
+                .Select(f => new ArcGroupLifecycleFunction(f.arc_group_lifecycle_function()));
             GenericTypes = context.arc_generic_declaration_wrapper()?
                 .arc_single_identifier()
                 .Select(g => new ArcSingleIdentifier(g)) ?? [];
