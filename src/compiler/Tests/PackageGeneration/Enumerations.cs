@@ -43,8 +43,8 @@ internal class Enumerations
                                     OFFLINE
                                 }
                                 
-                                public func test(): val none {
-                                    var status: val Status;
+                                public func test(): none {
+                                    var status: Status;
                                     status = Status.ONLINE;
                                 }
                             }

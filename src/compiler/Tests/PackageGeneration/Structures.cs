@@ -18,11 +18,11 @@ namespace Arc.Compiler.Tests.PackageGeneration
         {
             const string text = """
                                 namespace Arc::Program {
-                                    public func main(var args: val string[]): val int {
-                                        var a: val int; a = 2; a = 2 + 3; return 0;
+                                    public func main(var args: string[]): int {
+                                        var a: int; a = 2; a = 2 + 3; return 0;
                                     }
-                                    public func foo(): val int { return -1; }
-                                    public func bar(const lazyFox: ref string): ref bool {
+                                    public func foo(): int { return -1; }
+                                    public func bar(const lazyFox: string): bool {
                                         return true;
                                     }
                                 }
@@ -44,15 +44,15 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                      @Export
                                 	    public group ArcExample {
                                 		    @Getter
-                                		    public field const foo: val string;
+                                		    public field const foo: string;
                                 		    @Accessor
-                                		    public field var bar: val string;
+                                		    public field var bar: string;
 
-                                		    private func eval(): val bool {
+                                		    private func eval(): bool {
                                 		    	return false;
                                 		    }
                                  
-                                		    public func empty(): val none {}
+                                		    public func empty(): none {}
                                 	}
                                 }
                                 """;

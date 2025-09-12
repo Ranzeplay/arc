@@ -4,17 +4,17 @@ namespace Arc::Program {
 	@Export
 	public group ArcExample<T> {
 		@Getter
-		public field const foo: val T;
+		public field const foo: T;
 		@Accessor
-		public field var bar: val string;
+		public field var bar: string;
 
-		private func eval(): val bool {
+		private func eval(): bool {
 			return false;
 		}
 
-		public func empty(): val none {}
+		public func empty(): none {}
 
-		public func ctor(): val none {
+		public func ctor(): none {
 			foo = "foo";
 			bar = "bar";
 		}
@@ -22,20 +22,20 @@ namespace Arc::Program {
 
 	@Export
 	@Entrypoint
-	public func main(var args: val string[]): val none {
-		var a: val int = 4;
+	public func main(var args: string[]): none {
+		var a: int = 4;
 		a = [Console].readLn();
-		var b: val infer;
+		var b: infer;
 		b = 6;
-		const c: val infer;
+		const c: infer;
 		if (a > b) { c = a + b; }
 		elif (a < b) { c = a * b; }
 		else { c = a - b; }
 
 		call [Console].PrintLn("Hello, world!");
 
-		var d: val ArcExample<val string>;
-		d = new ArcExample<val string>();
+		var d: ArcExample<string>;
+		d = new ArcExample<string>();
 
 		return 0;
 	}
