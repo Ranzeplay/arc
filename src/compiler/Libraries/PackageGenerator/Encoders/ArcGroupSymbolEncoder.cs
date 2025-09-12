@@ -12,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Encoders
                 ..group.Fields.SelectMany(field => BitConverter.GetBytes(field.Id)),
                 // Lifecycle function id list
                 ..BitConverter.GetBytes((long) group.LifecycleFunctions.Count),
-                ..group.LifecycleFunctions.SelectMany(f => BitConverter.GetBytes(f.Id)),
+                ..group.LifecycleFunctions.SelectMany(f => (byte[]) [(byte)f.SyntaxTree.LifecycleStage, .. BitConverter.GetBytes(f.Id)]),
                 // Function id list
                 ..BitConverter.GetBytes((long) group.Functions.Count),
                 ..group.Functions.SelectMany(function => BitConverter.GetBytes(function.Id)),
