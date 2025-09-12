@@ -54,14 +54,23 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
                 logs.AddRange(iterLogs);
 
-                if (fnDescriptor == null)
-                {
-                    continue;
-                }
-
                 fnDescriptor.SyntaxTree = fn;
                 Functions.Add(fnDescriptor);
                 functionNodes.Add(fnDescriptor);
+                // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
+                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
+            }
+            
+            var lifecycleFunctionNodes = new List<ArcScopeTreeLifecycleFunctionNode>();
+            foreach (var lifecycleFn in SyntaxTree.LifecycleFunctions)
+            {
+                var (fnDesc, iterLogs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeLifecycleFunctionNode>(source, lifecycleFn.Declarator);
+
+                logs.AddRange(iterLogs);
+
+                fnDesc.SyntaxTree = lifecycleFn;
+                LifecycleFunctions.Add(fnDesc);
+                lifecycleFunctionNodes.Add(fnDesc);
                 // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
                 source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
             }
@@ -72,16 +81,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 var (fieldDescriptor, iterLogs) = ArcGroupGenerator.GenerateFieldDescriptor(source, field);
 
                 logs.AddRange(iterLogs);
-                if (fieldDescriptor == null)
-                {
-                    continue;
-                }
 
                 Fields.Add(fieldDescriptor);
                 fieldNodes.Add(fieldDescriptor);
             }
 
             AddChildren(functionNodes);
+            AddChildren(lifecycleFunctionNodes);
             AddChildren(fieldNodes);
 
             return logs;

@@ -8,6 +8,7 @@ using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
@@ -179,7 +180,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // Currently we determine constructor by the number of parameters
             // TODO: Implement a more robust way to determine the constructor
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
-            var constructorId = dataTypeGroup!.LifecycleFunctions.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
+            var constructorId = dataTypeGroup.LifecycleFunctions
+                .Where(f => f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction)
+                .First(c => c.Parameters.Count() == constructor.Parameters.Count())
+                .Id;
             result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1, constructor.SpecializedGenericTypes).Encode(source));
 
             var dataDeclDesc = new ArcDataDeclarationDescriptor

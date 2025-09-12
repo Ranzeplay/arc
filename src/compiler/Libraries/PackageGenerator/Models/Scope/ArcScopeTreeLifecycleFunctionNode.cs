@@ -10,5 +10,5 @@ public class ArcScopeTreeLifecycleFunctionNode : ArcScopeTreeFunctionNodeBase
 
     public override string SignatureAddend => $"L{Name}";
     
-    public ArcGroupLifecycleFunction SyntaxTree { get; }
+    public ArcGroupLifecycleFunction SyntaxTree { get; set; }
 }
