@@ -3,17 +3,17 @@ link Arc::Std::Compilation;
 
 namespace Program
 {
-   	@Entrypoint
-   	public func main(var args: val string[]): val int
-   	{
-		var number: val int;
-	  	number = ReadInteger();
+	 	@Entrypoint
+	 	public func main(var args: string[]): int
+		{
+			var number: int;
+			number = ReadInteger();
 
-		call PrintString("Number: ");
-		call PrintInteger(number);
+			call PrintString("Number: ");
+			call PrintInteger(number);
 		call PrintString("\n");
 
-	  	var digits: val int;
+	  	var digits: int;
 	  	digits = 0;
 	  	while (number <> 0)
 	  	{

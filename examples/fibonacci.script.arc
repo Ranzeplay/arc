@@ -4,12 +4,12 @@ link Arc::Std::Compilation;
 namespace Arc::Program {
 	# @Export
 	@Entrypoint
-	public func main(var args: val string[]): val int {
-		var i: val int;
+	public func main(var args: string[]): int {
+		var i: int;
 		i = 0;
 		while (i < 32)
 		{
-			const value: val int;
+			const value: int;
 			value = fib(i);
 			call PrintInteger(value);
 			call PrintString("\n");
@@ -19,7 +19,7 @@ namespace Arc::Program {
 		return 0;
 	}
 
-	public func fib(const n: val int): val int
+	public func fib(const n: int): int
 	{
 		if (n <= 1)
 		{

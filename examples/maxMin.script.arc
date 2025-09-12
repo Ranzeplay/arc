@@ -5,15 +5,15 @@ link Arc::Std::Array;
 namespace Program
 {
    	@Entrypoint
-   	public func main(var args: val string[]): val int
+   	public func main(var args: string[]): int
    	{
-		const count: val int;
+		const count: int;
 		count = ReadInteger();
 
-		var array: val int[];
+		var array: int[];
 		array = CreateIntArray();
 
-		var i: val int;
+		var i: int;
 
 		i = 0;
 		while(i < count)
@@ -22,8 +22,8 @@ namespace Program
 			i = i + 1;
 		}
 
-		var max: val int;
-		var min: val int;
+		var max: int;
+		var min: int;
 		max = array[0];
 		min = array[0];
 
@@ -49,7 +49,7 @@ namespace Program
 	  	return 0;
    	}
 
-	private func OutputNumber(const hint: ref string, const n: ref int): ref none
+	private func OutputNumber(const hint: string, const n: int): none
 	{
 		call PrintString(hint);
 		call PrintInteger(n);
