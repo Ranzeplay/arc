@@ -12,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             if (stmt.Expression is not null)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmt.Expression, true));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmt.Expression));
             }
             result.Append(new ArcReturnFromFunctionInstruction(stmt.Expression is not null).Encode(source));
 

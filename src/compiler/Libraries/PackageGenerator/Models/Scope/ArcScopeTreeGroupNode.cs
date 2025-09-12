@@ -25,9 +25,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public List<ArcScopeTreeGroupFunctionNode> Functions { get; set; } = [];
 
-        public List<ArcScopeTreeGroupConstructorNode> Constructors { get; set; } = [];
-
-        public List<ArcScopeTreeGroupFunctionNode> Destructors { get; set; } = [];
+        public List<ArcScopeTreeLifecycleFunctionNode> LifecycleFunctions { get; set; } = [];
 
         public List<ArcScopeTreeGroupFieldNode> Fields { get; set; } = [];
 
@@ -68,24 +66,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
             }
 
-            var constructorNodes = new List<ArcScopeTreeGroupConstructorNode>();
-            foreach (var ctor in SyntaxTree.Constructors)
-            {
-                var (ctorDescriptor, iterLogs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeGroupConstructorNode>(source, ctor.Declarator);
-
-                logs.AddRange(iterLogs);
-                if (ctorDescriptor == null)
-                {
-                    continue;
-                }
-
-                ctorDescriptor.SyntaxTree = ctor.Context;
-                Constructors.Add(ctorDescriptor);
-                constructorNodes.Add(ctorDescriptor);
-                // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
-                source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
-            }
-
             var fieldNodes = new List<ArcScopeTreeGroupFieldNode>();
             foreach (var field in SyntaxTree.Fields)
             {
@@ -102,7 +82,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             }
 
             AddChildren(functionNodes);
-            AddChildren(constructorNodes);
             AddChildren(fieldNodes);
 
             return logs;

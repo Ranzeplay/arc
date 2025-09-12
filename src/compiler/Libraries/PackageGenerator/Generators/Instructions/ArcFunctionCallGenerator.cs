@@ -21,7 +21,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             foreach (var arg in funcCall.Arguments)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression, true));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression));
             }
 
             var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);

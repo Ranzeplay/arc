@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin", relocationLayer).Encode(source);
 
-            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression, true);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, clBlock.ConditionalBlock.Expression);
 
             var body = ArcSequentialExecutionGenerator.Generate(source, clBlock.ConditionalBlock.Body, fnNode);
 
@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var beginBlockLabel = new ArcLabellingInstruction(ArcRelocationLabelType.BeginLoopBlock, "begin", relocationLayer).Encode(source);
 
-            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, forBlock.Condition, true);
+            var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, forBlock.Condition);
             
             var body = ArcSequentialExecutionGenerator.Generate(source, forBlock.Body, fnNode);
             var iterator = forBlock.Iterator.Generate(source);

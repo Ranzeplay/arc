@@ -84,7 +84,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         Type = paramDataType?.DataType ?? ArcBaseType.Placeholder(),
                         AllowNone = false,
                         Dimension = a.DataType.Dimension,
-                        MemoryStorageType = a.DataType.MemoryStorageType,
                         SyntaxTree = a.DataDeclarator,
                     },
                     RawFullName = a.Identifier.Name,
@@ -104,7 +103,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Type = returnType ?? ArcBaseType.Placeholder(),
                 AllowNone = false,
                 Dimension = declarator.ReturnType.Dimension,
-                MemoryStorageType = declarator.ReturnType.MemoryStorageType,
             };
             
             var descriptor = new T
