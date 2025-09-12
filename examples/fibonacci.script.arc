@@ -1,7 +1,7 @@
 link Arc::Std::Console;
 link Arc::Std::Compilation;
 
-namespace Arc::Program {
+namespace Program {
 	# @Export
 	@Entrypoint
 	public func main(var args: string[]): int {

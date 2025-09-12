@@ -4,9 +4,9 @@ link Arc::Std::Array;
 
 namespace Program
 {
-   	@Entrypoint
-   	public func main(var args: string[]): int
-   	{
+	@Entrypoint
+	public func main(var args: string[]): int
+	{
 		const count: int;
 		count = ReadInteger();
 
@@ -46,8 +46,8 @@ namespace Program
 		call OutputNumber("Max: ", max);
 		call OutputNumber("Min: ", min);
 
-	  	return 0;
-   	}
+		return 0;
+	}
 
 	private func OutputNumber(const hint: string, const n: int): none
 	{
