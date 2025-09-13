@@ -2,7 +2,7 @@
 
 public class ArcNamelessFunctionDeclarator : ArcFunctionMinimalDeclarator
 {
-    public string Remark { get; set; }
+    public string SignaturePrefix { get; set; }
     
-    public override string GetSignature() => Remark;
+    public override string GetSignature() => $"{SignaturePrefix}@{string.Join('&', Arguments.Select(a => a.DataType.GetSignature()))}*{ReturnType.GetSignature()}";
 }

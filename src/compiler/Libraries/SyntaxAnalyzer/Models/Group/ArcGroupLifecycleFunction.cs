@@ -15,13 +15,26 @@ public class ArcGroupLifecycleFunction : ArcNamelessFunction<ArcSourceCodeParser
     
     public ArcGroupLifecycleFunction(ArcSourceCodeParser.Arc_group_lifecycle_functionContext context)
     {
+        IEnumerable<ArcFunctionArgument> args;
+        if (context.arc_wrapped_arg_list().arc_arg_list()?.arc_self_data_declarator() != null)
+        {
+            args =
+            [
+                new ArcFunctionArgument(context.arc_wrapped_arg_list().arc_arg_list().arc_self_data_declarator()),
+                .. context.arc_wrapped_arg_list().arc_arg_list().arc_data_declarator()
+                    .Select(p => new ArcFunctionArgument(p))
+            ];
+        }
+        else
+        {
+            args = context.arc_wrapped_arg_list().arc_arg_list()?.arc_data_declarator().Select(p => new ArcFunctionArgument(p)) ?? [];
+        }
+        
         Declarator = new ArcNamelessFunctionDeclarator
         {
-            Arguments = context.arc_wrapped_arg_list()?
-                .arc_arg_list()?
-                .arc_data_declarator()
-                .Select(p => new ArcFunctionArgument(p)) ?? [],
-            ReturnType = new ArcDataType(context.arc_data_type())
+            Arguments = args,
+            ReturnType = new ArcDataType(context.arc_data_type()),
+            SignaturePrefix = $"L{LifecycleStage}"
         };
         Body = new ArcFunctionBody(context.arc_wrapped_function_body());
 
@@ -34,5 +47,4 @@ public class ArcGroupLifecycleFunction : ArcNamelessFunction<ArcSourceCodeParser
         
         Context = context;
     }
-    
 }
