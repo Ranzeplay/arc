@@ -23,13 +23,13 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public string ShortName { get; set; }
 
-        public List<ArcScopeTreeGroupFunctionNode> Functions { get; set; } = [];
+        public IEnumerable<ArcScopeTreeGroupFunctionNode> Functions => GetChildren<ArcScopeTreeGroupFunctionNode>();
 
-        public List<ArcScopeTreeLifecycleFunctionNode> LifecycleFunctions { get; set; } = [];
+        public IEnumerable<ArcScopeTreeLifecycleFunctionNode> LifecycleFunctions => GetChildren<ArcScopeTreeLifecycleFunctionNode>();
 
-        public List<ArcScopeTreeGroupFieldNode> Fields { get; set; } = [];
+        public IEnumerable<ArcScopeTreeGroupFieldNode> Fields => GetChildren<ArcScopeTreeGroupFieldNode>();
 
-        public List<ArcScopeTreeGroupNode> Groups { get; set; } = [];
+        public IEnumerable<ArcScopeTreeGroupNode> Groups => GetChildren<ArcScopeTreeGroupNode>();
 
         public Dictionary<ArcScopeTreeAnnotationNode, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
 
@@ -55,7 +55,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 logs.AddRange(iterLogs);
 
                 fnDescriptor.SyntaxTree = fn;
-                Functions.Add(fnDescriptor);
                 functionNodes.Add(fnDescriptor);
                 // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
                 source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
@@ -69,7 +68,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
                 logs.AddRange(iterLogs);
 
                 fnDesc.SyntaxTree = lifecycleFn;
-                LifecycleFunctions.Add(fnDesc);
                 lifecycleFunctionNodes.Add(fnDesc);
                 // Remove the last element since after executing the previous statement, there will be a new function in the parent signature
                 source.ParentSignature.Locators = source.ParentSignature.Locators.Take(source.ParentSignature.Locators.Count - 1).ToList();
@@ -82,7 +80,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
                 logs.AddRange(iterLogs);
 
-                Fields.Add(fieldDescriptor);
                 fieldNodes.Add(fieldDescriptor);
             }
 
