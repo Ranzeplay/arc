@@ -16,9 +16,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcFunctionGenerator
     {
-        public static ArcPartialGenerationResult GenerateNamedFunction<TSyntax, TFunctionNode>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, ArcNamedFunctionDeclarator> func)
+        public static ArcPartialGenerationResult GenerateFunction<TSyntax, TFunctionNode, TDeclarator>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, TDeclarator> func)
             where TSyntax : ParserRuleContext
             where TFunctionNode : ArcScopeTreeFunctionNodeBase, new()
+            where TDeclarator : ArcFunctionMinimalDeclarator
         {
             var result = new ArcPartialGenerationResult();
 
