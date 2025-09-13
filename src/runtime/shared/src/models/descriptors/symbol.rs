@@ -59,9 +59,8 @@ impl Debug for FunctionSymbol {
 #[derive(Clone)]
 pub struct GroupSymbol {
     pub field_ids: Vec<usize>,
-    pub constructor_ids: Vec<usize>,
-    pub destructor_ids: Vec<usize>,
     pub function_ids: Vec<usize>,
+    pub lifecycle_functions: Vec<GroupLifecycleFunctionSymbol>,
     pub sub_group_ids: Vec<usize>,
     pub annotation_ids: Vec<usize>,
     pub generic_type_ids: Vec<usize>,
@@ -69,13 +68,37 @@ pub struct GroupSymbol {
 
 impl Debug for GroupSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[GP] {}/{}/{}/{}/{}",
+        writeln!(f, "[GP] {}/{}/{}",
                  self.field_ids.len(),
                  self.function_ids.len(),
-                 self.constructor_ids.len(),
-                 self.destructor_ids.len(),
                  self.sub_group_ids.len()
         )
+    }
+}
+
+#[derive(Clone, Debug)]
+pub enum GroupLifecycleFunctionType {
+    Constructor,
+    Destructor,
+    ShallowCopy,
+    DeepCopy
+}
+
+#[derive(Clone)]
+pub struct GroupLifecycleFunctionSymbol {
+    pub fn_id: usize,
+    pub fn_type: GroupLifecycleFunctionType,
+}
+
+impl From<u8> for GroupLifecycleFunctionType {
+    fn from(value: u8) -> Self {
+        match &value {
+            0x01 => GroupLifecycleFunctionType::Constructor,
+            0x02 => GroupLifecycleFunctionType::Destructor,
+            0x03 => GroupLifecycleFunctionType::ShallowCopy,
+            0x04 => GroupLifecycleFunctionType::DeepCopy,
+            _ => unreachable!()
+        }
     }
 }
 

@@ -18,14 +18,9 @@ impl Debug for GroupDetailViewModel {
             writeln!(f, "  0x{:016X}", function_id)?;
         }
 
-        writeln!(f, "= Constructors:")?;
-        for constructor_id in &self.group.constructor_ids {
-            writeln!(f, "  0x{:016X}", constructor_id)?;
-        }
-
-        writeln!(f, "= Destructors:")?;
-        for destructor_id in &self.group.destructor_ids {
-            writeln!(f, "  0x{:016X}", destructor_id)?;
+        writeln!(f, "= Lifecycle functions:")?;
+        for func in &self.group.lifecycle_functions {
+            writeln!(f, "{:?}  0x{:016X}", func.fn_type, func.fn_id)?;
         }
 
         writeln!(f, "= Subgroups:")?;
