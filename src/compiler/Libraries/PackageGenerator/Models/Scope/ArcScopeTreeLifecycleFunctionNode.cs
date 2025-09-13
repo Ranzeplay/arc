@@ -8,7 +8,7 @@ public class ArcScopeTreeLifecycleFunctionNode : ArcScopeTreeFunctionNodeBase
     
     public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupLifecycleFunction;
 
-    public override string SignatureAddend => $"L{Name}";
+    public override string SignatureAddend => $"L{SyntaxTree.Declarator.GetSignature()}";
     
     public ArcGroupLifecycleFunction SyntaxTree { get; set; }
 }
