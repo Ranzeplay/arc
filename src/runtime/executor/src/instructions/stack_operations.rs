@@ -1,5 +1,4 @@
 use crate::data;
-use arc_shared::models::encodings::data_type_enc::MemoryStorageType;
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
 use arc_shared::models::instructions::pop_to_slot::PopToSlotInstruction;
@@ -97,10 +96,7 @@ pub fn load_stack(
         }
     };
 
-    let data = match &lsi.storage_type {
-        MemoryStorageType::Reference => Rc::clone(&data),
-        MemoryStorageType::Value => Rc::new(RefCell::new(data.borrow().to_owned().clone())),
-    };
+    let data = Rc::new(RefCell::new(data.borrow().to_owned().clone()));
 
     stack.push(data);
 }
@@ -125,14 +121,7 @@ pub fn save_stack(
 
             let mut slot_ref = slot.borrow_mut();
 
-            match ssi.storage_type {
-                MemoryStorageType::Reference => {
-                    slot_ref.value = stack_top_data;
-                }
-                MemoryStorageType::Value => {
-                    slot_ref.value = Rc::new(RefCell::new(stack_top_data.borrow().clone()));
-                }
-            }
+            slot_ref.value = Rc::new(RefCell::new(stack_top_data.borrow().clone()));
         }
         DataSourceType::Field => {}
         DataSourceType::ArrayElement => {}

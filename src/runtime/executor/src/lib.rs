@@ -8,7 +8,7 @@ use crate::func_exec::prepare_and_get_function_info;
 use crate::instructions::return_function::wrap_return_value_if_needed;
 use crate::stdlib::execute_stdlib_function;
 use log::{debug, error, trace};
-use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
 use arc_shared::models::execution::result::{FunctionExecutionFault, FunctionExecutionResult, StackTraceLocation};
@@ -26,8 +26,7 @@ macro_rules! push_bool_to_stack {
             data_type: DataTypeEncoding {
                 type_id: 0x6,
                 dimension: 0,
-                mutability: Mutability::Immutable,
-                memory_storage_type: MemoryStorageType::Value,
+                mutability: Mutability::Immutable
             },
             value: DataValueType::Bool($result),
         })));

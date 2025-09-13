@@ -1,7 +1,7 @@
 use arc_bindings::{arc_function_id, arc_scope_dispatcher};
 use arc_shared::base_type_id::{INTEGER_TYPE_ID, NONE_TYPE_ID};
 use arc_shared::models::encodings::data_type_enc::{
-    DataTypeEncoding, MemoryStorageType, Mutability,
+    DataTypeEncoding, Mutability,
 };
 use arc_shared::models::execution::data::{DataValue, DataValueType};
 use arc_shared::models::execution::result::FunctionExecutionResult;
@@ -20,7 +20,6 @@ impl ArcStdArray {
             type_id: *INTEGER_TYPE_ID,
             dimension: 1,
             mutability: Mutability::Mutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::Array(vec![]);
@@ -40,18 +39,12 @@ impl ArcStdArray {
         let array = args.pop().unwrap();
 
         let mut array = array.borrow_mut();
-        let memory_storage_type = array.data_type.memory_storage_type.clone();
 
         match &mut array.value {
             DataValueType::Array(arr) => match &value.borrow().value {
                 DataValueType::Integer(_) => {
                     let integer_value = {
-                        match memory_storage_type {
-                            MemoryStorageType::Reference => Rc::clone(&value),
-                            MemoryStorageType::Value => {
-                                Rc::new(RefCell::new(value.borrow().clone()))
-                            }
-                        }
+                        Rc::new(RefCell::new(value.borrow().clone()))
                     };
 
                     arr.push(integer_value);
@@ -127,7 +120,6 @@ impl ArcStdArray {
                                 type_id: *NONE_TYPE_ID,
                                 dimension: 0,
                                 mutability: Mutability::Mutable,
-                                memory_storage_type: MemoryStorageType::Reference,
                             },
                             value: DataValueType::None,
                         })),
@@ -157,7 +149,6 @@ impl ArcStdArray {
                     type_id: *INTEGER_TYPE_ID,
                     dimension: 1,
                     mutability: Mutability::Mutable,
-                    memory_storage_type: MemoryStorageType::Value,
                 };
 
                 let value = DataValueType::Array(Vec::with_capacity(i));

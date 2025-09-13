@@ -1,5 +1,5 @@
 use crate::models::descriptors::symbol::{DataTypeSymbol, Symbol, SymbolDescriptor};
-use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use crate::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
@@ -24,7 +24,6 @@ impl From<&Rc<SymbolDescriptor>> for DataValue {
                 type_id: 0xffffffff,
                 dimension: 0,
                 mutability: Mutability::Immutable,
-                memory_storage_type: MemoryStorageType::Reference,
             },
             value: DataValueType::Symbol(Rc::clone(value)),
         }
