@@ -17,9 +17,9 @@ use arc_shared::models::options::cmdec_options::CmdecOptions;
 pub fn decode_instructions(
     stream: &[u8],
     package: &Package,
-    opt: CmdecOptions,
+    opt: &CmdecOptions,
 ) -> Vec<Rc<Instruction>> {
-    if opt.verbose {
+    if opt.print_instructions {
         info!("=== Instructions");
     }
 
@@ -533,7 +533,7 @@ pub fn decode_instructions(
             }
         }
 
-        if opt.verbose {
+        if opt.print_instructions {
             if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
                 Function(f) => f.entry_pos == instruction.offset,
                 _ => false,
@@ -552,7 +552,7 @@ pub fn decode_instructions(
     }
 
     if pos == stream.len() {
-        if opt.verbose {
+        if opt.print_instructions {
             info!("All instructions decoded successfully!");
         }
     } else {

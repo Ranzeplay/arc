@@ -20,20 +20,20 @@ impl Cmdec {
             return None;
         }
 
-        if opt.print_decoding_result && opt.verbose {
+        if opt.print_raw_bytes {
             debug!("Raw:\n{:02X?}", stream);
         }
 
         let mut pos = 2;
         let (package_descriptor, len) = decode_package_descriptor(&stream[pos..]);
         pos += len;
-        if opt.print_decoding_result {
+        if opt.print_package_descriptor {
             info!("{:?}", package_descriptor);
         }
 
         let (symbol_table, len) = decode_symbol_table(&stream[pos..]);
         pos += len;
-        if opt.print_decoding_result {
+        if opt.print_symbols {
             info!("{:?}", symbol_table);
         }
 
@@ -47,13 +47,13 @@ impl Cmdec {
                 _ => {}
             }
         }
-        if opt.print_decoding_result {
+        if opt.print_symbols {
             info!("{:?}", group_detail_list);
         }
 
         let (constant_table, len) = decode_constant_table(&stream[pos..]);
         pos += len;
-        if opt.print_decoding_result {
+        if opt.print_constants {
             info!("{:?}", constant_table);
             info!("Header length: {:?}", pos);
         }
@@ -65,7 +65,7 @@ impl Cmdec {
             instructions: Vec::new(),
         };
 
-        package.instructions = decode_instructions(&stream[pos..], &package, opt);
+        package.instructions = decode_instructions(&stream[pos..], &package, &opt);
 
         Some(package)
     }

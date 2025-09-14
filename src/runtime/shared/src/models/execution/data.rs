@@ -70,7 +70,7 @@ impl ComplexDataValue {
             .symbol_table
             .symbols
             .get(&data_type_enc.type_id)
-            .unwrap();
+            .unwrap_or_else(|| panic!("Data type not found: 0x{:016X}", data_type_enc.type_id));
         let data_type = match &data_type_symbol.value {
             Symbol::DataType(dt) => dt,
             _ => panic!("Data type is not a group"),

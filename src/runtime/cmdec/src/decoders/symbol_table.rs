@@ -36,7 +36,7 @@ fn decode_symbol(stream: &[u8]) -> (Symbol, usize) {
         0x07 => decode_annotation_descriptor(&stream[1..]),
         0x08 => decode_enum_descriptor(&stream[1..]),
         0x09 => decode_enum_member_descriptor(&stream[1..]),
-        _ => unreachable!(),
+        _ => panic!("Unexpected symbol type 0x{:02X}", stream[0]),
     };
 
     (result.0, result.1 + 1)
