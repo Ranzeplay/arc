@@ -7,11 +7,12 @@ use crate::traits::instruction::DecodableInstruction;
 pub struct NewObjectInstruction {
     pub type_id: usize,
     pub generic_type_ids: Vec<usize>,
+    pub ctor_fn_id: usize,
 }
 
 impl Debug for NewObjectInstruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "0x{:016X}", self.type_id)
+        write!(f, "0x{:016X} <- ctor 0x{:016X}", self.type_id, self.ctor_fn_id)
     }
 }
 
@@ -24,10 +25,14 @@ impl DecodableInstruction<NewObjectInstruction> for NewObjectInstruction {
         let (generic_type_ids, generic_types_len) = SizedArrayEncoding::with_usize_data(stream[pos..].try_into().unwrap());
         pos += generic_types_len;
 
+        let ctor_fn_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+        pos += 8;
+
         Some((
             NewObjectInstruction {
                 type_id,
                 generic_type_ids,
+                ctor_fn_id,
             },
             pos,
         ))
