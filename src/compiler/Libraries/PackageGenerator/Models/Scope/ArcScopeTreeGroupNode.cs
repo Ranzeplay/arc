@@ -35,7 +35,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcAccessibility Accessibility { get; set; } = ArcAccessibility.Private;
 
-        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes => Children.OfType<ArcScopeTreeGenericTypeNode>();
+        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes => GetChildren<ArcScopeTreeGenericTypeNode>();
 
         public IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [

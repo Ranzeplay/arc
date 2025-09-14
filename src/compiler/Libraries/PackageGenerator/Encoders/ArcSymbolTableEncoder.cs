@@ -9,8 +9,6 @@ namespace Arc.Compiler.PackageGenerator.Encoders
     {
         public static IEnumerable<byte> Encode(ArcGeneratorContext context)
         {
-            var stringEncoder = new ArcStringEncoder();
-
             var result = new List<byte>();
 
             var validSymbolNodes = context.GlobalScopeTree.FlattenedNodes

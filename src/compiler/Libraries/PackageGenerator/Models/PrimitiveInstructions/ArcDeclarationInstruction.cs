@@ -50,7 +50,7 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 [
                     .. Opcode,
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
-                    .. BitConverter.GetBytes(dataTypeNode?.ResolvedType.TypeId ?? 0),
+                    .. BitConverter.GetBytes(dataTypeNode?.Id ?? 0),
                     
                     .. BitConverter.GetBytes(specializedGenericTypeId.LongCount()),
                     .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes),

@@ -171,7 +171,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy.ResolvedType)!;
 
             // Constructor is a function that uses `self`
-            result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType, constructor.SpecializedGenericTypes).Encode(source));
             foreach (var param in constructor.Parameters)
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param));
@@ -180,12 +179,13 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // Currently we determine constructor by the number of parameters
             // TODO: Implement a more robust way to determine the constructor
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
-            var constructorId = dataTypeGroup.LifecycleFunctions
+            var constructorFunction = dataTypeGroup.LifecycleFunctions
                 .Where(f => f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction)
-                .First(c => c.Parameters.Count() == constructor.Parameters.Count())
-                .Id;
-            result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1, constructor.SpecializedGenericTypes).Encode(source));
-
+                .First(c => c.Parameters.Count() == constructor.Parameters.Count());
+            
+            // Constructor function will be called automatically
+            result.Append(new ArcNewObjectInstruction(dataTypeNode, constructor.SpecializedGenericTypes, constructorFunction).Encode(source));
+            
             var dataDeclDesc = new ArcDataDeclarationDescriptor
             {
                 Type = dataTypeNode.DataType,
