@@ -55,9 +55,8 @@ impl Cmdec {
         pos += len;
         if opt.print_decoding_result {
             info!("{:?}", constant_table);
+            info!("Header length: {:?}", pos);
         }
-
-        info!("Header length: {:?}", pos);
 
         let mut package = Package {
             descriptor: package_descriptor,
