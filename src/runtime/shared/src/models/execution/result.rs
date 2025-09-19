@@ -3,12 +3,14 @@ use std::fmt::{Display, Formatter};
 use std::rc::Rc;
 use crate::models::execution::data::DataValue;
 
+#[derive(Debug)]
 pub enum FunctionExecutionResult {
     Invalid,
     Success(Option<Rc<RefCell<DataValue>>>),
     Failure(Rc<RefCell<FunctionExecutionFault>>),
 }
 
+#[derive(Debug)]
 pub struct FunctionExecutionFault {
     pub stack_trace: Vec<StackTraceLocation>,
     pub exception: Rc<RefCell<DataValue>>,
@@ -26,6 +28,7 @@ impl Display for FunctionExecutionFault {
     }
 }
 
+#[derive(Debug)]
 pub struct StackTraceLocation {
     pub instruction_location: usize,
     pub function_id: usize,

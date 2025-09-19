@@ -25,10 +25,10 @@ impl Cmdec {
         }
 
         let mut pos = 2;
-        let (package_descriptor, len) = decode_package_descriptor(&stream[pos..]);
+        let (pkg_desc, len) = decode_package_descriptor(&stream[pos..]);
         pos += len;
         if opt.print_package_descriptor {
-            info!("{:?}", package_descriptor);
+            info!("{:?}", pkg_desc);
         }
 
         let (symbol_table, len) = decode_symbol_table(&stream[pos..]);
@@ -59,7 +59,7 @@ impl Cmdec {
         }
 
         let mut package = Package {
-            descriptor: package_descriptor,
+            descriptor: pkg_desc,
             symbol_table,
             constant_table,
             instructions: Vec::new(),

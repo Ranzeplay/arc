@@ -1,4 +1,4 @@
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum Mutability {
     Immutable,
     Mutable,
@@ -14,7 +14,7 @@ impl Mutability {
     }
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct DataTypeEncoding {
     pub type_id: usize,
     pub dimension: u32,
