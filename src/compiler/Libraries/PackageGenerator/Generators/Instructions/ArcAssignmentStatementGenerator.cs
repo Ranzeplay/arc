@@ -101,7 +101,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
-                    result.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
+                    result.Append(new ArcLoadDataToStackInstruction(stackOperation).Encode(source));
 
                     foreach (var expr in term.Indices)
                     {
