@@ -123,6 +123,23 @@ pub fn save_stack(
 
             slot_ref.value = Rc::new(RefCell::new(stack_top_data.borrow().clone()));
         }
+        DataSourceType::Field => {
+            let field_id = ssi.location_id;
+
+            let mut ctx = exec_context.borrow_mut();
+            let data_to_save = ctx.global_stack.pop().unwrap();
+
+            let mut stack_top_data = stack_top_data.borrow_mut().to_owned();
+            match &mut stack_top_data.value {
+                DataValueType::Complex(c) => {
+                    c.values.insert(field_id, data_to_save);
+                }
+                _ => panic!("Non-complex type does not have fields"),
+            }
+
+
+            ctx.global_stack.push(Rc::new(RefCell::new(stack_top_data)));
+        }
         DataSourceType::Field => {}
         DataSourceType::ArrayElement => {}
         DataSourceType::StackTop => panic!("Cannot overwrite the stack top"),
