@@ -14,6 +14,8 @@ namespace Arc::Std::Collection
 			self.capacity = 4;
 			self.size = 0;
 			self.elements = CreateArray<T>(self.capacity);
+
+			return self;
 		}
 
 		public constructor(var self: List<T>, const data: T[]): List<T>
@@ -21,6 +23,8 @@ namespace Arc::Std::Collection
 			self.capacity = GetArraySize<T>(data);
 			self.size = self.capacity;
 			self.elements = data;
+
+			return self;
 		}
 
 		public func append(var self: List<T>, const element: T): none
