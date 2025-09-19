@@ -255,8 +255,8 @@ pub fn execute_function(
                 break;
             }
             InstructionType::FCall(call) => {
-                let result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
-                match result {
+                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                match fn_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid function(0x{:016X}) execution result", call.function_id);
                         return FunctionExecutionResult::Invalid;
@@ -280,10 +280,33 @@ pub fn execute_function(
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
             InstructionType::RpStk => replace_stack_top(&exec_context),
             InstructionType::NewObj(no) => {
-                let mut exec_context_ref = exec_context.borrow_mut();
-                let obj = construct_data(no, &exec_context_ref.package);
+                {
+                    let mut exec_context_ref = exec_context.borrow_mut();
+                    let obj = construct_data(no, &exec_context_ref.package);
 
-                exec_context_ref.global_stack.push(obj);
+                    exec_context_ref.global_stack.push(obj);
+                }
+
+                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                match ctor_result {
+                    FunctionExecutionResult::Invalid => {
+                        error!("Invalid constructor function(0x{:016X}) execution result", no.ctor_fn_id);
+                        return FunctionExecutionResult::Invalid;
+                    }
+                    FunctionExecutionResult::Success(data_opt) => {
+                        if let Some(data) = data_opt {
+                            exec_context.borrow_mut().global_stack.push(data);
+                        }
+                    }
+                    FunctionExecutionResult::Failure(exception) => {
+                        {
+                            let mut exception_ref = exception.borrow_mut();
+                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
+                        }
+
+                        return FunctionExecutionResult::Failure(exception);
+                    }
+                }
             }
         }
 
