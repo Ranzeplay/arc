@@ -9,6 +9,7 @@ members = [
     "shared",
     "macros/scope_dispatcher",
     "macros/manual_function_id",
+    "macros/instruction_factory",
     "tests",
 ]
 

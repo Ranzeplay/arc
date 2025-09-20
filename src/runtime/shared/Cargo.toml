@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-strum_macros = "~0.26"
+strum_macros = "~0.27"
 pad = "~0.1"
 serde = { version = "~1.0", features = ["derive"] }
+arc_instruction_factory = { path = "../macros/instruction_factory" }
 lazy_static = "~1.5"
