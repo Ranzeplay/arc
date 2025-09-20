@@ -1,5 +1,5 @@
 [package]
-name = "arc_bindings"
+name = "arc_scope_dispatcher"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,6 +7,5 @@ edition = "2024"
 proc-macro = true
 
 [dependencies]
-arc_shared = { path = "../shared" }
 syn = { version = "~2.0", features = ["full"] }
 quote = "~1.0"
