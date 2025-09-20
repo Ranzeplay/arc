@@ -552,7 +552,7 @@ pub fn decode_instructions(
     }
 
     if pos == stream.len() {
-        if opt.verbose {
+        if opt.print_decoding_result {
             info!("All instructions decoded successfully!");
         }
     } else {
