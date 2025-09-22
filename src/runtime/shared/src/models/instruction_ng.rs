@@ -1,3 +1,8 @@
+#[allow(unused)]
+use crate::models::instructions::single_instructions::*;
+#[allow(unused)]
+use crate::models::instructions::return_function::ReturnFunctionInstruction;
+
 use std::fmt::Debug;
 use arc_instruction_factory::{arc_instruction, generate_instruction_enum};
 use crate::models::package::Package;
