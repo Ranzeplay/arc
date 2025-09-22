@@ -1,6 +1,6 @@
 use proc_macro::TokenStream;
-use quote::quote;
 use std::collections::HashMap;
+use quote::quote;
 use syn::{parse_macro_input, ImplItem, ItemImpl, LitStr};
 
 #[proc_macro_attribute]
@@ -57,9 +57,4 @@ pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream
     };
 
     TokenStream::from(expanded)
-}
-
-#[proc_macro_attribute]
-pub fn arc_function_id(_attr: TokenStream, item: TokenStream) -> TokenStream {
-    item
 }

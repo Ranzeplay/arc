@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use arc_instruction_factory::arc_instruction;
 use crate::models::encodings::data_type_enc::MemoryStorageType;
 use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
@@ -29,6 +30,7 @@ impl Debug for DeclInstruction {
     }
 }
 
+#[arc_instruction(0x01, "Decl")]
 impl DecodableInstruction<DeclInstruction> for DeclInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(DeclInstruction, usize)> {
         let mut pos = 1;

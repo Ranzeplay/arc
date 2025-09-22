@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use arc_instruction_factory::arc_instruction;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 
@@ -13,6 +14,7 @@ impl Debug for ConditionalJumpInstruction {
     }
 }
 
+#[arc_instruction(0x22, "JmpC")]
 impl DecodableInstruction<ConditionalJumpInstruction> for ConditionalJumpInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(ConditionalJumpInstruction, usize)> {
         let jump_offset = i64::from_le_bytes(stream[1..9].try_into().unwrap());
