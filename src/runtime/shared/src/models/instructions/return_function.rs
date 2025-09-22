@@ -15,7 +15,7 @@ impl Debug for ReturnFunctionInstruction {
     }
 }
 
-#[arc_instruction(0x1a, "FRet")]
+#[arc_instruction(0x1a, "Ret")]
 impl DecodableInstruction<ReturnFunctionInstruction> for ReturnFunctionInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(ReturnFunctionInstruction, usize)> {
         let with_value = stream[1] == 0x01;

@@ -7,4 +7,4 @@ pub mod display;
 pub mod execution;
 pub mod source_info;
 pub mod options;
-pub mod instruction_ng;
+pub mod instruction_type;

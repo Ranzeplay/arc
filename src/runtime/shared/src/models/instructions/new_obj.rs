@@ -1,4 +1,5 @@
 use std::fmt::Debug;
+use arc_instruction_factory::arc_instruction;
 use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
@@ -15,6 +16,7 @@ impl Debug for NewObjectInstruction {
     }
 }
 
+#[arc_instruction(0x42, "NewObj")]
 impl DecodableInstruction<NewObjectInstruction> for NewObjectInstruction {
     fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(NewObjectInstruction, usize)> {
         let mut pos = 1;
