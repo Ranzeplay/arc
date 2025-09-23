@@ -1,7 +1,9 @@
 ﻿using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Generators.Instructions;
+using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Generation;
+using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
@@ -32,6 +34,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<ArcScopeTreeGroupNode> Groups => GetChildren<ArcScopeTreeGroupNode>();
 
         public Dictionary<ArcScopeTreeAnnotationNode, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
+        
+        public IEnumerable<ArcGroupDerivationLink> Derivations { get; set; } = [];
 
         public ArcAccessibility Accessibility { get; set; } = ArcAccessibility.Private;
 
@@ -46,6 +50,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public IEnumerable<ArcCompilationLogBase> ExpandSubDescriptors(ArcGenerationSource source)
         {
             var logs = new List<ArcCompilationLogBase>();
+            
+            Derivations = SyntaxTree.Derivations
+                .Select(derivation => ArcDataTypeHelper.GetDataType(source, derivation))
+                .Select(typeProxy => new ArcGroupDerivationLink { Target = typeProxy, GenericTypeMap = [] })
+                .ToArray();
 
             var functionNodes = new List<ArcScopeTreeGroupFunctionNode>();
             foreach (var fn in SyntaxTree.Functions)

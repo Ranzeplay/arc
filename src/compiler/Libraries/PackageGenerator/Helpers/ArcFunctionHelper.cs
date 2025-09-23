@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Helpers
 {
-    internal class ArcFunctionHelper
+    internal static class ArcFunctionHelper
     {
         public static (ulong, IEnumerable<ArcCompilationLogBase>) GetFunctionId(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {

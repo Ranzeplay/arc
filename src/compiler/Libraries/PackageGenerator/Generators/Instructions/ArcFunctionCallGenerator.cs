@@ -30,5 +30,21 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             return result;
         }
+        
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupFunctionNode funcNode, bool isSelfFunction, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        {
+            var result = new ArcPartialGenerationResult();
+
+            foreach (var arg in funcCall.Arguments)
+            {
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression));
+            }
+
+            var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
+
+            result.Append(new ArcFunctionCallInstruction(funcNode.Id, (uint)totalArgs, funcCall.SpecializedGenericTypes).Encode(source));
+
+            return result;
+        }
     }
 }

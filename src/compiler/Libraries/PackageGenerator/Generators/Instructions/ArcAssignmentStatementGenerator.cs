@@ -98,7 +98,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (currentDataType.ResolvedType is ArcComplexType)
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeNode(source, currentDataType.ResolvedType)!.ComplexTypeGroup!;
-                    var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
+                    var field = ArcGroupHelper.ResolveField(groupType, term.Identifier!.Name, source);
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
                     result.Append(new ArcLoadDataToStackInstruction(stackOperation).Encode(source));

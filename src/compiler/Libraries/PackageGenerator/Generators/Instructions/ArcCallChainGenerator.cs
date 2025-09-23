@@ -181,7 +181,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
             var constructorFunction = dataTypeGroup.LifecycleFunctions
                 .Where(f => f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction)
-                .First(c => c.Parameters.Count() == constructor.Parameters.Count());
+                .First(c => c.Parameters.Count() == constructor.Parameters.Count() + 1);
             
             // Constructor function will be called automatically
             result.Append(new ArcNewObjectInstruction(dataTypeNode, constructor.SpecializedGenericTypes, constructorFunction).Encode(source));
@@ -208,22 +208,37 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
-                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?.ComplexTypeGroup!;
+                var group = source.CurrentNode.Root
+                    .GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?
+                    .ComplexTypeGroup!;
 
-                if (term.Type == ArcCallChainTermType.FunctionCall)
+                switch (term.Type)
                 {
-                    // Handle the function call of this term
-                    result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, true, group));
-                }
-                else if (term.Type == ArcCallChainTermType.Identifier)
-                {
-                    var field = group.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
-                    var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
-                    result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
-                }
-                else
-                {
-                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
+                    case ArcCallChainTermType.FunctionCall:
+                        // Handle the function call of this term
+                        var fn = ArcGroupHelper.ResolveSelfFunction(group, term.FunctionCall!, source);
+                        if (fn == null)
+                        {
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            return result;
+                        }
+                        result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, fn, true, group));
+                        break;
+                    case ArcCallChainTermType.Identifier:
+                    {
+                        var field = ArcGroupHelper.ResolveField(group, term.Identifier!.Name, source);
+                        if (field == null)
+                        {
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Field '{term.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            return result;
+                        }
+                        var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
+                        result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+                        break;
+                    }
+                    default:
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
+                        break;
                 }
 
                 foreach (var expr in term.Indices)
