@@ -103,29 +103,29 @@ pub fn execute_function(
             InstructionType::Decl(decl) => {
                 declare_data(&function_context, decl, &exec_context.borrow().package);
             }
-            InstructionType::PushI => {}
-            InstructionType::PushC => {}
-            InstructionType::PushS => {}
-            InstructionType::PopD => {}
+            InstructionType::PushI(_) => {}
+            InstructionType::PushC(_) => {}
+            InstructionType::PushS(_) => {}
+            InstructionType::PopD(_) => {}
             InstructionType::PopS(pops) => {
                 pop_to_slot(&exec_context, &function_context, pops);
             }
-            InstructionType::Add => {
+            InstructionType::Add(_) => {
                 binary_operation_instruction!(exec_context, math::math_add_values);
             }
-            InstructionType::Sub => {
+            InstructionType::Sub(_) => {
                 binary_operation_instruction!(exec_context, math::math_subtract_values);
             }
-            InstructionType::Mul => {
+            InstructionType::Mul(_) => {
                 binary_operation_instruction!(exec_context, math::math_multiply_values);
             }
-            InstructionType::Div => {
+            InstructionType::Div(_) => {
                 binary_operation_instruction!(exec_context, math::math_divide_values);
             }
-            InstructionType::Mod => {
+            InstructionType::Mod(_) => {
                 binary_operation_instruction!(exec_context, math::math_modulo_values);
             }
-            InstructionType::LogOr => {
+            InstructionType::LogOr(_) => {
                 let mut exec_context_ref = exec_context.borrow_mut();
                 let a = exec_context_ref.global_stack.pop().unwrap();
                 let b = exec_context_ref.global_stack.pop().unwrap();
@@ -133,7 +133,7 @@ pub fn execute_function(
                 let result = math_logical_or(&b.borrow(), &a.borrow());
                 push_bool_to_stack!(exec_context_ref.global_stack, result);
             }
-            InstructionType::LogAnd => {
+            InstructionType::LogAnd(_) => {
                 let mut exec_context_ref = exec_context.borrow_mut();
                 let a = exec_context_ref.global_stack.pop().unwrap();
                 let b = exec_context_ref.global_stack.pop().unwrap();
@@ -141,20 +141,20 @@ pub fn execute_function(
                 let result = math_logical_and(&b.borrow(), &a.borrow());
                 push_bool_to_stack!(exec_context_ref.global_stack, result);
             }
-            InstructionType::LogNot => {
+            InstructionType::LogNot(_) => {
                 let mut exec_context_ref = exec_context.borrow_mut();
                 let a = exec_context_ref.global_stack.pop().unwrap();
 
                 let result = math_logical_not(&a.borrow());
                 push_bool_to_stack!(exec_context_ref.global_stack, result);
             }
-            InstructionType::BitAnd => {
+            InstructionType::BitAnd(_) => {
                 binary_operation_instruction!(exec_context, math::math_bitwise_and);
             }
-            InstructionType::BitOr => {
+            InstructionType::BitOr(_) => {
                 binary_operation_instruction!(exec_context, math::math_bitwise_or);
             }
-            InstructionType::BitNot => {
+            InstructionType::BitNot(_) => {
                 let mut exec_context_ref = exec_context.borrow_mut();
                 let a = exec_context_ref.global_stack.pop().unwrap();
                 let result = math_bitwise_not(&a.borrow());
@@ -163,35 +163,35 @@ pub fn execute_function(
                     .global_stack
                     .push(Rc::new(RefCell::new(result)));
             }
-            InstructionType::Inv => {}
-            InstructionType::EqC => {
+            InstructionType::Inv(_) => {}
+            InstructionType::EqC(_) => {
                 comparison_operation_instruction!(exec_context, math::math_compare_equal);
             }
-            InstructionType::EqR => {}
-            InstructionType::CLg => {
+            InstructionType::EqR(_) => {}
+            InstructionType::CLg(_) => {
                 comparison_operation_instruction!(exec_context, math::math_compare_greater);
             }
-            InstructionType::CLgE => {
+            InstructionType::CLgE(_) => {
                 comparison_operation_instruction!(
                     exec_context,
                     math::math_compare_greater_or_equal
                 );
             }
-            InstructionType::CLs => {
+            InstructionType::CLs(_) => {
                 comparison_operation_instruction!(exec_context, math::math_compare_less);
             }
-            InstructionType::CLsE => {
+            InstructionType::CLsE(_) => {
                 comparison_operation_instruction!(exec_context, math::math_compare_less_or_equal);
             }
-            InstructionType::NeqC => {
+            InstructionType::NeqC(_) => {
                 comparison_operation_instruction!(exec_context, math::math_compare_not_equal);
             }
-            InstructionType::NeqR => {}
+            InstructionType::NeqR(_) => {}
             InstructionType::Ret(ret) => {
                 result = wrap_return_value_if_needed(Rc::clone(&exec_context), ret.with_value);
                 break;
             }
-            InstructionType::Throw => {
+            InstructionType::Throw(_) => {
                 let mut exec_context_ref = exec_context.borrow_mut();
                 let exception = exec_context_ref.global_stack.pop().unwrap();
 
@@ -202,11 +202,11 @@ pub fn execute_function(
                     },
                 )));
             }
-            InstructionType::BTC => {}
-            InstructionType::BT => {}
-            InstructionType::BC => {}
-            InstructionType::BF => {}
-            InstructionType::ETC => {}
+            InstructionType::BTC(_) => {}
+            InstructionType::BT(_) => {}
+            InstructionType::BC(_) => {}
+            InstructionType::BF(_) => {}
+            InstructionType::ETC(_) => {}
             InstructionType::Jmp(_) => {
                 instruction_index = exec_context.borrow().jump_destinations[&instruction_index];
                 continue;
@@ -229,30 +229,30 @@ pub fn execute_function(
                     continue;
                 }
             }
-            InstructionType::GType => {}
-            InstructionType::WAll => {}
-            InstructionType::TEvt => {}
-            InstructionType::WEvt => {}
-            InstructionType::CRt => {}
-            InstructionType::CIR => {}
-            InstructionType::DIR => {}
-            InstructionType::Cln => {}
-            InstructionType::TermP => {}
-            InstructionType::TermEf => {}
-            InstructionType::SEf => {}
-            InstructionType::PEfId => {}
-            InstructionType::CEfId => {}
-            InstructionType::CType => {}
-            InstructionType::ShL => {
+            InstructionType::GType(_) => {}
+            InstructionType::WAll(_) => {}
+            InstructionType::TEvt(_) => {}
+            InstructionType::WEvt(_) => {}
+            InstructionType::CRt(_) => {}
+            InstructionType::CIR(_) => {}
+            InstructionType::DIR(_) => {}
+            InstructionType::Cln(_) => {}
+            InstructionType::TermP(_) => {}
+            InstructionType::TermEf(_) => {}
+            InstructionType::SEf(_) => {}
+            InstructionType::PEfId(_) => {}
+            InstructionType::CEfId(_) => {}
+            InstructionType::CType(_) => {}
+            InstructionType::ShL(_) => {
                 binary_operation_instruction!(exec_context, math::math_bitwise_left_shift);
             }
-            InstructionType::ShR => {
+            InstructionType::ShR(_) => {
                 binary_operation_instruction!(exec_context, math::math_bitwise_right_shift);
             }
-            InstructionType::Lbl => {
+            InstructionType::Lbl(_) => {
                 trace!("Found label");
             }
-            InstructionType::BitXor => {
+            InstructionType::BitXor(_) => {
                 binary_operation_instruction!(exec_context, math::math_bitwise_xor);
             }
             InstructionType::FRet(ret) => {
@@ -283,7 +283,7 @@ pub fn execute_function(
             }
             InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
-            InstructionType::RpStk => replace_stack_top(&exec_context),
+            InstructionType::RpStk(_) => replace_stack_top(&exec_context),
             InstructionType::NewObj(no) => {
                 {
                     let mut exec_context_ref = exec_context.borrow_mut();

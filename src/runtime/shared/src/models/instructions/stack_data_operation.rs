@@ -1,6 +1,7 @@
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 use std::fmt::{Debug, Formatter};
+use arc_instruction_factory::arc_instruction;
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DataSourceType {
@@ -58,6 +59,8 @@ impl Debug for StackOperationInstruction {
     }
 }
 
+#[arc_instruction(0x37, "LdStk")]
+#[arc_instruction(0x38, "SvStk")]
 impl DecodableInstruction<StackOperationInstruction> for StackOperationInstruction {
     fn decode(
         stream: &[u8],

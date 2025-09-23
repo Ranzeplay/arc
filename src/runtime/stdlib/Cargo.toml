@@ -5,5 +5,6 @@ edition = "2021"
 
 [dependencies]
 arc_shared = { path = "../shared" }
-arc_bindings = { path = "../bindings" }
+arc_scope_dispatcher = { path = "../macros/scope_dispatcher" }
+arc_manual_function_id = { path = "../macros/manual_function_id" }
 lazy_static = "~1.5"
