@@ -1,12 +1,111 @@
-namespace Arc::Lib {
-    public enum Status {
-        ONLINE,
-        BUSY,
-        OFFLINE
-    }
-    
-    public func test(): val none {
-        var status: val Status;
-        status = Status.ONLINE;
-    }
+link Arc::Std::Compilation;
+link Arc::Std::Array;
+
+namespace Arc::Std::Collection
+{
+	public group List<T>
+	{
+		private field var elements: T[];
+		private field var capacity: int;
+		private field var size: int;
+
+		public constructor(var self: List<T>): List<T>
+		{
+			self.capacity = 4;
+			self.size = 0;
+			self.elements = CreateArray<T>(self.capacity);
+		}
+
+		public constructor(var self: List<T>, const data: T[]): List<T>
+		{
+			self.capacity = GetArraySize<T>(data);
+			self.size = self.capacity;
+			self.elements = data;
+		}
+
+		public func append(var self: List<T>, const element: T): none
+		{
+			if (self.size >= self.capacity)
+			{
+				self.capacity = self.capacity * 2;
+				call ResizeArray<T>(self.elements, self.capacity);
+			}
+			call PushArray<T>(self.elements, element);
+			self.size = self.size + 1;
+			return none;
+		}
+
+		public func removeAt(var self: List<T>, const index: int): none
+		{
+			if (index < 0 || index >= self.size)
+			{
+				# TODO: Error handling for out-of-bounds index
+			}
+			call RemoveElementFromArray<T>(self.elements, index);
+			self.size = self.size - 1;
+			return none;
+		}
+
+		public func clear(var self: List<T>): none
+		{
+			self.size = 0;
+			self.capacity = 4;
+			self.elements = CreateArray<T>(self.capacity);
+			return none;
+		}
+
+		public func insertAt(var self: List<T>, const index: int, const element: T): none
+		{
+			if (index < 0 || index > self.size)
+			{
+				# TODO: Error handling for out-of-bounds index
+			}
+			if (self.size >= self.capacity)
+			{
+				self.capacity = self.capacity * 2;
+				call ResizeArray<T>(self.elements, self.capacity);
+			}
+			call InsertElementIntoArray<T>(self.elements, index, element);
+			self.size = self.size + 1;
+			return none;
+		}
+
+		public func getSize(const self: List<T>): int
+		{
+			return self.size;
+		}
+
+		public func at(const self: List<T>, const index: int): T
+		{
+			if (index < 0 || index >= self.size)
+			{
+				# TODO: Error handling for out-of-bounds index
+			}
+			return self.elements[index];
+		}
+
+		public func toArray(const self: List<T>): T[]
+		{
+			var result: T[];
+			result = CreateArray<T>(self.size);
+			
+			for(var i : int = 0; i < self.size; i = i + 1)
+            {
+                result[i] = self.elements[i];
+            }
+			return result;
+		}
+
+		public func indexOf(const self: List<T>, const element: T): int
+		{
+			for (var i : int = 0; i < self.size; i = i + 1)
+            {
+                if (self.elements[i] == element)
+                {
+                    return i;
+                }
+            }
+			return 0xffffffff;
+		}
+	}
 }

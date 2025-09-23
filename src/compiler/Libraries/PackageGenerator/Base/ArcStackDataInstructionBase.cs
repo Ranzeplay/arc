@@ -14,7 +14,6 @@ namespace Arc.Compiler.PackageGenerator.Base
                 GeneratedData = [
                     ..Opcode,
                     (byte)OperationDescriptor.Source,
-                    (byte)OperationDescriptor.StorageType,
                     ..BitConverter.GetBytes(OperationDescriptor.LocationId),
                     (byte)(OperationDescriptor.Overwrite ? 0x01 : 0x00),
                 ],

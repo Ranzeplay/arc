@@ -18,7 +18,7 @@ impl Debug for Instruction {
             self.offset,
             ' ',
             self.instruction_type.as_ref(),
-            description.pad_to_width(32),
+            description.pad_to_width(48),
             self.raw
         )
     }

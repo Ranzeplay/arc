@@ -1,7 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
-use crate::base_type_id::{INTEGER_TYPE_ID, STRING_TYPE_ID};
-use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use crate::base_type_id::{BOOLEAN_TYPE_ID, CHAR_TYPE_ID, DECIMAL_TYPE_ID, INTEGER_TYPE_ID, STRING_TYPE_ID};
+use crate::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use crate::models::execution::data::{DataValue, DataValueType};
 
 impl TryInto<i64> for DataValue {
@@ -76,7 +76,6 @@ impl From<String> for DataValue {
             type_id: *STRING_TYPE_ID,
             dimension: 0,
             mutability: Mutability::Immutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::String(value);
@@ -91,7 +90,6 @@ impl From<i64> for DataValue {
             type_id: *INTEGER_TYPE_ID,
             dimension: 0,
             mutability: Mutability::Immutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::Integer(value);
@@ -103,10 +101,9 @@ impl From<i64> for DataValue {
 impl From<f64> for DataValue {
     fn from(value: f64) -> Self {
         let data_type = DataTypeEncoding {
-            type_id: *INTEGER_TYPE_ID,
+            type_id: *DECIMAL_TYPE_ID,
             dimension: 0,
             mutability: Mutability::Immutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::Decimal(value);
@@ -118,10 +115,9 @@ impl From<f64> for DataValue {
 impl From<bool> for DataValue {
     fn from(value: bool) -> Self {
         let data_type = DataTypeEncoding {
-            type_id: *INTEGER_TYPE_ID,
+            type_id: *BOOLEAN_TYPE_ID,
             dimension: 0,
             mutability: Mutability::Immutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::Bool(value);
@@ -133,10 +129,9 @@ impl From<bool> for DataValue {
 impl From<char> for DataValue {
     fn from(value: char) -> Self {
         let data_type = DataTypeEncoding {
-            type_id: *INTEGER_TYPE_ID,
+            type_id: *CHAR_TYPE_ID,
             dimension: 0,
             mutability: Mutability::Immutable,
-            memory_storage_type: MemoryStorageType::Value,
         };
 
         let value = DataValueType::Char(value);

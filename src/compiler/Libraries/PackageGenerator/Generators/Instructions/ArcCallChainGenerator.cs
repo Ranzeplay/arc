@@ -8,13 +8,14 @@ using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcCallChainGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain, ArcMemoryStorageType requiredMemoryStorageType)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -35,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 
                 // Handle as normal call chain
                 
-                var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source, requiredMemoryStorageType);
+                var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source);
                 result.Append(firstTermResult);
                 lastTermTypeDecl = d;
                 skipCount = 1;
@@ -54,7 +55,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 return result;
             }
 
-            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, requiredMemoryStorageType);
+            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source);
             result.Append(remainingTermsResult);
 
             return result;
@@ -102,7 +103,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             result.Append(new ArcLoadDataToStackInstruction(
                 new(
                     ArcDataSourceType.Symbol, 
-                    ArcMemoryStorageType.Reference, 
                     enumMember.Id, false)
                 ).Encode(source)
             );
@@ -110,7 +110,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTerm(ArcCallChainTerm firstTerm, ArcGenerationSource source, ArcMemoryStorageType requiredMemoryStorageType)
+        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTerm(ArcCallChainTerm firstTerm, ArcGenerationSource source)
         {
             var result = new ArcPartialGenerationResult();
             ArcDataDeclarationDescriptor termTypeDecl;
@@ -119,7 +119,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var identifier = firstTerm.Identifier!;
                 var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
                 termTypeDecl = slot.DeclarationDescriptor;
-                var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, requiredMemoryStorageType, slot.SlotId, false);
+                var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, slot.SlotId, false);
 
                 result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
             }
@@ -148,9 +148,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             foreach (var expr in firstTerm.Indices)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, requiredMemoryStorageType, 0, true);
+                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, true);
                 result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
             }
 
@@ -171,31 +171,33 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataTypeNode = ArcDataTypeHelper.GetDataTypeNode(source, dataTypeProxy.ResolvedType)!;
 
             // Constructor is a function that uses `self`
-            result.Append(new ArcNewObjectInstruction(dataTypeNode.DataType, constructor.SpecializedGenericTypes).Encode(source));
             foreach (var param in constructor.Parameters)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param, true));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param));
             }
 
             // Currently we determine constructor by the number of parameters
             // TODO: Implement a more robust way to determine the constructor
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
-            var constructorId = dataTypeGroup!.Constructors.First(c => c.Parameters.Count() == constructor.Parameters.Count()).Id;
-            result.Append(new ArcFunctionCallInstruction(constructorId, (uint)constructor.Parameters.Count() + 1, constructor.SpecializedGenericTypes).Encode(source));
-
+            var constructorFunction = dataTypeGroup.LifecycleFunctions
+                .Where(f => f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction)
+                .First(c => c.Parameters.Count() == constructor.Parameters.Count() + 1);
+            
+            // Constructor function will be called automatically
+            result.Append(new ArcNewObjectInstruction(dataTypeNode, constructor.SpecializedGenericTypes, constructorFunction).Encode(source));
+            
             var dataDeclDesc = new ArcDataDeclarationDescriptor
             {
                 Type = dataTypeNode.DataType,
                 AllowNone = false,
                 Dimension = 0,
-                MemoryStorageType = ArcMemoryStorageType.Reference,
                 SyntaxTree = null!
             };
 
             return (result, dataDeclDesc);
         }
 
-        private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source, ArcMemoryStorageType requiredMemoryStorageType)
+        private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source)
         {
             var result = new ArcPartialGenerationResult();
             foreach (var term in terms)
@@ -206,29 +208,44 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
 
                 var dataType = (lastTermTypeDecl.Type as ArcComplexType)!;
-                var group = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?.ComplexTypeGroup!;
+                var group = source.CurrentNode.Root
+                    .GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?
+                    .ComplexTypeGroup!;
 
-                if (term.Type == ArcCallChainTermType.FunctionCall)
+                switch (term.Type)
                 {
-                    // Handle the function call of this term
-                    result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, true, group));
-                }
-                else if (term.Type == ArcCallChainTermType.Identifier)
-                {
-                    var field = group.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
-                    var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, requiredMemoryStorageType, field.Id, true);
-                    result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
-                }
-                else
-                {
-                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
+                    case ArcCallChainTermType.FunctionCall:
+                        // Handle the function call of this term
+                        var fn = ArcGroupHelper.ResolveSelfFunction(group, term.FunctionCall!, source);
+                        if (fn == null)
+                        {
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            return result;
+                        }
+                        result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, fn, true, group));
+                        break;
+                    case ArcCallChainTermType.Identifier:
+                    {
+                        var field = ArcGroupHelper.ResolveField(group, term.Identifier!.Name, source);
+                        if (field == null)
+                        {
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Field '{term.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            return result;
+                        }
+                        var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
+                        result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+                        break;
+                    }
+                    default:
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
+                        break;
                 }
 
                 foreach (var expr in term.Indices)
                 {
-                    result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+                    result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                    var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, requiredMemoryStorageType, 0, false);
+                    var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, false);
                     result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                 }
             }

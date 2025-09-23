@@ -10,7 +10,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         {
             Dimension = context.arc_array_indicator().Length;
             DataType = context.arc_primitive_data_type() != null ? DataMemberType.Primitive : DataMemberType.Complex;
-            MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_mem_store_type());
             if (DataType == DataMemberType.Primitive)
             {
                 PrimitiveType = ArcPrimitiveDataTypeUtils.FromToken(context.arc_primitive_data_type());
@@ -39,8 +38,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
 
         public ArcComplexDataType? ComplexType { get; set; }
 
-        public ArcMemoryStorageType MemoryStorageType { get; set; }
-
         public int Dimension { get; set; }
 
         public IEnumerable<ArcDataType> SpecializedGenericTypes { get; set; }
@@ -54,7 +51,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             _ => string.Empty
         };
 
-        public override string ToString() => $"{(MemoryStorageType == ArcMemoryStorageType.Reference ? 'R' : 'V')}{(Dimension > 0 ? "A" : "S")}{TypeName}";
+        public override string ToString() => $"{(Dimension > 0 ? "A" : "S")}{TypeName}";
 
         public string GetSignature() => ToString();
     }

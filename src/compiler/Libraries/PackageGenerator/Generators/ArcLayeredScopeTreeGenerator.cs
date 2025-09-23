@@ -159,7 +159,9 @@ namespace Arc.Compiler.PackageGenerator.Generators
                                 a => ArcAnnotationHelper.FindAnnotationNode(source, a),
                                 a => a.CallArguments.Select(ca => ca.Expression)
                             );
-                        n.ExpandSubDescriptors(source);
+                        // Here we do the expansion, the return value is the logs generated during the expansion
+                        var expandLogs = n.ExpandSubDescriptors(source);
+                        logs.AddRange(expandLogs);
                     });
             });
 

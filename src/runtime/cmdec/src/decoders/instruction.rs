@@ -8,9 +8,9 @@ use arc_shared::models::options::cmdec_options::CmdecOptions;
 pub fn decode_instructions(
     stream: &[u8],
     package: &Package,
-    opt: CmdecOptions,
+    opt: &CmdecOptions,
 ) -> Vec<Rc<Instruction>> {
-    if opt.verbose {
+    if opt.print_instructions {
         info!("=== Instructions");
     }
 

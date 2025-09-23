@@ -11,6 +11,7 @@
         Annotation = 0x07,
         Enum = 0x08,
         EnumMember = 0x09,
+        GenericTypeParameter = 0x0A,
         Invalid = 0x00
     }
 }

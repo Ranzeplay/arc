@@ -20,16 +20,16 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                 namespace Arc::Program {
                                 	public group Foo {
                                 		@Getter
-                                		public field var fitem: val int;
+                                		public field var fitem: int;
                                 	}
 
                                 	public group Bar {
                                 		@Getter
-                                		public field var bitem: val int;
+                                		public field var bitem: int;
 
-                                		public func getFoo(var self: ref Bar, var addend: val int): val Foo
+                                		public func getFoo(var self: Bar, var addend: int): Foo
                                 		{
-                                			var foo: val Foo;
+                                			var foo: Foo;
                                 			foo.fitem = self.bitem + addend;
 
                                 			return foo;
@@ -38,11 +38,11 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
                                 	@Export
                                 	@Entrypoint
-                                	public func main(var args: val string[]): val int {
-                                		var a: val Bar;
+                                	public func main(var args: string[]): int {
+                                		var a: Bar;
                                 		a.bitem = 42;
 
-                                		var b: val Foo;
+                                		var b: Foo;
                                 		b = a.getFoo(37413);
 
                                 		return 0;
@@ -65,13 +65,13 @@ namespace Arc.Compiler.Tests.PackageGeneration
 	                            link Arc::Std::Compilation;
 	                            namespace Arc::Program {
 	                            	public group Foo {
-	                            		public constructor(): val Foo {}
+	                            		public constructor(): Foo {}
 	                            	}
 
 	                            	@Export
 	                            	@Entrypoint
-	                            	public func main(var args: val string[]): val int {
-	                            		var b: val Foo;
+	                            	public func main(var args: string[]): int {
+	                            		var b: Foo;
 	                            		b = new Foo();
 
 	                            		return 0;

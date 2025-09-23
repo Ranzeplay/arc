@@ -12,7 +12,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcExpressionEvaluationGenerator
     {
-        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr, bool forceRefCallChain)
+        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -24,7 +24,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
                 else
                 {
-                    var logs = GenerateDataValue(ref source, ref result, term, forceRefCallChain);
+                    var logs = GenerateDataValue(ref source, ref result, term);
                     result.Logs.AddRange(logs);
                 }
             }
@@ -32,22 +32,21 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, bool forceRefCallChain)
+        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term)
         {
             switch (term.DataValue?.Type)
             {
                 case ArcDataValue.ValueType.InstantValue:
                     {
                         var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
-                        var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, ArcMemoryStorageType.Value, dataLocation, false);
+                        var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, dataLocation, false);
 
                         result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                         break;
                     }
                 case ArcDataValue.ValueType.CallChain:
                     {
-                        var memoryStorageType = forceRefCallChain ? ArcMemoryStorageType.Reference : ArcMemoryStorageType.Value;
-                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, memoryStorageType));
+                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!));
                         break;
                     }
                 default:

@@ -16,7 +16,7 @@ public class Generics
     {
         const string text = """
                             namespace Arc::Lib { 
-                                public func main<T>(): val int { 
+                                public func main<T>(): int { 
                                     return 0;
                                 }
                             }
@@ -34,7 +34,7 @@ public class Generics
     {
         const string text = """
                             namespace Arc::Lib { 
-                                public func main<T>(const t: val T): val int { 
+                                public func main<T>(const t: T): int { 
                                     return 0;
                                 }
                             }
@@ -52,7 +52,7 @@ public class Generics
     {
         const string text = """
                             namespace Arc::Lib { 
-                                public func main<T>(const t: val T): val T { 
+                                public func main<T>(const t: T): T { 
                                     return t;
                                 }
                             }
@@ -70,8 +70,8 @@ public class Generics
     {
         const string text = """
                             namespace Arc::Lib { 
-                                public func main<T>(const t: val T): val int {
-                                    const i: val T;
+                                public func main<T>(const t: T): int {
+                                    const i: T;
                                     i = t;
                                 
                                     return 0;
@@ -111,7 +111,7 @@ public class Generics
                             namespace Arc::Lib { 
                                 public group G<T>
                                 {
-                                    private field var item: val T;
+                                    private field var item: T;
                                 }
                             }
                             """;
@@ -130,11 +130,11 @@ public class Generics
                             namespace Arc::Lib { 
                                 public group G<T>
                                 {
-                                    private field var item: val T;
+                                    private field var item: T;
                                     
-                                    public func getFoo(var self: ref G): val T
+                                    public func getFoo(var self: G): T
                                     {
-                                        const i: val T;
+                                        const i: T;
                                         i = self.item;
                                     
                                     	return i;
@@ -157,7 +157,7 @@ public class Generics
                             namespace Arc::Lib { 
                                 public group G<T>
                                 {
-                                    public func getFoo<U>(var u: val U, var t: val T): val U
+                                    public func getFoo<U>(var u: U, var t: T): U
                                     {
                                     	return u;
                                     }
@@ -181,11 +181,11 @@ public class Generics
                             
                             namespace Arc::Program {
                                 @Entrypoint
-                                public func main(const args: val string[]): val int {
-                                    const list: val List<val string>;
-                                    list = new List<val string>(args);
+                                public func main(const args: string[]): int {
+                                    const list: List<string>;
+                                    list = new List<string>(args);
                                     
-                                    var size: val int;
+                                    var size: int;
                                     size = list.getSize();
                                     
                                     return 0;

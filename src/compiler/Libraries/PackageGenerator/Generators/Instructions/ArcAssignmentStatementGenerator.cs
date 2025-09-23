@@ -29,7 +29,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var firstTerm = assign.CallChain.Terms.First();
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
-            var rhsResult = GenerateRhs(assign.Expression, initialSlot.DeclarationDescriptor.MemoryStorageType, source);
+            var rhsResult = GenerateRhs(assign.Expression, source);
 
             // Combine the results
             result.Append(rhsResult);
@@ -60,7 +60,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         private static ArcPartialGenerationResult GenerateLhsDirectAssignment(ArcDataSlot slot, ArcGenerationSource source)
         {
             var result = new ArcPartialGenerationResult();
-            var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, slot.SlotId, false);
+            var pushSlotDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, slot.SlotId, false);
             result.Append(new ArcSaveDataFromStackInstruction(pushSlotDesc).Encode(source));
 
             return result;
@@ -75,14 +75,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             var result = new ArcPartialGenerationResult();
 
-            var firstSlotStackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, ArcMemoryStorageType.Reference, initialSlot.SlotId, false);
+            var firstSlotStackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, initialSlot.SlotId, false);
             result.Append(new ArcLoadDataToStackInstruction(firstSlotStackOperation).Encode(source));
 
             foreach (var expr in firstTerm.Indices)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, true);
+                var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, true);
                 result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
             }
 
@@ -98,16 +98,16 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (currentDataType.ResolvedType is ArcComplexType)
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeNode(source, currentDataType.ResolvedType)!.ComplexTypeGroup!;
-                    var field = groupType.Fields.First(f => f.IdentifierName == term.Identifier!.Name);
+                    var field = ArcGroupHelper.ResolveField(groupType, term.Identifier!.Name, source);
 
-                    var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, ArcMemoryStorageType.Reference, field.Id, true);
-                    result.Append(new ArcSaveDataFromStackInstruction(stackOperation).Encode(source));
+                    var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
+                    result.Append(new ArcLoadDataToStackInstruction(stackOperation).Encode(source));
 
                     foreach (var expr in term.Indices)
                     {
-                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, true));
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
 
-                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, ArcMemoryStorageType.Reference, 0, false);
+                        var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, false);
                         result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
                     }
 
@@ -125,12 +125,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static ArcPartialGenerationResult GenerateRhs(ArcExpression expression, ArcMemoryStorageType targetStorageType, ArcGenerationSource source)
+        private static ArcPartialGenerationResult GenerateRhs(ArcExpression expression, ArcGenerationSource source)
         {
             var rhsResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(
                 source,
-                expression,
-                targetStorageType == ArcMemoryStorageType.Reference
+                expression
             );
             return rhsResult;
         }

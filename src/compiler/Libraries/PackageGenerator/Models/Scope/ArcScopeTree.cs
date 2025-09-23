@@ -54,5 +54,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public T? GetNodeByName<T>(string name) where T : ArcScopeTreeNodeBase => Root.GetSpecificChild<T>(n => n.Name == name, true);
 
         public ArcScopeTreeNodeBase? GetNodeByName(string name) => GetNodeByName(name);
+        
+        public ArcScopeTreeNodeBase? GetNodeById(ulong id) => FlattenedNodes.FirstOrDefault(n => n.Id == id);
     }
 }

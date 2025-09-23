@@ -25,7 +25,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     Type = fieldTypeNode?.DataType ?? ArcBaseType.Placeholder(),
                     AllowNone = false,
                     Dimension = field.DataDeclarator.DataType.Dimension,
-                    MemoryStorageType = field.DataDeclarator.DataType.MemoryStorageType,
                 },
                 IdentifierName = field.DataDeclarator.Identifier.Name,
                 Annotations = field.Annotations

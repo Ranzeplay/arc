@@ -16,7 +16,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void EmptyFunction()
         {
             _logger.LogInformation("Running EmptyFunction test");
-            const string text = "namespace Arc::Program { public func main(): val none {} }";
+            const string text = "namespace Arc::Program { public func main(): none {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -28,7 +28,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithArguments()
         {
             _logger.LogInformation("Running FunctionWithArguments test");
-            const string text = "namespace Arc::Program { public func main(var args: val string[]): val int {} }";
+            const string text = "namespace Arc::Program { public func main(var args: string[]): int {} }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -40,7 +40,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
         public void FunctionWithLessStatements()
         {
             _logger.LogInformation("Running FunctionWithLessStatements test");
-            const string text = "namespace Arc::Program { public func main(): val int { var a: val int; const b: ref int; } }";
+            const string text = "namespace Arc::Program { public func main(): int { var a: int; const b: int; } }";
             var compilationUnitContext = AntlrAdapter.ParseCompilationUnit(text, _logger);
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
@@ -54,8 +54,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
             _logger.LogInformation("Running FunctionWithAssignmentExpression test");
             const string text = """
                                 namespace Arc::Program {
-                                    public func main(): val int {
-                                        var a: val int; a = 2; a = 2 + 3;
+                                    public func main(): int {
+                                        var a: int; a = 2; a = 2 + 3;
                                     }
                                 }
                                 """;
@@ -76,10 +76,10 @@ namespace Arc.Compiler.Tests.PackageGeneration
             _logger.LogInformation("Running FunctionWithBlockStatements test");
             const string text = """
                                 namespace Arc::Program { 
-                                    public func main(): val int { 
-                                        if (2 < 3) { var a: val int; a = 1; } 
-                                        else { var b: val int = 2; }
-                                        while (2 < 3) { var c: val int; c = 3; } 
+                                    public func main(): int { 
+                                        if (2 < 3) { var a: int; a = 1; } 
+                                        else { var b: int = 2; }
+                                        while (2 < 3) { var c: int; c = 3; } 
                                     }
                                 }
                                 """;
@@ -96,8 +96,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
             _logger.LogInformation("Running FunctionWithBlockStatements test");
             const string text = """
                                 namespace Arc::Program { 
-                                    public func main(): val none { 
-                                        var a: val int = 1;
+                                    public func main(): none { 
+                                        var a: int = 1;
                                     }
                                 }
                                 """;

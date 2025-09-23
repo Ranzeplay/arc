@@ -18,26 +18,26 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                      	  @Export
                                      	  public group ArcExample {
                                      	  	  @Getter
-                                     	  	  public field const foo: val string;
+                                     	  	  public field const foo: string;
                                      	  	  @Accessor
-                                     	  	  public field var bar: val string;
+                                     	  	  public field var bar: string;
                                          
-                                     	  	  private func eval(): val bool {
+                                     	  	  private func eval(): bool {
                                      	  	  	  return false;
                                      	  	  }
                                          
-                                     	  	  public func empty(): val none {}
+                                     	  	  public func empty(): none {}
                                      	  }
                                        
                                      	  @Export
                                      	  @Entrypoint
-                                     	  public func main(var args: val string[]): val none {
-                                     	  	  var a: val int;
+                                     	  public func main(var args: string[]): none {
+                                     	  	  var a: int;
                                      	  	  # a = [Console].readLn();
-                                     	  	  var b: val int;
+                                     	  	  var b: int;
                                      	  	  a = 114514;
                                      	  	  b = 1919810;
-                                     	  	  const c: val int;
+                                     	  	  const c: int;
                                      	  	  if (a > b) { c = a + b; }
                                      	  	  elif (a < b) { c = a * b; }
                                      	  	  else { c = a - b; }
@@ -51,7 +51,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                      	  	  return [Arc::Program].test();
                                      	  }
                                              
-                                         public func test(): val int {
+                                         public func test(): int {
                                              return 0;
                                          }
                                      }
@@ -59,7 +59,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
         private const string Text2 = """
                                      namespace Program::Test {
-                                     	 public func test(): val int {
+                                     	 public func test(): int {
                                              return 0;
                                          }
                                      }

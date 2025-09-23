@@ -1,4 +1,3 @@
-use crate::models::encodings::data_type_enc::MemoryStorageType;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
 use std::fmt::{Debug, Formatter};
@@ -44,7 +43,6 @@ impl From<u8> for DataSourceType {
 #[derive(PartialEq, Copy, Clone)]
 pub struct StackOperationInstruction {
     pub source: DataSourceType,
-    pub storage_type: MemoryStorageType,
     pub location_id: usize,
     pub overwrite: bool,
 }
@@ -53,12 +51,8 @@ impl Debug for StackOperationInstruction {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{:?} {} L:0x{:X} {}",
+            "{:?} L:0x{:X} {}",
             self.source,
-            match self.storage_type {
-                MemoryStorageType::Value => "Val",
-                MemoryStorageType::Reference => "Ref",
-            },
             self.location_id,
             if self.overwrite { "O" } else { "T" }
         )
@@ -76,8 +70,6 @@ impl DecodableInstruction<StackOperationInstruction> for StackOperationInstructi
         let mut pos = 1;
         let source = DataSourceType::from(stream[pos]);
         pos += 1;
-        let storage_type = MemoryStorageType::from_u8(stream[pos]);
-        pos += 1;
         let location_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
         let overwrite = stream[pos] == 0x01;
@@ -86,7 +78,6 @@ impl DecodableInstruction<StackOperationInstruction> for StackOperationInstructi
         Some((
             StackOperationInstruction {
                 source,
-                storage_type,
                 location_id,
                 overwrite,
             },

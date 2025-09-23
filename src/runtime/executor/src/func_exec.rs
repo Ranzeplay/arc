@@ -1,6 +1,6 @@
 use arc_shared::base_type_id::STRING_TYPE_ID;
 use arc_shared::models::descriptors::symbol::Symbol;
-use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
@@ -50,13 +50,10 @@ fn put_fn_args(
 
             let slot = DataSlot {
                 slot_id,
-                value: match &target_arg.memory_storage_type {
-                    MemoryStorageType::Value => Rc::new(RefCell::new(DataValue {
-                        data_type: target_arg.deref().clone(),
-                        value: data.borrow().value.clone(),
-                    })),
-                    MemoryStorageType::Reference => Rc::clone(&data),
-                },
+                value: Rc::new(RefCell::new(DataValue {
+                    data_type: target_arg.deref().clone(),
+                    value: data.borrow().value.clone(),
+                }))
             };
             function_context
                 .local_data
@@ -74,7 +71,6 @@ fn put_fn_args(
                         type_id: *STRING_TYPE_ID,
                         dimension: 1,
                         mutability: Mutability::Mutable,
-                        memory_storage_type: MemoryStorageType::Value,
                     },
                     value: DataValueType::Array(
                         exec_context

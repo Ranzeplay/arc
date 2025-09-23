@@ -1,9 +1,11 @@
-use crate::models::descriptors::symbol::{DataTypeSymbol, Symbol, SymbolDescriptor};
-use crate::models::encodings::data_type_enc::{DataTypeEncoding, MemoryStorageType, Mutability};
+use crate::models::descriptors::symbol::{
+    DataTypeSymbol, GroupFieldSymbol, Symbol, SymbolDescriptor,
+};
+use crate::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
+use crate::models::package::Package;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::models::package::Package;
 
 #[derive(Debug)]
 pub struct DataSlot {
@@ -24,7 +26,6 @@ impl From<&Rc<SymbolDescriptor>> for DataValue {
                 type_id: 0xffffffff,
                 dimension: 0,
                 mutability: Mutability::Immutable,
-                memory_storage_type: MemoryStorageType::Reference,
             },
             value: DataValueType::Symbol(Rc::clone(value)),
         }
@@ -71,7 +72,7 @@ impl ComplexDataValue {
             .symbol_table
             .symbols
             .get(&data_type_enc.type_id)
-            .unwrap();
+            .unwrap_or_else(|| panic!("Data type not found: 0x{:016X}", data_type_enc.type_id));
         let data_type = match &data_type_symbol.value {
             Symbol::DataType(dt) => dt,
             _ => panic!("Data type is not a group"),
@@ -92,20 +93,17 @@ impl ComplexDataValue {
             _ => panic!("Data type is not a group"),
         };
 
-        let mut values = HashMap::with_capacity(group.field_ids.len());
-        for field_id in &group.field_ids {
-            let field_symbol = package.symbol_table.symbols.get(field_id).unwrap();
-            let field = match &field_symbol.value {
-                Symbol::GroupField(field) => field,
-                _ => panic!("Field is not a field"),
-            };
+        let all_fields = get_all_fields(group_symbol.id, package);
 
+        let mut values: HashMap<usize, Rc<RefCell<DataValue>>> =
+            HashMap::with_capacity(all_fields.len());
+        for (id, field) in &all_fields {
             let initial_value = DataValue {
                 data_type: field.value_descriptor.clone(),
                 value: DataValueType::None,
             };
 
-            values.insert(*field_id, Rc::new(RefCell::new(initial_value)));
+            values.insert(*id, Rc::new(RefCell::new(initial_value)));
         }
 
         ComplexDataValue {
@@ -113,4 +111,43 @@ impl ComplexDataValue {
             values,
         }
     }
+}
+
+fn get_all_fields(group_id: usize, package: &Package) -> HashMap<usize, Rc<GroupFieldSymbol>> {
+    let group = match &package.symbol_table.symbols.get(&group_id).unwrap().value {
+        Symbol::Group(g) => g,
+        _ => panic!("Symbol 0x{:016X} is not a group", group_id),
+    };
+
+    let fields = group
+        .field_ids
+        .iter()
+        .map(|field_id| {
+            let field_symbol = package.symbol_table.symbols.get(field_id).unwrap();
+            match &field_symbol.value {
+                Symbol::GroupField(field) => (*field_id, field.clone()),
+                _ => panic!("Field is not a field"),
+            }
+        })
+        .collect::<HashMap<_, _>>();
+
+    let super_types = &group.derivation_type_ids;
+
+    let super_group_fields = super_types
+        .iter()
+        .map(|t| match &package.symbol_table.symbols.get(t).unwrap().value {
+            Symbol::DataType(dt) => match dt.as_ref() {
+                DataTypeSymbol::ComplexType(ct) => ct.group_id,
+                _ => panic!("Super type is not a complex type"),
+            },
+            _ => panic!("Super type is not a data type"),
+        })
+        .flat_map(|id| get_all_fields(id, &package))
+        .collect::<HashMap<_, _>>();
+
+    let mut result = HashMap::with_capacity(super_group_fields.len() + fields.len());
+    result.extend(super_group_fields);
+    result.extend(fields);
+
+    return result;
 }

@@ -13,7 +13,7 @@ pub struct FunctionCallInstruction {
 
 impl Debug for FunctionCallInstruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "F:{:02X} P:{}", self.function_id, self.param_count)
+        write!(f, "F:0x{:016X} P:{}", self.function_id, self.param_count)
     }
 }
 

@@ -16,9 +16,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcFunctionGenerator
     {
-        public static ArcPartialGenerationResult GenerateNamedFunction<TSyntax, TFunctionNode>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, ArcNamedFunctionDeclarator> func)
+        public static ArcPartialGenerationResult GenerateFunction<TSyntax, TFunctionNode, TDeclarator>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, TDeclarator> func)
             where TSyntax : ParserRuleContext
             where TFunctionNode : ArcScopeTreeFunctionNodeBase, new()
+            where TDeclarator : ArcFunctionMinimalDeclarator
         {
             var result = new ArcPartialGenerationResult();
 
@@ -84,7 +85,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         Type = paramDataType?.DataType ?? ArcBaseType.Placeholder(),
                         AllowNone = false,
                         Dimension = a.DataType.Dimension,
-                        MemoryStorageType = a.DataType.MemoryStorageType,
                         SyntaxTree = a.DataDeclarator,
                     },
                     RawFullName = a.Identifier.Name,
@@ -104,7 +104,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 Type = returnType ?? ArcBaseType.Placeholder(),
                 AllowNone = false,
                 Dimension = declarator.ReturnType.Dimension,
-                MemoryStorageType = declarator.ReturnType.MemoryStorageType,
             };
             
             var descriptor = new T

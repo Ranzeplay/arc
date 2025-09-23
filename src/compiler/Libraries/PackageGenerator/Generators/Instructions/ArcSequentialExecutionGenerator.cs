@@ -85,7 +85,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementThrow stmtThrow:
                         {
-                            stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression, false));
+                            stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression));
                             stepResult.Append(new ArcThrowInstruction().Encode(source));
                             break;
                         }

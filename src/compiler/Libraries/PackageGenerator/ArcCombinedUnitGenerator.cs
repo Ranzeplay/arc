@@ -10,6 +10,7 @@ using Arc.Compiler.PackageGenerator.StdlibSource;
 using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models;
 using System.Collections.Immutable;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 
 namespace Arc.Compiler.PackageGenerator
 {
@@ -75,7 +76,7 @@ namespace Arc.Compiler.PackageGenerator
                     }
                     else
                     {
-                        var fnResult = ArcFunctionGenerator.GenerateNamedFunction<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode>(genSource, fn, fn.SyntaxTree);
+                        var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode, ArcNamedFunctionDeclarator>(genSource, fn, fn.SyntaxTree);
                         fn.BlockLength = fnResult.GeneratedData.Count;
                         fn.GenerationResult = fnResult;
                     }
@@ -98,7 +99,26 @@ namespace Arc.Compiler.PackageGenerator
                         }
                         else
                         {
-                            var fnResult = ArcFunctionGenerator.GenerateNamedFunction<ArcSourceCodeParser.Arc_group_functionContext, ArcScopeTreeGroupFunctionNode>(genSource, fn, fn.SyntaxTree);
+                            var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_group_functionContext, ArcScopeTreeGroupFunctionNode, ArcNamedFunctionDeclarator>(genSource, fn, fn.SyntaxTree);
+                            fn.BlockLength = fnResult.GeneratedData.Count;
+                            fn.GenerationResult = fnResult;
+                        }
+                    }
+                    
+                    var groupLifecycleFns = grp.GetChildren<ArcScopeTreeLifecycleFunctionNode>();
+                    foreach (var fn in groupLifecycleFns)
+                    {
+                        var genSource = iterContext.GenerateSource([unit.Namespace], fn, structure.LinkedNamespaces);
+                        genSource.GenericTypes = [..fn.GenericTypes, ..grp.GenericTypes];
+
+                        if (fn.Annotations.Keys.Any(k => k.Signature == "NArc+NCompilation+ADeclaratorOnly"))
+                        {
+                            fn.BlockLength = 0;
+                            fn.GenerationResult = new ArcPartialGenerationResult();
+                        }
+                        else
+                        {
+                            var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_group_lifecycle_functionContext, ArcScopeTreeLifecycleFunctionNode, ArcFunctionMinimalDeclarator>(genSource, fn, fn.SyntaxTree);
                             fn.BlockLength = fnResult.GeneratedData.Count;
                             fn.GenerationResult = fnResult;
                         }
@@ -112,11 +132,8 @@ namespace Arc.Compiler.PackageGenerator
                     {
                         // Assign entrypoint location
                         t.EntrypointPos = iterContext.GeneratedData.Count + result.GeneratedData.Count;
-                        if (t.GenerationResult != null)
-                        {
-                            // Append the generated data
-                            iterContext.Append(t.GenerationResult);
-                        }
+                        // Append the generated data
+                        iterContext.Append(t.GenerationResult);
                     });
 
                 result.Append(iterContext);

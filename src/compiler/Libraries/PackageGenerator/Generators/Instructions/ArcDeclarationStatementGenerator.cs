@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             if (decl.InitialValueExpression != null)
             {
-                var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, decl.InitialValueExpression, false);
+                var expr = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, decl.InitialValueExpression);
                 var assignment = new ArcPopToSlotInstruction(slot).Encode(source);
 
                 result.Append(expr);

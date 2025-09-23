@@ -5,7 +5,6 @@ arc_compilation_unit: arc_stmt_link* arc_namespace_block EOF;
 
 arc_accessibility: KW_PUBLIC | KW_INTERNAL | KW_PROTECTED | KW_PRIVATE;
 arc_mutability: KW_CONSTANT | KW_VARIABLE;
-arc_mem_store_type: KW_VALUE | KW_REFERENCE;
 
 arc_namespace_identifier: IDENTIFIER (SCOPE IDENTIFIER)*;
 arc_namespace_declarator: KW_NAMESPACE arc_namespace_identifier;
@@ -16,7 +15,7 @@ arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
 arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_NONE | KW_ANY | KW_INFER;
 arc_array_indicator: LBRACKET RBRACKET;
-arc_data_type: arc_mem_store_type (arc_primitive_data_type | arc_flexible_identifier) arc_generic_specialization_wrapper? arc_array_indicator*;
+arc_data_type: (arc_primitive_data_type | arc_flexible_identifier) arc_generic_specialization_wrapper? arc_array_indicator*;
 
 arc_data_declarator: arc_mutability arc_single_identifier COLON arc_data_type;
 arc_self_data_declarator: arc_mutability arc_self_wrapper COLON arc_data_type;
@@ -95,13 +94,15 @@ arc_wrapped_expression: LPAREN arc_expression RPAREN;
 arc_namespace_block: arc_namespace_declarator LBRACE arc_namespace_member* RBRACE;
 arc_namespace_member: arc_function_block | arc_group_block | arc_enum_declarator;
 
-arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_group_member;
+arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? (COLON arc_group_derive_list)? arc_wrapped_group_member;
+arc_group_derive_list: arc_data_type (COMMA arc_data_type)*;
 arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
-arc_group_member: arc_group_constructor | arc_group_destructor | arc_group_function | arc_group_field;
+arc_group_member: arc_group_lifecycle_function | arc_group_function | arc_group_field;
 arc_group_field: arc_annotation* arc_accessibility KW_FIELD arc_data_declarator SEMICOLON;
-arc_group_constructor: arc_annotation* arc_accessibility KW_CONSTRUCTOR arc_wrapped_arg_list COLON arc_data_type arc_wrapped_function_body;
-arc_group_destructor: arc_annotation* arc_accessibility KW_DESTRUCTOR COLON arc_data_type arc_wrapped_function_body;
 arc_group_function: arc_function_block;
+
+arc_group_lifecycle_keyword: KW_CONSTRUCTOR | KW_DESTRUCTOR | KW_CLONE | KW_VALUE;
+arc_group_lifecycle_function: arc_annotation* arc_accessibility arc_group_lifecycle_keyword arc_wrapped_arg_list COLON arc_data_type arc_wrapped_function_body;
 
 arc_index: LBRACKET arc_expression RBRACKET;
 

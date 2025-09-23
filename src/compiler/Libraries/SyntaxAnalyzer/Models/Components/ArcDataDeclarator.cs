@@ -8,8 +8,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 {
     public class ArcDataDeclarator : IArcTraceable<ArcSourceCodeParser.Arc_data_declaratorContext>, IArcLocatable
     {
-        public ArcMemoryStorageType MemoryStorageType { get; set; }
-
         public ArcMutability Mutability { get; set; }
 
         public ArcSingleIdentifier Identifier { get; set; }
@@ -23,7 +21,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 
         public ArcDataDeclarator(ArcSourceCodeParser.Arc_data_declaratorContext context)
         {
-            MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
             Mutability = ArcMutabilityUtils.FromToken(context.arc_mutability());
             Identifier = new(context.arc_single_identifier());
             DataType = new ArcDataType(context.arc_data_type());
@@ -32,7 +29,6 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components
 
         public ArcDataDeclarator(ArcSourceCodeParser.Arc_self_data_declaratorContext context)
         {
-            MemoryStorageType = ArcMemoryStorageTypeUtils.FromToken(context.arc_data_type().arc_mem_store_type());
             Mutability = ArcMutabilityUtils.FromToken(context.arc_mutability());
             Identifier = new(context.arc_self_wrapper());
             DataType = new ArcDataType(context.arc_data_type());

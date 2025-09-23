@@ -36,7 +36,6 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                     Type = dataTypeProxy?.ResolvedType ?? ArcBaseType.Placeholder(),
                     AllowNone = false,
                     Dimension = DataDeclarator.DataType.Dimension,
-                    MemoryStorageType = DataDeclarator.DataType.MemoryStorageType,
                     SyntaxTree = DataDeclarator,
                 },
                 SlotId = (uint)source.LocalDataSlots.Count,
@@ -50,9 +49,8 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                 GeneratedData =
                 [
                     .. Opcode,
-                    DataDeclarator.DataType.MemoryStorageType == ArcMemoryStorageType.Value ? (byte)0x01 : (byte)0x00,
                     .. BitConverter.GetBytes(DataDeclarator.DataType.Dimension),
-                    .. BitConverter.GetBytes(dataTypeNode?.ResolvedType.TypeId ?? 0),
+                    .. BitConverter.GetBytes(dataTypeNode?.Id ?? 0),
                     
                     .. BitConverter.GetBytes(specializedGenericTypeId.LongCount()),
                     .. specializedGenericTypeId.SelectMany(BitConverter.GetBytes),

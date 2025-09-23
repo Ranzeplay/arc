@@ -1,4 +1,4 @@
-use arc_shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
+use arc_shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupLifecycleFunctionSymbol, GroupLifecycleFunctionType, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
 use arc_shared::models::encodings::data_type_enc::DataTypeEncoding;
 use arc_shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use std::collections::HashMap;
@@ -36,7 +36,7 @@ fn decode_symbol(stream: &[u8]) -> (Symbol, usize) {
         0x07 => decode_annotation_descriptor(&stream[1..]),
         0x08 => decode_enum_descriptor(&stream[1..]),
         0x09 => decode_enum_member_descriptor(&stream[1..]),
-        _ => unreachable!(),
+        _ => panic!("Unexpected symbol type 0x{:02X}", stream[0]),
     };
 
     (result.0, result.1 + 1)
@@ -92,12 +92,22 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (field_ids, field_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += field_ids_len;
 
-    let (constructor_ids, constructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
-    pos += constructor_ids_len;
-
-    let (destructor_ids, destructor_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
-    pos += destructor_ids_len;
-
+    let lifecycle_fn_size = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    pos += 8;
+    let mut lifecycle_functions = vec![];
+    for _ in 0..lifecycle_fn_size {
+        let type_id = u8::from_le_bytes(stream[pos..pos + 1].try_into().unwrap());
+        pos += 1;
+        
+        let fn_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+        pos += 8;
+        
+        lifecycle_functions.push(GroupLifecycleFunctionSymbol {
+            fn_id,
+            fn_type: GroupLifecycleFunctionType::from(type_id),
+        })
+    }
+    
     let (function_ids, function_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += function_ids_len;
 
@@ -110,14 +120,17 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += generic_type_ids_len;
 
+    let (derivation_type_ids, derivation_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += derivation_type_ids_len;
+
     let result = Symbol::Group(Rc::new(GroupSymbol {
         field_ids,
-        constructor_ids,
-        destructor_ids,
         function_ids,
+        lifecycle_functions,
         sub_group_ids,
         annotation_ids,
         generic_type_ids,
+        derivation_type_ids,
     }));
     (result, pos)
 }

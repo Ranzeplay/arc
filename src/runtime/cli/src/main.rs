@@ -30,7 +30,11 @@ fn main() {
                 info!("Decoding package content");
                 let opt = CmdecOptions {
                     path: decode_command.path,
-                    print_decoding_result: true,
+                    print_instructions: decode_command.instructions,
+                    print_symbols: decode_command.symbols,
+                    print_constants: decode_command.constants,
+                    print_package_descriptor: decode_command.descriptor,
+                    print_raw_bytes: decode_command.raw,
                     verbose: args.verbose,
                 };
                 call_cmdec_decoder(opt);
@@ -39,7 +43,11 @@ fn main() {
                 debug!("Executing package");
                 let opt = CmdecOptions {
                     path: execute_command.path,
-                    print_decoding_result: false,
+                    print_constants: false,
+                    print_instructions: false,
+                    print_symbols: false,
+                    print_raw_bytes: false,
+                    print_package_descriptor: false,
                     verbose: args.verbose,
                 };
                 let package = call_cmdec_decoder(opt);

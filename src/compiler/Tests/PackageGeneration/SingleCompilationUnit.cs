@@ -20,26 +20,26 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                     	@Export
                                     	public group ArcExample {
                                     		@Getter
-                                    		public field const foo: val string;
+                                    		public field const foo: string;
                                     		@Accessor
-                                    		public field var bar: val string;
+                                    		public field var bar: string;
                                     
-                                    		private func eval(): val bool {
+                                    		private func eval(): bool {
                                     			return false;
                                     		}
                                     
-                                    		public func empty(): val none {}
+                                    		public func empty(): none {}
                                     	}
                                     
                                     	@Export
                                     	@Entrypoint
-                                    	public func main(var args: val string[]): val none {
-                                    		var a: val int;
+                                    	public func main(var args: string[]): none {
+                                    		var a: int;
                                     		# a = [Console].readLn();
-                                    		var b: val int;
+                                    		var b: int;
                                     		a = 114514;
                                     		b = 1919810;
-                                    		const c: val int;
+                                    		const c: int;
                                     		if (a > b) { c = a + b; }
                                     		elif (a < b) { c = a * b; }
                                     		else { c = a - b; }
@@ -53,7 +53,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                     		return [Arc::Program].test();
                                     	}
                                         
-                                        public func test(): val int {
+                                        public func test(): int {
                                             return 0;
                                         }
                                     }
@@ -90,7 +90,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                 namespace Program
                                 {
                                 	@Entrypoint
-                                	public func main(var args: val string[]): val int
+                                	public func main(var args: string[]): int
                                 	{
                                 		call PrintString("Hello, world!\n");
                                 
@@ -117,12 +117,12 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                 namespace Arc::Program {
                                 	# @Export
                                 	@Entrypoint
-                                	public func main(var args: val string[]): val int {
-                                		var i: val int;
+                                	public func main(var args: string[]): int {
+                                		var i: int;
                                 		i = 0;
                                 		while (i < 40)
                                 		{
-                                			const value: val int;
+                                			const value: int;
                                 			value = fib(i);
                                 			call PrintInteger(value);
                                 			call PrintString("\n");
@@ -132,7 +132,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
                                 		return 0;
                                 	}
 
-                                	public func fib(const n: val int): val int
+                                	public func fib(const n: int): int
                                 	{
                                 		if (n <= 1)
                                 		{
