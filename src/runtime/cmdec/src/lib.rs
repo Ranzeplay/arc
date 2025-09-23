@@ -42,7 +42,7 @@ impl Cmdec {
             match &symbol.value {
                 Symbol::Group(group) => {
                     let g = group.clone();
-                    group_detail_list.groups.push(GroupDetailViewModel::new(g));
+                    group_detail_list.groups.push(GroupDetailViewModel::new(symbol.id, g));
                 }
                 _ => {}
             }

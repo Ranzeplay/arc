@@ -3,6 +3,7 @@ use std::rc::Rc;
 use crate::models::descriptors::symbol::GroupSymbol;
 
 pub struct GroupDetailViewModel {
+    pub id: usize,
     pub group: Rc<GroupSymbol>
 }
 
@@ -20,7 +21,7 @@ impl Debug for GroupDetailViewModel {
 
         writeln!(f, "= Lifecycle functions:")?;
         for func in &self.group.lifecycle_functions {
-            writeln!(f, "{:?}  0x{:016X}", func.fn_type, func.fn_id)?;
+            writeln!(f, "  {:?}  0x{:016X}", func.fn_type, func.fn_id)?;
         }
 
         writeln!(f, "= Subgroups:")?;
@@ -33,13 +34,19 @@ impl Debug for GroupDetailViewModel {
             writeln!(f, "  0x{:016X}", annotation_id)?;
         }
 
+        writeln!(f, "= Derivations:")?;
+        for derivation_id in &self.group.derivation_type_ids {
+            writeln!(f, "  0x{:016X}", derivation_id)?;
+        }
+
         Ok(())
     }
 }
 
 impl GroupDetailViewModel {
-    pub fn new(group: Rc<GroupSymbol>) -> GroupDetailViewModel {
+    pub fn new(id: usize, group: Rc<GroupSymbol>) -> GroupDetailViewModel {
         GroupDetailViewModel {
+            id,
             group
         }
     }
@@ -53,6 +60,7 @@ impl Debug for GroupListViewModel {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         writeln!(f, "=== Group list")?;
         for group in &self.groups {
+            writeln!(f, "0x{:016X}", group.id)?;
             writeln!(f, "{:?}", group)?;
         }
 

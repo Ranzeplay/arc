@@ -120,6 +120,9 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += generic_type_ids_len;
 
+    let (derivation_type_ids, derivation_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    pos += derivation_type_ids_len;
+
     let result = Symbol::Group(Rc::new(GroupSymbol {
         field_ids,
         function_ids,
@@ -127,6 +130,7 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
         sub_group_ids,
         annotation_ids,
         generic_type_ids,
+        derivation_type_ids,
     }));
     (result, pos)
 }

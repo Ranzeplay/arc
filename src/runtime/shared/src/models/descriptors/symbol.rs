@@ -64,6 +64,7 @@ pub struct GroupSymbol {
     pub sub_group_ids: Vec<usize>,
     pub annotation_ids: Vec<usize>,
     pub generic_type_ids: Vec<usize>,
+    pub derivation_type_ids: Vec<usize>,
 }
 
 impl Debug for GroupSymbol {
