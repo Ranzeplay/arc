@@ -94,7 +94,8 @@ arc_wrapped_expression: LPAREN arc_expression RPAREN;
 arc_namespace_block: arc_namespace_declarator LBRACE arc_namespace_member* RBRACE;
 arc_namespace_member: arc_function_block | arc_group_block | arc_enum_declarator;
 
-arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_group_member;
+arc_group_block: arc_annotation* arc_accessibility KW_GROUP arc_single_identifier arc_generic_declaration_wrapper? (COLON arc_group_derive_list)? arc_wrapped_group_member;
+arc_group_derive_list: arc_data_type (COMMA arc_data_type)*;
 arc_wrapped_group_member: LBRACE arc_group_member* RBRACE;
 arc_group_member: arc_group_lifecycle_function | arc_group_function | arc_group_field;
 arc_group_field: arc_annotation* arc_accessibility KW_FIELD arc_data_declarator SEMICOLON;

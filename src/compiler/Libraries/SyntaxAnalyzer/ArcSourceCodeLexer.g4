@@ -107,8 +107,6 @@ KW_NEW: 'new';
 KW_DEFER: 'defer';
 KW_MACRO: 'macro';
 KW_NAMESPACE: 'namespace';
-KW_EXTENDS: 'extends';
-KW_IMPLEMENTS: 'implements';
 KW_LINK: 'link';
 KW_TRUE: 'true';
 KW_FALSE: 'false';

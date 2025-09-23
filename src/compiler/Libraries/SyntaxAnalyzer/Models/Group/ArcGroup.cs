@@ -1,6 +1,7 @@
 ﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
@@ -18,6 +19,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
         public IEnumerable<ArcGroupFunction> Functions { get; set; }
         
         public IEnumerable<ArcGroupLifecycleFunction> LifecycleFunctions { get; set; }
+        
+        public IEnumerable<ArcDataType> Derivations { get; set; }
 
         public IEnumerable<ArcSingleIdentifier> GenericTypes { get; set; }
 
@@ -30,19 +33,19 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Group
             Accessibility = ArcAccessibilityUtils.FromToken(context.arc_accessibility());
             Fields = context.arc_wrapped_group_member()
                 .arc_group_member()
-                .ToList()
-                .FindAll(m => m.arc_group_field() != null)
+                .Where(m => m.arc_group_field() != null)
                 .Select(f => new ArcGroupField(f.arc_group_field()));
             Functions = context.arc_wrapped_group_member()
                 .arc_group_member()
-                .ToList()
-                .FindAll(m => m.arc_group_function() != null)
+                .Where(m => m.arc_group_function() != null)
                 .Select(f => new ArcGroupFunction(f.arc_group_function()));
             LifecycleFunctions = context.arc_wrapped_group_member()
                 .arc_group_member()
-                .ToList()
-                .FindAll(m => m.arc_group_lifecycle_function() != null)
+                .Where(m => m.arc_group_lifecycle_function() != null)
                 .Select(f => new ArcGroupLifecycleFunction(f.arc_group_lifecycle_function()));
+            Derivations = context.arc_group_derive_list()?
+                .arc_data_type()
+                .Select(dt => new ArcDataType(dt)) ?? [];
             GenericTypes = context.arc_generic_declaration_wrapper()?
                 .arc_single_identifier()
                 .Select(g => new ArcSingleIdentifier(g)) ?? [];
