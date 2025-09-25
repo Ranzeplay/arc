@@ -5,3 +5,9 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "~4.5", features = ["color", "derive", "debug"] }
+toml = "~0.9"
+serde = { version = "~1.0", features = ["derive"] }
+crossterm = "~0.29"
+inquire = { version = "~0.9", features = ["crossterm"] }
+anyhow = "~1.0"
+regex = "1.11.3"

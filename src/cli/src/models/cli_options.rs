@@ -13,10 +13,8 @@ pub struct CommandOptions {
 #[derive(Parser, Debug)]
 #[clap(name = "init", about = "Initialize a new project")]
 pub struct InitSubcommandOptions {
-    #[arg(short, long, help = "Path to the project directory", default_value = ".")]
-    pub path: PathBuf,
-    #[arg(short, long, help = "Project name")]
-    pub name: Option<String>
+    #[arg(required = true, help = "Path to the project directory", default_value = ".")]
+    pub path: PathBuf
 }
 
 #[derive(Subcommand, Debug)]
