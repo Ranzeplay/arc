@@ -1,1 +1,0 @@
-../../../grammar/ArcSourceCodeLexer.g4
