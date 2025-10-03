@@ -1,3 +1,10 @@
 node_modules/
 *.vsix
 dist/
+
+# Grammar files
+
+src/parser/*.interp
+src/parser/*.tokens
+src/parser/*.ts
+!src/parser/ArcParser.ts
