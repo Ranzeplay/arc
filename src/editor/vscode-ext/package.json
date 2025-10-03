@@ -37,8 +37,8 @@
   },
   "scripts": {
     "vscode:prepublish": "pnpm run compile",
-    "compile": "pnpm run generate-parser && webpack --mode production",
-    "watch": "webpack --mode development --watch",
+    "compile": "pnpm run generate-parser && NODE_ENV=production pnpm rolldown -c rolldown.config.mjs",
+    "watch": "pnpm run generate-parser && pnpm rolldown -c rolldown.config.mjs --watch",
     "generate-parser": "antlr4ts -visitor -listener src/parser/ArcSourceCodeLexer.g4 src/parser/ArcSourceCodeParser.g4",
     "pretest": "pnpm run compile && npm run lint",
     "lint": "eslint src --ext ts",
@@ -50,13 +50,11 @@
   "devDependencies": {
     "@types/node": "^24.6.2",
     "@types/vscode": "^1.104.0",
-    "antlr4ts-cli": "0.5.0-alpha.4",
-    "typescript": "^5.9.3",
-    "webpack": "^5.89.0",
-    "webpack-cli": "^5.1.4",
-    "ts-loader": "^9.5.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^9.0.0"
+    "antlr4ts-cli": "0.5.0-alpha.4",
+    "eslint": "^9.0.0",
+    "rolldown": "^0.15.0",
+    "typescript": "^5.9.3"
   }
 }
