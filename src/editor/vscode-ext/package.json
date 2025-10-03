@@ -1,60 +1,63 @@
 {
-  "name": "arc-lang-ext",
-  "displayName": "Arc Language Extension",
-  "description": "Language support for the Arc programming language",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.96.0"
-  },
-  "categories": [
-    "Programming Languages"
-  ],
-  "main": "./dist/extension.js",
-  "activationEvents": [
-    "onLanguage:arc"
-  ],
-  "contributes": {
-    "languages": [
-      {
-        "id": "arc",
-        "aliases": [
-          "Arc",
-          "arc"
-        ],
-        "extensions": [
-          ".script.arc"
-        ],
-        "configuration": "./language-configuration.json"
-      }
-    ],
-    "grammars": [
-      {
-        "language": "arc",
-        "scopeName": "source.arc",
-        "path": "./syntaxes/arc.tmLanguage.json"
-      }
-    ]
-  },
-  "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "pnpm run generate-parser && NODE_ENV=production pnpm rolldown -c rolldown.config.mjs",
-    "watch": "pnpm run generate-parser && pnpm rolldown -c rolldown.config.mjs --watch",
-    "generate-parser": "antlr4ts -visitor -listener src/parser/ArcSourceCodeLexer.g4 src/parser/ArcSourceCodeParser.g4",
-    "pretest": "pnpm run compile && npm run lint",
-    "lint": "eslint src --ext ts",
-    "test": "node ./dist/test/runTest.js"
-  },
-  "dependencies": {
-    "antlr4ts": "0.5.0-alpha.4"
-  },
-  "devDependencies": {
-    "@types/node": "^24.6.2",
-    "@types/vscode": "^1.104.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "antlr4ts-cli": "0.5.0-alpha.4",
-    "eslint": "^9.0.0",
-    "rolldown": "^0.15.0",
-    "typescript": "^5.9.3"
-  }
+	"name": "arc-lang-ext",
+	"displayName": "Arc Language Extension",
+	"description": "Language support for the Arc programming language",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.96.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
+	"main": "./dist/extension.js",
+	"activationEvents": [
+		"onLanguage:arc"
+	],
+	"contributes": {
+		"languages": [
+			{
+				"id": "arc",
+				"aliases": [
+					"Arc",
+					"arc"
+				],
+				"extensions": [
+					".script.arc"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "arc",
+				"scopeName": "source.arc",
+				"path": "./syntaxes/arc.tmLanguage.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "pnpm run compile",
+		"compile": "pnpm run generate-parser && NODE_ENV=production pnpm rolldown -c rolldown.config.mjs",
+		"watch": "pnpm run generate-parser && pnpm rolldown -c rolldown.config.mjs --watch",
+		"generate-parser": "antlr4ts -visitor -listener src/parser/ArcSourceCodeLexer.g4 src/parser/ArcSourceCodeParser.g4",
+		"pretest": "pnpm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./dist/test/runTest.js",
+		"clean": "rm -rf ./dist ./src/parser/*.tokens ./src/parser/*.interp && find ./src/parser -type f -name '*.ts' ! -name 'ArcParser.ts' -delete",
+		"pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json}\""
+	},
+	"dependencies": {
+		"antlr4ts": "0.5.0-alpha.4"
+	},
+	"devDependencies": {
+		"@types/node": "^24.6.2",
+		"@types/vscode": "^1.104.0",
+		"@typescript-eslint/eslint-plugin": "^6.0.0",
+		"@typescript-eslint/parser": "^6.0.0",
+		"antlr4ts-cli": "0.5.0-alpha.4",
+		"eslint": "^9.0.0",
+		"prettier": "^3.6.2",
+		"rolldown": "^0.15.0",
+		"typescript": "^5.9.3"
+	}
 }

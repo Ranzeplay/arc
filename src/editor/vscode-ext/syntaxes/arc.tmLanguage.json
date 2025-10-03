@@ -1,83 +1,83 @@
 {
-  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "Arc",
-  "patterns": [
-    {
-      "include": "#keywords"
-    },
-    {
-      "include": "#strings"
-    },
-    {
-      "include": "#comments"
-    },
-    {
-      "include": "#numbers"
-    },
-    {
-      "include": "#operators"
-    }
-  ],
-  "repository": {
-    "keywords": {
-      "patterns": [
-        {
-          "name": "keyword.control.arc",
-          "match": "\\b(if|elif|else|while|for|loop|foreach|in|break|continue|return|throw|try|catch|finally|match|case|default)\\b"
-        },
-        {
-          "name": "keyword.declaration.arc",
-          "match": "\\b(func|group|field|constructor|destructor|operator|namespace|enum|macro)\\b"
-        },
-        {
-          "name": "keyword.modifier.arc",
-          "match": "\\b(public|internal|protected|private|static|const|var|val|ref|clone|call|new|defer|await|async)\\b"
-        },
-        {
-          "name": "keyword.type.arc",
-          "match": "\\b(int|decimal|char|string|bool|byte|none|any|infer|typeof|self)\\b"
-        },
-        {
-          "name": "constant.language.arc",
-          "match": "\\b(true|false|none|any)\\b"
-        }
-      ]
-    },
-    "strings": {
-      "name": "string.quoted.double.arc",
-      "begin": "\"",
-      "end": "\"",
-      "patterns": [
-        {
-          "name": "constant.character.escape.arc",
-          "match": "\\\\."
-        }
-      ]
-    },
-    "comments": {
-      "patterns": [
-        {
-          "name": "comment.line.number-sign.arc",
-          "match": "#.*$"
-        }
-      ]
-    },
-    "numbers": {
-      "patterns": [
-        {
-          "name": "constant.numeric.arc",
-          "match": "\\b(0x[0-9a-fA-F]+|0o[0-7]+|0b[01]+|[0-9]+(\\.[0-9]*)?([eE][+-]?[0-9]+)?)\\b"
-        }
-      ]
-    },
-    "operators": {
-      "patterns": [
-        {
-          "name": "keyword.operator.arc",
-          "match": "(\\+|\\-|\\*|\\/|%|&|\\||<<|>>|\\^|~|==|===|<>|<!>|<|>|<=|>=|&&|\\|\\||!|=|\\?\\?=|\\+\\+|\\-\\-|\\+=|\\-=|\\*=|\\/=|%=|\\?|\\.\\.|\\.\\?|=>|::|\\|>|\\?\\?)"
-        }
-      ]
-    }
-  },
-  "scopeName": "source.arc"
+	"$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+	"name": "Arc",
+	"patterns": [
+		{
+			"include": "#keywords"
+		},
+		{
+			"include": "#strings"
+		},
+		{
+			"include": "#comments"
+		},
+		{
+			"include": "#numbers"
+		},
+		{
+			"include": "#operators"
+		}
+	],
+	"repository": {
+		"keywords": {
+			"patterns": [
+				{
+					"name": "keyword.control.arc",
+					"match": "\\b(if|elif|else|while|for|loop|foreach|in|break|continue|return|throw|try|catch|finally|match|case|default)\\b"
+				},
+				{
+					"name": "keyword.declaration.arc",
+					"match": "\\b(func|group|field|constructor|destructor|operator|namespace|enum|macro)\\b"
+				},
+				{
+					"name": "keyword.modifier.arc",
+					"match": "\\b(public|internal|protected|private|static|const|var|val|ref|clone|call|new|defer|await|async)\\b"
+				},
+				{
+					"name": "keyword.type.arc",
+					"match": "\\b(int|decimal|char|string|bool|byte|none|any|infer|typeof|self)\\b"
+				},
+				{
+					"name": "constant.language.arc",
+					"match": "\\b(true|false|none|any)\\b"
+				}
+			]
+		},
+		"strings": {
+			"name": "string.quoted.double.arc",
+			"begin": "\"",
+			"end": "\"",
+			"patterns": [
+				{
+					"name": "constant.character.escape.arc",
+					"match": "\\\\."
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line.number-sign.arc",
+					"match": "#.*$"
+				}
+			]
+		},
+		"numbers": {
+			"patterns": [
+				{
+					"name": "constant.numeric.arc",
+					"match": "\\b(0x[0-9a-fA-F]+|0o[0-7]+|0b[01]+|[0-9]+(\\.[0-9]*)?([eE][+-]?[0-9]+)?)\\b"
+				}
+			]
+		},
+		"operators": {
+			"patterns": [
+				{
+					"name": "keyword.operator.arc",
+					"match": "(\\+|\\-|\\*|\\/|%|&|\\||<<|>>|\\^|~|==|===|<>|<!>|<|>|<=|>=|&&|\\|\\||!|=|\\?\\?=|\\+\\+|\\-\\-|\\+=|\\-=|\\*=|\\/=|%=|\\?|\\.\\.|\\.\\?|=>|::|\\|>|\\?\\?)"
+				}
+			]
+		}
+	},
+	"scopeName": "source.arc"
 }
