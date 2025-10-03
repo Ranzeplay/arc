@@ -35,7 +35,7 @@ export class ArcCompletionProvider implements vscode.CompletionItemProvider {
         // Add type completions
         this.types.forEach(type => {
             const item = new vscode.CompletionItem(type, vscode.CompletionItemKind.TypeParameter);
-            item.detail = `Arc type`;
+            item.detail = `Arc base type`;
             completions.push(item);
         });
 
@@ -49,6 +49,9 @@ export class ArcCompletionProvider implements vscode.CompletionItemProvider {
         groupSnippet.insertText = new vscode.SnippetString('group ${1:Name} {\n\t${2:// members}\n}');
         groupSnippet.detail = 'Group declaration';
         completions.push(groupSnippet);
+
+        // If in a function, suggest variables
+        const linePrefix = document.lineAt(position).text.substr(0, position.character);
 
         return completions;
     }

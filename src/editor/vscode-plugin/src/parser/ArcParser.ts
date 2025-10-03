@@ -1,7 +1,7 @@
 import { ANTLRInputStream, CommonTokenStream } from 'antlr4ts';
 import { ParseTreeWalker } from 'antlr4ts/tree/ParseTreeWalker';
 import { ArcSourceCodeLexer } from './ArcSourceCodeLexer';
-import { Arc_enum_declaratorContext, Arc_function_declaratorContext, Arc_group_blockContext, Arc_namespace_blockContext, Arc_namespace_declaratorContext, Arc_namespace_memberContext, Arc_stmt_declContext, ArcSourceCodeParser } from './ArcSourceCodeParser';
+import { Arc_function_blockContext, Arc_namespace_blockContext, Arc_statementContext, Arc_stmt_declContext, ArcSourceCodeParser } from './ArcSourceCodeParser';
 import { ArcSourceCodeParserListener } from './ArcSourceCodeParserListener';
 
 export interface ParseResult {
@@ -29,6 +29,7 @@ export interface Symbol {
 
 export enum SymbolKind {
     Function = 'function',
+    SelfFunction = 'selffunction',
     Variable = 'variable',
     Class = 'class',
     Namespace = 'namespace',
@@ -105,7 +106,7 @@ class SymbolExtractor implements ArcSourceCodeParserListener {
                             const memberName = enumMember.arc_single_identifier().text;
                             const memberStart = enumMember.start;
                             const memberStop = enumMember.stop;
-                            
+
                             members.push({
                                 name: memberName,
                                 kind: SymbolKind.Field,
@@ -129,20 +130,9 @@ class SymbolExtractor implements ArcSourceCodeParserListener {
                 }
             } else if (member.arc_function_block()) {
                 const funcCtx = member.arc_function_block()!;
-                if (funcCtx.arc_function_declarator()) {
-                    const funcDeclCtx = funcCtx.arc_function_declarator()!;
-                    const name = funcDeclCtx.arc_single_identifier().text;
-                    const start = funcDeclCtx.start;
-                    const stop = funcDeclCtx.stop;
-
-                    functions.push({
-                        name,
-                        kind: SymbolKind.Function,
-                        range: {
-                            start: { line: start.line - 1, character: start.charPositionInLine },
-                            end: { line: stop!.line - 1, character: stop!.charPositionInLine + stop!.text!.length }
-                        }
-                    });
+                const funcSymbol = parseFunction(funcCtx);
+                if (funcSymbol) {
+                    functions.push(funcSymbol);
                 }
             } else if (member.arc_group_block()) {
                 const groupCtx = member.arc_group_block()!;
@@ -155,33 +145,24 @@ class SymbolExtractor implements ArcSourceCodeParserListener {
                     const functions: Symbol[] = [];
                     const lifecycleFunctions: Symbol[] = [];
 
-                    // TODO: Extract fields and functions from groupCtx if needed
-
-                    for(const members of groupCtx.arc_wrapped_group_member().arc_group_member()) {
-                        if(members.arc_group_function()?.arc_function_block()) {
+                    for (const members of groupCtx.arc_wrapped_group_member().arc_group_member()) {
+                        if (members.arc_group_function()?.arc_function_block()) {
                             const funcCtx = members.arc_group_function()!.arc_function_block()!;
-                            if (funcCtx.arc_function_declarator()) {
-                                const funcDeclCtx = funcCtx.arc_function_declarator()!;
-                                const funcName = funcDeclCtx.arc_single_identifier().text;
-                                const funcStart = funcDeclCtx.start;
-                                const funcStop = funcDeclCtx.stop;
-                                
-                                functions.push({
-                                    name: funcName,
-                                    kind: SymbolKind.Function,
-                                    range: {
-                                        start: { line: funcStart.line - 1, character: funcStart.charPositionInLine },
-                                        end: { line: funcStop!.line - 1, character: funcStop!.charPositionInLine + funcStop!.text!.length }
-                                    }
-                                });
+                            const funcSymbol = parseFunction(funcCtx);
+                            if (funcSymbol) {
+                                if(funcCtx.arc_function_declarator()?.arc_wrapped_arg_list()?.arc_arg_list()?.arc_self_data_declarator()) {
+                                    funcSymbol.kind = SymbolKind.SelfFunction;
+                                }
+
+                                functions.push(funcSymbol);
                             }
-                        } else if(members.arc_group_field()) {
+                        } else if (members.arc_group_field()) {
                             const fieldCtx = members.arc_group_field()!;
-                            if(fieldCtx.arc_data_declarator() && fieldCtx.arc_data_declarator().arc_single_identifier()) {
+                            if (fieldCtx.arc_data_declarator() && fieldCtx.arc_data_declarator().arc_single_identifier()) {
                                 const fieldName = fieldCtx.arc_data_declarator().arc_single_identifier().text;
                                 const fieldStart = fieldCtx.start;
                                 const fieldStop = fieldCtx.stop;
-                                
+
                                 fields.push({
                                     name: fieldName,
                                     kind: SymbolKind.Field,
@@ -191,13 +172,13 @@ class SymbolExtractor implements ArcSourceCodeParserListener {
                                     }
                                 });
                             }
-                        } else if(members.arc_group_lifecycle_function()) {
+                        } else if (members.arc_group_lifecycle_function()) {
                             const lifeCtx = members.arc_group_lifecycle_function()!;
 
                             const lifeName = lifeCtx.arc_group_lifecycle_keyword().text;
                             const lifeStart = lifeCtx.start;
                             const lifeStop = lifeCtx.arc_data_type().stop;
-                            
+
                             lifecycleFunctions.push({
                                 name: lifeName,
                                 kind: SymbolKind.Function,
@@ -234,8 +215,104 @@ class SymbolExtractor implements ArcSourceCodeParserListener {
     }
 
     // Implement other required methods with empty bodies
-    enterEveryRule() {}
-    exitEveryRule() {}
-    visitTerminal() {}
-    visitErrorNode() {}
+    enterEveryRule() { }
+    exitEveryRule() { }
+    visitTerminal() { }
+    visitErrorNode() { }
 }
+
+function parseFunction(ctx: Arc_function_blockContext): Symbol | null {
+    if (ctx.arc_function_declarator()) {
+        const funcDeclCtx = ctx.arc_function_declarator()!;
+        const name = funcDeclCtx.arc_single_identifier().text;
+        const start = funcDeclCtx.start;
+        const stop = funcDeclCtx.stop;
+
+        // Extract arguments
+        const funcArgs: Symbol[] = [];
+        if (funcDeclCtx.arc_wrapped_arg_list()?.arc_arg_list()?.arc_data_declarator()) {
+            for (const param of funcDeclCtx.arc_wrapped_arg_list()!.arc_arg_list()!.arc_data_declarator()!) {
+                const paramName = param.arc_single_identifier().text;
+                const paramStart = param.start;
+                const paramStop = param.stop;
+
+                funcArgs.push({
+                    name: paramName,
+                    kind: SymbolKind.Variable,
+                    range: {
+                        start: { line: paramStart.line - 1, character: paramStart.charPositionInLine },
+                        end: { line: paramStop!.line - 1, character: paramStop!.charPositionInLine + paramStop!.text!.length }
+                    }
+                });
+
+            }
+        }
+
+        // Retrieve inner variables and constants
+        let innerSymbols = parseStatements(ctx.arc_wrapped_function_body().arc_statement());
+
+        return {
+            name,
+            kind: SymbolKind.Function,
+            range: {
+                start: { line: start.line - 1, character: start.charPositionInLine },
+                end: { line: stop!.line - 1, character: stop!.charPositionInLine + stop!.text!.length }
+            },
+            children: [...funcArgs, ...innerSymbols]
+        };
+    }
+
+    return null;
+}
+
+function parseStatements(ctx: Arc_statementContext[]): Symbol[] {
+    const symbols: Symbol[] = [];
+
+    for (const stmt of ctx) {
+        if (stmt.arc_stmt_decl()) {
+            const declCtx = stmt.arc_stmt_decl()!;
+            const symbol = parseDataDeclarator(declCtx);
+            if (symbol) {
+                symbols.push(symbol);
+            }
+        } else if (stmt.arc_stmt_while()) {
+            const whileCtx = stmt.arc_stmt_while()!;
+            const innerSymbols = parseStatements(whileCtx.arc_wrapped_function_body().arc_statement());
+            symbols.push(...innerSymbols);
+        } else if (stmt.arc_stmt_for()) {
+            const forCtx = stmt.arc_stmt_for()!;
+            const leadingSymbol = parseDataDeclarator(forCtx.arc_stmt_decl()!);
+
+            const innerSymbols = parseStatements(forCtx.arc_wrapped_function_body().arc_statement());
+            if (leadingSymbol) {
+                leadingSymbol.children = innerSymbols;
+                symbols.push(leadingSymbol);
+            }
+        } else if (stmt.arc_stmt_if()) {
+            const ifCtx = stmt.arc_stmt_if()!;
+            const innerSymbols = parseStatements(ifCtx.arc_wrapped_function_body().flatMap(b => b.arc_statement()));
+            symbols.push(...innerSymbols);
+        }
+    }
+
+    return symbols;
+}
+
+function parseDataDeclarator(ctx: Arc_stmt_declContext): Symbol | null {
+    if (ctx.arc_data_declarator() && ctx.arc_data_declarator().arc_single_identifier()) {
+        const name = ctx.arc_data_declarator().arc_single_identifier().text;
+        const start = ctx.start;
+        const stop = ctx.stop;
+
+        return {
+            name,
+            kind: SymbolKind.Variable,
+            range: {
+                start: { line: start.line - 1, character: start.charPositionInLine },
+                end: { line: stop!.line - 1, character: stop!.charPositionInLine + stop!.text!.length }
+            }
+        };
+    }
+    return null;
+}
+

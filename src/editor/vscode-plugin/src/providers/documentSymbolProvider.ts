@@ -50,6 +50,8 @@ export class ArcDocumentSymbolProvider implements vscode.DocumentSymbolProvider 
                 return vscode.SymbolKind.Enum;
             case SymbolKind.Field:
                 return vscode.SymbolKind.Field;
+            case SymbolKind.SelfFunction:
+                return vscode.SymbolKind.Method;
             default:
                 return vscode.SymbolKind.Variable;
         }
