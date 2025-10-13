@@ -4,10 +4,13 @@ This roadmap outlines the development plan for the Arc programming language, inc
 
 ## Work in Progress
 
-- Enum support
-- Generics support
-- Reference/value data
-- Code generator error handling
+- IDE & editor integration (Visual Studio Code)
+  - Syntax highlighting
+  - Code completion
+  - Debugging support
+- Standard library
+  - Elementary data structures (lists, maps, sets, etc.)
+- Group inheritence and implementation
 
 ## Reviewing
 
@@ -17,20 +20,22 @@ This roadmap outlines the development plan for the Arc programming language, inc
 
 ### Core Language Features
 
+- First-class function
+  - Lambda expression
+  - Function type
 - Foreign Function Interface (FFI)
 - Module system
-- Standard library design
+- Standard library
   - Operating system interfaces
   - Networking
   - File system operations
   - String manipulation
-  - Elementary data structures (lists, maps, sets, etc.)
   - Algorithms (sorting, searching, etc.)
   - Concurrency primitives
 - Concurrency model
 - Generics constraints
 - Type inference
-- Error handling
+- Exception handling
 - Primitive types
   - Byte
 - Syntactic sugar
@@ -49,10 +54,6 @@ This roadmap outlines the development plan for the Arc programming language, inc
 
 - Package management system
 - Debugging tools
-- IDE integration
-  - Syntax highlighting
-  - Code completion
-  - Debugging support
 - Documentation generation tools
 - Community building
   - Website and forums
@@ -81,6 +82,10 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Primitive type system design
 - Group type support
 - Basic memory management
+- Enum support
+- Generics support
+- Reference/value data
+- Code generator error handling
 
 ## Long-term Goals
 
