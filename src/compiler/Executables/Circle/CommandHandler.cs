@@ -10,7 +10,7 @@ namespace Arc.Compiler.Circle
 {
     internal static class CommandHandler
     {
-        private static readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions()
+        private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
         {
             WriteIndented = true,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -51,7 +51,7 @@ namespace Arc.Compiler.Circle
 
             if (context.Logs.Count != 0)
             {
-                logger.LogInformation("Compiation generated with {} info(s), {} warning(s), {} error(s)",
+                logger.LogInformation("Compilation generated with {0} info(s), {1} warning(s), {2} error(s)",
                     context.Logs.Count(l => l.Level == LogLevel.Information),
                     context.Logs.Count(l => l.Level == LogLevel.Warning),
                     context.Logs.Count(l => l.Level == LogLevel.Error)
