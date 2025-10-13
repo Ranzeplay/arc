@@ -11,6 +11,8 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Standard library
   - Elementary data structures (lists, maps, sets, etc.)
 - Group inheritence and implementation
+- Primitive types
+  - Byte
 
 ## Reviewing
 
@@ -36,8 +38,6 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Generics constraints
 - Type inference
 - Exception handling
-- Primitive types
-  - Byte
 - Syntactic sugar
   - Guard statement
   - Assignment on declaration
