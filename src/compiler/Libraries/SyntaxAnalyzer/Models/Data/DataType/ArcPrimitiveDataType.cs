@@ -11,6 +11,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
         String,
         Bool,
         Byte,
+        Function,
         None,
         Any,
         Infer
@@ -27,6 +28,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
             if (context.KW_INT() != null) return ArcPrimitiveDataType.Integer;
             if (context.KW_DECIMAL() != null) return ArcPrimitiveDataType.Decimal;
             if (context.KW_STRING() != null) return ArcPrimitiveDataType.String;
+            if (context.KW_FUNCTION() != null) return ArcPrimitiveDataType.Function;
             if (context.KW_ANY() != null) return ArcPrimitiveDataType.Any;
             if (context.KW_NONE() != null) return ArcPrimitiveDataType.None;
             throw new InvalidConstraintException("Invalid primitive data type");
