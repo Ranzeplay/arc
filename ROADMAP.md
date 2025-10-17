@@ -4,6 +4,7 @@ This roadmap outlines the development plan for the Arc programming language, inc
 
 ## Work in Progress
 
+- Renew documentation website: detach from fumadocs
 - IDE & editor integration (Visual Studio Code)
   - Syntax highlighting
   - Code completion
@@ -49,7 +50,6 @@ This roadmap outlines the development plan for the Arc programming language, inc
 - Version control best practices
 - Documentation standards
 - Code review process
-- Renew documentation website: detach from fumadocs
 
 ### Ecosystem Development
 
