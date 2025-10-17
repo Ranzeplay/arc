@@ -20,13 +20,15 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcAccessibility Accessibility { get; set; }
 
-        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes => Children.OfType<ArcScopeTreeGenericTypeNode>();
+        public IEnumerable<ArcScopeTreeGenericTypeNode> GenericTypes => GetChildren<ArcScopeTreeGenericTypeNode>();
 
         public long EntrypointPos { get; set; }
 
         public long BlockLength { get; set; }
 
         public long DataCount { get; set; }
+
+        public IEnumerable<ArcScopeTreeLambdaNode> LambdaExpressions => GetChildren<ArcScopeTreeLambdaNode>();
 
         public ArcPartialGenerationResult GenerationResult { get; set; }
 

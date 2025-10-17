@@ -27,7 +27,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementAssign assign:
                         {
-                            stepResult = assign.Generate(source);
+                            stepResult = assign.Generate(source, fnNode);
                             break;
                         }
                     case ArcBlockIf ifBlock:
@@ -42,15 +42,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementReturn @return:
                         {
-                            stepResult = ArcSequenceReturnGenerator.Generate(source, @return);
+                            stepResult = ArcSequenceReturnGenerator.Generate(source, @return, fnNode);
                             break;
                         }
-                    case ArcStatementBreak @break:
+                    case ArcStatementBreak:
                         {
                             stepResult = ArcLoopControlGenerator.GenerateBreak(source);
                             break;
                         }
-                    case ArcStatementContinue @continue:
+                    case ArcStatementContinue:
                         {
                             stepResult = ArcLoopControlGenerator.GenerateContinue(source);
                             break;
@@ -63,7 +63,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                                 break;
                             }
 
-                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false);
+                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, fnNode);
                             // Discard the result of the function call
 
                             var (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
@@ -85,7 +85,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementThrow stmtThrow:
                         {
-                            stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression));
+                            stepResult.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmtThrow.Expression, fnNode));
                             stepResult.Append(new ArcThrowInstruction().Encode(source));
                             break;
                         }

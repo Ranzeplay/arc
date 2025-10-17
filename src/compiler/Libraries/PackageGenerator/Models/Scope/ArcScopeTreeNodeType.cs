@@ -14,6 +14,7 @@
         GenericType,
         Annotation,
         Enum,
-        EnumMember
+        EnumMember,
+        Lambda
     }
 }

@@ -1,18 +1,19 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcSequenceReturnGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcStatementReturn stmt)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcStatementReturn stmt, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
             if (stmt.Expression is not null)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmt.Expression));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, stmt.Expression, baseFn));
             }
             result.Append(new ArcReturnFromFunctionInstruction(stmt.Expression is not null).Encode(source));
 

@@ -3,6 +3,7 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
+using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
@@ -13,7 +14,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcAssignmentStatementGenerator
     {
-        public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source)
+        public static ArcPartialGenerationResult Generate(this ArcStatementAssign assign, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -23,13 +24,13 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
 
             // Handle lhs
-            var lhsResult = GenerateLhs(assign.CallChain, source);
+            var lhsResult = GenerateLhs(assign.CallChain, source, baseFn);
 
             // Handle rhs
             var firstTerm = assign.CallChain.Terms.First();
             var initialSlot = source.LocalDataSlots
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
-            var rhsResult = GenerateRhs(assign.Expression, source);
+            var rhsResult = GenerateRhs(assign.Expression, source, baseFn);
 
             // Combine the results
             result.Append(rhsResult);
@@ -38,7 +39,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static ArcPartialGenerationResult GenerateLhs(ArcCallChain lhs, ArcGenerationSource source)
+        private static ArcPartialGenerationResult GenerateLhs(ArcCallChain lhs, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             // Handle the first element of the call chain since it is from a data slot
             var firstTerm = lhs.Terms.First();
@@ -53,7 +54,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
             else
             {
-                return GenerateLhsComplexAssignment(lhs, source);
+                return GenerateLhsComplexAssignment(lhs, source, baseFn);
             }
         }
 
@@ -66,7 +67,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static ArcPartialGenerationResult GenerateLhsComplexAssignment(ArcCallChain callChain, ArcGenerationSource source)
+        private static ArcPartialGenerationResult GenerateLhsComplexAssignment(ArcCallChain callChain, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var firstTerm = callChain.Terms.First();
             var initialSlot = source.LocalDataSlots
@@ -80,7 +81,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             foreach (var expr in firstTerm.Indices)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, baseFn));
 
                 var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, true);
                 result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
@@ -105,7 +106,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                     foreach (var expr in term.Indices)
                     {
-                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                        result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, baseFn));
 
                         var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, false);
                         result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
@@ -125,11 +126,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static ArcPartialGenerationResult GenerateRhs(ArcExpression expression, ArcGenerationSource source)
+        private static ArcPartialGenerationResult GenerateRhs(ArcExpression expression, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var rhsResult = ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(
                 source,
-                expression
+                expression,
+                baseFn
             );
             return rhsResult;
         }

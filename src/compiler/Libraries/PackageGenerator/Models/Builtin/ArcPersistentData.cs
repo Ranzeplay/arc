@@ -5,7 +5,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
 {
     internal static class ArcPersistentData
     {
-        public static IEnumerable<ArcBaseType> BaseTypes = [
+        private static readonly IEnumerable<ArcBaseType> BaseTypes = [
             NoneType,
             AnyType,
             IntType,
@@ -13,7 +13,8 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
             CharType,
             StringType,
             BoolType,
-            ByteType
+            ByteType,
+            FunctionType
         ];
 
         public static ArcBaseType NoneType => new(0, "none");
@@ -24,6 +25,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Builtin
         public static ArcBaseType StringType => new(5, "string");
         public static ArcBaseType BoolType => new(6, "bool");
         public static ArcBaseType ByteType => new(7, "byte");
+        public static ArcBaseType FunctionType => new(8, "func");
 
 
         public static ArcScopeTree BaseTypeScopeTree
