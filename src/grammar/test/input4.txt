@@ -1,0 +1,5 @@
+namespace L {
+	public func f(): none {
+		var a: infer = 3 * (-1 + 2);
+	}
+}

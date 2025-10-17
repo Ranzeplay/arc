@@ -1,5 +1,12 @@
 lexer grammar ArcSourceCodeLexer;
 
+NUMBER : ('+' | '-')? (INTEGER | OCTAL | HEX | DECIMAL | BINARY);
+fragment INTEGER : [0-9]+ ;
+fragment DECIMAL : [0-9]+ '.' [0-9]* (('e' | 'E') ('+' | '-')? [0-9]+)? ;
+fragment HEX : '0x' [0-9a-fA-F]+ ;
+fragment OCTAL : '0o' [0-7]+ ;
+fragment BINARY : '0b' [01]+ ;
+
 // Math operators
 PLUS: '+';
 MINUS: '-';
@@ -130,10 +137,3 @@ LITERAL_STRING : '"' (~["\r\n\\] | '\\' .)* '"';
 WHITESPACE : [ \t\r\n]+ -> skip ;
 LINE_COMMENT : '#' .*? '\n' -> skip ;
 IDENTIFIER : [a-zA-Z_][a-zA-Z_0-9]* ;
-
-NUMBER : INTEGER | OCTAL | HEX | DECIMAL | BINARY ;
-fragment INTEGER : [0-9]+ ;
-fragment DECIMAL : [0-9]+ '.' [0-9]* (('e' | 'E') ('+' | '-')? [0-9]+)? ;
-fragment HEX : '0x' [0-9a-fA-F]+ ;
-fragment OCTAL : '0o' [0-7]+ ;
-fragment BINARY : '0b' [01]+ ;
