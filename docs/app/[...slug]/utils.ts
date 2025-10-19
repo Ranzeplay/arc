@@ -31,7 +31,7 @@ export function generateDirectoryTree(): TreeNode[] {
         const hasIndex = fs.existsSync(indexPath);
 
         let title = entry.name;
-        let nodePath = [...basePath, entry.name].join('/');
+        let nodePath = "/" + [...basePath, entry.name].join('/');
 
         if (hasIndex) {
           // Read frontmatter from index.mdx
@@ -55,7 +55,7 @@ export function generateDirectoryTree(): TreeNode[] {
         
         nodes.push({
           title: data.title || fileName,
-          path: [...basePath, fileName].join('/')
+          path: "/" + [...basePath, fileName].join('/')
         });
       }
     }
