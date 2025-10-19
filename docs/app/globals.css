@@ -4,3 +4,42 @@
 h1, h2, h3, h4, h5, h6 {
   scroll-margin-top: calc(var(--spacing) * 16);
 }
+
+.btn {
+    @apply rounded-lg py-2 px-4 shadow transition-all;
+}
+
+.btn-primary {
+    @apply bg-zinc-900 hover:bg-zinc-700 text-white;
+    @apply dark:bg-zinc-100 dark:hover:bg-zinc-200 dark:text-black;
+}
+
+.btn-secondary {
+    @apply bg-zinc-50 hover:bg-zinc-100 text-black;
+    @apply dark:bg-zinc-900 dark:hover:bg-zinc-800 dark:text-white;
+}
+
+.card {
+    @apply rounded-lg shadow-md bg-zinc-200/40 p-6 flex flex-col gap-y-4;
+    @apply dark:bg-zinc-800 dark:text-white;
+}
+
+.card-header {
+    @apply flex flex-row gap-x-4 items-center text-black;
+    @apply dark:text-white;
+}
+
+.card-icon {
+    @apply flex items-center justify-center w-10 h-10 bg-zinc-800 rounded-lg;
+    @apply dark:bg-zinc-700 dark:text-black;
+}
+
+.card-title {
+    @apply font-bold text-lg;
+    @apply dark:text-white;
+}
+
+.card-content {
+    @apply text-zinc-800 text-justify indent-4;
+    @apply dark:text-zinc-200;
+}
