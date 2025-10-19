@@ -30,7 +30,9 @@ const withMDX = createMDX({
         }
       ],
       'rehype-slug',
-      ['rehype-katex', { strict: true, throwOnError: true }]
+      ['rehype-katex', { strict: true, throwOnError: true }],
+      '@stefanprobst/rehype-extract-toc',
+      '@stefanprobst/rehype-extract-toc/mdx'
     ]
   },
   extension: /\.(md|mdx)$/,

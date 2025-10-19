@@ -17,6 +17,9 @@ importers:
       '@next/mdx':
         specifier: ^15.5.6
         version: 15.5.6(@mdx-js/loader@3.1.1)(@mdx-js/react@3.1.1(@types/react@19.2.2)(react@19.1.0))
+      '@stefanprobst/rehype-extract-toc':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@types/mdx':
         specifier: ^2.0.13
         version: 2.0.13
@@ -392,6 +395,10 @@ packages:
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
+
+  '@stefanprobst/rehype-extract-toc@3.0.0':
+    resolution: {integrity: sha512-ZnmL6g8DydunVa2/Vk54PTPC+Ib096Xwvd/mqhK/mqsTh6jaiLZFAvM3FUsOiio0oeVpUDb1jbBPePfA9m/NRg==}
+    engines: {node: '>=18'}
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
@@ -1564,6 +1571,14 @@ snapshots:
       '@types/hast': 3.0.4
 
   '@shikijs/vscode-textmate@10.0.2': {}
+
+  '@stefanprobst/rehype-extract-toc@3.0.0':
+    dependencies:
+      estree-util-is-identifier-name: 3.0.0
+      estree-util-value-to-estree: 3.4.0
+      hast-util-heading-rank: 3.0.0
+      hast-util-to-string: 3.0.1
+      unist-util-visit: 5.0.0
 
   '@swc/helpers@0.5.15':
     dependencies:

@@ -1,11 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import cp from 'child_process';
 
 export interface TreeNode {
   title: string;
   path: string;
   children?: TreeNode[];
+  lastModificationTime?: Date;
 }
 
 export function generateDirectoryTree(): TreeNode[] {
@@ -52,10 +54,12 @@ export function generateDirectoryTree(): TreeNode[] {
         const content = fs.readFileSync(fullPath, 'utf-8');
         const { data } = matter(content);
         const fileName = entry.name.replace('.mdx', '');
+        const lastModificationTimeOnGit = cp.execSync(`git log -1 --format="%cI" -- "${fullPath}"`).toString().trim();
         
         nodes.push({
           title: data.title || fileName,
-          path: "/" + [...basePath, fileName].join('/')
+          path: "/" + [...basePath, fileName].join('/'),
+          lastModificationTime: lastModificationTimeOnGit ? new Date(lastModificationTimeOnGit) : undefined
         });
       }
     }

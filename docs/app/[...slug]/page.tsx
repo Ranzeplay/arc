@@ -3,6 +3,8 @@ import { generateDirectoryTree, TreeNode } from "./utils";
 import Directory from "@/app/components/directory";
 import NotFound from "@/app/not-found";
 import Breadcrumb from "../components/breadcrumb";
+import React from "react";
+import TableOfContents from "../components/toc";
 
 // Cache directory tree at build time
 const directoryTree = generateDirectoryTree();
@@ -43,14 +45,16 @@ export default async function Page({
   const slugPath = slug.join("/");
 
   // Direct static import - Next.js will handle this at build time
-  let Content;
+  let Content, toc;
   try {
     const module = await import(`@/app/content/${slugPath}.mdx`);
     Content = module.default;
+    toc = module.tableOfContents;
   } catch {
     try {
       const module = await import(`@/app/content/${slugPath}/index.mdx`);
       Content = module.default;
+      toc = module.tableOfContents;
     } catch {
       return <NotFound />;
     }
@@ -59,17 +63,20 @@ export default async function Page({
   let rootNode = directoryTree.find((dir) => dir.path === "/" + slug[0])!;
   let path = findCurrentNodePath(rootNode, slug)!;
   let currentNode = path.at(-1) || rootNode;
-
   path = [rootNode, ...path];
 
   return (
     <main className="flex flex-row divide-x-1 divide-neutral-200 flex-1 h-full">
-      <div className="basis-1/4 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto p-8 shadow">
+      <div className="basis-3/13 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto p-8 shadow flex flex-col gap-y-5">
+        <TableOfContents toc={toc} />
+        <div className="w-full h-px bg-neutral-300" />
         <Directory node={rootNode} currentPath={"/" + slugPath} />
       </div>
       <div className="prose p-8 overflow-y-auto grow w-full max-w-full">
         {path.length > 1 && <Breadcrumb path={path} />}
-        <h1 className="font-serif mt-3">{currentNode.title}</h1>
+        <h1 className="font-serif mt-3 mb-1!">{currentNode.title}</h1>
+        <p className="mt-0! text-neutral-500">Last updated at: {currentNode.lastModificationTime?.toLocaleString()}</p>
+        <div className="w-full h-px bg-neutral-300" />
         <Content />
       </div>
     </main>
