@@ -1,11 +1,14 @@
-import fs from 'fs';
 import path from 'path';
 import { generateDirectoryTree } from './utils';
 import Directory from '@/app/components/directory';
 
+// Cache directory tree at build time
+const directoryTree = generateDirectoryTree();
+
 export async function generateStaticParams() {
-  const contentDir = path.join(process.cwd(), 'app', 'content');
   const params: { slug: string[] }[] = [];
+  const CONTENT_DIR = path.join(process.cwd(), 'app', 'content');
+  const fs = await import('fs');
 
   function getAllMdxFiles(dir: string, basePath: string[] = []): void {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -15,53 +18,45 @@ export async function generateStaticParams() {
         getAllMdxFiles(path.join(dir, entry.name), [...basePath, entry.name]);
       } else if (entry.name.endsWith('.mdx')) {
         const fileName = entry.name.replace('.mdx', '');
-        if (fileName === 'index') {
-          // For index files, use the directory path
-          if (basePath.length > 0) {
-            params.push({ slug: basePath });
-          }
-        } else {
-          params.push({ slug: [...basePath, fileName] });
-        }
+        params.push({
+          slug: fileName === 'index' && basePath.length > 0 
+            ? basePath 
+            : [...basePath, fileName]
+        });
       }
     }
   }
 
-  getAllMdxFiles(contentDir);
+  getAllMdxFiles(CONTENT_DIR);
   return params;
 }
 
-export default async function Page({ params }: { params: Promise<{ slug: string[] }> }) {
+export default async function Page({ 
+  params 
+}: { 
+  params: Promise<{ slug: string[] }> 
+}) {
   const { slug } = await params;
+  const slugPath = slug.join('/');
   
-  const contentDir = path.join(process.cwd(), 'app', 'content');
-  const filePath = path.join(contentDir, ...slug);
-  
-  let Content: any;
-  
-  // Check if direct .mdx file exists
-  const directFile = `${filePath}.mdx`;
-  const indexFile = path.join(filePath, 'index.mdx');
-  
-  if (fs.existsSync(directFile)) {
-    const module = await import(`@/app/content/${slug.join("/")}.mdx`);
+  // Direct static import - Next.js will handle this at build time
+  let Content;
+  try {
+    const module = await import(`@/app/content/${slugPath}.mdx`);
     Content = module.default;
-  } else if (fs.existsSync(indexFile)) {
-    const module = await import(`@/app/content/${slug.join("/")}/index.mdx`);
+  } catch {
+    const module = await import(`@/app/content/${slugPath}/index.mdx`);
     Content = module.default;
-  } else {
-    throw new Error(`Content not found for slug: ${slug.join("/")}`);
   }
-
-  // Generate directory tree
-  const directoryTree = generateDirectoryTree();
 
   return (
     <main className="flex flex-row divide-x-1 divide-neutral-200 flex-1 h-full">
       <div className="basis-1/5 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto p-8">
         <Directory tree={directoryTree} />
       </div>
-      <div className="prose p-8 overflow-y-auto"><Content /></div>
+      <div className="prose p-8 overflow-y-auto">
+        <Content />
+      </div>
     </main>
   );
 }
