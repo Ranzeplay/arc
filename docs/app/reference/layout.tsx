@@ -1,0 +1,1 @@
+../components/docsLayout.tsx
