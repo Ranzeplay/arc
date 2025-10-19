@@ -1,8 +1,0 @@
-{
-  "title": "Articles",
-  "root": true,
-  "icon": "Newspaper",
-  "pages": [
-    "discussion-on-the-design-of-generics"
-  ]
-}

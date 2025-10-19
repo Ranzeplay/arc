@@ -1,6 +1,6 @@
 # The Arc Programming Language Documentation
 
-Welcome to the official documentation site for the Arc programming language! This repository contains the source code for the Arc documentation website, built with [Next.js](https://nextjs.org/) and [Fumadocs](https://fumadocs.vercel.app/).
+Welcome to the official documentation site for the Arc programming language! This repository contains the source code for the Arc documentation website, built with [Next.js](https://nextjs.org/).
 
 ## 📖 About
 
