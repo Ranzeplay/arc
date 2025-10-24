@@ -1,6 +1,5 @@
 use std::fmt::Debug;
 use arc_instruction_factory::arc_instruction;
-use crate::models::encodings::data_type_enc::MemoryStorageType;
 use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
