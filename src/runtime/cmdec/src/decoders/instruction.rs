@@ -28,7 +28,7 @@ pub fn decode_instructions(
 
         let instruction = Instruction {
             instruction_type: i_type,
-            offset: 0,
+            offset: pos,
             raw: stream[pos..pos + len].to_vec(),
         };
 
