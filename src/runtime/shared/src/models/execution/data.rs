@@ -39,6 +39,8 @@ pub enum DataValueType {
     Decimal(f64),
     String(String),
     Char(char),
+    Byte(u8),
+    Function(Rc<SymbolDescriptor>),
     Any,
     None,
     Complex(ComplexDataValue),
@@ -51,7 +53,7 @@ impl DataValueType {
         if data_type_encoding.dimension > 0 {
             DataValueType::Array(Vec::new())
         } else {
-            if data_type_encoding.type_id <= 6 {
+            if data_type_encoding.type_id <= 8 {
                 DataValueType::None
             } else {
                 DataValueType::Complex(ComplexDataValue::init(&data_type_encoding, package))
