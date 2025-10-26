@@ -59,12 +59,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     
                     var (node, logs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeLambdaNode>(source, lambda.Declarator);
                     result.Logs.AddRange(logs);
-
-                    node.SyntaxTree = lambda;
-                    var lambdaGenResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_lambda_expressionContext, ArcScopeTreeLambdaNode, ArcFunctionMinimalDeclarator>(source, node, lambda);
-                    node.BlockLength = lambdaGenResult.TotalGeneratedDataSlotCount;
                     
                     baseFn.AddChild(node);
+                    source.GlobalScopeTree.FlattenedNodes.First(n => n.Id == baseFn.Id).AddChild(node);
+
+                    node.SyntaxTree = lambda;
+                    var lambdaGenResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_lambda_expressionContext, ArcScopeTreeLambdaNode, ArcFunctionMinimalDeclarator>(source, node, lambda, true);
+                    node.BlockLength = lambdaGenResult.TotalGeneratedDataSlotCount;
+                    node.GenerationResult = lambdaGenResult;
+                    node.Parent = baseFn;
                     
                     // Push lambda symbol onto the stack
                     var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Symbol, node.Id, false);

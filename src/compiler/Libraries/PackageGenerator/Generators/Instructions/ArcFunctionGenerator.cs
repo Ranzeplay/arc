@@ -16,7 +16,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal static class ArcFunctionGenerator
     {
-        public static ArcPartialGenerationResult GenerateFunction<TSyntax, TFunctionNode, TDeclarator>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, TDeclarator> func)
+        public static ArcPartialGenerationResult GenerateFunction<TSyntax, TFunctionNode, TDeclarator>(ArcGenerationSource source, ArcScopeTreeFunctionNodeBase node, ArcFunctionBase<TSyntax, TDeclarator> func, bool saveGenResult = false)
             where TSyntax : ParserRuleContext
             where TFunctionNode : ArcScopeTreeFunctionNodeBase, new()
             where TDeclarator : ArcFunctionMinimalDeclarator
@@ -46,6 +46,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             source.LocalDataSlots = [];
             node.DataCount = result.TotalGeneratedDataSlotCount + node.Parameters.Count();
+
+            if (saveGenResult)
+            {
+                node.GenerationResult = result;
+            }
 
             return result;
         }
