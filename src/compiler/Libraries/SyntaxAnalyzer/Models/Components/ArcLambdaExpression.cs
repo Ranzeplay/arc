@@ -13,7 +13,7 @@ public class ArcLambdaExpression : ArcNamelessFunction<ArcSourceCodeParser.Arc_l
         {
             ReturnType = new ArcDataType(context.arc_data_type()),
             Arguments = context.arc_wrapped_arg_list()?
-                .arc_arg_list()
+                .arc_arg_list()?
                 .arc_data_declarator()
                 .Select(d => new ArcFunctionArgument(d)) ?? []
         };
