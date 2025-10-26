@@ -32,7 +32,7 @@ pub fn decode_instructions(
             raw: stream[pos..pos + len].to_vec(),
         };
 
-        if opt.verbose {
+        if opt.print_instructions {
             if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
                 Function(f) => f.entry_pos == instruction.offset,
                 _ => false,
