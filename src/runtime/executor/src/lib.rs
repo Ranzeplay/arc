@@ -7,7 +7,7 @@ mod stdlib;
 use crate::func_exec::prepare_and_get_function_info;
 use crate::instructions::return_function::wrap_return_value_if_needed;
 use crate::stdlib::execute_stdlib_function;
-use log::{debug, error, trace};
+use log::{debug, error, trace, warn};
 use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
@@ -89,7 +89,7 @@ pub fn execute_function(
         loc
     };
 
-    loop {
+    'finalize: loop {
         let instruction = {
             let exec_context_ref = exec_context.borrow();
             let result = exec_context_ref.package.instructions.get(instruction_index).unwrap();
@@ -257,10 +257,27 @@ pub fn execute_function(
             }
             InstructionType::FRet(ret) => {
                 result = wrap_return_value_if_needed(exec_context, ret.with_value);
-                break;
+                break 'finalize;
             }
             InstructionType::FCall(call) => {
-                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                let mut fn_id = call.function_id;
+                if fn_id == 0 {
+                    fn_id = {
+                        let mut exec_context_ref = exec_context.borrow_mut();
+                        let symbol_data = exec_context_ref.global_stack.pop().unwrap();
+                        let symbol_data = symbol_data.borrow();
+
+                        match &symbol_data.value {
+                            DataValueType::Symbol(s) => s.id,
+                            _ => {
+                                error!("Invalid data type for function symbol");
+                                return FunctionExecutionResult::Invalid;
+                            }
+                        }
+                    };
+                }
+
+                let fn_result = execute_function(fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
                 match fn_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid function(0x{:016X}) execution result", call.function_id);
