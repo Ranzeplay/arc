@@ -44,6 +44,21 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
         
+        // Make sure that the function symbol is already on stack top
+        public static ArcPartialGenerationResult GenerateLambdaCall(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeFunctionNodeBase baseFn)
+        {
+            var result = new ArcPartialGenerationResult();
+
+            foreach (var arg in funcCall.Arguments)
+            {
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression, baseFn));
+            }
+
+            result.Append(new ArcFunctionCallInstruction(0, (uint)funcCall.Arguments.Count(), funcCall.SpecializedGenericTypes).Encode(source));
+
+            return result;
+        }
+        
         public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupFunctionNode funcNode, bool isSelfFunction, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {
             var result = new ArcPartialGenerationResult();
