@@ -63,12 +63,13 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                                 break;
                             }
 
-                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, fnNode);
+                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, true, fnNode);
                             // Discard the result of the function call
 
                             var (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
                             stepResult.Logs.AddRange(logs);
-                            var function = source.GlobalScopeTree.FlattenedNodes
+                            var function = source.GlobalScopeTree
+                                .FlattenedNodes
                                 .OfType<ArcScopeTreeFunctionNodeBase>()
                                 .FirstOrDefault(f => f.Id == funcId);
 

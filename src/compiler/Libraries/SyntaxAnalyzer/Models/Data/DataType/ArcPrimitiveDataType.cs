@@ -47,6 +47,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType
                 ArcPrimitiveDataType.String => "string",
                 ArcPrimitiveDataType.Any => "any",
                 ArcPrimitiveDataType.None => "none",
+                ArcPrimitiveDataType.Function => "func",
                 _ => throw new InvalidConstraintException("Invalid primitive data type")
             };
         }

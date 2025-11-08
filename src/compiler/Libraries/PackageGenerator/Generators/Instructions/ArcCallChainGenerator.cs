@@ -129,7 +129,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 case ArcCallChainTermType.FunctionCall:
                 {
                     var call = firstTerm.FunctionCall!;
-                    result.Append(ArcFunctionCallGenerator.Generate(source, call, false, baseFn));
+                    result.Append(ArcFunctionCallGenerator.Generate(source, call, false, true, baseFn));
 
                     var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
                     if (logs.Any())
@@ -226,6 +226,24 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         var fn = ArcGroupHelper.ResolveSelfFunction(group, term.FunctionCall!, source);
                         if (fn == null)
                         {
+                            // No function found, then consider if there exist a field such that it holds a lambda expression, i.e. with `func` data type
+                            
+                            var nameIdent = term.FunctionCall!.Identifier;
+                            if(nameIdent.Namespace == null)
+                            {
+                                var field = ArcGroupHelper.ResolveField(group, term.FunctionCall!.Identifier.Name, source);
+                                if (field != null && field.DataType.Type.Equals(ArcPersistentData.FunctionType))
+                                {
+                                    // Load the field to stack top
+                                    var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
+                                    result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+
+                                    // Now generate lambda call
+                                    result.Append(ArcFunctionCallGenerator.GenerateLambdaCall(source, term.FunctionCall!, baseFn));
+                                    break;
+                                }
+                            }
+                            
                             result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
                             return result;
                         }

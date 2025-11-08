@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcFunctionCallGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, bool isSelfFunction, ArcScopeTreeFunctionNodeBase baseFn, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, bool isSelfFunction, bool considerLambda, ArcScopeTreeFunctionNodeBase baseFn, ArcScopeTreeGroupNode? searchUnderGroup = null)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -20,10 +20,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
             
             ulong funcId = 0;
-
+            
             // We check if the function identifier is a local data slot, which indicates a lambda
             var lambdaDataSlot = source.LocalDataSlots.FirstOrDefault(lds => lds.Name.Equals(funcCall.Identifier.Name));
-            if (funcCall.Identifier.Namespace == null && lambdaDataSlot != null)
+            if (considerLambda && funcCall.Identifier.Namespace == null && lambdaDataSlot != null)
             {
                 // We keep funcId as 0 so that the function call instruction knows to call a lambda from a data slot
                 // Then it will read symbol from stack top
