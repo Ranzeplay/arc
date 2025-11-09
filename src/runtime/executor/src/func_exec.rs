@@ -6,11 +6,13 @@ use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
+use crate::instructions::data_declaration::construct_data;
 
 pub fn prepare_and_get_function_info(
     function_id: usize,
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
+    is_constructor_of_type: Option<usize>
 ) -> Rc<RefCell<FunctionExecutionContext>> {
     let mut function_context = {
         let exec_context_ref = exec_context.borrow();
@@ -31,7 +33,7 @@ pub fn prepare_and_get_function_info(
         }
     };
 
-    put_fn_args(parent_fn_opt, exec_context, &mut function_context);
+    put_fn_args(parent_fn_opt, exec_context, &mut function_context, is_constructor_of_type);
 
     Rc::new(RefCell::new(function_context))
 }
@@ -40,10 +42,12 @@ fn put_fn_args(
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
     function_context: &mut FunctionExecutionContext,
+    is_constructor_of_type: Option<usize>,
 ) {
     if let Some(_) = parent_fn_opt {
         let current_function_arg_count = function_context.function.parameter_descriptors.len();
-        for i in 0..current_function_arg_count {
+        let begin_index = if is_constructor_of_type.is_none() { 0 } else { 1 };
+        for i in begin_index..current_function_arg_count {
             let data = exec_context.borrow_mut().global_stack.pop().unwrap();
             let slot_id = current_function_arg_count - i - 1;
             let target_arg = &function_context.function.parameter_descriptors[slot_id];
@@ -58,6 +62,15 @@ fn put_fn_args(
             function_context
                 .local_data
                 .push(Rc::new(RefCell::new(slot)));
+        }
+
+        if let Some(type_id) = is_constructor_of_type {
+            let exec_context_ref = exec_context.borrow();
+            let obj = construct_data(type_id, &exec_context_ref.package);
+            function_context.local_data.push(Rc::new(RefCell::new(DataSlot {
+                slot_id: 0,
+                value: obj,
+            })));
         }
 
         function_context.local_data.reverse();

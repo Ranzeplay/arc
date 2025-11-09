@@ -2,7 +2,6 @@ use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability}
 use arc_shared::models::execution::context::FunctionExecutionContext;
 use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use arc_shared::models::instructions::decl::DeclInstruction;
-use arc_shared::models::instructions::new_obj::NewObjectInstruction;
 use arc_shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -26,9 +25,9 @@ pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, de
     })));
 }
 
-pub fn construct_data(new_obj: &NewObjectInstruction, package: &Package) -> Rc<RefCell<DataValue>> {
+pub fn construct_data(type_id: usize, package: &Package) -> Rc<RefCell<DataValue>> {
     let encoding = DataTypeEncoding {
-        type_id: new_obj.type_id,
+        type_id,
         dimension: 0,
         mutability: Mutability::Immutable,
     };

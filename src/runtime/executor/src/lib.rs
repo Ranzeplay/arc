@@ -16,7 +16,7 @@ use arc_shared::models::instruction::InstructionType;
 use std::cell::RefCell;
 use std::rc::Rc;
 use arc_shared::models::options::launch_options::LaunchOptions;
-use crate::instructions::data_declaration::{construct_data, declare_data};
+use crate::instructions::data_declaration::declare_data;
 use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
 use crate::math::{math_bitwise_not, math_logical_and, math_logical_not, math_logical_or};
 
@@ -61,6 +61,7 @@ pub fn execute(opt: Rc<LaunchOptions>) -> FunctionExecutionResult {
         context.package.descriptor.entrypoint_function_id,
         None,
         Rc::new(RefCell::new(context)),
+        None
     )
 }
 
@@ -68,6 +69,7 @@ pub fn execute_function(
     function_id: usize,
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
+    is_constructor_of_type: Option<usize>,
 ) -> FunctionExecutionResult {
     trace!("Entering function 0x{:016X}", function_id);
 
@@ -80,7 +82,7 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context));
+    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type);
 
     let mut instruction_index = {
         let exec_context_ref = exec_context.borrow();
@@ -277,7 +279,7 @@ pub fn execute_function(
                     };
                 }
 
-                let fn_result = execute_function(fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                let fn_result = execute_function(fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None);
                 match fn_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid function(0x{:016X}) execution result", call.function_id);
@@ -302,14 +304,7 @@ pub fn execute_function(
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
             InstructionType::RpStk(_) => replace_stack_top(&exec_context),
             InstructionType::NewObj(no) => {
-                {
-                    let mut exec_context_ref = exec_context.borrow_mut();
-                    let obj = construct_data(no, &exec_context_ref.package);
-
-                    exec_context_ref.global_stack.push(obj);
-                }
-
-                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context));
+                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), Some(no.type_id));
                 match ctor_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid constructor function(0x{:016X}) execution result", no.ctor_fn_id);
