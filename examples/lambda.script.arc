@@ -14,5 +14,5 @@ namespace Program
         call f();
 
 		return 0;
-	}	
+	}
 }
