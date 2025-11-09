@@ -232,7 +232,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             if(nameIdent.Namespace == null)
                             {
                                 var field = ArcGroupHelper.ResolveField(group, term.FunctionCall!.Identifier.Name, source);
-                                if (field != null && field.DataType.Type.Equals(ArcPersistentData.FunctionType))
+                                if (field != null && field.DataType.Type.TypeId == ArcPersistentData.FunctionType.TypeId)
                                 {
                                     // Load the field to stack top
                                     var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
