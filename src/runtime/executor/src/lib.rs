@@ -73,8 +73,13 @@ pub fn execute_function(
 ) -> FunctionExecutionResult {
     trace!("Entering function 0x{:016X}", function_id);
 
-    let result;
+    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type);
+    let function_id = {
+        let function_context_ref = function_context.borrow();
+        function_context_ref.id
+    };
 
+    // Check for standard library functions
     if function_id >= 0xa1 && function_id <= 0xff {
         trace!("Executing stdlib function");
         execute_stdlib_function(function_id, Rc::clone(&exec_context));
@@ -82,14 +87,25 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type);
-
-    let mut instruction_index = {
+    // Otherwise proceed with normal function execution
+    let instruction_index = {
         let exec_context_ref = exec_context.borrow();
         let loc = exec_context_ref.function_entry_points[&function_id];
 
         loc
     };
+
+    instruction_loop(instruction_index, exec_context, &function_context)
+}
+
+fn instruction_loop(
+    initial_instruction_index: usize,
+    exec_context: Rc<RefCell<ExecutionContext>>,
+    function_context: &Rc<RefCell<FunctionExecutionContext>>,
+) -> FunctionExecutionResult {
+    let result;
+    let function_id = function_context.borrow().id;
+    let mut instruction_index = initial_instruction_index;
 
     'finalize: loop {
         let instruction = {
@@ -262,24 +278,7 @@ pub fn execute_function(
                 break 'finalize;
             }
             InstructionType::FCall(call) => {
-                let mut fn_id = call.function_id;
-                if fn_id == 0 {
-                    fn_id = {
-                        let mut exec_context_ref = exec_context.borrow_mut();
-                        let symbol_data = exec_context_ref.global_stack.pop().unwrap();
-                        let symbol_data = symbol_data.borrow();
-
-                        match &symbol_data.value {
-                            DataValueType::Symbol(s) => s.id,
-                            _ => {
-                                error!("Invalid data type for function symbol");
-                                return FunctionExecutionResult::Invalid;
-                            }
-                        }
-                    };
-                }
-
-                let fn_result = execute_function(fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None);
+                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None);
                 match fn_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid function(0x{:016X}) execution result", call.function_id);
