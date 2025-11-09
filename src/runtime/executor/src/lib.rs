@@ -61,7 +61,8 @@ pub fn execute(opt: Rc<LaunchOptions>) -> FunctionExecutionResult {
         context.package.descriptor.entrypoint_function_id,
         None,
         Rc::new(RefCell::new(context)),
-        None
+        None,
+        1
     )
 }
 
@@ -70,14 +71,9 @@ pub fn execute_function(
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
     is_constructor_of_type: Option<usize>,
+    param_count: usize,
 ) -> FunctionExecutionResult {
     trace!("Entering function 0x{:016X}", function_id);
-
-    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type);
-    let function_id = {
-        let function_context_ref = function_context.borrow();
-        function_context_ref.id
-    };
 
     // Check for standard library functions
     if function_id >= 0xa1 && function_id <= 0xff {
@@ -86,6 +82,12 @@ pub fn execute_function(
         trace!("Exiting function 0x{:016X}", function_id);
         return FunctionExecutionResult::Success(None);
     }
+
+    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type, param_count);
+    let function_id = {
+        let function_context_ref = function_context.borrow();
+        function_context_ref.id
+    };
 
     // Otherwise proceed with normal function execution
     let instruction_index = {
@@ -278,7 +280,7 @@ fn instruction_loop(
                 break 'finalize;
             }
             InstructionType::FCall(call) => {
-                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None);
+                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None, call.param_count as usize);
                 match fn_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid function(0x{:016X}) execution result", call.function_id);
@@ -303,7 +305,7 @@ fn instruction_loop(
             InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
             InstructionType::RpStk(_) => replace_stack_top(&exec_context),
             InstructionType::NewObj(no) => {
-                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), Some(no.type_id));
+                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), Some(no.type_id), 0);
                 match ctor_result {
                     FunctionExecutionResult::Invalid => {
                         error!("Invalid constructor function(0x{:016X}) execution result", no.ctor_fn_id);

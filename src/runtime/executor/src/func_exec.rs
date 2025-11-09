@@ -12,27 +12,56 @@ pub fn prepare_and_get_function_info(
     function_id: usize,
     parent_fn_opt: Option<Rc<RefCell<FunctionExecutionContext>>>,
     exec_context: Rc<RefCell<ExecutionContext>>,
-    is_constructor_of_type: Option<usize>
+    is_constructor_of_type: Option<usize>,
+    param_count: usize,
 ) -> Rc<RefCell<FunctionExecutionContext>> {
+    let mut temp_param_store = vec![];
+    if function_id == 0 {
+        let mut exec_context_ref = exec_context.borrow_mut();
+        for _ in 0..param_count {
+            let data = exec_context_ref.global_stack.pop().unwrap();
+            temp_param_store.push(data);
+        }
+    }
+
     let mut function_context = {
-        let exec_context_ref = exec_context.borrow();
+        let mut exec_context_ref = exec_context.borrow_mut();
+        let mut fn_id = function_id;
+        if function_id == 0 {
+            let st_symbol = exec_context_ref.global_stack.pop().unwrap();
+            let st_symbol = st_symbol.borrow();
+            fn_id = match &st_symbol.value {
+                DataValueType::Symbol(s) => {
+                    s.id
+                },
+                _ => panic!("Invalid data type for function symbol")
+            }
+        }
         let current_fn_symbol_opt = exec_context_ref
             .package
             .symbol_table
             .symbols
-            .get(&function_id);
+            .get(&fn_id);
         let current_fn = current_fn_symbol_opt.unwrap();
 
         // Create the function context
         match &current_fn.value {
             Symbol::Function(f) => FunctionExecutionContext {
-                id: function_id,
+                id: fn_id,
                 function: f.clone(),
                 local_data: Vec::with_capacity(f.data_count),
             },
             _ => panic!("Invalid symbol type."),
         }
     };
+
+    if function_id == 0 {
+        let mut exec_context_ref = exec_context.borrow_mut();
+        // Push back into global stack
+        for data in temp_param_store.into_iter().rev() {
+            exec_context_ref.global_stack.push(data);
+        }
+    }
 
     if let Some(_) = parent_fn_opt {
         put_fn_args(Rc::clone(&exec_context), &mut function_context, is_constructor_of_type);
