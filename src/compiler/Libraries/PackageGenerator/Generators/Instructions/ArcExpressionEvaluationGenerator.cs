@@ -64,7 +64,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     source.GlobalScopeTree.FlattenedNodes.First(n => n.Id == baseFn.Id).AddChild(node);
 
                     node.SyntaxTree = lambda;
-                    var lambdaGenResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_lambda_expressionContext, ArcScopeTreeLambdaNode, ArcFunctionMinimalDeclarator>(source, node, lambda, true);
+                    var lambdaSource = source.Clone();
+                    lambdaSource.LocalDataSlots = [];
+                    var lambdaGenResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_lambda_expressionContext, ArcScopeTreeLambdaNode, ArcFunctionMinimalDeclarator>(lambdaSource, node, lambda, true);
                     node.BlockLength = lambdaGenResult.TotalGeneratedDataSlotCount;
                     node.GenerationResult = lambdaGenResult;
                     node.Parent = baseFn;

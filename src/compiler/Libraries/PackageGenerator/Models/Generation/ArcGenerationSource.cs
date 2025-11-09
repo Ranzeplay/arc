@@ -57,5 +57,10 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             LocalDataSlots.AddRange(generationResult.DataSlots);
             AccessibleConstants = AccessibleConstants.Concat(generationResult.AddedConstants);
         }
+
+        public ArcGenerationSource Clone()
+        {
+            return (ArcGenerationSource) MemberwiseClone();
+        }
     }
 }
