@@ -12,9 +12,9 @@ namespace Arc.Compiler.PackageGenerator.Base
 
         public ArcSymbolScope Scope { get; set; } = new() { Type = ArcSymbolScopeType.CurrentPackage, Remark = "Default scope for types" };
 
-        protected bool Equals(ArcTypeBase other)
+        public override bool Equals(object? other)
         {
-            return TypeId == other.TypeId && Scope.Equals(other.Scope);
+            return other is ArcTypeBase tb && TypeId == tb.TypeId && Scope.Equals(tb.Scope);
         }
     }
 }
