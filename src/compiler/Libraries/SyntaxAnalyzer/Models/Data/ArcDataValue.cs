@@ -14,6 +14,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
             TypeValue,
             CallChain,
             EnumAccessor,
+            Lambda,
             None
         }
 
@@ -26,6 +27,8 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
         public ArcCallChain? CallChain { get; set; }
 
         public ArcEnumAccessor? EnumAccessor { get; set; }
+        
+        public ArcLambdaExpression? Lambda { get; set; }
 
         public ArcDataValue(ArcInstantValue value)
         {
@@ -50,6 +53,12 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
             Type = ValueType.EnumAccessor;
             EnumAccessor = enumAccessor;
         }
+        
+        public ArcDataValue(ArcLambdaExpression lambda)
+        {
+            Type = ValueType.Lambda;
+            Lambda = lambda;
+        }
 
         /// <summary>
         /// Creates a new instance of <see cref="ArcDataValue"/> with <see cref="ValueType.None"/>.
@@ -65,22 +74,25 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data
             {
                 return new ArcDataValue(ArcInstantValue.FromTokens(context.arc_instant_value()));
             }
-            else if (context.arc_type_value() != null)
+            if (context.arc_type_value() != null)
             {
                 return new ArcDataValue(new ArcDataType(context.arc_type_value().arc_data_type()));
             }
-            else if (context.arc_call_chain() != null)
+            if (context.arc_call_chain() != null)
             {
                 return new ArcDataValue(new ArcCallChain(context.arc_call_chain()));
             }
-            else if (context.arc_enum_accessor() != null)
+            if (context.arc_enum_accessor() != null)
             {
                 return new ArcDataValue(new ArcEnumAccessor(context.arc_enum_accessor()));
             }
-            else
+            if (context.arc_lambda_expression() != null)
             {
-                return new ArcDataValue();
+                return new ArcDataValue(new ArcLambdaExpression(context.arc_lambda_expression()));
             }
+
+            // Return an empty value if none of the above matched
+            return new ArcDataValue();
         }
     }
 }

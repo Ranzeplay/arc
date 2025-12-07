@@ -4,6 +4,6 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 {
     internal class ArcLogicalOrInstruction : ArcPrimitiveInstructionBase
     {
-        public override byte[] Opcode => [0x0f];
+        public override byte[] Opcode => [0x0c];
     }
 }

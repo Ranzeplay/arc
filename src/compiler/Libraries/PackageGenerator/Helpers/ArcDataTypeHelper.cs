@@ -37,6 +37,8 @@ namespace Arc.Compiler.PackageGenerator.Helpers
                         x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
                     ArcPrimitiveDataType.Any => candidateTypes.First(x =>
                         x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
+                    ArcPrimitiveDataType.Function => candidateTypes.First(x =>
+                        x.DataType.TypeId == ArcPersistentData.FunctionType.TypeId),
                     ArcPrimitiveDataType.Infer => throw new NotImplementedException(),
                     _ => throw new UnreachableException(),
                 };

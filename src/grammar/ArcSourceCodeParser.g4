@@ -13,7 +13,7 @@ arc_single_identifier: IDENTIFIER;
 arc_full_identifier: arc_namespace_limiter DOT arc_single_identifier;
 arc_flexible_identifier: arc_full_identifier | arc_single_identifier;
 
-arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_NONE | KW_ANY | KW_INFER;
+arc_primitive_data_type: KW_INT | KW_DECIMAL | KW_CHAR | KW_STRING | KW_BOOL | KW_BYTE | KW_FUNCTION | KW_NONE | KW_ANY | KW_INFER;
 arc_array_indicator: LBRACKET RBRACKET;
 arc_data_type: (arc_primitive_data_type | arc_flexible_identifier) arc_generic_specialization_wrapper? arc_array_indicator*;
 
@@ -29,6 +29,7 @@ arc_wrapped_param_list: LPAREN arc_param_list? RPAREN;
 arc_annotation: AT arc_flexible_identifier arc_wrapped_param_list?;
 
 arc_function_declarator: arc_annotation* arc_accessibility KW_FUNCTION arc_single_identifier arc_generic_declaration_wrapper? arc_wrapped_arg_list COLON arc_data_type;
+// Function call should handle both regular functions and lambda expressions
 arc_function_call_base: arc_flexible_identifier arc_generic_specialization_wrapper? arc_wrapped_param_list;
 
 arc_wrapped_function_body: LBRACE arc_statement* RBRACE;
@@ -37,7 +38,7 @@ arc_function_block: arc_function_declarator arc_wrapped_function_body;
 arc_bool_value: KW_TRUE | KW_FALSE;
 arc_instant_value: NUMBER | LITERAL_STRING | arc_bool_value | KW_NONE | KW_ANY;
 arc_type_value: KW_TYPEOF LPAREN arc_data_type RPAREN;
-arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | arc_enum_accessor;
+arc_data_value: arc_instant_value | arc_type_value | arc_call_chain | arc_enum_accessor | arc_lambda_expression;
 
 arc_constructor_call: KW_NEW arc_flexible_identifier arc_generic_specialization_wrapper? arc_wrapped_param_list;
 
@@ -58,6 +59,8 @@ arc_stmt_foreach: KW_FOREACH LPAREN arc_data_declarator KW_IN arc_expression RPA
 arc_stmt_throw: KW_THROW arc_expression;
 
 arc_stmt_if: KW_IF LPAREN arc_expression RPAREN arc_wrapped_function_body (KW_ELIF LPAREN arc_expression RPAREN arc_wrapped_function_body)* (KW_ELSE arc_wrapped_function_body)?;
+
+arc_lambda_expression: KW_LAMBDA arc_wrapped_arg_list COLON arc_data_type ARROW arc_wrapped_function_body;
 
 // TODO: 
 arc_expression: 

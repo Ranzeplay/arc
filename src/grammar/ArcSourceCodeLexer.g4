@@ -132,6 +132,7 @@ KW_LIFETIME: 'lifetime';
 KW_TYPEOF: 'typeof';
 KW_SELF: 'self';
 KW_ENUM: 'enum';
+KW_LAMBDA: 'lambda';
 
 LITERAL_STRING : '"' (~["\r\n\\] | '\\' .)* '"';
 WHITESPACE : [ \t\r\n]+ -> skip ;

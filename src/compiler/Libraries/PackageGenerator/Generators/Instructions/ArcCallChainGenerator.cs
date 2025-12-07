@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcCallChainGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -36,14 +36,14 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 
                 // Handle as normal call chain
                 
-                var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source);
+                var (firstTermResult, d) = GenerateFirstTerm(callChain.Terms.First(), source, baseFn);
                 result.Append(firstTermResult);
                 lastTermTypeDecl = d;
                 skipCount = 1;
             }
             else
             {
-                var (firstTermResult, d) = GenerateFirstTermConstructor(callChain.ConstructorCall, source);
+                var (firstTermResult, d) = GenerateFirstTermConstructor(callChain.ConstructorCall, source, baseFn);
 
                 result.Append(firstTermResult);
                 lastTermTypeDecl = d;
@@ -55,7 +55,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 return result;
             }
 
-            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source);
+            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, baseFn);
             result.Append(remainingTermsResult);
 
             return result;
@@ -110,45 +110,52 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTerm(ArcCallChainTerm firstTerm, ArcGenerationSource source)
+        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTerm(ArcCallChainTerm firstTerm, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
             ArcDataDeclarationDescriptor termTypeDecl;
-            if (firstTerm.Type == ArcCallChainTermType.Identifier)
+            switch (firstTerm.Type)
             {
-                var identifier = firstTerm.Identifier!;
-                var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
-                termTypeDecl = slot.DeclarationDescriptor;
-                var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, slot.SlotId, false);
-
-                result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
-            }
-            else
-            {
-                var call = firstTerm.FunctionCall!;
-                result.Append(ArcFunctionCallGenerator.Generate(source, call, false));
-
-                var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
-                if (logs.Any())
+                case ArcCallChainTermType.Identifier:
                 {
-                    result.Logs.AddRange(logs);
-                    return (result, null);
+                    var identifier = firstTerm.Identifier!;
+                    var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
+                    termTypeDecl = slot.DeclarationDescriptor;
+                    var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, slot.SlotId, false);
+
+                    result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
+                    break;
                 }
-
-                var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFuncId, true);
-
-                if (function == null)
+                case ArcCallChainTermType.FunctionCall:
                 {
-                    result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, call.Context));
-                    return (result, null);
-                }
+                    var call = firstTerm.FunctionCall!;
+                    result.Append(ArcFunctionCallGenerator.Generate(source, call, false, true, baseFn));
 
-                termTypeDecl = function.ReturnValueType;
+                    var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
+                    if (logs.Any())
+                    {
+                        result.Logs.AddRange(logs);
+                        return (result, null);
+                    }
+
+                    var function = source.CurrentNode.Root.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(f => f.Id == targetFuncId, true);
+
+                    if (function == null)
+                    {
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function not found", source.Name, call.Context));
+                        return (result, null);
+                    }
+
+                    termTypeDecl = function.ReturnValueType;
+                    break;
+                }
+                default:
+                    throw new NotImplementedException();
             }
 
             foreach (var expr in firstTerm.Indices)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, baseFn));
 
                 var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, true);
                 result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));
@@ -157,7 +164,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return (result, termTypeDecl);
         }
 
-        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTermConstructor(ArcConstructorCall constructor, ArcGenerationSource source)
+        private static (ArcPartialGenerationResult, ArcDataDeclarationDescriptor?) GenerateFirstTermConstructor(ArcConstructorCall constructor, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -173,7 +180,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // Constructor is a function that uses `self`
             foreach (var param in constructor.Parameters)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, param, baseFn));
             }
 
             // Currently we determine constructor by the number of parameters
@@ -197,7 +204,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return (result, dataDeclDesc);
         }
 
-        private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source)
+        private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
             foreach (var term in terms)
@@ -219,6 +226,24 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         var fn = ArcGroupHelper.ResolveSelfFunction(group, term.FunctionCall!, source);
                         if (fn == null)
                         {
+                            // No function found, then consider if there exist a field such that it holds a lambda expression, i.e. with `func` data type
+                            
+                            var nameIdent = term.FunctionCall!.Identifier;
+                            if(nameIdent.Namespace == null)
+                            {
+                                var field = ArcGroupHelper.ResolveField(group, term.FunctionCall!.Identifier.Name, source);
+                                if (field != null && field.DataType.Type.TypeId == ArcPersistentData.FunctionType.TypeId)
+                                {
+                                    // Load the field to stack top
+                                    var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
+                                    result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+
+                                    // Now generate lambda call
+                                    result.Append(ArcFunctionCallGenerator.GenerateLambdaCall(source, term.FunctionCall!, baseFn));
+                                    break;
+                                }
+                            }
+                            
                             result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
                             return result;
                         }
@@ -243,7 +268,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                 foreach (var expr in term.Indices)
                 {
-                    result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr));
+                    result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, expr, baseFn));
 
                     var arrayOperationDesc = new ArcStackDataOperationDescriptor(ArcDataSourceType.ArrayElement, 0, false);
                     result.Append(new ArcLoadDataToStackInstruction(arrayOperationDesc).Encode(source));

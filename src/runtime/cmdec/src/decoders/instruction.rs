@@ -28,11 +28,11 @@ pub fn decode_instructions(
 
         let instruction = Instruction {
             instruction_type: i_type,
-            offset: 0,
+            offset: pos,
             raw: stream[pos..pos + len].to_vec(),
         };
 
-        if opt.verbose {
+        if opt.print_instructions {
             if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
                 Function(f) => f.entry_pos == instruction.offset,
                 _ => false,
@@ -53,7 +53,7 @@ pub fn decode_instructions(
     }
 
     if pos == stream.len() {
-        if opt.print_decoding_result {
+        if opt.print_instructions {
             info!("All instructions decoded successfully!");
         }
     } else {

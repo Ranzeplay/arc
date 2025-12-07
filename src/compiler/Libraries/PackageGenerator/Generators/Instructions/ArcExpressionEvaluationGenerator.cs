@@ -3,16 +3,19 @@ using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
 using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
+using Arc.Compiler.PackageGenerator.Models.Scope;
+using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
+using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcExpressionEvaluationGenerator
     {
-        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr)
+        public static ArcPartialGenerationResult GenerateEvaluationCommand(ArcGenerationSource source, ArcExpression expr, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -24,7 +27,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
                 else
                 {
-                    var logs = GenerateDataValue(ref source, ref result, term);
+                    var logs = GenerateDataValue(ref source, ref result, term, baseFn);
                     result.Logs.AddRange(logs);
                 }
             }
@@ -32,23 +35,48 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term)
+        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, ArcScopeTreeFunctionNodeBase baseFn)
         {
             switch (term.DataValue?.Type)
             {
                 case ArcDataValue.ValueType.InstantValue:
-                    {
-                        var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
-                        var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, dataLocation, false);
+                {
+                    var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
+                    var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, dataLocation, false);
 
-                        result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
-                        break;
-                    }
+                    result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
+                    break;
+                }
                 case ArcDataValue.ValueType.CallChain:
-                    {
-                        result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!));
-                        break;
-                    }
+                {
+                    result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, baseFn));
+                    break;
+                }
+                case ArcDataValue.ValueType.Lambda:
+                {
+                    // Create a new lambda node under the current function
+                    var lambda = term.DataValue.Lambda!;
+                    
+                    var (node, logs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeLambdaNode>(source, lambda.Declarator);
+                    result.Logs.AddRange(logs);
+                    
+                    baseFn.AddChild(node);
+                    source.GlobalScopeTree.FlattenedNodes.First(n => n.Id == baseFn.Id).AddChild(node);
+
+                    node.SyntaxTree = lambda;
+                    var lambdaSource = source.Clone();
+                    lambdaSource.LocalDataSlots = [];
+                    var lambdaGenResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_lambda_expressionContext, ArcScopeTreeLambdaNode, ArcFunctionMinimalDeclarator>(lambdaSource, node, lambda, true);
+                    node.BlockLength = lambdaGenResult.TotalGeneratedDataSlotCount;
+                    node.GenerationResult = lambdaGenResult;
+                    node.Parent = baseFn;
+                    
+                    // Push lambda symbol onto the stack
+                    var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Symbol, node.Id, false);
+                    result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
+                    
+                    break;
+                }
                 default:
                     return [new ArcSourceLocatableLog(LogLevel.Error, 0, "Data value not implemented", source.Name, term.Context)];
             }

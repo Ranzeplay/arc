@@ -36,7 +36,17 @@ namespace Arc::Program {
 
 		var d: ArcExample<string>;
 		d = new ArcExample<string>();
+		
+		const fn: func = lambda (const a: int, const b: int): int => {
+            if (a > b) {
+                return a;
+            } else {
+                return b;
+            }
+        };
+        
+        const result: int = fn(50, 0);
 
-		return 0;
+		return result;
 	}
 }
