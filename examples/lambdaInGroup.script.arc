@@ -27,7 +27,11 @@ namespace Program
         };
 
         const g: G<int> = new G(f);
-        const result: bool = g.check(2);
+        if(g.check(2)) {
+            call PrintString("Valid data");
+        } else {
+            call PrintString("Invalid data");
+        }
 
 		return 0;
 	}
