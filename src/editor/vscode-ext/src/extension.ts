@@ -30,17 +30,26 @@ export function activate(context: vscode.ExtensionContext) {
 		vscode.languages.createDiagnosticCollection('Arc');
 	context.subscriptions.push(diagnosticsCollection);
 
+	// Debounce timer for document changes
+	let debounceTimer: NodeJS.Timeout | undefined;
+	const debounceDelay = 500; // 500ms delay
+
 	// Listen for document changes
 	const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
 		async event => {
-			await tryRegenerateDocumentInfo(event.document, diagnosticsProvider);
+			if (debounceTimer) {
+				clearTimeout(debounceTimer);
+			}
+			debounceTimer = setTimeout(() => {
+				tryRegenerateDocumentInfo(event.document, diagnosticsProvider, diagnosticsCollection);
+			}, debounceDelay);
 		}
 	);
 
 	// Listen for document opens
 	const documentOpenDisposable = vscode.workspace.onDidOpenTextDocument(
 		async document => {
-			await tryRegenerateDocumentInfo(document, diagnosticsProvider);
+			await tryRegenerateDocumentInfo(document, diagnosticsProvider, diagnosticsCollection);
 		}
 	);
 
@@ -54,12 +63,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 async function tryRegenerateDocumentInfo(
 	document: vscode.TextDocument,
-	diagnosticsProvider: ArcDiagnosticsProvider
+	diagnosticsProvider: ArcDiagnosticsProvider,
+	diagnosticsCollection: vscode.DiagnosticCollection
 ) {
 	if (document.languageId === 'arc') {
 		diagnosticsProvider.updateDiagnostics(
 			document,
-			vscode.languages.createDiagnosticCollection('Arc')
+			diagnosticsCollection
 		);
 	}
 }

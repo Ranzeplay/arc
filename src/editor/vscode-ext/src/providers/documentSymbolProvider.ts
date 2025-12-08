@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ArcParser, Symbol, SymbolKind } from '../parser/ArcParser';
+import { ArcParser, type Symbol as ParserSymbol, SymbolKind } from '../parser/ArcParser';
 
 export class ArcDocumentSymbolProvider
 	implements vscode.DocumentSymbolProvider
@@ -20,7 +20,7 @@ export class ArcDocumentSymbolProvider
 	}
 
 	private convertToVSCodeSymbol(
-		symbol: Symbol,
+		symbol: ParserSymbol,
 		document: vscode.TextDocument
 	): vscode.DocumentSymbol {
 		const range = new vscode.Range(
