@@ -16,7 +16,7 @@ namespace Arc.Compiler.Circle
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath)
+        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun)
         {
             var logger = LoggerFactory.Create(builder =>
             {
@@ -68,17 +68,23 @@ namespace Arc.Compiler.Circle
 
             var outputStream = context.DumpFullByteStream();
 
-
-            File.WriteAllBytes(output, [.. outputStream]);
-
-            if (sourceInfoPath != null)
+            if (!dryRun)
             {
-                logger.LogInformation("Generating source information");
-                context.UpdateSourceSymbolInformation();
+                File.WriteAllBytes(output, [.. outputStream]);
 
-                var sourceInfoJsonText = JsonSerializer.Serialize(context.SourceInformation, options: _jsonSerializerOptions);
+                if (sourceInfoPath != null)
+                {
+                    logger.LogInformation("Generating source information");
+                    context.UpdateSourceSymbolInformation();
 
-                File.WriteAllText(sourceInfoPath, sourceInfoJsonText);
+                    var sourceInfoJsonText = JsonSerializer.Serialize(context.SourceInformation, options: _jsonSerializerOptions);
+
+                    File.WriteAllText(sourceInfoPath, sourceInfoJsonText);
+                }
+            }
+            else
+            {
+                logger.LogInformation("dry-run specified, skipping output generation");
             }
 
             logger.LogInformation("Done for {}", packageType.ToString().ToLowerInvariant());
