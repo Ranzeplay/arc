@@ -14,6 +14,10 @@ export class ArcDocumentSymbolProvider
 	> {
 		const result = this.parser.parse(document.getText());
 
+		if (token.isCancellationRequested) {
+			return [];
+		}
+		
 		return result.symbols.map(symbol =>
 			this.convertToVSCodeSymbol(symbol, document)
 		);
