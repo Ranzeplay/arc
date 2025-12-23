@@ -15,7 +15,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcCallChainGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain, ArcScopeTreeFunctionNodeBase baseFn)
+        public static (ArcPartialGenerationResult, ulong?) GenerateWithFinalCalledFunctionId(ArcGenerationSource source, ArcCallChain callChain, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -31,7 +31,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 var enumResult = TryResolveAsEnum(source, callChain);
                 if (enumResult != null)
                 {
-                    return enumResult;
+                    return (result, null);
                 }
                 
                 // Handle as normal call chain
@@ -52,13 +52,18 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             if (lastTermTypeDecl == null)
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Cannot determine the data type of the first term", source.Name, callChain.Terms.First().Context));
-                return result;
+                return (result, null);
             }
 
-            var remainingTermsResult = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, baseFn);
+            var (remainingTermsResult, fnId) = GenerateRemainingTerm(callChain.Terms.Skip(skipCount), lastTermTypeDecl, source, baseFn);
             result.Append(remainingTermsResult);
 
-            return result;
+            return (result, fnId);
+        }
+        
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcCallChain callChain, ArcScopeTreeFunctionNodeBase baseFn)
+        {
+            return GenerateWithFinalCalledFunctionId(source, callChain, baseFn).Item1;
         }
 
         private static ArcPartialGenerationResult? TryResolveAsEnum(ArcGenerationSource source, ArcCallChain callChain)
@@ -204,9 +209,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return (result, dataDeclDesc);
         }
 
-        private static ArcPartialGenerationResult GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
+        private static (ArcPartialGenerationResult, ulong?) GenerateRemainingTerm(IEnumerable<ArcCallChainTerm> terms, ArcDataDeclarationDescriptor lastTermTypeDecl, ArcGenerationSource source, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
+            ulong? fnId = null;
             foreach (var term in terms)
             {
                 if (lastTermTypeDecl.Type is ArcBaseType)
@@ -245,8 +251,11 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             }
                             
                             result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
-                            return result;
+                            return (result, null);
                         }
+
+                        fnId = fn.Id;
+                        lastTermTypeDecl = fn.ReturnValueType;
                         result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, fn, true, group));
                         break;
                     case ArcCallChainTermType.Identifier:
@@ -255,13 +264,16 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         if (field == null)
                         {
                             result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Field '{term.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
-                            return result;
+                            return (result, null);
                         }
                         var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
                         result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
+                        fnId = null;
+                        lastTermTypeDecl = field.DataType;
                         break;
                     }
                     default:
+                        fnId = null;
                         result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid call chain term", source.Name, term.Context));
                         break;
                 }
@@ -275,7 +287,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 }
             }
 
-            return result;
+            return (result, fnId);
         }
     }
 }

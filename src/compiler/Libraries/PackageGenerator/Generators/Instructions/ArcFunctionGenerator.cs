@@ -100,7 +100,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             if (returnTypeProxy == null)
             {
                 logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Data type '{declarator.ReturnType}' not found", source.Name, declarator.ReturnType.Context));
-                return (default!, logs);
+                return (null!, logs);
             }
 
             var returnType = ArcDataTypeHelper.GetDataTypeNode(source, returnTypeProxy.ResolvedType)?.DataType;

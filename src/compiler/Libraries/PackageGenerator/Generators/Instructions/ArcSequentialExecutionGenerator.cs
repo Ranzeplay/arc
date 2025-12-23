@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions;
 using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 using Microsoft.Extensions.Logging;
 
@@ -40,9 +41,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             stepResult = ArcConditionLoopBlockGenerator.EncodeWhileLoop(source, conditionalLoop, fnNode);
                             break;
                         }
-                    case ArcStatementReturn @return:
+                    case ArcStatementReturn ret:
                         {
-                            stepResult = ArcSequenceReturnGenerator.Generate(source, @return, fnNode);
+                            stepResult = ArcSequenceReturnGenerator.Generate(source, ret, fnNode);
                             break;
                         }
                     case ArcStatementBreak:
@@ -57,16 +58,26 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         }
                     case ArcStatementCall call:
                         {
-                            if (call.FunctionCall == null)
+                            if (call.FunctionCall == null && call.CallChain?.Terms.LastOrDefault()?.Type != ArcCallChainTermType.FunctionCall)
                             {
-                                stepResult.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Function call not found", source.Name, call.Context));
+                                stepResult.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Expected a function call clause", source.Name, call.Context));
                                 break;
                             }
 
-                            stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, true, fnNode);
-                            // Discard the result of the function call
-
-                            var (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
+                            ulong? funcId;
+                            IEnumerable<ArcCompilationLogBase> logs;
+                            if (call.FunctionCall != null)
+                            {
+                                stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, true, fnNode);
+                                (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
+                            }
+                            else
+                            {
+                                (stepResult, funcId) = ArcCallChainGenerator.GenerateWithFinalCalledFunctionId(source, call.CallChain, fnNode);
+                                logs = [];
+                            }
+                            
+                            // Discard the result of the function call if any
                             stepResult.Logs.AddRange(logs);
                             var function = source.GlobalScopeTree
                                 .FlattenedNodes

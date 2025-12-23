@@ -16,13 +16,15 @@ namespace Arc.Compiler.PackageGenerator
 {
     public class ArcCombinedUnitGenerator
     {
-        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnits, ArcPackageDescriptor packageDescriptor, bool withStd = true)
+        public static ArcGeneratorContext GenerateUnits(IEnumerable<ArcCompilationUnit> compilationUnitsEnum, ArcPackageDescriptor packageDescriptor, bool withStd = true)
         {
+            var compilationUnits = compilationUnitsEnum.ToList();
+            
             var logger = compilationUnits.First().Logger;
 
             if (withStd)
             {
-                compilationUnits = compilationUnits.Concat(ArcStdlibLoader.LoadSyntax(logger));
+                compilationUnits.AddRange(ArcStdlibLoader.LoadSyntax(logger));
             }
 
             var (structures, structureLogs) = ArcLayeredScopeTreeGenerator.GenerateUnitStructure(compilationUnits, packageDescriptor);
@@ -76,7 +78,7 @@ namespace Arc.Compiler.PackageGenerator
                     }
                     else
                     {
-                        var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode, ArcNamedFunctionDeclarator>(genSource, fn, fn.SyntaxTree);
+                        var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_function_blockContext, ArcScopeTreeIndividualFunctionNode, ArcNamedFunctionDeclarator>(genSource, fn, fn.SyntaxTree, true);
                         fn.BlockLength = fnResult.GeneratedData.Count;
                         fn.GenerationResult = fnResult;
                     }
@@ -118,7 +120,7 @@ namespace Arc.Compiler.PackageGenerator
                         }
                         else
                         {
-                            var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_group_lifecycle_functionContext, ArcScopeTreeLifecycleFunctionNode, ArcFunctionMinimalDeclarator>(genSource, fn, fn.SyntaxTree);
+                            var fnResult = ArcFunctionGenerator.GenerateFunction<ArcSourceCodeParser.Arc_group_lifecycle_functionContext, ArcScopeTreeLifecycleFunctionNode, ArcFunctionMinimalDeclarator>(genSource, fn, fn.SyntaxTree, true);
                             fn.BlockLength = fnResult.GeneratedData.Count;
                             fn.GenerationResult = fnResult;
                         }

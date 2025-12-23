@@ -18,7 +18,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            if (!assign.CallChain.Terms.All(t => t.Type == ArcCallChainTermType.Identifier))
+            if (assign.CallChain.Terms.LastOrDefault()?.Type != ArcCallChainTermType.Identifier)
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid assignment target", source.Name, assign.CallChain.Context));
             }
@@ -47,15 +47,10 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
 
             bool isDirectAssignment = lhs.Terms.Count() == 1 && !lhs.Terms.First().Indices.Any();
-            if (isDirectAssignment)
-            {
+            return isDirectAssignment ?
                 // If lhs has only one term, and it is being accessed direcly, then we can directly put the value into the slot
-                return GenerateLhsDirectAssignment(initialSlot, source);
-            }
-            else
-            {
-                return GenerateLhsComplexAssignment(lhs, source, baseFn);
-            }
+                GenerateLhsDirectAssignment(initialSlot, source) :
+                GenerateLhsComplexAssignment(lhs, source, baseFn);
         }
 
         private static ArcPartialGenerationResult GenerateLhsDirectAssignment(ArcDataSlot slot, ArcGenerationSource source)
@@ -100,6 +95,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeNode(source, currentDataType.ResolvedType)!.ComplexTypeGroup!;
                     var field = ArcGroupHelper.ResolveField(groupType, term.Identifier!.Name, source);
+
+                    if (field == null)
+                    {
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Field not found", source.Name, term.Context));
+                        break;
+                    }
 
                     var stackOperation = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);
                     result.Append(new ArcLoadDataToStackInstruction(stackOperation).Encode(source));
