@@ -88,6 +88,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             Constants.AddRange(result.AddedConstants);
             GeneratedData.AddRange(result.GeneratedData);
             SourceInformation.MergeMappings(result.SourceInformation);
+            Logs.AddRange(result.Logs);
         }
 
         public void Append(ArcGeneratorContext context)
@@ -107,6 +108,7 @@ namespace Arc.Compiler.PackageGenerator.Models
             Constants.AddRange(context.Constants);
             GeneratedData.AddRange(context.GeneratedData);
             SourceInformation.MergeMappings(context.SourceInformation);
+            Logs.AddRange(context.Logs);
         }
 
         public ArcGenerationSource GenerateSource()
