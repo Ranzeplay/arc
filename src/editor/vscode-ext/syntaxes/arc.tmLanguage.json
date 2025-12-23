@@ -23,7 +23,7 @@
 			"patterns": [
 				{
 					"name": "keyword.control.arc",
-					"match": "\\b(if|elif|else|while|for|loop|foreach|in|break|continue|return|throw|try|catch|finally|match|case|default)\\b"
+					"match": "\\b(if|elif|else|while|for|loop|foreach|in|break|continue|return|throw|try|catch|finally|match|case|default|link)\\b"
 				},
 				{
 					"name": "keyword.declaration.arc",
