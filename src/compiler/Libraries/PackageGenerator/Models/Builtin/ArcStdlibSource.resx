@@ -130,7 +130,10 @@
   <data name="NamespaceConsole" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\StdlibSource\Console.script.arc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="NamespaceCollection" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\StdlibSource\Collection.script.arc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="NamespaceCollectionLinkedList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\StdlibSource\Collection\LinkedList.script.arc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="NamespaceCollectionList" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\..\StdlibSource\Collection\List.script.arc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

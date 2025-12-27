@@ -26,13 +26,17 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
             var mathNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(mathNamespaceSource, logger);
             var mathNamespaceUnit = new ArcCompilationUnit(mathNamespaceUnitContext, logger, "Arc::Std::Math");
 
-            var collectionNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceCollection);
-            var collectionNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(collectionNamespaceSource, logger);
-            var collectionNamespaceUnit = new ArcCompilationUnit(collectionNamespaceUnitContext, logger, "Arc::Std::Collection");
+            var collectionListNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceCollectionList);
+            var collectionListNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(collectionListNamespaceSource, logger);
+            var collectionListNamespaceUnit = new ArcCompilationUnit(collectionListNamespaceUnitContext, logger, "Arc::Std::Collection");
+            
+            var collectionLinkedListNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceCollectionLinkedList);
+            var collectionLinkedListNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(collectionLinkedListNamespaceSource, logger);
+            var collectionLinkedListNamespaceUnit = new ArcCompilationUnit(collectionLinkedListNamespaceUnitContext, logger, "Arc::Std::Collection");
 
             // var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit]);
 
-            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit, mathNamespaceUnit, collectionNamespaceUnit];
+            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit, mathNamespaceUnit, collectionListNamespaceUnit, collectionLinkedListNamespaceUnit];
         }
     }
 }

@@ -29,10 +29,11 @@
 
 	<ItemGroup>
 	  <Resource Include="StdlibSource\Array.script.arc" />
-	  <Resource Include="StdlibSource\Collection.script.arc" />
 	  <Resource Include="StdlibSource\Compilation.script.arc" />
 	  <Resource Include="StdlibSource\Console.script.arc" />
 	  <Resource Include="StdlibSource\Math.script.arc" />
+      <Resource Include="StdlibSource\Collection\List.script.arc" />
+      <Resource Include="StdlibSource\Collection\LinkedList.script.arc" />
 	</ItemGroup>
 
 	<ItemGroup>
