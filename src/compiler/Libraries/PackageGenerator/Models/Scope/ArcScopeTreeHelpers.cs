@@ -19,6 +19,9 @@ internal static class ArcScopeTreeHelpers
 
     public static ArcScopeTree MergeTree(ArcScopeTree tree1, ArcScopeTree tree2, bool overwrite = false)
     {
+        if (tree1 is null) return tree2;
+        if (tree2 is null) return tree1;
+        
         var result = new ArcScopeTree();
 
         var node1 = tree1.Root;

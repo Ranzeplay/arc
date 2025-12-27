@@ -20,6 +20,19 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public List<ArcScopeTreeNodeBase> Children { get; set; } = [];
 
         public virtual ArcScopeTreeNodeBase Parent { get; set; }
+        
+        public ArcScopeTreeNamespaceNode? Namespace 
+        {
+            get
+            {
+                var current = this;
+                while (current is not null && current is not ArcScopeTreeNamespaceNode)
+                {
+                    current = current.Parent;
+                }
+                return current as ArcScopeTreeNamespaceNode;
+            }
+        }
 
         /// <summary>
         /// Adds a child to the current node.
@@ -59,7 +72,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             {
                 var stack = new List<string>();
                 var current = this;
-                while (current is not ArcRootScopeNode)
+                while (current is not null && current is not ArcRootScopeNode)
                 {
                     stack.Add(current.SignatureAddend);
                     current = current.Parent;
@@ -141,6 +154,12 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
         public void RemoveChild(ulong id)
         {
             Children = [.. Children.Where(n => n.Id != id)];
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is ArcScopeTreeNodeBase baseNode &&
+                   Id == baseNode.Id;
         }
     }
 }

@@ -57,8 +57,8 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             }
             else
             {
-                return source.DirectlyAccessibleTypes.FirstOrDefault(c => c.ShortName == identifier.Name) ??
-                       source.GenericTypes.FirstOrDefault(c => c.ShortName == identifier.Name);
+                return source.DirectlyAccessibleTypes.FirstOrDefault(c => c.ShortName.Equals(identifier.Name)) ??
+                       source.GenericTypes.FirstOrDefault(c => c.ShortName.Equals(identifier.Name));
             }
         }
 

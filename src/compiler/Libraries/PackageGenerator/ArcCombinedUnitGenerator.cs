@@ -65,10 +65,11 @@ namespace Arc.Compiler.PackageGenerator
                 // Generate functions
 
                 var funcs = structure.ScopeTree
-                    .GetNodes<ArcScopeTreeIndividualFunctionNode>();
+                    .GetNodes<ArcScopeTreeIndividualFunctionNode>()
+                    .Where(n => Equals(n.Namespace, structure.CurrentNamespace));
                 foreach (var fn in funcs)
                 {
-                    var genSource = iterContext.GenerateSource([unit.Namespace], fn, structure.LinkedNamespaces);
+                    var genSource = iterContext.GenerateSource([ns], fn, structure.LinkedNamespaces);
                     genSource.GenericTypes = fn.GenericTypes;
 
                     if (fn.Annotations.Keys.Any(k => k.Signature == "NArc+NCompilation+ADeclaratorOnly"))
@@ -85,7 +86,8 @@ namespace Arc.Compiler.PackageGenerator
                 }
 
                 var groups = structure.ScopeTree
-                    .GetNodes<ArcScopeTreeGroupNode>();
+                    .GetNodes<ArcScopeTreeGroupNode>()
+                    .Where(n => Equals(n.Namespace, structure.CurrentNamespace));
                 foreach (var grp in groups)
                 {
                     var groupFns = grp.GetChildren<ArcScopeTreeGroupFunctionNode>();
@@ -129,6 +131,7 @@ namespace Arc.Compiler.PackageGenerator
 
                 structure.ScopeTree
                     .GetNodes<ArcScopeTreeFunctionNodeBase>()
+                    .Where(t => t.GenerationResult != null)
                     .ToImmutableList()
                     .ForEach(t =>
                     {

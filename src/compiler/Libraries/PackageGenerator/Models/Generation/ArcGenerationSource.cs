@@ -24,9 +24,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
                 {
                     result = result.Concat(functionNodeBase.GenericTypes);
 
-                    if (CurrentNode.Parent is ArcScopeTreeGroupNode groupNode)
+                    if (CurrentNode.Parent is ArcScopeTreeGroupNode parentGroupNode)
                     {
-                        result = result.Concat(groupNode.GenericTypes);
+                        result = result.Concat(parentGroupNode.GenericTypes);
+
+                        // Allow call function in group itself without linking namespace
+                        result = result.Append(GlobalScopeTree.FlattenedNodes
+                            .OfType<ArcScopeTreeDataTypeNode>()
+                            .First(n => n.ComplexTypeGroup == parentGroupNode));
                     }
                 }
 
@@ -34,7 +39,15 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
             }
         }
 
-        public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes => LinkedNamespaces.SelectMany(lns => lns.Children);
+        public IEnumerable<ArcScopeTreeNodeBase> DirectlyAccessibleNodes
+        {
+            get
+            {
+                return LinkedNamespaces
+                    .SelectMany(lns => lns.Children)
+                    .Concat(CurrentNode?.Namespace?.Children ?? []);
+            }
+        }
 
         public ArcScopeTreeNodeBase CurrentNode { get; set; }
 
@@ -60,7 +73,7 @@ namespace Arc.Compiler.PackageGenerator.Models.Generation
 
         public ArcGenerationSource Clone()
         {
-            return (ArcGenerationSource) MemberwiseClone();
+            return (ArcGenerationSource)MemberwiseClone();
         }
     }
 }
