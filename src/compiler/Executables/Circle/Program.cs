@@ -2,4 +2,4 @@
 using System.CommandLine;
 
 var command = CommandBuilder.BuildCommand();
-await command.InvokeAsync(args);
+return await command.Parse(args).InvokeAsync();
