@@ -7,4 +7,3 @@ edition = "2021"
 arc_shared = { path = "../shared" }
 arc_scope_dispatcher = { path = "../macros/scope_dispatcher" }
 arc_manual_function_id = { path = "../macros/manual_function_id" }
-lazy_static = "~1.5"
