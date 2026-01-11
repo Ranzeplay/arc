@@ -1,1 +1,2 @@
-code --extensionDevelopmentPath=.
+#!/bin/bash
+code --extensionDevelopmentPath="$(pwd)"
