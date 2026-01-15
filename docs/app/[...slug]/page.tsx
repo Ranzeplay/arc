@@ -1,10 +1,10 @@
-import path from "path";
-import { generateDirectoryTree, TreeNode } from "./utils";
+/** biome-ignore-all lint/suspicious/noImplicitAnyLet: The code is organized */
+import path from "node:path";
 import Directory from "@/app/components/directory";
 import NotFound from "@/app/not-found";
 import Breadcrumb from "../components/breadcrumb";
-import React from "react";
 import TableOfContents from "../components/toc";
+import { generateDirectoryTree, type TreeNode } from "./utils";
 
 // Cache directory tree at build time
 const directoryTree = generateDirectoryTree();
@@ -12,7 +12,7 @@ const directoryTree = generateDirectoryTree();
 export async function generateStaticParams() {
   const params: { slug: string[] }[] = [];
   const CONTENT_DIR = path.join(process.cwd(), "app", "content");
-  const fs = await import("fs");
+  const fs = await import("node:fs");
 
   function getAllMdxFiles(dir: string, basePath: string[] = []): void {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
@@ -45,24 +45,28 @@ export default async function Page({
   const slugPath = slug.join("/");
 
   // Direct static import - Next.js will handle this at build time
-  let Content, toc;
+  // biome-ignore lint/suspicious/noExplicitAny: dynamic import result
+  let Content: any,
+    toc: any = [];
   try {
     const module = await import(`@/app/content/${slugPath}.mdx`);
     Content = module.default;
-    toc = module.tableOfContents;
+    toc = module.tableOfContents || [];
   } catch {
     try {
       const module = await import(`@/app/content/${slugPath}/index.mdx`);
       Content = module.default;
-      toc = module.tableOfContents;
+      toc = module.tableOfContents || [];
     } catch {
       return <NotFound />;
     }
   }
 
-  let rootNode = directoryTree.find((dir) => dir.path === "/" + slug[0])!;
+  // biome-ignore lint/style/noNonNullAssertion: checked above
+  const rootNode = directoryTree.find((dir) => dir.path === `/${slug[0]}`)!;
+  // biome-ignore lint/style/noNonNullAssertion: checked above
   let path = findCurrentNodePath(rootNode, slug)!;
-  let currentNode = path.at(-1) || rootNode;
+  const currentNode = path.at(-1) || rootNode;
   path = [rootNode, ...path];
 
   return (
@@ -75,7 +79,9 @@ export default async function Page({
       <div className="prose p-8 overflow-y-auto grow w-full max-w-full">
         {path.length > 1 && <Breadcrumb path={path} />}
         <h1 className="font-serif mt-3 mb-1!">{currentNode.title}</h1>
-        <p className="mt-0! text-neutral-500">Last updated at: {currentNode.lastModificationTime?.toLocaleString()}</p>
+        <p className="mt-0! text-neutral-500">
+          Last updated at: {currentNode.lastModificationTime?.toLocaleString()}
+        </p>
         <div className="w-full h-px bg-neutral-300" />
         <Content />
       </div>
@@ -85,7 +91,7 @@ export default async function Page({
 
 function findCurrentNodePath(
   root: TreeNode,
-  slugParts: string[]
+  slugParts: string[],
 ): TreeNode[] | undefined {
   const path: TreeNode[] = [];
   let currentNode: TreeNode | undefined = root;
@@ -94,7 +100,7 @@ function findCurrentNodePath(
     const concatenatedPath = "/" + slugParts.slice(0, i + 1).join("/");
     if (!currentNode) break;
     const nextNode: TreeNode | undefined = currentNode.children?.find(
-      (child) => child.path === concatenatedPath
+      (child) => child.path === concatenatedPath,
     );
     if (nextNode) {
       path.push(nextNode);
