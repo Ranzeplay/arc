@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Executables/">
+    <Project Path="Executables/Circle/Arc.Compiler.Circle.csproj" />
+  </Folder>
+  <Folder Name="/Libraries/">
+    <Project Path="Libraries/PackageGenerator/Arc.Compiler.PackageGenerator.csproj" />
+    <Project Path="Libraries/SyntaxAnalyzer/Arc.Compiler.SyntaxAnalyzer.csproj" />
+  </Folder>
+  <Project Path="Tests/Arc.Compiler.Tests.csproj" />
+</Solution>
