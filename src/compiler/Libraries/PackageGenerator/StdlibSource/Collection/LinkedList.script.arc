@@ -1,5 +1,4 @@
 link Arc::Std::Compilation;
-link Arc::Std::Console;
 link Arc::Std::Array;
 
 namespace Arc::Std::Collection
@@ -145,20 +144,5 @@ namespace Arc::Std::Collection
         {
             self.prev = none;
         }
-    }
-
-    @Entrypoint
-    public func main(const args: string[]): int {
-        var ll: LinkedList<int> = new LinkedList<int>();
-
-        call ll.append(1);
-        call ll.append(2);
-        call ll.append(3);
-
-        call PrintInteger(ll.getSize());
-
-        call PrintInteger(ll.at(1));
-
-        return 0;
     }
 }
