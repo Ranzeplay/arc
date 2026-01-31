@@ -104,11 +104,11 @@ namespace Arc.Compiler.PackageGenerator.Generators
             return (mainTree, logs);
         }
 
-        public static (IEnumerable<ArcCompilationUnitStructure>, IEnumerable<ArcCompilationLogBase>) GenerateUnitStructure(IEnumerable<ArcCompilationUnit> units, ArcPackageDescriptor packageDescriptor)
+        public static (IEnumerable<ArcCompilationUnitStructure>, IEnumerable<ArcCompilationLogBase>) GenerateUnitStructure(IEnumerable<ArcCompilationUnit> units, ArcPackageDescriptor packageDescriptor, ILogger? logger = null)
         {
             var logs = new List<ArcCompilationLogBase>();
             var unitList = units.ToList();
-            var logger = unitList.First().Logger;
+            logger ??= unitList.First().Logger;
             var globalScopeTree = new ArcScopeTree();
 
             // globalScopeTree.MergeRoot(ArcStdlib.GetTree());

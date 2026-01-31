@@ -35,6 +35,11 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
             return current as ArcScopeTreeNamespaceNode;
         }
 
+        public ArcScopeTreeNamespaceNode? GetNamespaceByName(string name)
+        {
+            return GetNamespace(name.Split("::"));
+        }
+
         public T? GetNode<T>(IEnumerable<string> names) where T : ArcScopeTreeNodeBase
         {
             var current = Root;
