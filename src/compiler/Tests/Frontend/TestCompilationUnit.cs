@@ -6,6 +6,7 @@ namespace Arc.Compiler.Tests.Frontend;
 [TestFixture]
 [CancelAfter(1000)]
 [Category("Frontend")]
+[Category("Examples")]
 public class TestCompilationUnit
 {
     private string SourceCode { get; set; } = string.Empty;
@@ -22,5 +23,14 @@ public class TestCompilationUnit
     {
         var compilationUnit = AntlrAdapter.ParseCompilationUnit(SourceCode, _logger);
         Assert.That(compilationUnit, Is.Not.Null);
+        Assert.That(compilationUnit.exception, Is.Null);
+    }
+    
+    [Test]
+    public void ParseEmpty()
+    {
+        var compilationUnit = AntlrAdapter.ParseCompilationUnit(string.Empty, _logger);
+        Assert.That(compilationUnit, Is.Not.Null);
+        Assert.That(compilationUnit.exception, Is.Not.Null);
     }
 }

@@ -8,6 +8,9 @@ using Microsoft.Extensions.Logging;
 namespace Arc.Compiler.Tests.Backend.Examples;
 
 [TestFixture]
+[CancelAfter(1000)]
+[Category("Backend")]
+[Category("Examples")]
 public class TestHelloWorld
 {
     private string SourceCode { get; set; } = string.Empty;
