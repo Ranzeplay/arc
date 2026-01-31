@@ -11,8 +11,8 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
         public static IEnumerable<ArcCompilationUnit> LoadSyntax(ILogger logger)
         {
             var compilationNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceCompilation);
-            var compilerNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(compilationNamespaceSource, logger);
-            var compilerNamespaceUnit = new ArcCompilationUnit(compilerNamespaceUnitContext, logger, "Arc::Std::Compilation");
+            var compilationNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(compilationNamespaceSource, logger);
+            var compilationNamespaceUnit = new ArcCompilationUnit(compilationNamespaceUnitContext, logger, "Arc::Std::Compilation");
 
             var arrayNamespaceSource = Encoding.UTF8.GetString(ArcStdlibSource.NamespaceArray);
             var arrayNamespaceUnitContext = AntlrAdapter.ParseCompilationUnit(arrayNamespaceSource, logger);
@@ -36,7 +36,7 @@ namespace Arc.Compiler.PackageGenerator.StdlibSource
 
             // var structure = ArcLayeredScopeTreeGenerator.GenerateUnitStructure([compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit]);
 
-            return [compilerNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit, mathNamespaceUnit, collectionListNamespaceUnit, collectionLinkedListNamespaceUnit];
+            return [compilationNamespaceUnit, arrayNamespaceUnit, consoleNamespaceUnit, mathNamespaceUnit, collectionListNamespaceUnit, collectionLinkedListNamespaceUnit];
         }
     }
 }
