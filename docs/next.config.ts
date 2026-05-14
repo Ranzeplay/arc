@@ -10,14 +10,6 @@ const nextConfig: NextConfig = {
     NEXT_PUBLIC_COPYRIGHT_YEAR: new Date().getFullYear().toString(),
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV || 'development',
   },
-  turbopack: {
-    rules: {
-      '*.mdx': {
-        loaders: ['@mdx-js/loader'],
-        as: '*.js',
-      },
-    },
-  },
 };
 
 const withMDX = createMDX({
