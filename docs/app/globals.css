@@ -1,5 +1,12 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+    body {
+        @apply bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 transition-colors;
+    }
+}
 
 h1, h2, h3, h4, h5, h6 {
   scroll-margin-top: calc(var(--spacing) * 16);

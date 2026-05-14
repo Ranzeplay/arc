@@ -1,9 +1,9 @@
 "use client";
 
-import { Toc } from "@stefanprobst/rehype-extract-toc";
+import type { Toc } from "@stefanprobst/rehype-extract-toc";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import { useState } from "react";
 
 export default function TableOfContents({
   toc,
@@ -24,7 +24,8 @@ export default function TableOfContents({
         <div className="flex flex-row justify-between items-center">
           <h2 className="font-bold text-lg">Table of Contents</h2>
           <button
-            className="text-neutral-500 text-sm hover:underline cursor-pointer"
+            type="button"
+            className="text-neutral-500 dark:text-neutral-400 text-sm hover:underline cursor-pointer"
             onClick={() => setExpand(!expand)}
           >
             <ChevronDown className={`transition-transform ${!expand ? "rotate-180" : ""}`} />
@@ -33,14 +34,14 @@ export default function TableOfContents({
       )}
       <div className={expand ? "" : "hidden"}>
         {!hideTitle && toc.length === 0 && (
-          <p className="text-neutral-500 italic">Empty</p>
+          <p className="text-neutral-500 dark:text-neutral-400 italic">Empty</p>
         )}
         <ul className="flex flex-col gap-y-1 mt-1">
-          {toc.map((item, index) => (
-            <li key={index}>
+          {toc.map((item) => (
+            <li key={item.id}>
               <Link
                 href={`#${item.id}`}
-                className="text-neutral-600 hover:underline"
+                className="text-neutral-600 dark:text-neutral-300 hover:underline"
               >
                 {item.value}
               </Link>
