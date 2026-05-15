@@ -1,15 +1,15 @@
-import type { TreeNode } from "../[...slug]/utils";
 import Link from "next/link";
+import type { TreeNode } from "../[...slug]/utils";
 
 function DirectoryItem({
   node,
   currentPath,
 }: { node: TreeNode; currentPath: string }) {
   return (
-    <li className="my-0.5 py-1.5 px-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all">
+    <li className="my-0.5 py-1.5 px-2 rounded-lg hover:bg-neutral-100 dark:hover:bg-neutral-900 transition-all">
       <Link
         href={`${node.path}`}
-        className={`${currentPath === node.path ? "font-semibold text-neutral-800 dark:text-neutral-100" : "text-neutral-600 dark:text-neutral-300"}`}
+        className={`${currentPath === node.path ? "font-medium text-neutral-800 dark:text-neutral-100" : "text-neutral-600 dark:text-neutral-300"}`}
       >
         {node.title}
       </Link>

@@ -70,19 +70,19 @@ export default async function Page({
   path = [rootNode, ...path];
 
   return (
-    <main className="flex flex-row divide-x-1 divide-neutral-200 dark:divide-neutral-800 flex-1 h-full">
+    <main className="flex flex-row divide-x divide-neutral-200 dark:divide-neutral-800 flex-1 h-full">
       <div className="basis-3/13 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto p-8 shadow flex flex-col gap-y-5">
         <TableOfContents toc={toc} />
         <div className="w-full h-px bg-neutral-300 dark:bg-neutral-700" />
-        <Directory node={rootNode} currentPath={"/" + slugPath} />
+        <Directory node={rootNode} currentPath={`/${slugPath}`} />
       </div>
       <div className="prose dark:prose-invert p-8 overflow-y-auto grow w-full max-w-full">
         {path.length > 1 && <Breadcrumb path={path} />}
         <h1 className="font-serif mt-3 mb-1!">{currentNode.title}</h1>
-        <p className="mt-0! text-neutral-500 dark:text-neutral-400">
+        <p className={`mt-0! text-neutral-500 dark:text-neutral-400 ${currentNode.lastModificationTime ? 'block' : 'hidden'}`}>
           Last updated at: {currentNode.lastModificationTime?.toLocaleString()}
         </p>
-        <div className="w-full h-px bg-neutral-300 dark:bg-neutral-700" />
+        <div className="w-full h-px bg-neutral-300 dark:bg-neutral-700 my-4" />
         <Content />
       </div>
     </main>
@@ -97,7 +97,7 @@ function findCurrentNodePath(
   let currentNode: TreeNode | undefined = root;
 
   for (let i = 1; i < slugParts.length; i++) {
-    const concatenatedPath = "/" + slugParts.slice(0, i + 1).join("/");
+    const concatenatedPath = `/${slugParts.slice(0, i + 1).join("/")}`;
     if (!currentNode) break;
     const nextNode: TreeNode | undefined = currentNode.children?.find(
       (child) => child.path === concatenatedPath,
