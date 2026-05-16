@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noImplicitAnyLet: The code is organized */
 import path from "node:path";
+import type { Metadata } from "next";
 import Directory from "@/app/components/directory";
 import NotFound from "@/app/not-found";
 import Breadcrumb from "../components/breadcrumb";
@@ -34,6 +35,31 @@ export async function generateStaticParams() {
 
   getAllMdxFiles(CONTENT_DIR);
   return params;
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[] }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  if (slug.length === 0) {
+    return { title: "The Arc Programming Language" };
+  }
+
+  const rootNode = directoryTree.find((dir) => dir.path === `/${slug[0]}`);
+
+  if (!rootNode) {
+    return { title: "Not Found" };
+  }
+
+  const nodePath = findCurrentNodePath(rootNode, slug);
+  const currentNode = nodePath?.at(-1) || rootNode;
+
+  return {
+    title: currentNode.title,
+  };
 }
 
 export default async function Page({
