@@ -1,0 +1,64 @@
+---
+title: 'Overhaul of the instruction set'
+---
+
+# Background
+
+Current instruction is based on a stack machine.
+Though it is simple to implement, it is not very efficient,
+and the instructions cannot provide enough insights about
+the semantic intent of the code, which makes it hard to optimize.
+
+As the runtime is being developed, and will implement JIT compilation.
+It would be beneficial to have a more expressive instruction set,
+which is more high-level while providing more information about
+the intention of the code.
+
+# Design
+
+The new instruction set will be based on a register machine.
+
+## Temporary local data
+
+Defined variables will be stored in data slots as usual,
+while temporary data will be stored in implicit registers.
+
+## Data operation
+
+The instruction of data operation will be in three-address SSA format,
+which is more expressive and easier to optimize.
+
+## Control flow
+
+### Function call
+
+Function calls will be in a block form, which is more explicit.
+
+```
+prepare_call <func>
+// compute args with usual instructions
+bind_arg <arg1>
+bind_arg <arg2>
+// Argument number increments implicitly
+...
+invoke
+```
+
+### Branch and loop
+
+Usual jump instructions.
+We will leave the optimization to the JIT compiler.
+
+# Hints
+
+Arc compiler will embed hints (or metadata) in the instruction stream,
+which can be used by the JIT compiler to optimize the code.
+
+## Examples
+
+- Tail function call
+- Pure function
+- Cachable result
+- Last usage of a variable
+- Const loop bound
+- Parameter can be passed by reference
