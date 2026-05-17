@@ -95,7 +95,7 @@ export default function Home() {
         <p className="text-orange-900">
           We are currently overhauling the instruction set,
           breaking changes may happen frequently.
-          Please check the changelog for more details.
+          Please check <Link href="/ginkgo" className="underline hover:text-orange-900">here</Link> changelog for more details.
         </p>
       </div>
     </main>
