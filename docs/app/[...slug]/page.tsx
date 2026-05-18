@@ -1,10 +1,9 @@
 /** biome-ignore-all lint/suspicious/noImplicitAnyLet: The code is organized */
 import path from "node:path";
 import type { Metadata } from "next";
-import Directory from "@/app/components/directory";
 import NotFound from "@/app/not-found";
 import Breadcrumb from "../components/breadcrumb";
-import TableOfContents from "../components/toc";
+import ResizableSidebar from "../components/resizableSidebar";
 import { generateDirectoryTree, type TreeNode } from "./utils";
 
 // Cache directory tree at build time
@@ -94,16 +93,17 @@ export default async function Page({
   let path = findCurrentNodePath(rootNode, slug)!;
   const currentNode = path.at(-1) || rootNode;
   path = [rootNode, ...path];
+  const breadcrumbPath = path.slice(0, -1);
 
   return (
     <main className="flex flex-row divide-x divide-neutral-200 dark:divide-neutral-800 flex-1 h-full">
-      <div className="basis-3/13 sticky top-14 h-[calc(100vh-3.5rem)] overflow-y-auto p-8 shadow flex flex-col gap-y-5">
-        <TableOfContents toc={toc} />
-        <div className="w-full h-px bg-neutral-300 dark:bg-neutral-700" />
-        <Directory node={rootNode} currentPath={`/${slugPath}`} />
-      </div>
+      <ResizableSidebar
+        toc={toc}
+        rootNode={rootNode}
+        currentPath={`/${slugPath}`}
+      />
       <div className="prose dark:prose-invert p-8 overflow-y-auto grow w-full max-w-full">
-        {path.length > 1 && <Breadcrumb path={path} />}
+        {breadcrumbPath.length > 1 && <Breadcrumb path={breadcrumbPath} />}
         <h1 className="font-serif mt-3 mb-1!">{currentNode.title}</h1>
         <p className={`mt-0! text-neutral-500 dark:text-neutral-400 ${currentNode.lastModificationTime ? 'block' : 'hidden'}`}>
           Last updated at: {currentNode.lastModificationTime?.toLocaleString()}
