@@ -6,6 +6,8 @@ import Breadcrumb from "../components/breadcrumb";
 import ResizableSidebar from "../components/resizableSidebar";
 import { generateDirectoryTree, type TreeNode } from "./utils";
 
+import "katex/dist/katex.min.css";
+
 // Cache directory tree at build time
 const directoryTree = generateDirectoryTree();
 
