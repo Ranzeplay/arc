@@ -1,0 +1,47 @@
+---
+title: 'Logical'
+---
+
+# And
+
+```
+logand src_a, src_b, dest
+```
+
+Performs $dest = src_a \land src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+# Or
+
+```
+logor src_a, src_b, dest
+```
+
+Performs $dest = src_a \lor src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+# Xor
+
+```
+logxor src_a, src_b, dest
+```
+
+Performs $dest = src_a \oplus src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+# Not
+
+```
+lognot src, dest
+```
+
+Performs $dest = \lnot src$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.

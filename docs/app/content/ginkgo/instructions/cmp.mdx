@@ -1,0 +1,73 @@
+---
+title: 'Comparison'
+---
+
+# Equal
+
+```
+eq src_l, src_r, dest, flags
+```
+
+Expresses the intention to set $dest = (src_l = src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+## Flags
+
+- `cmp_ref`: Use reference comparison instead of value comparison.
+
+# Not Equal
+
+```
+neq src_l, src_r, dest, flags
+```
+
+Expresses the intention to set $dest = (src_l \neq src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+## Flags
+
+- `cmp_ref`: Use reference comparison instead of value comparison.
+
+# Less Than
+
+```
+lt src_l, src_r, dest
+```
+
+Expresses the intention to set $dest = (src_l < src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+# Less Than or Equal
+
+```
+le src_l, src_r, dest
+```
+
+Expresses the intention to set $dest = (src_l \leq src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+# Greater Than
+
+```
+gt src_l, src_r, dest
+```
+
+Expresses the intention to set $dest = (src_l > src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+# Greater Than or Equal
+
+```
+ge src_l, src_r, dest
+```
+
+Expresses the intention to set $dest = (src_l \geq src_r)$ where all operands are implicit variables.
+
+Semantics follow the data type of $src_l$; a reloaded operator will be used if present.
+
+

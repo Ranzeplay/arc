@@ -1,0 +1,79 @@
+---
+title: 'Control flow'
+---
+
+# Label
+
+```
+lbl
+```
+
+Defines a label for jump instructions to target.
+
+# Unconditional Jump
+
+```
+jmp target
+```
+
+# Conditional Jump
+
+```
+cjp condition, target
+```
+
+Performs a jump to `target` if `condition` is true.
+
+## Conditions
+
+- `cond_true`: Jump when `target` is true.
+- `cond_false`: Jump when `target` is false.
+- `cond_not_none`: Jump when `target` is not `None`.
+- `cond_none`: Jump when `target` is `None`.
+
+# Function Call
+
+```
+pcall fid
+// compute args with usual instructions
+arg arg1, flags
+arg arg2, flags
+// Argument number increments implicitly
+invoke flags
+```
+
+## Instruction breakdown
+
+- `pcall`: Prepare for a function call, with the function ID `fid`.
+- `arg`: Bind an argument for the function call, with the value an implicit register. Argument number increments implicitly.
+- `invoke`: Invoke the function call.
+
+> If `invoke` is not used after `pcall`,
+> the current execution will continue as normal,
+> and the prepared function call will be discarded.
+
+## Flags
+
+### Argument
+
+- `last_use`: Whether this argument is the last use of the source register.
+
+### Invoke
+
+- `tail_call`: Whether this function call is a tail call.
+
+# Function Return with Value
+
+```
+retv val
+```
+
+Return from the current function with a return value `val`.
+
+# Function Return without Value
+
+```
+retn
+```
+
+Return from the current function without a return value.

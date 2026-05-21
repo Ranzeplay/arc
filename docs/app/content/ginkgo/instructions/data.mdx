@@ -1,0 +1,102 @@
+---
+title: 'Data'
+---
+
+# Load from Constant Pool
+
+```
+ld_const idx, dest, flags
+```
+
+Performs $dest = const_pool[idx]$ where $dest$ is an implicit variable.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `ld_const_ref`: Load reference from constant pool instead of value.
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Load Immediate Integer
+
+```
+ld_int value, dest, flags
+```
+
+Performs $dest = value$ where $dest$ is an implicit variable.
+
+Value will be casted to the data type of $dest$ if necessary.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Load Floating-point Constant
+
+```
+ld_float value, dest, flags
+```
+
+Performs $dest = value$ where $dest$ is an implicit variable.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+# Shallow Clone
+
+```
+shallow_clone src, dest
+```
+
+Performs $dest = shallow\_clone(src)$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Deep Clone
+
+```
+deep_clone src, dest
+```
+
+Performs $dest = deep\_clone(src)$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Load as Reference
+
+```
+ref src, dest
+```
+
+Performs $dest = ref(src)$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Initialize Object
+
+```
+init_obj type_idx, dest, flags
+```
+
+## Flags
+
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.

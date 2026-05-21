@@ -1,0 +1,227 @@
+---
+title: 'Arithmetic'
+---
+
+# Add
+
+```
+add src_a, src_b, dest, flags
+```
+
+Performs $dest = src_a + src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Subtract
+
+```
+sub src_a, src_b, dest, flags
+```
+
+Performs $dest = src_a - src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Multiply
+
+```
+mul src_a, src_b, dest
+```
+
+Performs $dest = src_a \times src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Divide
+
+```
+div src_a, src_b, dest
+```
+
+Performs $dest = src_a \div src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Modulo
+
+```
+mod src_a, src_b, dest
+```
+
+Performs $dest = src_a \mod src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Inverse
+
+```
+inv src, dest
+```
+
+Performs $dest = -src$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src`: Whether this instruction is the last use of `src`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Left Shift Arithmetic
+
+```
+lsa src, amount, dest
+```
+
+Performs $dest = src \ll amount$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src`: Whether this instruction is the last use of `src`.
+- `last_use_amount`: Whether this instruction is the last use of `amount`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Right Shift Arithmetic
+
+```
+rsa src, amount, dest
+```
+
+Performs $dest = src \gg amount$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+Will fill in the leftmost bits with the value of the original leftmost bit of $src$
+for signed integral data types, and with 0 for unsigned integral data types.
+
+## Flags
+
+- `last_use_src`: Whether this instruction is the last use of `src`.
+- `last_use_amount`: Whether this instruction is the last use of `amount`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+
+# Right Shift Logical
+
+```
+rsl src, amount, dest
+```
+
+Performs $dest = src \ggg amount$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src`: Whether this instruction is the last use of `src`.
+- `last_use_amount`: Whether this instruction is the last use of `amount`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Bitwise And
+
+```
+bitand src_a, src_b, dest
+```
+
+Performs $dest = src_a \& src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Bitwise Or
+
+```
+bitor src_a, src_b, dest
+```
+
+Performs $dest = src_a | src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Bitwise Xor
+
+```
+bitxor src_a, src_b, dest
+```
+
+Performs $dest = src_a \oplus src_b$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
+
+# Bitwise Not
+
+```
+bitnot src, dest
+```
+
+Performs $dest = \sim src$ where all operands are implicit variables.
+
+Operation follows the data type of $dest$,
+use reloaded operator if exists.
+
+## Flags
+
+- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
+- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `use_dest_next`: Whether `dest` is used in the next instruction.
