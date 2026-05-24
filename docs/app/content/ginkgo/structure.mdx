@@ -1,0 +1,15 @@
+---
+title: 'Data structures'
+---
+
+# Array
+
+An array in Ginkgo is a fixed size collection of elements of the same type.
+
+An array start with a 4-byte length field, followed by the elements. The length field is the number of elements in the array, not the number of bytes.
+
+```
++------------------+-----------+-----------+-----+
+| Length (4 bytes) | Element 1 | Element 2 | ... |
++------------------+-----------+-----------+-----+
+```

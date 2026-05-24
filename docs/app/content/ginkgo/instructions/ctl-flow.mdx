@@ -16,6 +16,8 @@ Defines a label for jump instructions to target.
 jmp target
 ```
 
+Performs an unconditional jump to `target`.
+
 # Conditional Jump
 
 ```
@@ -60,7 +62,7 @@ invoke flags
 
 ### Invoke
 
-- `tail_call`: Whether this function call is a tail call.
+- `is_virt`: Whether this is a virtual call (dynamic dispatch).
 
 # Function Return with Value
 

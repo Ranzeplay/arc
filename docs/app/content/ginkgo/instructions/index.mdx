@@ -5,43 +5,44 @@ title: 'Instructions'
 Below is a concise opcode table for each instruction under this directory.
 
 | Opcode | Mnemonics | Remark |
-|---:|---|---|
-| `0x00` | `add` | Adds two values. |
-| `0x01` | `sub` | Subtracts second value from first. |
-| `0x02` | `mul` | Multiplies two values. |
-| `0x03` | `div` | Divides first value by second. |
-| `0x04` | `mod` | Computes remainder of division. |
-| `0x05` | `inv` | Negates a value. |
-| `0x06` | `lsa` | Left arithmetic shift. |
-| `0x07` | `rsa` | Right arithmetic shift (sign-preserving). |
-| `0x08` | `rsl` | Right logical shift (zero-fill). |
-| `0x09` | `bitand` | Bitwise AND of two values. |
-| `0x0A` | `bitor` | Bitwise OR of two values. |
-| `0x0B` | `bitxor` | Bitwise XOR of two values. |
-| `0x0C` | `bitnot` | Bitwise NOT of a value. |
-| `0x0D` | `eq` | Sets true if equal. |
-| `0x0E` | `neq` | Sets true if not equal. |
-| `0x0F` | `lt` | Sets true if left < right. |
-| `0x10` | `le` | Sets true if left ≤ right. |
-| `0x11` | `gt` | Sets true if left > right. |
-| `0x12` | `ge` | Sets true if left ≥ right. |
-| `0x13` | `lbl` | Defines a jump label. |
-| `0x14` | `jmp` | Unconditional jump to target. |
-| `0x15` | `cjp` | Conditional jump on condition. |
-| `0x16` | `pcall` | Prepare a function call. |
-| `0x17` | `arg` | Bind an argument for a call. |
-| `0x18` | `invoke` | Invoke the prepared call. |
-| `0x19` | `retv` | Return from function with value. |
-| `0x1A` | `retn` | Return from function without value. |
-| `0x1B` | `ld_const` | Load from constant pool. |
-| `0x1C` | `ld_int` | Load immediate integer. |
-| `0x1D` | `ld_float` | Load immediate floating constant. |
-| `0x1E` | `shallow_clone` | Shallowly clone an object. |
-| `0x1F` | `deep_clone` | Deeply clone an object. |
-| `0x20` | `ref` | Load as reference. |
-| `0x21` | `init_obj` | Initialize a new object. |
-| `0x22` | `logand` | Logical AND of two values. |
-| `0x23` | `logor` | Logical OR of two values. |
-| `0x24` | `logxor` | Logical XOR of two values. |
-| `0x25` | `lognot` | Logical NOT of a value. |
+---:|---|---|
+| `0x00` | `nop` | No operation. |
+| `0x01` | `add` | Adds two values. |
+| `0x02` | `sub` | Subtracts second value from first. |
+| `0x03` | `mul` | Multiplies two values. |
+| `0x04` | `div` | Divides first value by second. |
+| `0x05` | `mod` | Computes remainder of division. |
+| `0x06` | `inv` | Negates a value. |
+| `0x07` | `lsa` | Left arithmetic shift. |
+| `0x08` | `rsa` | Right arithmetic shift (sign-preserving). |
+| `0x09` | `rsl` | Right logical shift (zero-fill). |
+| `0x0A` | `bitand` | Bitwise AND of two values. |
+| `0x0B` | `bitor` | Bitwise OR of two values. |
+| `0x0C` | `bitxor` | Bitwise XOR of two values. |
+| `0x0D` | `bitnot` | Bitwise NOT of a value. |
+| `0x0E` | `eq` | Sets true if equal. |
+| `0x0F` | `neq` | Sets true if not equal. |
+| `0x10` | `lt` | Sets true if left < right. |
+| `0x11` | `le` | Sets true if left ≤ right. |
+| `0x12` | `gt` | Sets true if left > right. |
+| `0x13` | `ge` | Sets true if left ≥ right. |
+| `0x14` | `lbl` | Defines a jump label. |
+| `0x15` | `jmp` | Unconditional jump to target. |
+| `0x16` | `cjp` | Conditional jump on condition. |
+| `0x17` | `pcall` | Prepare a function call. |
+| `0x18` | `arg` | Bind an argument for a call. |
+| `0x19` | `invoke` | Invoke the prepared call. |
+| `0x1A` | `retv` | Return from function with value. |
+| `0x1B` | `retn` | Return from function without value. |
+| `0x1C` | `ld_const` | Load from constant pool. |
+| `0x1D` | `ld_int` | Load immediate integer. |
+| `0x1E` | `ld_float` | Load immediate floating constant. |
+| `0x1F` | `copy` | Shallowly clone an object. |
+| `0x20` | `clone` | Deeply clone an object. |
+| `0x21` | `ref` | Load as reference. |
+| `0x22` | `init_obj` | Initialize a new object. |
+| `0x23` | `logand` | Logical AND of two values. |
+| `0x24` | `logor` | Logical OR of two values. |
+| `0x25` | `logxor` | Logical XOR of two values. |
+| `0x26` | `lognot` | Logical NOT of a value. |
 
