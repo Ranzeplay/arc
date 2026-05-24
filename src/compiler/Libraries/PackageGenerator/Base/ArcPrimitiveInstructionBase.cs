@@ -2,7 +2,7 @@
 
 namespace Arc.Compiler.PackageGenerator.Base
 {
-    internal abstract class ArcPrimitiveInstructionBase
+    public abstract class ArcPrimitiveInstructionBase
     {
         public abstract byte[] Opcode { get; }
 
