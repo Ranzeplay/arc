@@ -12,5 +12,17 @@
             }
             return hashedValue;
         }
+        
+        public static uint GetDjb2Hash(ReadOnlySpan<char> input)
+        {
+            uint hash = 5381;
+
+            for (int i = 0; i < input.Length; i++)
+            {
+                hash = ((hash << 5) + hash) + input[i];
+            }
+
+            return hash;
+        }
     }
 }
