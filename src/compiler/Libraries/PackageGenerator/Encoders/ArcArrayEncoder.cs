@@ -17,5 +17,21 @@
                 ..array.Select(BitConverter.GetBytes).SelectMany(x => x)
             ];
         }
+        
+        public static IEnumerable<byte> SerializeArray(IEnumerable<ushort> array)
+        {
+            return [
+                ..BitConverter.GetBytes(array.LongCount()),
+                ..array.Select(BitConverter.GetBytes).SelectMany(x => x)
+            ];
+        }
+        
+        public static IEnumerable<byte> SerializeArray(IEnumerable<uint> array)
+        {
+            return [
+                ..BitConverter.GetBytes(array.LongCount()),
+                ..array.Select(BitConverter.GetBytes).SelectMany(x => x)
+            ];
+        }
     }
 }

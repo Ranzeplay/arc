@@ -1,23 +1,51 @@
 ﻿using Antlr4.Runtime;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Models.Logging
 {
-    public class ArcSourceLocatableLog(LogLevel level, uint code, string message, string sourceFile, ParserRuleContext context) : ArcCompilationLogBase
+    public class ArcSourceLocatableLog : ArcCompilationLogBase
     {
-        public override LogLevel Level => level;
+        private readonly LogLevel _level;
+        private readonly uint _code;
+        private readonly string _message;
+        private readonly string _sourceFile;
 
-        public override uint Code => code;
+        public ArcSourceLocatableLog(LogLevel level, uint code, string message, string sourceFile, ParserRuleContext context)
+        {
+            _level = level;
+            _code = code;
+            _message = message;
+            _sourceFile = sourceFile;
+            Begin = new Position(context.Start);
+            End = new Position(context.Stop);
+        }
+        
+        public ArcSourceLocatableLog(LogLevel level, uint code, string message, string sourceFile, IArcTraceable<ParserRuleContext> locatable)
+        {
+            var context = locatable.Context;
+            
+            _level = level;
+            _code = code;
+            _message = message;
+            _sourceFile = sourceFile;
+            Begin = new Position(context.Start);
+            End = new Position(context.Stop);
+        }
 
-        public override string FormattedMessage => $"{sourceFile} [({Begin})~({End})]: {Message}";
+        public override LogLevel Level => _level;
 
-        public string SourceFile => sourceFile;
+        public override uint Code => _code;
 
-        private Position Begin { get; } = new Position(context.Start);
+        public override string FormattedMessage => $"{_sourceFile} [({Begin})~({End})]: {Message}";
 
-        private Position End { get; } = new Position(context.Stop);
+        public string SourceFile => _sourceFile;
 
-        public string Message => message;
+        private Position Begin { get; }
+
+        private Position End { get; }
+
+        public string Message => _message;
 
         private readonly struct Position(IToken token)
         {

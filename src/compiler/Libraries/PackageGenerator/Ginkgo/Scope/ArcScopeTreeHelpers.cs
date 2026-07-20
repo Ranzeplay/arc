@@ -93,7 +93,6 @@ internal static class ArcGinkgoScopeTreeHelpers
                 if (overwrite)
                 {
                     resultNamespace.AddChild(node2);
-
                 }
                 else
                 {

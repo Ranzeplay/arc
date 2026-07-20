@@ -14,6 +14,6 @@ namespace Arc.Compiler.PackageGenerator.Models.Descriptors
 
         public ArcMutability Mutability { get; set; }
 
-        public ArcDataDeclarator SyntaxTree { get; set; }
+        public ArcDataDeclarator SyntaxTree { get; init; }
     }
 }

@@ -7,7 +7,8 @@
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "biome check",
-    "format": "biome format --write"
+    "format": "biome format --write",
+    "cleanup": "rm -rf out .next"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",

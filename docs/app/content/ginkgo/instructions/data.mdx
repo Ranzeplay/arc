@@ -100,3 +100,29 @@ init_obj type_idx, dest, dim, flags
 ## Flags
 
 - `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Load Field from Object
+
+```
+ld_field src, dest, field_id, flags
+```
+
+Performs $dest = src.field\_id$ where all operands are implicit variables.
+
+## Flags
+
+- `last_use_src`: Whether this is the last use of the source register.
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
+
+# Store Field to Object
+
+```
+st_field src, dest, field_id, flags
+```
+
+Performs $dest.field\_id = src$ where all operands are implicit variables.
+
+## Flags
+
+- `last_use_src`: Whether this is the last use of the source register.
+- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.

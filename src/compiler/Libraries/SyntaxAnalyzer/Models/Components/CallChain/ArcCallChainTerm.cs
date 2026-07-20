@@ -3,10 +3,11 @@ using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 using System.Diagnostics;
+using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
 {
-    public class ArcCallChainTerm
+    public class ArcCallChainTerm: IArcTraceable<ArcSourceCodeParser.Arc_call_chain_termContext>
     {
         public ArcCallChainTerm(ArcSourceCodeParser.Arc_call_chain_termContext context)
         {

@@ -1,6 +1,6 @@
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
-public class ArcArithmeticLeftArithmeticShiftInstruction : ArcArithmeticInstructionBase
+public class ArcArithmeticLeftShiftInstruction : ArcArithmeticInstructionBase
 {
     public override byte[] Opcode => [0x07];
     
