@@ -18,9 +18,22 @@ public class ArcFunctionGenerationContext(
     public void AddImplicitRegister(ArcImplicitRegister localObject)
     {
         ImplicitRegisterRegistry.Add(localObject.Id, localObject.Name, localObject);
+        if (scopes.Count > 0) scopes.Peek().Add(localObject.Id);
     }
 
-    public ushort NextImplicitRegisterId => (ushort)ImplicitRegisterRegistry.Count;
+    private int nextRegisterId;
+    private readonly Stack<List<ushort>> scopes = new();
+    public int RegisterCount => nextRegisterId;
+    // IDs are allocated once per function and never reclaimed when a scope exits.
+    public ushort NextImplicitRegisterId => nextRegisterId <= ushort.MaxValue
+        ? (ushort)nextRegisterId++
+        : throw new InvalidOperationException("Ginkgo function exceeds 65536 registers");
+
+    public void EnterScope() => scopes.Push([]);
+    public void ExitScope()
+    {
+        foreach (var id in scopes.Pop()) ImplicitRegisterRegistry.Remove(id);
+    }
 
     public ArcImplicitRegister? GetImplicitRegister(string name)
     {

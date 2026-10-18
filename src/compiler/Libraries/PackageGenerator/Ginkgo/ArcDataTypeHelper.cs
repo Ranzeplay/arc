@@ -14,40 +14,38 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo
     {
         public static IArcDataTypeProxy? GetDataType<T>(IArcGinkgoGenerationContext<T> source, ArcDataType dataType) where T : ArcScopeTreeNodeBase
         {
-            if (dataType.DataType == ArcDataType.DataMemberType.Primitive)
-            {
-                var candidateTypes = source.DirectlyAccessibleNodes
-                    .OfType<ArcScopeTreeDataTypeNode>()
-                    .Where(x => x.DataType is ArcBaseType);
-
-                return dataType.PrimitiveType switch
-                {
-                    ArcPrimitiveDataType.Integer => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.IntType.TypeId),
-                    ArcPrimitiveDataType.Decimal => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.DecimalType.TypeId),
-                    ArcPrimitiveDataType.String => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.StringType.TypeId),
-                    ArcPrimitiveDataType.Char => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.CharType.TypeId),
-                    ArcPrimitiveDataType.Bool => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.BoolType.TypeId),
-                    ArcPrimitiveDataType.Byte => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.ByteType.TypeId),
-                    ArcPrimitiveDataType.None => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
-                    ArcPrimitiveDataType.Any => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
-                    ArcPrimitiveDataType.Function => candidateTypes.First(x =>
-                        x.DataType.TypeId == ArcPersistentData.FunctionType.TypeId),
-                    ArcPrimitiveDataType.Infer => throw new NotImplementedException(),
-                    _ => throw new UnreachableException(),
-                };
-            }
-            else
+            if (dataType.DataType != ArcDataType.DataMemberType.Primitive)
             {
                 return GetComplexType(source, dataType.ComplexType!.Identifier);
             }
+            
+            var candidateTypes = source.DirectlyAccessibleNodes
+                .OfType<ArcScopeTreeDataTypeNode>()
+                .Where(x => x.DataType is ArcBaseType);
+
+            return dataType.PrimitiveType switch
+            {
+                ArcPrimitiveDataType.Integer => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.IntType.TypeId),
+                ArcPrimitiveDataType.Decimal => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.DecimalType.TypeId),
+                ArcPrimitiveDataType.String => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.StringType.TypeId),
+                ArcPrimitiveDataType.Char => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.CharType.TypeId),
+                ArcPrimitiveDataType.Bool => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.BoolType.TypeId),
+                ArcPrimitiveDataType.Byte => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.ByteType.TypeId),
+                ArcPrimitiveDataType.None => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.NoneType.TypeId),
+                ArcPrimitiveDataType.Any => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.AnyType.TypeId),
+                ArcPrimitiveDataType.Function => candidateTypes.FirstOrDefault(x =>
+                    x.DataType.TypeId == ArcPersistentData.FunctionType.TypeId),
+                ArcPrimitiveDataType.Infer => null,
+                _ => throw new UnreachableException(),
+            };
         }
 
         public static IArcDataTypeProxy? GetComplexType<T>(IArcGinkgoGenerationContext<T> source, ArcFlexibleIdentifier identifier) where T : ArcScopeTreeNodeBase

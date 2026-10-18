@@ -142,7 +142,7 @@ public abstract class ArcScopeTreeNodeBase
 
     public IEnumerable<T> GetChildren<T>(Func<T, bool> predicate, bool recursive = false) where T : ArcScopeTreeNodeBase
     {
-        return GetChildren(n => n is T, recursive).Cast<T>();
+        return GetChildren(n => n is T t && predicate(t), recursive).Cast<T>();
     }
 
     public IEnumerable<T> GetChildren<T>(bool recursive = false) where T : ArcScopeTreeNodeBase

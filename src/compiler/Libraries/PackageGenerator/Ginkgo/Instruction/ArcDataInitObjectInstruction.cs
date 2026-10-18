@@ -2,7 +2,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
 public class ArcDataInitObjectInstruction : ArcDataInstructionBase
 {
-    public override byte[] Opcode => [0x1c];
+    public override byte[] Opcode => [0x22];
     
     public uint TypeId { get; set; }
     

@@ -4,6 +4,14 @@ namespace Arc.Compiler.PackageGenerator.Models.Relocation
 {
     public class ArcRelocationTarget
     {
+        public static ArcRelocationTarget ForLabel(ArcRelocationLabel label)
+            => new()
+            {
+                Layer = label.Layer,
+                TargetType = ArcRelocationTargetType.Label,
+                Label = label.Type
+            };
+
         public ArcRelocationTargetType TargetType { get; set; }
 
         public long Location { get; set; }

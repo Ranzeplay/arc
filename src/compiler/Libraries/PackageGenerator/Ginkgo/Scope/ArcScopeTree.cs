@@ -39,24 +39,30 @@ public class ArcScopeTree(ArcScopeTreeNodeBase? root = null)
     }
 
     public T? GetNode<T>(IEnumerable<string> names) where T : ArcScopeTreeNodeBase
+        => GetNodes<T>(names).FirstOrDefault();
+
+    public IEnumerable<T> GetNodes<T>(IEnumerable<string> names) where T : ArcScopeTreeNodeBase
     {
         var current = Root;
-        foreach (var name in names)
+        var path = names.ToList();
+        if (path.Count == 0) return [];
+        foreach (var name in path.Take(path.Count - 1))
         {
-            var node = current.GetSpecificChild<T>(n => n.Name == name);
+            var node = current.GetSpecificChild(n => n.Name == name &&
+                n is ArcScopeTreeNamespaceNode or ArcScopeTreeGroupNode);
             if (node == null)
             {
-                return null;
+                return [];
             }
             current = node;
         }
 
-        return current is T ? current as T : null;
+        return current.GetSpecificChildren<T>(n => n.Name == path[^1]);
     }
 
     public T? GetNodeByName<T>(string name) where T : ArcScopeTreeNodeBase => Root.GetSpecificChild<T>(n => n.Name == name, true);
 
-    public ArcScopeTreeNodeBase? GetNodeByName(string name) => GetNodeByName(name);
+    public ArcScopeTreeNodeBase? GetNodeByName(string name) => GetNodeByName<ArcScopeTreeNodeBase>(name);
         
     public ArcScopeTreeNodeBase? GetNodeById(ulong id) => FlattenedNodes.FirstOrDefault(n => n.Id == id);
 }

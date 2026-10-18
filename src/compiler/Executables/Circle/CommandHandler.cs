@@ -5,6 +5,7 @@ using Arc.Compiler.SyntaxAnalyzer.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using System.Text.Json;
+using Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
 
 namespace Arc.Compiler.Circle
 {
@@ -16,7 +17,7 @@ namespace Arc.Compiler.Circle
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public static void HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun)
+        public static int HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun, bool ginkgo = false)
         {
             var logger = LoggerFactory.Create(builder =>
             {
@@ -40,6 +41,30 @@ namespace Arc.Compiler.Circle
                 .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
 
             logger.LogInformation("Encoding instructions");
+            if (ginkgo)
+            {
+                var artifact = ArcGinkgoArtifactGenerator.Generate(compilationUnits,
+                    ArcPackageDescriptor.Default(packageType), !noStd, logger);
+                foreach (var log in artifact.Logs)
+                    logger.Log(log.Level, "{}", log.FormattedMessage);
+                if (artifact.DiscardResult)
+                {
+                    logger.LogError("Failed to generate Ginkgo artifact due to {} error(s)",
+                        artifact.Logs.Count(l => l.Level >= LogLevel.Error));
+                    return 1;
+                }
+                if (!dryRun)
+                {
+                    File.WriteAllBytes(output, artifact.GeneratedData);
+                    if (sourceInfoPath is not null)
+                        File.WriteAllText(sourceInfoPath, JsonSerializer.Serialize(artifact.SourceInformation,
+                            options: _jsonSerializerOptions));
+                }
+                else logger.LogInformation("dry-run specified, skipping output generation");
+                logger.LogInformation("Generated draft Ginkgo artifact ({} bytes); legacy runtime execution is not supported",
+                    artifact.GeneratedData.Length);
+                return 0;
+            }
             var context = ArcCombinedUnitGenerator.GenerateUnits(compilationUnits, ArcPackageDescriptor.Default(packageType), !noStd);
 
             context.SetEntrypointFunctionId();
@@ -58,10 +83,10 @@ namespace Arc.Compiler.Circle
                 );
             }
 
-            if (context.Logs.Any(l => l.Level == LogLevel.Error))
+            if (context.Logs.Any(l => l.Level >= LogLevel.Error))
             {
                 logger.LogError("Failed to generate package due to {} error(s) above", context.Logs.Count(e => e.Level >= LogLevel.Error));
-                return;
+                return 1;
             }
 
             logger.LogInformation("Generating byte stream");
@@ -88,6 +113,7 @@ namespace Arc.Compiler.Circle
             }
 
             logger.LogInformation("Done for {}", packageType.ToString().ToLowerInvariant());
+            return 0;
         }
     }
 }

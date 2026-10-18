@@ -83,8 +83,8 @@ internal static class ArcGinkgoScopeTreeHelpers
             resultNamespace.AddChild(subNs2);
         }
 
-        var ns1NonNamespaceNodes = ns1.Children.TakeWhile(n => n is not ArcScopeTreeNamespaceNode).ToList();
-        var ns2NonNamespaceNodes = ns2.Children.TakeWhile(n => n is not ArcScopeTreeNamespaceNode).ToList();
+        var ns1NonNamespaceNodes = ns1.Children.Where(n => n is not ArcScopeTreeNamespaceNode).ToList();
+        var ns2NonNamespaceNodes = ns2.Children.Where(n => n is not ArcScopeTreeNamespaceNode).ToList();
         foreach (var node1 in ns1NonNamespaceNodes)
         {
             var node2 = ns2NonNamespaceNodes.FirstOrDefault(n => n.Id == node1.Id);

@@ -14,13 +14,13 @@ namespace Arc::Std::Math
 
 	public func AbsDecimal(const d: decimal): decimal
 	{
-		if (d >= 0)
+		if (d >= 0.0)
 		{
 			return d;
 		}
 		else
 		{
-			return 0 - d;
+			return 0.0 - d;
 		}
 	}
 

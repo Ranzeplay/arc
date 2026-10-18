@@ -2,7 +2,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
 public class ArcArithmeticSubtractInstruction : ArcArithmeticInstructionBase
 {
-    public override byte[] Opcode => [0x01];
+    public override byte[] Opcode => [0x02];
     
     public ushort SrcA { get; set; }
     public ushort SrcB { get; set; }

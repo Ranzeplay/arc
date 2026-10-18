@@ -2,7 +2,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
 public class ArcComparisonGreaterThanOrEqualInstruction : ArcComparisonInstructionBase
 {
-    public override byte[] Opcode => [0x11];
+    public override byte[] Opcode => [0x13];
     
     public ushort SrcL { get; set; }
     public ushort SrcR { get; set; }

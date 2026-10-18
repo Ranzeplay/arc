@@ -22,9 +22,9 @@ public static class ArcLocalDataDeclarationGenerator
         }
 
         var maxImpRegs = ushort.MaxValue;
-        if (ctx.ImplicitRegisterRegistry.Count >= maxImpRegs)
+        if (ctx.RegisterCount > maxImpRegs)
         {
-            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Too many variable definitions ({maxImpRegs} entries maximum)", ctx.UnitName, syntax.Context));
+            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Too many registers ({maxImpRegs + 1} entries maximum)", ctx.UnitName, syntax.Context));
             return result;
         }
 
@@ -42,6 +42,12 @@ public static class ArcLocalDataDeclarationGenerator
         }
         
         ctx.AddImplicitRegister(localObj);
+        result.OutImplicitRegister = localObj;
+        result.Instructions.Add(new Instruction.ArcDataInitObjectInstruction
+        {
+            TypeId = checked((uint)localObj.Instance.Type.ActualTypeId),
+            Dest = localObj.Id, Dimension = localObj.Instance.Dimension
+        });
 
         return result;
     }

@@ -6,11 +6,13 @@ public class ArcControlFlowInvokeInstruction : ArcControlFlowInstructionBase
     
     public bool IsVirtual { get; set; }
 
+    public ushort Dest { get; set; }
+
     private ArcControlFlowInvokeInstruction(bool isVirtual)
     {
         IsVirtual = isVirtual;
     }
 
-    public static ArcControlFlowInvokeInstruction Normal = new(false);
-    public static ArcControlFlowInvokeInstruction Virtual = new(true);
+    public static ArcControlFlowInvokeInstruction Normal => new(false);
+    public static ArcControlFlowInvokeInstruction Virtual => new(true);
 }

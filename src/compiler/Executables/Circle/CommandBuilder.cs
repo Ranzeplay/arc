@@ -43,6 +43,11 @@ namespace Arc.Compiler.Circle
                 Description = "Perform a dry run without generating output",
                 DefaultValueFactory = _ => false,
             };
+            var ginkgoOption = new Option<bool>("--ginkgo")
+            {
+                Description = "Use Ginkgo generation rules and emit a draft Ginkgo artifact",
+                DefaultValueFactory = _ => false,
+            };
 
             var command = new RootCommand("The compiler CLI for the Arc programming language.")
             {
@@ -52,6 +57,8 @@ namespace Arc.Compiler.Circle
                 noStdOption,
                 withSourceInfoOption,
                 dryRun,
+                ginkgoOption,
+                logLevelOption,
             };
             command.TreatUnmatchedTokensAsErrors = true;
 
@@ -65,10 +72,10 @@ namespace Arc.Compiler.Circle
 
             command.SetAction(pr =>
             {
-                CommandHandler.HandleCommand(pr.GetValue(inputArgument) ?? [], pr.GetValue(outputOption) ?? "",
+                return CommandHandler.HandleCommand(pr.GetValue(inputArgument) ?? [], pr.GetValue(outputOption) ?? "",
                     pr.GetValue(packageTypeOption),
                     pr.GetValue(noStdOption),
-                    pr.GetValue(logLevelOption), pr.GetValue(withSourceInfoOption), pr.GetValue(dryRun));
+                    pr.GetValue(logLevelOption), pr.GetValue(withSourceInfoOption), pr.GetValue(dryRun), pr.GetValue(ginkgoOption));
             });
             return command;
         }

@@ -21,9 +21,20 @@ public class ArcGinkgoUnitGenerationContext
         }
     }
     
-    public IEnumerable<IArcDataTypeProxy> LinkedTypes { get; }
+    public IEnumerable<IArcDataTypeProxy> LinkedTypes => LinkedNodes.OfType<IArcDataTypeProxy>();
     
-    public IEnumerable<IArcDataTypeProxy> LinkedGenericTypes { get; }
+    public IEnumerable<IArcDataTypeProxy> LinkedGenericTypes { get; set; } = [];
+
+    // Pool indices are assigned once per unit, shared by all generated functions.
+    public List<(ulong TypeId, object Value)> Constants { get; } = [];
+
+    public uint InternConstant(ulong typeId, object value)
+    {
+        var index = Constants.FindIndex(c => c.TypeId == typeId && Equals(c.Value, value));
+        if (index >= 0) return checked((uint)index);
+        Constants.Add((typeId, value));
+        return checked((uint)(Constants.Count - 1));
+    }
     
     public string UnitName => CompilationUnit.Name;
 }

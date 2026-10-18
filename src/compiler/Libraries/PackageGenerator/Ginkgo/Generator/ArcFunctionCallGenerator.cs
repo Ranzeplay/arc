@@ -1,5 +1,4 @@
 using Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
-using Arc.Compiler.PackageGenerator.Ginkgo.Metadata;
 using Arc.Compiler.PackageGenerator.Ginkgo.Metadata.Data;
 using Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 using Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
@@ -12,88 +11,71 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Generator;
 public static class ArcFunctionCallGenerator
 {
     public static ArcGinkgoInstructionGenerationResult Generate(
-        ref ArcFunctionGenerationContext ctx,
-        ArcFunctionCall syntax)
+        ref ArcFunctionGenerationContext ctx, ArcFunctionCall syntax)
     {
-        var result = new ArcGinkgoInstructionGenerationResult();
-        
-        // Locate function
-        var (func, funcNodeSearchLog) = GetFunctionNode(ctx.GlobalContext, syntax);
-        if (func is null)
-        {
-            result.Logs.AddRange(funcNodeSearchLog);
-        }
-        
-        // Build arguments
-        var args = new ArcGinkgoInstructionGenerationResult[func?.Parameters.Count() ?? syntax.Arguments.Count()];
-        for (var i = 0; i < syntax.Arguments.Count(); i++)
-        {
-            var expr = syntax.Arguments.ElementAt(i).Expression;
-            if (i < args.Length)
-            {
-                args[i] = ArcExpressionEvaluationGenerator.Generate(ref ctx, expr);
-                // TODO: Verify argument type
-                result.Append(args[i]);
-            }
-            else
-            {
-                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Too many arguments for argument {i}", ctx.UnitName, expr));
-            }
-        }
-
-        if (syntax.Arguments.Count() < func?.Parameters.Count())
-        {
-            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Too few arguments, {func.Parameters.Count()} required but only {syntax.Arguments.Count()} provided", ctx.UnitName, syntax.Identifier));
-        }
-        
-        // Encapsulate function call
-        result.Instructions.AddRange([
-            new ArcControlFlowPrepareCallInstruction(func?.Id ?? 0),
-            ..args.Select(a => new ArcControlFlowBindArgInstruction{ Src = a.OutImplicitRegister.Id }),
-            ArcControlFlowInvokeInstruction.Normal
-        ]);
-        
-        return result;
+        var candidates = syntax.Identifier.Namespace is not null
+            ? ctx.GlobalContext.ScopeTree.GetNodes<ArcScopeTreeFunctionNodeBase>(syntax.Identifier.NameArray)
+            : ctx.GlobalContext.LinkedNodes.Concat(ctx.CurrentNode.Namespace?.Children ?? [])
+                .OfType<ArcScopeTreeFunctionNodeBase>().Where(f => f.Name == syntax.Identifier.Name).Distinct();
+        return ResolveAndEmit(ref ctx, syntax, candidates, null);
     }
 
     public static ArcGinkgoInstructionGenerationResult GenerateSelfCall(
-        ref ArcFunctionGenerationContext ctx,
-        ArcFunctionCall syntax,
-        ArcImplicitRegister baseObj)
+        ref ArcFunctionGenerationContext ctx, ArcFunctionCall syntax, ArcImplicitRegister baseObj)
     {
-        throw new NotImplementedException();
+        var group = ArcDataTypeHelper.GetDataTypeNode(ctx, baseObj.Instance.Type.ResolvedType)?.ComplexTypeGroup;
+        return ResolveAndEmit(ref ctx, syntax,
+            group?.Functions.Where(f => f.Name == syntax.Identifier.Name).Cast<ArcScopeTreeFunctionNodeBase>() ?? [],
+            baseObj);
     }
 
-    private static (ArcScopeTreeFunctionNodeBase?, IEnumerable<ArcCompilationLogBase>) GetFunctionNode(
-        ArcGinkgoUnitGenerationContext globalContext,
-        ArcFunctionCall syntax)
+    private static ArcGinkgoInstructionGenerationResult ResolveAndEmit(
+        ref ArcFunctionGenerationContext ctx, ArcFunctionCall syntax,
+        IEnumerable<ArcScopeTreeFunctionNodeBase> candidates, ArcImplicitRegister? receiver)
     {
-        if (syntax.Identifier.Namespace is not null)
+        var result = new ArcGinkgoInstructionGenerationResult();
+        if (syntax.Context.arc_generic_specialization_wrapper() is not null || syntax.SpecializedGenericTypes.Any())
+            return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+                "Ginkgo does not support generic function specialization", ctx.UnitName, syntax.Identifier);
+        var arguments = new List<ArcImplicitRegister>();
+        if (receiver is not null) arguments.Add(receiver);
+        // Evaluate before preparing the outer frame, so nested calls cannot replace it.
+        foreach (var argument in syntax.Arguments)
         {
-            var funcDecl = globalContext.ScopeTree
-                .GetNode<ArcScopeTreeFunctionNodeBase>(syntax.Identifier.NameArray);
-
-            if (funcDecl == null)
-            {
-                return (null, [
-                    new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function \"{syntax.Identifier}\" does not exist in explicit location", globalContext.UnitName, syntax.Identifier)
-                ]);
-            }
-
-            return (funcDecl, []);
+            var value = ArcExpressionEvaluationGenerator.Generate(ref ctx, argument.Expression);
+            result.Append(value);
+            if (value.DiscardResult || value.OutImplicitRegister is null) return result;
+            arguments.Add(value.OutImplicitRegister);
         }
-        
-        var funcNode = globalContext.LinkedNodes
-            .OfType<ArcScopeTreeFunctionNodeBase>()
-            .FirstOrDefault(n => n.Name == syntax.Identifier.Name);
-
-        if (funcNode == null)
+        var matches = candidates.Where(f => f.Parameters.Count() == arguments.Count &&
+            f.Parameters.Zip(arguments).All(pair =>
+                pair.First.DataType.Type.TypeId == pair.Second.Instance.Type.ResolvedType.TypeId &&
+                pair.First.DataType.Dimension == pair.Second.Instance.Dimension)).ToList();
+        if (matches.Count != 1)
         {
-            return (null, [
-                new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function \"{syntax.Identifier}\" does not exist in any linked namespace", globalContext.UnitName, syntax.Identifier)
-            ]);
+            result.Append(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+                matches.Count == 0 ? $"No matching function {syntax.Identifier}" : $"Ambiguous function {syntax.Identifier}",
+                ctx.UnitName, syntax.Identifier));
+            return result;
         }
-
-        return (funcNode, []);
+        var function = matches[0];
+        ArcImplicitRegister? output = null;
+        if (function.ReturnValueType.Type.TypeId != 0 || function.ReturnValueType.Dimension != 0)
+        {
+            var (register, logs) = ArcImplicitRegister.CreateAnonymous(ctx,
+                function.ReturnValueType, ArcImplicitRegisterType.LocalData);
+            result.Logs.AddRange(logs);
+            if (register is null || result.DiscardResult) return result;
+            ctx.AddImplicitRegister(register);
+            output = register;
+        }
+        result.Instructions.Add(new ArcControlFlowPrepareCallInstruction(function.Id));
+        result.Instructions.AddRange(arguments.Select(a => new ArcControlFlowBindArgInstruction { Src = a.Id }));
+        var invoke = ArcControlFlowInvokeInstruction.Normal;
+        invoke.Dest = output?.Id ?? 0;
+        result.Instructions.Add(invoke);
+        result.OutImplicitRegister = output;
+        result.OutputInvoke = output is null ? null : invoke;
+        return result;
     }
 }

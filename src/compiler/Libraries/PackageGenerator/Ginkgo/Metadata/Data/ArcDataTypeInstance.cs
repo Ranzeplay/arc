@@ -35,7 +35,7 @@ public class ArcDataTypeInstance
         return (new ArcDataTypeInstance
         {
             Type = dt,
-            Dimension = (ushort)decl.Dimension,
+            Dimension = checked((ushort)decl.Dimension),
             AllowNone = decl.AllowNone,
             Mutability = decl.Mutability,
         }, []);

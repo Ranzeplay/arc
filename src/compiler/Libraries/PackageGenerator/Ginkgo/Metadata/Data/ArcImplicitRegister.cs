@@ -37,7 +37,10 @@ public class ArcImplicitRegister
 
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) Create(ArcFunctionGenerationContext ctx, ArcDataDeclarator decl, ArcImplicitRegisterType type)
     {
-        throw new NotImplementedException();
+        var (instance, logs) = ArcDataTypeInstance.Create(ctx, decl.DataType, decl.Mutability,
+            checked((ushort)decl.DataType.Dimension), false);
+        return instance is null ? (null, logs) :
+            (new ArcImplicitRegister(ctx.NextImplicitRegisterId, decl.Identifier.Name, instance, type), logs);
     }
     
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) Create(ArcFunctionGenerationContext ctx, ArcDataDeclarationDescriptor decl, ArcImplicitRegisterType type)
@@ -48,25 +51,24 @@ public class ArcImplicitRegister
             return (null, logs);
         }
         
-        return (new ArcImplicitRegister(0, dti, type), logs);
+        return (new ArcImplicitRegister(ctx.NextImplicitRegisterId, decl.SyntaxTree.Identifier.Name, dti, type), logs);
     }
     
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) CreateAnonymous(ArcFunctionGenerationContext ctx, ArcDataType dataType, ArcMutability mutability, ArcImplicitRegisterType type)
     {
-        // TODO: Implement
-        throw new NotImplementedException();
+        var (instance, logs) = ArcDataTypeInstance.Create(ctx, dataType, mutability,
+            checked((ushort)dataType.Dimension), false);
+        return instance is null ? (null, logs) : CreateAnonymous(ctx, instance, type);
     }
     
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) CreateAnonymous(ArcFunctionGenerationContext ctx, ArcDataTypeInstance instance, ArcImplicitRegisterType type)
     {
-        // TODO: Implement
-        throw new NotImplementedException();
+        return (new ArcImplicitRegister(ctx.NextImplicitRegisterId, instance, type), []);
     }
     
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) CreateAnonymous(ArcFunctionGenerationContext ctx, ArcDataDeclarator decl, ArcImplicitRegisterType type)
     {
-        // TODO: Implement
-        throw new NotImplementedException();
+        return CreateAnonymous(ctx, decl.DataType, decl.Mutability, type);
     }
     
     public static (ArcImplicitRegister?, IEnumerable<ArcCompilationLogBase>) CreateAnonymous(ArcFunctionGenerationContext ctx, ArcDataDeclarationDescriptor decl, ArcImplicitRegisterType type)
@@ -77,6 +79,6 @@ public class ArcImplicitRegister
             return (null, logs);
         }
         
-        return (new ArcImplicitRegister(0, dti, type), logs);
+        return (new ArcImplicitRegister(ctx.NextImplicitRegisterId, dti, type), logs);
     }
 }

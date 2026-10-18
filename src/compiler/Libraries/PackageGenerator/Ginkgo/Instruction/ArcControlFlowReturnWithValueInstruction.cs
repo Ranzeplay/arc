@@ -5,4 +5,6 @@ public class ArcControlFlowReturnWithValueInstruction : ArcControlFlowInstructio
     public override byte[] Opcode => [0x1a];
     
     public ushort Src { get; set; }
+
+    public bool ExpectReturnValue { get; set; } = true;
 }

@@ -17,7 +17,7 @@ public class ArcScopeTreeEnumNode : ArcScopeTreeNodeBase, IArcEncodableScopeTree
     
     public Dictionary<Models.Scope.ArcScopeTreeAnnotationNode, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
     
-    public IEnumerable<Models.Scope.ArcScopeTreeEnumMemberNode> Members => Children.OfType<Models.Scope.ArcScopeTreeEnumMemberNode>();
+    public IEnumerable<ArcScopeTreeEnumMemberNode> Members => Children.OfType<ArcScopeTreeEnumMemberNode>();
     
     public virtual IEnumerable<byte> Encode(Models.Scope.ArcScopeTree tree) =>
     [
