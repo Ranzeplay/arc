@@ -26,6 +26,32 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
                 .ToList();
             IsWrapped = false;
 
+            // These grammar alternatives have no direct arc_expression child for unary operands.
+            if (context.LOGICAL_NOT() != null || context.BITWISE_NOT() != null)
+            {
+                var operand = context.arc_wrapped_expression() is not null
+                    ? new ArcExpression(context.arc_wrapped_expression().arc_expression())
+                    : new ArcExpression(ArcDataValue.FromTokens(context.arc_data_value()), context);
+                Operator = context.LOGICAL_NOT() != null ? ArcOperator.LogicalNot : ArcOperator.BitwiseNot;
+                SubExpressions = [operand];
+                Terms = [.. operand.Terms, new ArcExpressionTerm(Operator.Value) { Context = context }];
+                Context = context;
+                return;
+            }
+            ArcOperator? additionalBinary = context.MODULO() != null ? ArcOperator.Modulus :
+                context.BITWISE_LSHIFT() != null ? ArcOperator.ShiftLeft :
+                context.BITWISE_RSHIFT() != null ? ArcOperator.ShiftRight :
+                context.COMP_REF_EQ() != null ? ArcOperator.ReferenceEquals :
+                context.COMP_REF_NEQ() != null ? ArcOperator.ReferenceNotEquals : null;
+            if (additionalBinary.HasValue)
+            {
+                Operator = additionalBinary.Value;
+                Terms = [.. SubExpressions[0].Terms, .. SubExpressions[1].Terms,
+                    new ArcExpressionTerm(Operator.Value) { Context = context }];
+                Context = context;
+                return;
+            }
+
             if (context.MULTIPLY() != null)
             {
                 var exprBefore = SubExpressions.ElementAt(0);
@@ -242,5 +268,13 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
         }
 
         public ArcSourceCodeParser.Arc_expressionContext Context { get; }
+
+        private ArcExpression(ArcDataValue value, ArcSourceCodeParser.Arc_expressionContext context)
+        {
+            DataValue = value;
+            SubExpressions = [];
+            Terms = [new ArcExpressionTerm(value) { Context = context }];
+            Context = context;
+        }
     }
 }
