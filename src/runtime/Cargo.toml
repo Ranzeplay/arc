@@ -1,5 +1,5 @@
 [workspace]
-resolver = "2"
+resolver = "3"
 
 members = [
     "cli",
@@ -12,6 +12,26 @@ members = [
     "macros/instruction_factory",
     "tests",
 ]
+
+[workspace.dependencies]
+arc_shared = { path = "shared" }
+arc_cmdec = { path = "cmdec" }
+arc_executor = { path = "executor" }
+arc_stdlib = { path = "stdlib" }
+arc_instruction_factory = { path = "macros/instruction_factory" }
+arc_manual_function_id = { path = "macros/manual_function_id" }
+arc_scope_dispatcher = { path = "macros/scope_dispatcher" }
+
+clap = { version = "~4.6", features = ["color", "derive"] }
+colog = "~1.4"
+lazy_static = "~1.5"
+log = "~0.4"
+mimalloc = "~0.1"
+pad = "~0.1"
+quote = "~1.0"
+serde = { version = "1", features = ["derive"] }
+strum_macros = "~0.28"
+syn = { version = "~3.0", features = ["full"] }
 
 [profile.profiling]
 inherits = "release"

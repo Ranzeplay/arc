@@ -1,11 +1,11 @@
 [package]
 name = "arc_shared"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-strum_macros = "~0.27"
-pad = "~0.1"
-serde = { version = "1", features = ["derive"] }
-arc_instruction_factory = { path = "../macros/instruction_factory" }
-lazy_static = "~1.5"
+strum_macros = { workspace = true }
+pad = { workspace = true }
+serde = { workspace = true }
+arc_instruction_factory = { workspace = true }
+lazy_static = { workspace = true }
