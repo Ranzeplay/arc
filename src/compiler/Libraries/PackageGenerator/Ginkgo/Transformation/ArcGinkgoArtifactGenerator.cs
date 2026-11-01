@@ -28,7 +28,8 @@ public static class ArcGinkgoArtifactGenerator
         result.Logs.AddRange(logs);
         if (result.DiscardResult) return result;
 
-        var symbols = contexts[0].ScopeTree.FlattenedNodes.OrderBy(n => n.Id).ToList();
+        var symbols = contexts.SelectMany(context => context.ScopeTree.FlattenedNodes)
+            .GroupBy(node => node.Id).Select(group => group.First()).OrderBy(n => n.Id).ToList();
         var functions = contexts.SelectMany((unit, pool) => unit.ScopeTree
             .GetNodes<ArcScopeTreeFunctionNodeBase>()
             .Where(f => f.GenerationResult is not null)
