@@ -2,6 +2,10 @@
 title: 'Data'
 ---
 
+See [Draft binary encoding](/ginkgo/instructions/encoding) for operand widths and
+flag bits. Overloaded operators describe intended semantics; the current Ginkgo
+generator does not resolve operator overloads.
+
 # Load from Constant Pool
 
 ```
@@ -11,7 +15,7 @@ ld_const idx, dest, flags
 Performs $dest = const_pool[idx]$ where $dest$ is an implicit variable.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -29,7 +33,7 @@ Performs $dest = value$ where $dest$ is an implicit variable.
 Value will be casted to the data type of $dest$ if necessary.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -43,19 +47,24 @@ ld_float value, dest, flags
 
 Performs $dest = value$ where $dest$ is an implicit variable.
 
+`value` is an IEEE 754 binary64 immediate. Decimal source literals instead use the
+typed constant pool to preserve precision. Flag bit 0 is `usage_hint`.
+
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 # Copy
 
+Flag bit 0 is `last_use_src`; bit 1 is `usage_hint`.
+
 ```
-copy src, dest
+copy src, dest, flags
 ```
 
 Performs shallow clone $dest = src$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -63,14 +72,16 @@ use reloaded operator if exists.
 
 # Clone
 
+Flag bit 0 is `last_use_src`; bit 1 is `usage_hint`.
+
 ```
-clone src, dest
+clone src, dest, flags
 ```
 
 Performs deep clone $dest = deep\_clone(src)$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -78,14 +89,16 @@ use reloaded operator if exists.
 
 # Load as Reference
 
+Flag bit 0 is `last_use_src`; bit 1 is `usage_hint`.
+
 ```
-ref src, dest
+ref src, dest, flags
 ```
 
 Performs $dest = ref(src)$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -97,6 +110,11 @@ use reloaded operator if exists.
 init_obj type_idx, dest, dim, flags
 ```
 
+Allocates an object of type symbol ID `type_idx` with dimension `dim` into
+register `dest`. The type operand is a symbol ID, not a symbol table position.
+Allocation alone does not invoke a constructor; supported group construction
+emits a separate lifecycle call. See [Compiler support](/ginkgo/implementation).
+
 ## Flags
 
 - `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
@@ -107,7 +125,8 @@ init_obj type_idx, dest, dim, flags
 ld_field src, dest, field_id, flags
 ```
 
-Performs $dest = src.field\_id$ where all operands are implicit variables.
+Performs $dest = src.field\_id$ where `src` and `dest` are registers and
+`field_id` is a field symbol ID.
 
 ## Flags
 
@@ -120,7 +139,8 @@ Performs $dest = src.field\_id$ where all operands are implicit variables.
 st_field src, dest, field_id, flags
 ```
 
-Performs $dest.field\_id = src$ where all operands are implicit variables.
+Performs $dest.field\_id = src$ where `src` is the value register, `dest` is the
+object register, and `field_id` is a field symbol ID.
 
 ## Flags
 

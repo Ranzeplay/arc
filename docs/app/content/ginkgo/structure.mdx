@@ -2,6 +2,11 @@
 title: 'Data structures'
 ---
 
+This page describes a proposed runtime layout. The current compiler artifact
+stores metadata and constant pools in [JSON](/ginkgo/descriptors/pkg), not this
+binary array representation. Source array indexing and iteration are not yet
+lowered by the Ginkgo generator.
+
 # Array
 
 An array in Ginkgo is a fixed size collection of elements of the same type.

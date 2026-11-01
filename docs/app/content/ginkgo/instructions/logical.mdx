@@ -2,46 +2,54 @@
 title: 'Logical'
 ---
 
+Binary instructions use `last_use_src_a`, `last_use_src_b`, and `use_dest_next`
+in flag bits 0, 1, and 2. `lognot` uses `last_use_src` and `use_dest_next` in bits
+0 and 1. See [Draft binary encoding](/ginkgo/instructions/encoding).
+
+The current compiler requires scalar boolean operands and evaluates both operands
+of binary logical operations; these instructions do not short-circuit evaluation.
+Overloaded operator resolution is not implemented.
+
 # And
 
 ```
-logand src_a, src_b, dest
+logand src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \land src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 # Or
 
 ```
-logor src_a, src_b, dest
+logor src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \lor src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 # Xor
 
 ```
-logxor src_a, src_b, dest
+logxor src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \oplus src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 # Not
 
 ```
-lognot src, dest
+lognot src, dest, flags
 ```
 
 Performs $dest = \lnot src$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.

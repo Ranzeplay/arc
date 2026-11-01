@@ -2,6 +2,11 @@
 title: 'Arithmetic'
 ---
 
+All examples include the trailing flag byte. See
+[Draft binary encoding](/ginkgo/instructions/encoding) for flag positions.
+Overloaded operators are intended semantics; overload resolution is not yet
+implemented by the Ginkgo generator.
+
 # Add
 
 ```
@@ -11,7 +16,7 @@ add src_a, src_b, dest, flags
 Performs $dest = src_a + src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -28,7 +33,7 @@ sub src_a, src_b, dest, flags
 Performs $dest = src_a - src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -39,13 +44,13 @@ use reloaded operator if exists.
 # Multiply
 
 ```
-mul src_a, src_b, dest
+mul src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \times src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -56,13 +61,13 @@ use reloaded operator if exists.
 # Divide
 
 ```
-div src_a, src_b, dest
+div src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \div src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -73,13 +78,13 @@ use reloaded operator if exists.
 # Modulo
 
 ```
-mod src_a, src_b, dest
+mod src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \mod src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -90,13 +95,13 @@ use reloaded operator if exists.
 # Inverse
 
 ```
-inv src, dest
+inv src, dest, flags
 ```
 
 Performs $dest = -src$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -106,13 +111,13 @@ use reloaded operator if exists.
 # Left Shift Arithmetic
 
 ```
-lsa src, amount, dest
+lsa src, amount, dest, flags
 ```
 
 Performs $dest = src \ll amount$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -123,13 +128,13 @@ use reloaded operator if exists.
 # Right Shift Arithmetic
 
 ```
-rsa src, amount, dest
+rsa src, amount, dest, flags
 ```
 
 Performs $dest = src \gg amount$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 Will fill in the leftmost bits with the value of the original leftmost bit of $src$
 for signed integral data types, and with 0 for unsigned integral data types.
@@ -144,13 +149,13 @@ for signed integral data types, and with 0 for unsigned integral data types.
 # Right Shift Logical
 
 ```
-rsl src, amount, dest
+rsl src, amount, dest, flags
 ```
 
 Performs $dest = src \ggg amount$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -161,13 +166,13 @@ use reloaded operator if exists.
 # Bitwise And
 
 ```
-bitand src_a, src_b, dest
+bitand src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \& src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -178,13 +183,13 @@ use reloaded operator if exists.
 # Bitwise Or
 
 ```
-bitor src_a, src_b, dest
+bitor src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a | src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -195,13 +200,13 @@ use reloaded operator if exists.
 # Bitwise Xor
 
 ```
-bitxor src_a, src_b, dest
+bitxor src_a, src_b, dest, flags
 ```
 
 Performs $dest = src_a \oplus src_b$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
@@ -212,16 +217,15 @@ use reloaded operator if exists.
 # Bitwise Not
 
 ```
-bitnot src, dest
+bitnot src, dest, flags
 ```
 
 Performs $dest = \sim src$ where all operands are implicit variables.
 
 Operation follows the data type of $dest$,
-use reloaded operator if exists.
+use an overloaded operator if one exists.
 
 ## Flags
 
-- `last_use_src_a`: Whether this instruction is the last use of `src_a`.
-- `last_use_src_b`: Whether this instruction is the last use of `src_b`.
+- `last_use_src`: Whether this instruction is the last use of `src`.
 - `use_dest_next`: Whether `dest` is used in the next instruction.

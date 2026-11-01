@@ -1,3 +1,51 @@
 ---
 title: 'Package descriptor'
 ---
+
+## Draft Circle artifact, version 1
+
+`Circle --ginkgo` writes a distinct compiler artifact. This is not the legacy
+executable package or the final Ginkgo runtime ABI. The existing Rust runtime
+cannot consume it. All numeric header fields use little-endian byte order.
+
+| Byte offset | Size | Field |
+| ---: | ---: | --- |
+| 0 | 8 | ASCII `GINKGO` followed by two zero bytes |
+| 8 | 4 | Unsigned format version, currently 1 |
+| 12 | 4 | Unsigned UTF-8 JSON manifest byte length |
+| 16 | 8 | Unsigned code section byte length |
+| 24 | Manifest length | UTF-8 JSON manifest |
+| 24 + manifest length | Code length | Concatenated function instruction bytes |
+
+## Manifest
+
+Property names are case-sensitive and use the following PascalCase names:
+
+| Property | Contents |
+| --- | --- |
+| `InstructionSet` | `"ginkgo"` |
+| `FormatVersion` | 1 |
+| `Package` | `Name`, `Version`, `Type`, `EntrypointFunctionId` |
+| `Symbols` | `Id`, `Name`, `Signature`, string `Kind`, nullable `Parent`, `Children`, nullable `DataType` and `FieldType` |
+| `Functions` | `Id`, `Signature`, `Offset`, `Length`, `Registers`, `ConstantPool`, `External`, `Parameters`, `ReturnType`, `Annotations` |
+| `ConstantPools` | Per-unit `Index`, `Unit`, and `Values` |
+
+Each data-type symbol's `DataType` records `Kind`, nullable group and enum symbol
+IDs (`Group`, `Enum`), and `IsInternal`. Field, parameter, and return declarations
+record `Id`, `Dimension`, `AllowNone`, and string `Mutability`. Parameters also
+record `Name`. Function annotations are signature strings.
+
+Functions are ordered by symbol ID. `Offset` is relative to the code section and
+`Length` counts bytes. `Registers` is the function's register count. External
+declarations have `External: true` and zero code length. Jump addresses remain
+local to their owning function.
+
+`ConstantPool` selects a unit pool by its `Index`; `ld_const` addresses that pool's
+`Values` using its local constant index. Each value records `Index`, `TypeId`, and
+`Value`. Decimal values are JSON numbers, strings and booleans retain their JSON
+types, and byte arrays use base64 strings. Consumers must preserve decimal
+precision rather than implicitly interpreting every number as binary64.
+
+These JSON tables do not implement the proposed binary symbol and array layouts
+elsewhere in this section. See [Compiler support](/ginkgo/implementation) for
+source lowering limits and CLI behavior.

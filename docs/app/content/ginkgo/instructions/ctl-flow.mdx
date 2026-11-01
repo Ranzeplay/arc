@@ -10,6 +10,9 @@ lbl
 
 Defines a label for jump instructions to target.
 
+`lbl` emits opcode `0x14`, one byte. Its attached label metadata emits no bytes
+and names that instruction's start address.
+
 # Unconditional Jump
 
 ```
@@ -18,41 +21,59 @@ jmp target
 
 Performs an unconditional jump to `target`.
 
+`target` is a signed 64-bit function-local byte address, validated against
+instruction boundaries. It is not an instruction index or package address.
+See [relocation rules](/ginkgo/instructions/encoding).
+
 # Conditional Jump
 
 ```
-cjp condition, target
+cjp condition, target, flags
 ```
 
-Performs a jump to `target` if `condition` is true.
+Performs a jump to `target` when the selected condition holds for register
+`condition`. Targets use the same addressing as `jmp`.
 
 ## Conditions
 
-- `cond_true`: Jump when `target` is true.
-- `cond_false`: Jump when `target` is false.
-- `cond_not_none`: Jump when `target` is not `None`.
-- `cond_none`: Jump when `target` is `None`.
+- `cond_true`: Jump when `condition` is true (bit 0).
+- `cond_false`: Jump when `condition` is false (bit 1).
+- `cond_not_none`: Jump when `condition` is not `None` (bit 2).
+- `cond_none`: Jump when `condition` is `None` (bit 3).
+- `last_use_condition`: Last use of the condition register (bit 4).
+
+The compiler selects exactly one condition flag. Semantics for combinations of
+condition flags are not yet specified.
 
 # Function Call
 
 ```
-pcall fid
 // compute args with usual instructions
+pcall fid
 arg arg1, flags
 arg arg2, flags
 // Argument number increments implicitly
-invoke flags
+invoke dest, flags
 ```
 
 ## Instruction breakdown
 
 - `pcall`: Prepare for a function call, with the function ID `fid`.
 - `arg`: Bind an argument for the function call, with the value an implicit register. Argument number increments implicitly.
-- `invoke`: Invoke the function call.
+- `invoke`: Invoke the function call, recording caller implicit register `dest`
+  as the return destination. A value returned by `retv` is written there before
+  execution resumes after `invoke`. `pcall` carries only the function ID.
 
-> If `invoke` is not used after `pcall`,
-> the current execution will continue as normal,
-> and the prepared function call will be discarded.
+`dest` is an unsigned 16-bit register operand before the trailing flags byte
+(`Dest` in C#). For a scalar `none` return, `dest` is ignored and the compiler
+encodes zero; no result register is allocated. For value-returning calls, including
+calls used only as statements, the compiler allocates a typed result register.
+Zero remains a valid destination for value-returning calls; it is not a sentinel.
+
+Arguments are evaluated before `pcall`, so nested calls during evaluation do not
+overwrite the pending call frame. Argument registers are bound in declaration
+order. A prepared call executes only when `invoke` is reached; cancellation of
+an unused prepared call still requires a runtime contract.
 
 ## Flags
 
@@ -64,18 +85,38 @@ invoke flags
 
 - `is_virt`: Whether this is a virtual call (dynamic dispatch).
 
+Both call flags occupy bit 0 in their respective instructions. Virtual dispatch
+is encodable but is not implemented by the current compiler/runtime path.
+
 # Function Return with Value
 
 ```
-retv val
+retv val, flags
 ```
 
 Return from the current function with a return value `val`.
 
+Flag bit 0, `expect_return_value` (ERV), indicates whether the function is
+expected to return a value. The C# instruction property is `ExpectReturnValue`.
+Source generation sets ERV according to the declared return type: true for a
+value-returning function, false for scalar `none`. The caller destination is
+encoded by `invoke`. Other flag bits are reserved
+and emitted as zero.
+
+`val` is a callee register operand. Its value is transferred to the caller's
+destination recorded by `invoke`. Source generation supports value-returning
+calls in expressions as well as statements.
+
 # Function Return without Value
 
 ```
-retn
+retn flags
 ```
 
 Return from the current function without a return value.
+
+Flag bit 0 is `expect_return_value` (ERV), with the same meaning as on `retv`.
+Generated bare and implicit returns from scalar `none` functions clear ERV.
+A bare return in a value-returning function remains a compilation error; setting
+the flag does not supply a missing value. The encoded lengths are now four bytes
+for `retv` and two bytes for `retn`.

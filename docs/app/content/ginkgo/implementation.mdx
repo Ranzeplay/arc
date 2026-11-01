@@ -1,0 +1,81 @@
+---
+title: 'Compiler support'
+---
+
+Circle uses Ginkgo instructions and generation rules when `--ginkgo` is supplied:
+
+```sh
+Circle input.script.arc --ginkgo --package-type Library --no-std --output build.ginkgo.arc
+```
+
+Without this flag, Circle uses the legacy generator and package format. Under
+Ginkgo, unsupported constructs produce diagnostics rather than falling back to
+legacy instructions. Standard-library loading is enabled unless `--no-std` is
+supplied. `--dry-run` generates in memory without writing output.
+`--source-info <path>` writes symbol signatures and function source paths;
+instruction-level source mapping is not implemented. Generation errors produce
+a nonzero exit code. Executable packages require exactly one defined function
+annotated `@Entrypoint`.
+
+Standard-library declarations are loaded for resolution, but their bodies are
+generated only when called by user code, including transitive calls. Unsupported
+unused library bodies do not block compilation; unsupported called bodies still
+produce diagnostics. All supplied user function bodies are checked.
+
+The output is a [draft compiler artifact](/ginkgo/descriptors/pkg). The existing
+Rust runtime cannot load or execute it. Encoding an instruction does not imply
+runtime support or source-language lowering for every use of that instruction.
+
+## Implemented generation
+
+All 41 documented opcodes, `0x00` through `0x28`, have instruction models and
+binary encoders. Function assembly resolves jumps and validates instruction
+boundaries. Source lowering currently covers:
+
+- Literals, typed constant pools, local reads, explicit and inferred declarations.
+- Arithmetic, bitwise operations, shifts, comparisons, and unary operations.
+- Logical operations on scalar booleans, evaluating both operands eagerly.
+- Local assignments, field reads and writes, nested field writes, and assign-if-none.
+- Statement and expression calls with argument count and exact type matching,
+  typed return destinations encoded in `invoke`, and supported group construction.
+- Value and void returns, if/elif/else, while, for, loop, break, and continue.
+
+Outputs from calls are exposed through the same implicit register encoded in
+`invoke.dest`. Direct call initializers and local assignments redirect that
+destination to the target register instead of emitting a copy. Field stores,
+arguments, arithmetic, returns, and chained access consume the call result register.
+Intermediate call results remain distinct when needed by later instructions.
+
+Parameters occupy the first registers in declaration order. Subsequent register
+allocation is monotonic within a function; registers are not reused when a block
+exits. Lexical declarations cease to be visible at block exit. Shadowing an active
+local is currently rejected. A conservative structural check diagnoses possible
+fallthrough in value-returning functions.
+
+Construction emits `init_obj` followed by a construction lifecycle call. Supported
+constructors accept the allocated object as their first explicit `self` parameter
+and return scalar `none`. A group without declared constructors permits default
+construction with no arguments. `init_obj` alone does not invoke a constructor.
+
+## Remaining contracts and limitations
+
+- Construction lifecycle functions still require explicit `self` and scalar `none`
+  returns. Factory-style construction needs separate allocation and lifecycle
+  rules; ordinary functions returning group values can be used in expressions.
+- Type and enum values, lambdas/captures, and generic specialization require
+  additional value representation and calling-convention work.
+- Indexed access and throw produce diagnostics: no indexed load/store or throw
+  protocol is defined in this ISA. Foreach has no AST lowering yet.
+- Ternary, range, and arrow expressions remain unsupported by the existing AST parser.
+- Operator-overload resolution, inheritance dispatch, runtime decoding/execution,
+  and the final package and metadata ABI remain unfinished.
+
+Instruction pages describe intended semantics. References to overloaded operators,
+virtual invocation, deep cloning, or reference loads do not claim those runtime
+features have been implemented. See the [encoding notes](/ginkgo/instructions/encoding)
+for currently unspecified flag combinations and reference ordering.
+
+Encoding, generation, and artifact regression tests are provided under
+`src/compiler/Tests/PackageGeneration/Ginkgo*`. The focused Ginkgo test run currently
+has failures in the deferred-library fixture and related generation cases; the
+runtime workspace builds successfully with `cargo check --workspace`.

@@ -4,8 +4,12 @@ title: 'Instructions'
 
 Below is a concise opcode table for each instruction under this directory.
 
+Operand widths, flag bits, instruction lengths and relocation rules are defined
+in [Draft binary encoding](/ginkgo/instructions/encoding). See also
+[Compiler support](/ginkgo/implementation) for generation coverage and limitations.
+
 | Opcode | Mnemonics | Remark |
----:|---|---|
+| ---: | --- | --- |
 | `0x00` | `nop` | No operation. |
 | `0x01` | `add` | Adds two values. |
 | `0x02` | `sub` | Subtracts second value from first. |
