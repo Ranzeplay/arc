@@ -1,5 +1,5 @@
 use crate::command_line_options::Args;
-use crate::dispatcher::cmdec::call_cmdec_decoder;
+use crate::dispatcher::cmdec::{call_cmdec_decoder, decode};
 use crate::dispatcher::execute::execute;
 use clap::Parser;
 use log::{debug, error, info};
@@ -41,7 +41,9 @@ fn main() {
                     print_raw_bytes: decode_command.raw,
                     verbose: args.verbose,
                 };
-                call_cmdec_decoder(opt);
+                if !decode(opt, decode_command.source_info.as_deref()) {
+                    exit(1);
+                }
             }
             command_line_options::Subcommands::Execute(execute_command) => {
                 debug!("Executing package");

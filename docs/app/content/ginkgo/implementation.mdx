@@ -27,8 +27,30 @@ produce diagnostics. All supplied user function bodies are checked.
 The output is a [self-contained binary artifact](/ginkgo/descriptors/pkg), using
 the original order: descriptor, symbol table, constant table, then instructions.
 Version 2 replaces the draft JSON manifest with packed binary records. The
-existing Rust runtime cannot load or execute it. Encoding an instruction does not imply
+runtime cmdec can decode it; the Rust executor cannot execute it. Encoding an instruction does not imply
 runtime support or source-language lowering for every use of that instruction.
+
+## Runtime decoding
+
+The runtime CLI detects Ginkgo's magic header with the existing `decode` command:
+
+```sh
+cargo run --manifest-path src/runtime/Cargo.toml -p arc_cli -- decode build.ginkgo.arc --descriptor --symbols --constants --instructions
+```
+
+All 41 instructions are displayed with typed operands, flag bits, byte offsets,
+and raw bytes. Function headers identify the register count and constant pool;
+jump targets are function-local byte addresses. Symbols and constants retain
+their numeric IDs, and each constant pool is displayed separately. Version 2
+uses the current 32-bit IDs and counts; older draft layouts must be regenerated.
+Malformed or unsupported Ginkgo packages produce a nonzero exit code.
+
+Pass `--source-info <path>` (or `-m <path>`) to add signatures and function source
+paths from Circle's optional JSON sidecar. It is not needed for decoding.
+`--descriptor`, `--symbols`, `--constants`, `--instructions`, and `--raw` retain
+their existing meanings for legacy packages. Use the global `--verbose` flag
+with `--raw` to see the debug-level raw package dump. Ginkgo execution remains
+unsupported and `execute` reports that explicitly.
 
 ## Implemented generation
 
@@ -71,7 +93,7 @@ construction with no arguments. `init_obj` alone does not invoke a constructor.
 - Indexed access and throw produce diagnostics: no indexed load/store or throw
   protocol is defined in this ISA. Foreach has no AST lowering yet.
 - Ternary, range, and arrow expressions remain unsupported by the existing AST parser.
-- Operator-overload resolution, inheritance dispatch, runtime decoding/execution,
+- Operator-overload resolution, inheritance dispatch, runtime execution,
   and the final package and metadata ABI remain unfinished.
 
 Instruction pages describe intended semantics. References to overloaded operators,
@@ -80,6 +102,5 @@ features have been implemented. See the [encoding notes](/ginkgo/instructions/en
 for currently unspecified flag combinations and reference ordering.
 
 Encoding, generation, and artifact regression tests are provided under
-`src/compiler/Tests/PackageGeneration/Ginkgo*`. The focused Ginkgo test run currently
-has failures in the deferred-library fixture and related generation cases; the
-runtime workspace builds successfully with `cargo check --workspace`.
+`src/compiler/Tests/PackageGeneration/Ginkgo*`. Runtime decoder and CLI regression
+tests run with `cargo test --workspace` from `src/runtime`.

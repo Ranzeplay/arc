@@ -9,13 +9,34 @@ use arc_shared::models::options::cmdec_options::CmdecOptions;
 use arc_shared::models::package::Package;
 
 mod decoders;
+pub mod ginkgo;
 
 pub struct Cmdec {}
 
 impl Cmdec {
+    pub fn decode_ginkgo(
+        stream: &[u8],
+        opt: &CmdecOptions,
+        source_info: Option<&arc_shared::ginkgo::SourceInfo>,
+    ) -> Option<arc_shared::ginkgo::Package> {
+        match ginkgo::decode(stream) {
+            Ok(package) => {
+                ginkgo::print(&package, opt, source_info);
+                if opt.print_raw_bytes {
+                    debug!("Raw:\n{:02X?}", stream);
+                }
+                Some(package)
+            }
+            Err(message) => {
+                error!("Failed to decode Ginkgo package: {}", message);
+                None
+            }
+        }
+    }
+
     pub fn decode(stream: &[u8], opt: CmdecOptions) -> Option<Package> {
         // Check first 2 bytes
-        if stream[0] != 0x20 || stream[1] != 0x24 {
+        if !stream.starts_with(&[0x20, 0x24]) {
             error!("Invalid Arc package");
             return None;
         }

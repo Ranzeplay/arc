@@ -4,8 +4,8 @@ title: 'Draft binary encoding'
 
 This page defines the current compiler's draft wire convention for the
 [Ginkgo instruction set](/ginkgo/instructions). It supplements the instruction
-semantics; it is not a finalized runtime ABI. The legacy Rust runtime does not
-decode these instructions.
+semantics; it is not a finalized runtime ABI. Runtime cmdec decodes these
+instructions; the executor still supports only the legacy instruction set.
 
 Each instruction starts with its one-byte opcode, followed by operands in the
 order shown on its instruction page. There is no padding. Multi-byte values use
