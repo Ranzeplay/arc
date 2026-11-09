@@ -47,8 +47,8 @@ ld_float value, dest, flags
 
 Performs $dest = value$ where $dest$ is an implicit variable.
 
-`value` is an IEEE 754 binary64 immediate. Decimal source literals instead use the
-typed constant pool to preserve precision. Flag bit 0 is `usage_hint`.
+`value` is an IEEE 754 binary64 immediate. Decimal source literals use the
+typed constant pool with binary64 payloads. Flag bit 0 is `usage_hint`.
 
 Operation follows the data type of $dest$,
 use an overloaded operator if one exists.

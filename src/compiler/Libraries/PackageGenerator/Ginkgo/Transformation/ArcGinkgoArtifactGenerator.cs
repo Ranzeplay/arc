@@ -1,5 +1,4 @@
-using System.Text;
-using System.Text.Json;
+using Arc.Compiler.PackageGenerator.Ginkgo.Encoders;
 using Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Logging;
@@ -50,74 +49,25 @@ public static class ArcGinkgoArtifactGenerator
         }
 
         using var code = new MemoryStream();
-        var functionTable = functions.Select(item =>
+        foreach (var item in functions)
         {
             var function = item.Function;
+            // Each unit has its own scope copy; emit the copy whose body was generated.
+            symbols[symbols.FindIndex(n => n.Id == function.Id)] = function;
             function.EntrypointPos = code.Position;
             code.Write(function.GenerationResult.GeneratedData.ToArray());
             result.SourceInformation.FunctionSources.Add(function.Id, item.Unit.UnitName);
-            return new
-            {
-                function.Id, function.Signature, Offset = function.EntrypointPos,
-                Length = function.BlockLength, Registers = function.DataCount,
-                ConstantPool = item.Pool, External = function.BlockLength == 0,
-                Parameters = function.Parameters.Select(p => new
-                {
-                    Name = p.RawFullName, Type = Type(p.DataType, symbols),
-                }).ToArray(),
-                ReturnType = Type(function.ReturnValueType, symbols),
-                Annotations = function.Annotations.Keys.Select(a => a.Signature).ToArray()
-            };
-        }).ToArray();
+        }
         
         foreach (var symbol in symbols)
             result.SourceInformation.SymbolMapping.Add(symbol.Id, symbol.Signature);
 
-        var manifest = JsonSerializer.SerializeToUtf8Bytes(new
-        {
-            InstructionSet = "ginkgo", FormatVersion = 1,
-            Package = new { descriptor.Name, descriptor.Version, Type = descriptor.Type.ToString(), descriptor.EntrypointFunctionId },
-            Symbols = symbols.Select(n => new
-            {
-                n.Id, n.Name, n.Signature, Kind = n.NodeType.ToString(),
-                Parent = n.Parent?.Id,
-                Children = n.Children.Select(c => c.Id).ToArray(),
-                DataType = n is ArcScopeTreeDataTypeNode type ? new
-                {
-                    Kind = type.ArcDataTypeType.ToString(), Group = type.ComplexTypeGroup?.Id,
-                    Enum = type.EnumType?.Id, type.IsInternal
-                } : null,
-                FieldType = n is ArcScopeTreeGroupFieldNode field ? Type(field.DataType, symbols) : null
-            }).ToArray(),
-            Functions = functionTable,
-            ConstantPools = contexts.Select((unit, index) => new
-            {
-                Index = index, Unit = unit.UnitName,
-                Values = unit.Constants.Select((c, slot) => new { Index = slot, TypeId = c.TypeId, c.Value }).ToArray()
-            }).ToArray()
-        });
-        
-        using var output = new MemoryStream();
-        using var writer = new BinaryWriter(output, Encoding.UTF8, leaveOpen: true);
-        writer.Write("GINKGO\0\0"u8.ToArray());
-        writer.Write(1u);
-        writer.Write(checked((uint)manifest.Length));
-        writer.Write(checked((ulong)code.Length));
-        writer.Write(manifest);
-        writer.Write(code.ToArray());
-        result.GeneratedData = output.ToArray();
+        result.GeneratedData = ArcGinkgoPackageEncoder.Encode(descriptor, symbols,
+            functions.ToDictionary(f => f.Function.Id, f => checked((uint)f.Pool)), contexts, code.ToArray());
         return result;
     }
 
     private static void Error(string message, ref ArcGinkgoArtifact result) =>
         result.Logs.Add(new ArcSourceUnlocatableLog(
             LogLevel.Error, 0, message, "Ginkgo artifact"));
-
-    private static object Type(ArcDataDeclarationDescriptor declaration, List<ArcScopeTreeNodeBase>? symbols) =>
-        new
-        {
-            Id = symbols.OfType<ArcScopeTreeDataTypeNode>()
-                .FirstOrDefault(t => t.ResolvedType.TypeId == declaration.Type.TypeId)?.Id,
-            declaration.Dimension, declaration.AllowNone, Mutability = declaration.Mutability.ToString()
-        };
 }

@@ -35,7 +35,7 @@ namespace Arc.Compiler.Circle
             };
             var withSourceInfoOption = new Option<string?>("--source-info")
             {
-                Description = "Include source information in the package and specify path",
+                Description = "Write optional debugging information to a separate file",
                 DefaultValueFactory = _ => null,
             };
             var dryRun = new Option<bool>("--dry-run")
@@ -45,7 +45,7 @@ namespace Arc.Compiler.Circle
             };
             var ginkgoOption = new Option<bool>("--ginkgo")
             {
-                Description = "Use Ginkgo generation rules and emit a draft Ginkgo artifact",
+                Description = "Use Ginkgo generation rules and emit a self-contained binary package",
                 DefaultValueFactory = _ => false,
             };
 

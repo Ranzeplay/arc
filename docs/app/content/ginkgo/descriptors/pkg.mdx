@@ -2,50 +2,93 @@
 title: 'Package descriptor'
 ---
 
-## Draft Circle artifact, version 1
+## Binary Circle artifact, version 2
 
-`Circle --ginkgo` writes a distinct compiler artifact. This is not the legacy
-executable package or the final Ginkgo runtime ABI. The existing Rust runtime
-cannot consume it. All numeric header fields use little-endian byte order.
+`Circle --ginkgo` produces one self-contained binary package. No JSON manifest
+or source-information file is required to interpret its execution metadata.
+Version 2 replaces the draft version 1 JSON representation; it is not byte
+compatible with that draft or with the legacy instruction set. The existing
+Rust executor does not yet execute Ginkgo packages.
 
-| Byte offset | Size | Field |
-| ---: | ---: | --- |
-| 0 | 8 | ASCII `GINKGO` followed by two zero bytes |
-| 8 | 4 | Unsigned format version, currently 1 |
-| 12 | 4 | Unsigned UTF-8 JSON manifest byte length |
-| 16 | 8 | Unsigned code section byte length |
-| 24 | Manifest length | UTF-8 JSON manifest |
-| 24 + manifest length | Code length | Concatenated function instruction bytes |
+The section order follows the original package layout: magic and descriptor,
+symbol table, constant table, then instructions. Integers are little-endian,
+booleans occupy one byte, symbol IDs are `u32`, and counts and byte lengths are
+`u64`. Records are packed without padding. Strings are UTF-8.
 
-## Manifest
-
-Property names are case-sensitive and use the following PascalCase names:
-
-| Property | Contents |
+| Section | Encoding |
 | --- | --- |
-| `InstructionSet` | `"ginkgo"` |
-| `FormatVersion` | 1 |
-| `Package` | `Name`, `Version`, `Type`, `EntrypointFunctionId` |
-| `Symbols` | `Id`, `Name`, `Signature`, string `Kind`, nullable `Parent`, `Children`, nullable `DataType` and `FieldType` |
-| `Functions` | `Id`, `Signature`, `Offset`, `Length`, `Registers`, `ConstantPool`, `External`, `Parameters`, `ReturnType`, `Annotations` |
-| `ConstantPools` | Per-unit `Index`, `Unit`, and `Values` |
+| Magic | Eight bytes: ASCII `GINKGO` followed by two zero bytes |
+| Format version | `u32`, currently 2 |
+| Package descriptor | Same fields and widths as the original descriptor, below |
+| Symbol table | `u64` count followed by symbol records |
+| Constant pools | `u64` pool count followed by each counted constant table |
+| Instructions | All remaining bytes; functions are concatenated in symbol-ID order |
 
-Each data-type symbol's `DataType` records `Kind`, nullable group and enum symbol
-IDs (`Group`, `Enum`), and `IsInternal`. Field, parameter, and return declarations
-record `Id`, `Dimension`, `AllowNone`, and string `Mutability`. Parameters also
-record `Name`. Function annotations are signature strings.
+## Package descriptor
 
-Functions are ordered by symbol ID. `Offset` is relative to the code section and
-`Length` counts bytes. `Registers` is the function's register count. External
-declarations have `External: true` and zero code length. Jump addresses remain
-local to their owning function.
+The descriptor reuses the original encoder. Its fields, in order, are package
+type (`u8`: 0 library, 1 executable), name (`u64` byte length and UTF-8 bytes),
+package version (`i64`), entrypoint function ID (`u64`), data alignment length
+(`u64`), root function table position (`u64`), root constant table position
+(`u64`), root group table position (`u64`), and region table position (`u64`).
+The last four positions are reserved and zero in Circle's default descriptor;
+tables are read sequentially. Alignment is retained for descriptor compatibility
+and does not introduce padding. The package version is independent of the
+binary format version. The entrypoint is zero for libraries.
 
-`ConstantPool` selects a unit pool by its `Index`; `ld_const` addresses that pool's
-`Values` using its local constant index. Each value records `Index`, `TypeId`, and
-`Value`. Decimal values are JSON numbers, strings and booleans retain their JSON
-types, and byte arrays use base64 strings. Consumers must preserve decimal
-precision rather than implicitly interpreting every number as binary64.
+## Symbol table
 
-These JSON tables do not implement the proposed binary symbol and array layouts
-elsewhere in this section. See [Compiler support](/ginkgo/implementation) for
-source lowering limits and CLI behavior.
+Each record starts with a `u32` symbol ID and `u8` kind, followed immediately by
+the payload below. Kind numbers match the original instruction set's symbol
+tags. Names, signatures, parameter names, source paths, and the compiler's
+scope tree are omitted from execution records.
+
+An ID list is a `u64` count followed by `u32` IDs. A declaration consists of
+dimension (`i32`), mutability (`u8`: 0 constant, 1 variable), type symbol ID
+(`u32`), and allow-none (`bool`).
+
+| Kind | Payload, in order |
+| --- | --- |
+| `0x01` Namespace | Empty |
+| `0x02` Function | Code offset (`i64`), byte length (`i64`), return declaration, parameter count (`u64`) and declarations, annotation ID list, generic type ID list, register count (`i64`), constant pool index (`u32`) |
+| `0x03` Group field | Declaration |
+| `0x04` Data type | Category (`u8`: 0 internal, 1 user-defined), then group or enum ID (`u32`) only for user-defined types |
+| `0x06` Group | Field ID list, lifecycle count (`u64`) and pairs of stage (`u8`) and function ID (`u32`), function ID list, subgroup ID list, annotation ID list, generic type ID list, derivation type ID list |
+| `0x07` Annotation | Target group ID (`u32`) |
+| `0x08` Enum | Annotation ID list, member ID list |
+| `0x09` Enum member | Annotation ID list |
+| `0x0a` Generic type parameter | Constraint type ID (`u32`) |
+
+Function offsets are relative to the instruction section. Jumps remain local
+to their owning function. External declarations have zero byte length. Only
+generated functions and explicit external declarations have function records;
+unused deferred standard-library bodies are not emitted.
+
+## Constant pools
+
+Pools retain compilation-unit order. Each pool starts with a `u64` constant
+count. Its records follow the original constant descriptor structure with
+32-bit IDs: local index (`u32`), type symbol ID (`u32`), is-array (`bool`, currently
+false), payload byte length (`u64`), and payload bytes. `ld_const` uses its
+function's pool index and a local constant index; pool and constant indices
+start at zero. Unit names are not stored.
+
+| Value | Payload |
+| --- | --- |
+| Integer | Signed `i64` |
+| Decimal | 8-byte IEEE 754 binary64 (`double`) |
+| Boolean | One byte, 0 or 1 |
+| String | UTF-8 bytes; length is the descriptor's payload byte length |
+| None | Empty payload |
+
+Decimal source values are converted to doubles when the package is encoded.
+Strings use byte lengths, including non-ASCII text.
+
+## Optional debugging information
+
+`--source-info <path>` writes a separate JSON file containing `instructionSet`
+(`"arc-ginkgo"`), `symbolMapping` (numeric IDs to readable signatures), and
+`functionSources` (function IDs to source paths). It is solely for descriptions
+and debugging tools such as cmdec; removing it does not change the package's
+execution data. Instruction-level source mapping is not implemented. See
+[Compiler support](/ginkgo/implementation) for current runtime and lowering limits.

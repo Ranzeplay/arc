@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
 
-/// <summary>A versioned compiler artifact, separate from legacy executable packages.</summary>
+/// <summary>A self-contained binary package with optional debugging information.</summary>
 public sealed class ArcGinkgoArtifact
 {
     public byte[] GeneratedData { get; internal set; } = [];

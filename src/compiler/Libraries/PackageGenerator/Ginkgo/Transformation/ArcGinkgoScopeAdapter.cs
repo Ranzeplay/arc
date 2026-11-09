@@ -39,6 +39,11 @@ public static class ArcGinkgoScopeAdapter
                 function.Accessibility = oldFunction.Accessibility;
                 function.Annotations = oldFunction.Annotations;
             }
+            if (source is Legacy.ArcScopeTreeAnnotationNode oldAnnotation && target is ArcScopeTreeAnnotationNode annotation)
+                annotation.TargetGroup = (ArcScopeTreeGroupNode)mapped[oldAnnotation.TargetGroup];
+            if (source is Legacy.ArcScopeTreeGroupNode oldGroup && target is ArcScopeTreeGroupNode targetGroup)
+                foreach (var (key, arguments) in oldGroup.Annotations)
+                    targetGroup.Annotations.Add((ArcScopeTreeAnnotationNode)mapped[key], arguments);
         }
         // FlattenedNodes deduplicates IDs, so inspect the mapped nodes instead.
         if (mapped.Values.GroupBy(n => n.Id).Any(g => g.Count() > 1))
@@ -86,6 +91,7 @@ public static class ArcGinkgoScopeAdapter
                     Legacy.ArcScopeTreeEnumMemberNode n => new ArcScopeTreeEnumMemberNode { SyntaxTree = n.SyntaxTree, Annotations = n.Annotations },
                     Legacy.ArcScopeTreeGenericTypeNode n => new ArcScopeTreeGenericTypeNode
                         { Identifier = n.Identifier, ConstraintType = n.ConstraintType },
+                    Legacy.ArcScopeTreeAnnotationNode n => new ArcScopeTreeAnnotationNode { TargetGroup = null! },
                     _ => null
                 };
                 if (copy is null) continue;

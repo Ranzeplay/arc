@@ -125,7 +125,7 @@ public static class ArcExpressionEvaluationGenerator
                 { Value = value.IntegerValue!.Value, Dest = output.Id };
         else
         {
-            // Preserve decimal precision and the bool/none types in the constant pool.
+            // Keep decimal, bool, and none values in the typed constant pool.
             var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value?.GetRawValue() ?? Array.Empty<byte>());
             instruction = new ArcDataLoadConstantInstruction { TableIndex = index, Dest = output.Id };
         }

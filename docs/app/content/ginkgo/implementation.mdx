@@ -12,8 +12,10 @@ Without this flag, Circle uses the legacy generator and package format. Under
 Ginkgo, unsupported constructs produce diagnostics rather than falling back to
 legacy instructions. Standard-library loading is enabled unless `--no-std` is
 supplied. `--dry-run` generates in memory without writing output.
-`--source-info <path>` writes symbol signatures and function source paths;
-instruction-level source mapping is not implemented. Generation errors produce
+`--source-info <path>` optionally writes a debugging-only JSON sidecar with
+symbol signatures and function source paths. Execution metadata is stored in
+the binary package and requires no JSON manifest or sidecar.
+Instruction-level source mapping is not implemented. Generation errors produce
 a nonzero exit code. Executable packages require exactly one defined function
 annotated `@Entrypoint`.
 
@@ -22,8 +24,10 @@ generated only when called by user code, including transitive calls. Unsupported
 unused library bodies do not block compilation; unsupported called bodies still
 produce diagnostics. All supplied user function bodies are checked.
 
-The output is a [draft compiler artifact](/ginkgo/descriptors/pkg). The existing
-Rust runtime cannot load or execute it. Encoding an instruction does not imply
+The output is a [self-contained binary artifact](/ginkgo/descriptors/pkg), using
+the original order: descriptor, symbol table, constant table, then instructions.
+Version 2 replaces the draft JSON manifest with packed binary records. The
+existing Rust runtime cannot load or execute it. Encoding an instruction does not imply
 runtime support or source-language lowering for every use of that instruction.
 
 ## Implemented generation

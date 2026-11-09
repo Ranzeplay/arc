@@ -61,7 +61,7 @@ namespace Arc.Compiler.Circle
                             options: _jsonSerializerOptions));
                 }
                 else logger.LogInformation("dry-run specified, skipping output generation");
-                logger.LogInformation("Generated draft Ginkgo artifact ({} bytes); legacy runtime execution is not supported",
+                logger.LogInformation("Generated Ginkgo binary package ({} bytes); legacy runtime execution is not supported",
                     artifact.GeneratedData.Length);
                 return 0;
             }

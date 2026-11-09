@@ -25,8 +25,7 @@ when its value is zero.
 
 Symbol operands are IDs, not positions in the serialized symbol table. Constant
 indices address the unit pool selected by the function's `ConstantPool` metadata.
-Decimal source literals use typed constants to preserve precision rather than
-being converted to binary64.
+Decimal source literals use typed constants with IEEE 754 binary64 payloads.
 
 ## Flag bits
 
