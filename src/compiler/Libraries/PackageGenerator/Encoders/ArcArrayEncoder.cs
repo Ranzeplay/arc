@@ -29,7 +29,7 @@
         public static IEnumerable<byte> SerializeArray(IEnumerable<uint> array)
         {
             return [
-                ..BitConverter.GetBytes(array.LongCount()),
+                ..BitConverter.GetBytes(checked((uint)array.Count())),
                 ..array.Select(BitConverter.GetBytes).SelectMany(x => x)
             ];
         }

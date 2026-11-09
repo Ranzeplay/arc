@@ -17,12 +17,12 @@ internal static class ArcGinkgoPackageEncoder
         using var writer = new BinaryWriter(output, Encoding.UTF8, leaveOpen: true);
         writer.Write("GINKGO\0\0"u8);
         writer.Write(2u);
-        writer.Write(ArcPackageDescriptorEncoder.Encode(descriptor).ToArray());
+        WriteDescriptor();
 
         // Keep the legacy order: descriptor, counted symbol table, counted constants, code.
         var encodedSymbols = symbols.Where(n => n is IArcEncodableScopeTreeNode or ArcScopeTreeNamespaceNode ||
             n is ArcScopeTreeGroupNode || n is ArcScopeTreeFunctionNodeBase && functionPools.ContainsKey(n.Id)).ToList();
-        writer.Write((ulong)encodedSymbols.Count);
+        writer.Write(checked((uint)encodedSymbols.Count));
         foreach (var symbol in encodedSymbols)
         {
             writer.Write(symbol.Id);
@@ -33,7 +33,7 @@ internal static class ArcGinkgoPackageEncoder
                     writer.Write(function.EntrypointPos);
                     writer.Write(function.BlockLength);
                     WriteDeclaration(function.ReturnValueType);
-                    writer.Write((ulong)function.Parameters.LongCount());
+                    writer.Write(checked((uint)function.Parameters.Count()));
                     foreach (var parameter in function.Parameters) WriteDeclaration(parameter.DataType);
                     WriteIds(function.Annotations.Keys.Select(a => AnnotationId(a.Signature)));
                     WriteIds(function.GenericTypes.Select(g => g.Id));
@@ -53,7 +53,7 @@ internal static class ArcGinkgoPackageEncoder
                     writer.Write((byte)ArcSymbolType.Group);
                     WriteIds(group.Fields.Select(f => f.Id));
                     var lifecycleFunctions = group.LifecycleFunctions.Where(f => functionPools.ContainsKey(f.Id)).ToList();
-                    writer.Write((ulong)lifecycleFunctions.Count);
+                    writer.Write(checked((uint)lifecycleFunctions.Count));
                     foreach (var function in lifecycleFunctions)
                     {
                         writer.Write((byte)function.SyntaxTree.LifecycleStage);
@@ -92,10 +92,10 @@ internal static class ArcGinkgoPackageEncoder
             }
         }
 
-        writer.Write((ulong)contexts.Count);
+        writer.Write(checked((uint)contexts.Count));
         foreach (var context in contexts)
         {
-            writer.Write((ulong)context.Constants.Count);
+            writer.Write(checked((uint)context.Constants.Count));
             for (var index = 0; index < context.Constants.Count; index++)
             {
                 var constant = context.Constants[index];
@@ -121,6 +121,21 @@ internal static class ArcGinkgoPackageEncoder
         void WriteIds(IEnumerable<uint> ids) => writer.Write(ArcArrayEncoder.SerializeArray(ids).ToArray());
 
         uint AnnotationId(string signature) => symbols.First(n => n.Signature == signature).Id;
+
+        void WriteDescriptor()
+        {
+            writer.Write((byte)descriptor.Type);
+            var nameBytes = Encoding.UTF8.GetBytes(descriptor.Name);
+            writer.Write((ulong)nameBytes.LongLength);
+            writer.Write(nameBytes);
+            writer.Write(descriptor.Version);
+            writer.Write(checked((uint)descriptor.EntrypointFunctionId));
+            writer.Write(descriptor.DataAlignmentLength);
+            writer.Write(descriptor.RootFunctionTableEntryPos);
+            writer.Write(descriptor.RootConstantTableEntryPos);
+            writer.Write(descriptor.RootGroupTableEntryPos);
+            writer.Write(descriptor.RegionTableEntryPos);
+        }
 
         void WriteDeclaration(ArcDataDeclarationDescriptor declaration)
         {

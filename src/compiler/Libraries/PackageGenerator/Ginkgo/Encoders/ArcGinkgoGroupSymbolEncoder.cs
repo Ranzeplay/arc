@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Encoders
                 // Field id list
                 .. ArcArrayEncoder.SerializeArray(group.Fields.Select(field => field.Id)),
                 // Lifecycle function id list
-                .. BitConverter.GetBytes(group.LifecycleFunctions.LongCount()),
+                .. BitConverter.GetBytes(checked((uint)group.LifecycleFunctions.Count())),
                 .. group.LifecycleFunctions.SelectMany(f => (byte[]) [(byte)f.SyntaxTree.LifecycleStage, .. BitConverter.GetBytes(f.Id)]),
                 // Function id list
                 .. ArcArrayEncoder.SerializeArray(group.Functions.Select(function => function.Id)),
@@ -22,7 +22,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Encoders
                 // Generic id list
                 .. ArcArrayEncoder.SerializeArray(group.GenericTypes.Select(g => g.Id)),
                 // Derivation id list
-                .. ArcArrayEncoder.SerializeArray(group.Derivations.Select(derivation => derivation.Target.ProxyTypeId)),
+                .. ArcArrayEncoder.SerializeArray(group.Derivations.Select(derivation => checked((uint)derivation.Target.ProxyTypeId))),
             ];
         }
     }
