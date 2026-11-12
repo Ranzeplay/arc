@@ -81,10 +81,17 @@ fn all_opcodes_have_the_compiler_lengths() {
     let mut offset = 0;
     for (i, length) in decoded.instructions.iter().zip(lengths) {
         assert_eq!(i.offset, offset);
+        assert_eq!(i.opcode as u8, i.raw[0]);
         assert_eq!(i.raw.len(), length);
         assert_eq!(
             i.flags.is_none(),
-            matches!(i.opcode, 0x00 | 0x14 | 0x15 | 0x17)
+            matches!(
+                i.opcode,
+                Opcode::NoOperation
+                    | Opcode::Label
+                    | Opcode::UnconditionalJump
+                    | Opcode::PrepareFunctionCall
+            )
         );
         offset += length;
     }
@@ -198,8 +205,19 @@ fn decodes_all_symbol_kinds_and_per_function_constant_pools() {
         vec![(0, 3, (-1.25f64).to_le_bytes().to_vec())],
     ];
     let decoded = decode(&package(&symbols, &pools, &[0x1b, 0, 0x1b, 1])).unwrap();
+    assert_eq!(decoded.descriptor.package_type, PackageType::Library);
     assert_eq!(decoded.descriptor.name, "测试");
     assert_eq!(decoded.symbols.len(), symbols.len());
+    assert!(matches!(decoded.symbols[&13], Symbol::DataType(None)));
+    assert!(matches!(decoded.symbols[&14], Symbol::DataType(Some(15))));
+    let Symbol::Group {
+        lifecycle_functions,
+        ..
+    } = &decoded.symbols[&15]
+    else {
+        panic!();
+    };
+    assert_eq!(lifecycle_functions, &[(LifecycleKind::Destructor, 10)]);
     assert_eq!(decoded.constant_pools[0][&0].raw_value, "你好".as_bytes());
     assert_eq!(
         decoded.constant_pools[1][&0].raw_value,
@@ -287,4 +305,63 @@ fn library_with_no_code_or_symbols_is_valid() {
     );
     // External functions have no instruction bytes.
     assert!(decode(&package(&[(1, 2, function(0, 0, 0))], &[vec![]], &[])).is_ok());
+}
+
+#[test]
+fn enum_values_follow_the_ginkgo_wire_format() {
+    // Keep literal bytes in these fixtures to verify the protocol independently of the enums.
+    assert_eq!(Opcode::from_repr(0x01), Some(Opcode::Add));
+    assert_eq!(Opcode::from_repr(0x28), Some(Opcode::StoreField));
+    assert_eq!(Opcode::from_repr(0x29), None);
+    assert_eq!(Opcode::from_repr(0xff), None);
+    assert_eq!(Opcode::LoadConstant.mnemonic(), "ld_const");
+    assert_eq!(Opcode::LogicalNot.mnemonic(), "lognot");
+    assert_eq!(BuiltinType::from_repr(2), Some(BuiltinType::Integer));
+    assert_eq!(BuiltinType::from_repr(8), Some(BuiltinType::Function));
+    assert_eq!(BuiltinType::from_repr(9), None);
+
+    let mut bytes = package(&[], &[], &[]);
+    bytes[12] = 1;
+    assert_eq!(
+        decode(&bytes).unwrap().descriptor.package_type,
+        PackageType::Executable
+    );
+    bytes[12] = 2;
+    assert!(decode(&bytes).unwrap_err().contains("package type"));
+
+    assert!(
+        decode(&package(&[(1, 4, vec![2])], &[], &[]))
+            .unwrap_err()
+            .contains("type category")
+    );
+    for (value, expected) in [
+        (1, LifecycleKind::Constructor),
+        (2, LifecycleKind::Destructor),
+        (3, LifecycleKind::DeepCopy),
+        (4, LifecycleKind::ShallowCopy),
+    ] {
+        let group = [
+            0u32.to_le_bytes().as_slice(),
+            &1u32.to_le_bytes(),
+            &[value],
+            &10u32.to_le_bytes(),
+            &[0; 20],
+        ]
+        .concat();
+        let decoded = decode(&package(&[(1, 6, group)], &[], &[])).unwrap();
+        let Symbol::Group {
+            lifecycle_functions,
+            ..
+        } = &decoded.symbols[&1]
+        else {
+            panic!();
+        };
+        assert_eq!(lifecycle_functions, &[(expected, 10)]);
+    }
+    let group = [0u32.to_le_bytes().as_slice(), &1u32.to_le_bytes(), &[0xff]].concat();
+    assert!(
+        decode(&package(&[(1, 6, group)], &[], &[]))
+            .unwrap_err()
+            .contains("lifecycle kind")
+    );
 }

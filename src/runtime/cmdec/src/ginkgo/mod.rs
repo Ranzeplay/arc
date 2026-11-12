@@ -27,10 +27,9 @@ pub fn decode(stream: &[u8]) -> Result<Package, String> {
     if version != 2 {
         return Err(format!("Unsupported Ginkgo format version: {}", version));
     }
-    let package_type = reader.u8()?;
-    if package_type > 1 {
-        return Err(format!("Unknown package type: {}", package_type));
-    }
+    let value = reader.u8()?;
+    let package_type =
+        PackageType::from_repr(value).ok_or_else(|| format!("Unknown package type: {}", value))?;
     let name_length = reader.length()?;
     let name = std::str::from_utf8(reader.take(name_length)?)
         .map_err(|e| e.to_string())?
@@ -101,9 +100,12 @@ fn declaration(reader: &mut Reader<'_>) -> Result<Declaration, String> {
 }
 
 fn decode_symbol(reader: &mut Reader<'_>) -> Result<Symbol, String> {
-    Ok(match reader.u8()? {
-        0x01 => Symbol::Namespace,
-        0x02 => {
+    let value = reader.u8()?;
+    let kind = SymbolKind::from_repr(value)
+        .ok_or_else(|| format!("Unknown symbol kind: 0x{:02X}", value))?;
+    Ok(match kind {
+        SymbolKind::Namespace => Symbol::Namespace,
+        SymbolKind::Function => {
             let code_offset = reader.nonnegative()?;
             let code_length = reader.nonnegative()?;
             let return_declaration = declaration(reader)?;
@@ -121,16 +123,25 @@ fn decode_symbol(reader: &mut Reader<'_>) -> Result<Symbol, String> {
                 constant_pool: reader.u32()?,
             })
         }
-        0x03 => Symbol::GroupField(declaration(reader)?),
-        0x04 => Symbol::DataType(match reader.u8()? {
-            0 => None,
-            1 => Some(reader.u32()?),
-            value => return Err(format!("Unknown type category: {}", value)),
-        }),
-        0x06 => Symbol::Group {
+        SymbolKind::GroupField => Symbol::GroupField(declaration(reader)?),
+        SymbolKind::DataType => {
+            let value = reader.u8()?;
+            let category = DataTypeCategory::from_repr(value)
+                .ok_or_else(|| format!("Unknown type category: {}", value))?;
+            Symbol::DataType(match category {
+                DataTypeCategory::Internal => None,
+                DataTypeCategory::Complex => Some(reader.u32()?),
+            })
+        }
+        SymbolKind::Group => Symbol::Group {
             field_ids: reader.ids()?,
             lifecycle_functions: (0..reader.u32()?)
-                .map(|_| Ok((reader.u8()?, reader.u32()?)))
+                .map(|_| {
+                    let value = reader.u8()?;
+                    let kind = LifecycleKind::from_repr(value)
+                        .ok_or_else(|| format!("Unknown lifecycle kind: {}", value))?;
+                    Ok((kind, reader.u32()?))
+                })
                 .collect::<Result<_, String>>()?,
             function_ids: reader.ids()?,
             subgroup_ids: reader.ids()?,
@@ -138,16 +149,15 @@ fn decode_symbol(reader: &mut Reader<'_>) -> Result<Symbol, String> {
             generic_type_ids: reader.ids()?,
             derivation_type_ids: reader.ids()?,
         },
-        0x07 => Symbol::Annotation(reader.u32()?),
-        0x08 => Symbol::Enum {
+        SymbolKind::Annotation => Symbol::Annotation(reader.u32()?),
+        SymbolKind::Enum => Symbol::Enum {
             annotation_ids: reader.ids()?,
             member_ids: reader.ids()?,
         },
-        0x09 => Symbol::EnumMember {
+        SymbolKind::EnumMember => Symbol::EnumMember {
             annotation_ids: reader.ids()?,
         },
-        0x0a => Symbol::GenericTypeParameter(reader.u32()?),
-        kind => return Err(format!("Unknown symbol kind: 0x{:02X}", kind)),
+        SymbolKind::GenericTypeParameter => Symbol::GenericTypeParameter(reader.u32()?),
     })
 }
 

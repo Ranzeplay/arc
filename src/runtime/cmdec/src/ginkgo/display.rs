@@ -63,7 +63,11 @@ pub(crate) fn print(package: &Package, opt: &CmdecOptions, source: Option<&Sourc
                 .unwrap_or_default();
             info!(
                 "0x{:08X} {:<8} {}{} {:02X?}",
-                instruction.offset, instruction.mnemonic, operands, flags, instruction.raw
+                instruction.offset,
+                instruction.opcode.mnemonic(),
+                operands,
+                flags,
+                instruction.raw
             );
         }
     }
@@ -76,33 +80,37 @@ fn symbol_name(id: u32, source: Option<&SourceInfo>) -> String {
     }
 }
 
-fn flag_names(opcode: u8, flags: u8) -> Vec<&'static str> {
+fn flag_names(opcode: Opcode, flags: u8) -> Vec<&'static str> {
+    use Opcode::*;
     let names: &[&str] = match opcode {
-        0x01..=0x05 | 0x0a..=0x0c | 0x23..=0x25 => {
+        Add | Subtract | Multiply | Divide | Modulo | BitwiseAnd | BitwiseOr | BitwiseXor
+        | LogicalAnd | LogicalOr | LogicalXor => {
             &["last_use_src_a", "last_use_src_b", "use_dest_next"]
         }
-        0x07..=0x09 => &["last_use_src", "last_use_amount", "use_dest_next"],
-        0x06 | 0x0d | 0x26 => &["last_use_src", "use_dest_next"],
-        0x0e..=0x13 => &[
+        LeftShiftArithmetic | RightShiftArithmetic | RightShiftLogical => {
+            &["last_use_src", "last_use_amount", "use_dest_next"]
+        }
+        Inverse | BitwiseNot | LogicalNot => &["last_use_src", "use_dest_next"],
+        Equal | NotEqual | LessThan | LessThanOrEqual | GreaterThan | GreaterThanOrEqual => &[
             "last_use_src_l",
             "last_use_src_r",
             "use_dest_next",
             "cmp_ref",
         ],
-        0x16 => &[
+        ConditionalJump => &[
             "cond_true",
             "cond_false",
             "cond_not_none",
             "cond_none",
             "last_use_condition",
         ],
-        0x18 => &["last_use"],
-        0x19 => &["is_virt"],
-        0x1a | 0x1b => &["expect_return_value"],
-        0x1c => &["ld_const_ref", "usage_hint"],
-        0x1d | 0x1e | 0x22 => &["usage_hint"],
-        0x1f..=0x21 | 0x27 | 0x28 => &["last_use_src", "usage_hint"],
-        _ => &[],
+        Argument => &["last_use"],
+        Invoke => &["is_virt"],
+        ReturnWithValue | ReturnWithoutValue => &["expect_return_value"],
+        LoadConstant => &["ld_const_ref", "usage_hint"],
+        LoadImmediateInteger | LoadFloatingPointConstant | InitializeObject => &["usage_hint"],
+        Copy | Clone | LoadReference | LoadField | StoreField => &["last_use_src", "usage_hint"],
+        NoOperation | Label | UnconditionalJump | PrepareFunctionCall => &[],
     };
     names
         .iter()
@@ -114,16 +122,20 @@ fn flag_names(opcode: u8, flags: u8) -> Vec<&'static str> {
 fn constant_value(constant: &Constant) -> String {
     let bytes = constant.raw_value.as_slice();
     if !constant.is_array {
-        match (constant.type_id, bytes.len()) {
-            (0, 0) => return "none".into(),
-            (2, 8) => return i64::from_le_bytes(bytes.try_into().unwrap()).to_string(),
-            (3, 8) => return format!("{:?}", f64::from_le_bytes(bytes.try_into().unwrap())),
-            (5, _) => {
+        match (BuiltinType::from_repr(constant.type_id), bytes.len()) {
+            (Some(BuiltinType::None), 0) => return "none".into(),
+            (Some(BuiltinType::Integer), 8) => {
+                return i64::from_le_bytes(bytes.try_into().unwrap()).to_string();
+            }
+            (Some(BuiltinType::Decimal), 8) => {
+                return format!("{:?}", f64::from_le_bytes(bytes.try_into().unwrap()));
+            }
+            (Some(BuiltinType::String), _) => {
                 if let Ok(text) = std::str::from_utf8(bytes) {
                     return format!("{:?}", text);
                 }
             }
-            (6, 1) if bytes[0] <= 1 => return (bytes[0] == 1).to_string(),
+            (Some(BuiltinType::Boolean), 1) if bytes[0] <= 1 => return (bytes[0] == 1).to_string(),
             _ => {}
         }
     }

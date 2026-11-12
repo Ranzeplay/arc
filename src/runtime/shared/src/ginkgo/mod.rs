@@ -1,6 +1,60 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
 
+mod opcode;
+pub use opcode::Opcode;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[repr(u8)]
+pub enum PackageType {
+    Library = 0,
+    Executable = 1,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[repr(u8)]
+pub enum SymbolKind {
+    Namespace = 0x01,
+    Function = 0x02,
+    GroupField = 0x03,
+    DataType = 0x04,
+    Group = 0x06,
+    Annotation = 0x07,
+    Enum = 0x08,
+    EnumMember = 0x09,
+    GenericTypeParameter = 0x0a,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[repr(u8)]
+pub enum DataTypeCategory {
+    Internal = 0,
+    Complex = 1,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[repr(u8)]
+pub enum LifecycleKind {
+    Constructor = 1,
+    Destructor = 2,
+    DeepCopy = 3,
+    ShallowCopy = 4,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[repr(u32)]
+pub enum BuiltinType {
+    None = 0,
+    Any = 1,
+    Integer = 2,
+    Decimal = 3,
+    Char = 4,
+    String = 5,
+    Boolean = 6,
+    Byte = 7,
+    Function = 8,
+}
+
 #[derive(Debug, Clone)]
 pub struct Package {
     pub descriptor: PackageDescriptor,
@@ -11,7 +65,7 @@ pub struct Package {
 
 #[derive(Debug, Clone)]
 pub struct PackageDescriptor {
-    pub package_type: u8,
+    pub package_type: PackageType,
     pub name: String,
     pub version: i64,
     pub entrypoint_function_id: u32,
@@ -38,7 +92,7 @@ pub enum Symbol {
     DataType(Option<u32>),
     Group {
         field_ids: Vec<u32>,
-        lifecycle_functions: Vec<(u8, u32)>,
+        lifecycle_functions: Vec<(LifecycleKind, u32)>,
         function_ids: Vec<u32>,
         subgroup_ids: Vec<u32>,
         annotation_ids: Vec<u32>,
@@ -90,8 +144,7 @@ pub enum Operand {
 pub struct Instruction {
     /// Byte offset relative to the instruction section.
     pub offset: usize,
-    pub opcode: u8,
-    pub mnemonic: &'static str,
+    pub opcode: Opcode,
     pub operands: Vec<Operand>,
     pub flags: Option<u8>,
     pub raw: Vec<u8>,
