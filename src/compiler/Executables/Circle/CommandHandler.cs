@@ -19,7 +19,7 @@ namespace Arc.Compiler.Circle
 
         public static int HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun, bool ginkgo = false)
         {
-            var logger = LoggerFactory.Create(builder =>
+            using var loggerFactory = LoggerFactory.Create(builder =>
             {
                 builder.AddSimpleConsole(options =>
                 {
@@ -29,17 +29,51 @@ namespace Arc.Compiler.Circle
                     options.UseUtcTimestamp = false;
                 });
                 builder.SetMinimumLevel(logLevel);
-            }).CreateLogger("Circle CLI");
+            });
+            var logger = loggerFactory.CreateLogger("Circle CLI");
 
             logger.LogInformation("Processing {} file(s)", inputs.Length);
 
             // We can ensure that inputs is not empty because of the validator
             logger.LogInformation("Analyzing source code structure");
-            var compilationUnits = inputs
-                .Select(t => new { Content = File.ReadAllText(t), Path = t })
-                .Select(t => new { Context = AntlrAdapter.ParseCompilationUnit(t.Content, logger), t.Path })
-                .Select(t => new ArcCompilationUnit(t.Context, logger, t.Path));
+            var compilationUnits = new List<ArcCompilationUnit>();
+            var syntaxErrors = new List<string>();
+            foreach (var path in inputs)
+            {
+                try
+                {
+                    var syntax = AntlrAdapter.ParseCompilationUnit(File.ReadAllText(path), logger, path);
+                    compilationUnits.Add(new ArcCompilationUnit(syntax, logger, path));
+                }
+                catch (ArcSyntaxException exception)
+                {
+                    syntaxErrors.AddRange(exception.Diagnostics);
+                }
+            }
+            if (syntaxErrors.Count > 0)
+            {
+                foreach (var error in syntaxErrors)
+                    logger.LogError("{}", error);
+                logger.LogError("Failed to compile due to {} syntax error(s)", syntaxErrors.Count);
+                return 1;
+            }
 
+            try
+            {
+                return GeneratePackage(compilationUnits, output, packageType, noStd, sourceInfoPath, dryRun, ginkgo, logger);
+            }
+            catch (ArcSyntaxException exception)
+            {
+                foreach (var error in exception.Diagnostics)
+                    logger.LogError("{}", error);
+                logger.LogError("Failed to compile due to {} syntax error(s)", exception.Diagnostics.Count);
+                return 1;
+            }
+        }
+
+        private static int GeneratePackage(List<ArcCompilationUnit> compilationUnits, string output,
+            ArcPackageType packageType, bool noStd, string? sourceInfoPath, bool dryRun, bool ginkgo, ILogger logger)
+        {
             logger.LogInformation("Encoding instructions");
             if (ginkgo)
             {

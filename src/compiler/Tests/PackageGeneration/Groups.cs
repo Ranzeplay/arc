@@ -65,7 +65,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
 	                            link Arc::Std::Compilation;
 	                            namespace Arc::Program {
 	                            	public group Foo {
-	                            		public constructor(): Foo {}
+	                                    public constructor(var self: Foo): Foo { return self; }
 	                            	}
 
 	                            	@Export

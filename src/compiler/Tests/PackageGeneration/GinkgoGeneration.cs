@@ -76,7 +76,7 @@ public class GinkgoGeneration
         var (units, logs) = GenerateSource("""
             namespace Test {
                 public func answer(): int { return 42; }
-                public func main(): none { var value: int = Test::answer(); }
+                public func main(): none { var value: int = [Test].answer(); }
             }
             """);
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
@@ -93,7 +93,7 @@ public class GinkgoGeneration
         var (units, logs) = GenerateSource("""
             namespace Test {
                 public func answer(): int { return 42; }
-                public func main(): none { var value: int = 0; value = Test::answer(); }
+                public func main(): none { var value: int = 0; value = [Test].answer(); }
             }
             """);
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
@@ -111,7 +111,7 @@ public class GinkgoGeneration
         var (units, logs) = GenerateSource("""
             namespace Test {
                 public func answer(): int { return 42; }
-                public func main(): int { return Test::answer(); }
+                public func main(): int { return [Test].answer(); }
             }
             """);
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
@@ -131,8 +131,8 @@ public class GinkgoGeneration
             namespace Test {
                 public func identity(const value: int): int { return value; }
                 public func main(): none {
-                    var result: int = Test::identity(Test::identity(42)) + 1;
-                    call Test::identity(result);
+                    var result: int = [Test].identity([Test].identity(42)) + 1;
+                    call [Test].identity(result);
                 }
             }
             """);
@@ -145,7 +145,7 @@ public class GinkgoGeneration
         var (_, logs) = GenerateSource("""
             namespace Test {
                 public func sink(): none {}
-                public func main(): none { var value: int = Test::sink(); }
+                public func main(): none { var value: int = [Test].sink(); }
             }
             """);
         Assert.That(logs.Any(l => l.Level == LogLevel.Error), Is.True);
@@ -158,7 +158,7 @@ public class GinkgoGeneration
             namespace Test {
                 public func sink(const value: int): none {}
                 public func sink(const value: bool): none {}
-                public func main(): none { call Test::sink(true); }
+                public func main(): none { call [Test].sink(true); }
             }
             """);
         Assert.That(logs.Any(l => l.Level is LogLevel.Error or LogLevel.Critical), Is.False);
@@ -237,7 +237,7 @@ public class GinkgoGeneration
             namespace Test {
                 public group Item { public field var value: int; }
                 public func answer(): int { return 42; }
-                public func main(): none { {{declaration}} {{target}} ??= Test::answer(); }
+                public func main(): none { {{declaration}} {{target}} ??= [Test].answer(); }
             }
             """);
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
@@ -262,8 +262,8 @@ public class GinkgoGeneration
 
     [TestCase("var item: Item = new Item<int>();", "constructor specialization")]
     [TestCase("var item: Item = new Item<?>();", "constructor specialization")]
-    [TestCase("var value: int = Test::answer<int>();", "function specialization")]
-    [TestCase("var value: int = Test::answer<?>();", "function specialization")]
+    [TestCase("var value: int = [Test].answer<int>();", "function specialization")]
+    [TestCase("var value: int = [Test].answer<?>();", "function specialization")]
     public void UnsupportedExplicitSpecializationProducesADiagnostic(string body, string diagnostic)
     {
         var (_, logs) = GenerateSource($$"""

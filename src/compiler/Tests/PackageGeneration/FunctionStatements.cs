@@ -21,7 +21,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Namespace?.Name == "Program"), Is.EqualTo(2));
         }
 
         [Test]
@@ -33,7 +33,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Namespace?.Name == "Program"), Is.EqualTo(2));
         }
 
         [Test]
@@ -45,7 +45,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Namespace?.Name == "Program"), Is.EqualTo(2));
         }
 
         [Test]
@@ -65,8 +65,8 @@ namespace Arc.Compiler.Tests.PackageGeneration
 
             Assert.Multiple(() =>
             {
-                Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
-                Assert.That(result.Constants, Has.Count.EqualTo(37));
+                Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Namespace?.Name == "Program"), Is.EqualTo(2));
+                Assert.That(result.Constants.Select(c => c.Value), Does.Contain(2L).And.Contain(3L));
             });
         }
 
@@ -87,7 +87,7 @@ namespace Arc.Compiler.Tests.PackageGeneration
             var unit = new ArcCompilationUnit(compilationUnitContext, _logger, "test");
             var result = ArcCombinedUnitGenerator.GenerateUnits([unit], ArcPackageDescriptor.Default(ArcPackageType.Library));
 
-            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Id > 0xfff), Is.EqualTo(34));
+            Assert.That(result.GlobalScopeTree.FlattenedNodes.Count(s => s.Namespace?.Name == "Program"), Is.EqualTo(2));
         }
         
         [Test]

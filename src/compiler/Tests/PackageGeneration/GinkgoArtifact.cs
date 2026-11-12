@@ -39,9 +39,9 @@ public class GinkgoArtifact
     }
 
     [TestCase("")]
-    [TestCase("var value: int = Arc::Std::Math::AbsInt(1);")]
-    [TestCase("var value: decimal = Arc::Std::Math::AbsDecimal(1.0);")]
-    [TestCase("call Arc::Std::Console::PrintInteger(1);")]
+    [TestCase("var value: int = [Arc::Std::Math].AbsInt(1);")]
+    [TestCase("var value: decimal = [Arc::Std::Math].AbsDecimal(1.0);")]
+    [TestCase("call [Arc::Std::Console].PrintInteger(1);")]
     public void DefaultStandardLibraryDoesNotLowerUnusedUnsupportedBodies(string body)
     {
         using var factory = LoggerFactory.Create(_ => { });
