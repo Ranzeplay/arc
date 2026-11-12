@@ -4,5 +4,6 @@
     {
         Identifier,
         FunctionCall,
+        Self,
     }
 }

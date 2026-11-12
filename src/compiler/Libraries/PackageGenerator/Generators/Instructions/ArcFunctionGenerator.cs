@@ -83,18 +83,30 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                 var paramDataType = ArcDataTypeHelper.GetDataTypeNode(source, paramDataTypeProxy.ResolvedType);
 
+                var isReceiver = a.DataDeclarator.SelfContext is not null;
+                if (isReceiver && (source.CurrentNode is not ArcScopeTreeGroupNode group ||
+                    typeof(T) == typeof(ArcScopeTreeLambdaNode) ||
+                    paramDataType?.ComplexTypeGroup != group || a.DataType.Dimension != 0))
+                {
+                    logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0,
+                        "self requires a group method and must have the enclosing group type",
+                        source.Name, a.DataDeclarator.SelfContext!));
+                }
+
                 return new ArcParameterDescriptor
                 {
+                    IsReceiver = isReceiver,
                     DataType = new ArcDataDeclarationDescriptor
                     {
                         Type = paramDataType?.DataType ?? ArcBaseType.Placeholder(),
                         AllowNone = false,
                         Dimension = a.DataType.Dimension,
+                        Mutability = a.DataDeclarator.Mutability,
                         SyntaxTree = a.DataDeclarator,
                     },
                     RawFullName = a.Identifier.Name,
                 };
-            });
+            }).ToArray();
 
             var returnTypeProxy = ArcDataTypeHelper.GetDataType(source, declarator.ReturnType);
             if (returnTypeProxy == null)

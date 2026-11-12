@@ -23,8 +23,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
             }
             else if (context.arc_self_wrapper() != null)
             {
-                Type = ArcCallChainTermType.Identifier;
-                Identifier = new ArcFlexibleIdentifier(new ArcSingleIdentifier(context.arc_self_wrapper()));
+                Type = ArcCallChainTermType.Self;
             }
             else
             {

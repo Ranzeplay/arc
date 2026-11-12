@@ -68,7 +68,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                             IEnumerable<ArcCompilationLogBase> logs;
                             if (call.FunctionCall != null)
                             {
-                                stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, false, true, fnNode);
+                                stepResult = ArcFunctionCallGenerator.Generate(source, call.FunctionCall, true, fnNode);
                                 (funcId, logs) = ArcFunctionHelper.GetFunctionId(source, call.FunctionCall);
                             }
                             else

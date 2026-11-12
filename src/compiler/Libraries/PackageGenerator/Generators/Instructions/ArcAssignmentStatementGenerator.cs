@@ -18,18 +18,25 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
 
-            if (assign.CallChain.Terms.LastOrDefault()?.Type != ArcCallChainTermType.Identifier)
+            var firstTerm = assign.CallChain.Terms.First();
+            if (firstTerm.Type == ArcCallChainTermType.Self && baseFn.Receiver is null)
+            {
+                result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0,
+                    "self is only available in an instance method", source.Name, firstTerm.Context));
+                return result;
+            }
+
+            if (assign.CallChain.Terms.LastOrDefault()?.Type != ArcCallChainTermType.Identifier &&
+                !(assign.CallChain.Terms.Count() == 1 && firstTerm.Type == ArcCallChainTermType.Self))
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid assignment target", source.Name, assign.CallChain.Context));
+                return result;
             }
 
             // Handle lhs
             var lhsResult = GenerateLhs(assign.CallChain, source, baseFn);
 
             // Handle rhs
-            var firstTerm = assign.CallChain.Terms.First();
-            var initialSlot = source.LocalDataSlots
-                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
             var rhsResult = GenerateRhs(assign.Expression, source, baseFn);
 
             // Combine the results
@@ -44,7 +51,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // Handle the first element of the call chain since it is from a data slot
             var firstTerm = lhs.Terms.First();
             var initialSlot = source.LocalDataSlots
-                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
+                .First(s => firstTerm.Type == ArcCallChainTermType.Self
+                    ? ReferenceEquals(s.DeclarationDescriptor, baseFn.Receiver!.DataType)
+                    : s.Name == firstTerm.Identifier!.Name);
 
             bool isDirectAssignment = lhs.Terms.Count() == 1 && !lhs.Terms.First().Indices.Any();
             return isDirectAssignment ?
@@ -66,7 +75,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var firstTerm = callChain.Terms.First();
             var initialSlot = source.LocalDataSlots
-                .First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == firstTerm.Identifier!.Name);
+                .First(s => firstTerm.Type == ArcCallChainTermType.Self
+                    ? ReferenceEquals(s.DeclarationDescriptor, baseFn.Receiver!.DataType)
+                    : s.Name == firstTerm.Identifier!.Name);
             var currentDataType = ArcDataTypeHelper.GetDataType(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
             var result = new ArcPartialGenerationResult();

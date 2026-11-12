@@ -15,6 +15,8 @@ public class ArcFunctionGenerationContext(
 {
     public TwoWayDictionary<ushort, string, ArcImplicitRegister> ImplicitRegisterRegistry { get; } = new();
 
+    public ArcImplicitRegister? Receiver { get; set; }
+
     public void AddImplicitRegister(ArcImplicitRegister localObject)
     {
         ImplicitRegisterRegistry.Add(localObject.Id, localObject.Name, localObject);

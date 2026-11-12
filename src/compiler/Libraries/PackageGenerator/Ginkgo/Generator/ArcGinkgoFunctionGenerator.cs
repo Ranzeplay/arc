@@ -72,6 +72,7 @@ public static class ArcGinkgoFunctionGenerator
             }
             
             ctx.AddImplicitRegister(register);
+            if (parameter.IsReceiver) ctx.Receiver = register;
         }
 
         result.AppendInstructions(ArcFunctionBodyGenerator.Generate(ref ctx, body));

@@ -9,7 +9,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 {
     internal class ArcFunctionCallGenerator
     {
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, bool isSelfFunction, bool considerLambda, ArcScopeTreeFunctionNodeBase baseFn, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, bool considerLambda, ArcScopeTreeFunctionNodeBase baseFn)
         {
             var result = new ArcPartialGenerationResult();
 
@@ -17,7 +17,6 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             {
                 result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression, baseFn));
             }
-            var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
             
             ulong funcId = 0;
             
@@ -31,7 +30,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
             else
             {
-                var (actualFuncId, actualLogs) = ArcFunctionHelper.GetFunctionId(source, funcCall, searchUnderGroup);
+                var (actualFuncId, actualLogs) = ArcFunctionHelper.GetFunctionId(source, funcCall);
                 if (actualLogs.Any())
                 {
                     result.Logs.AddRange(actualLogs);
@@ -39,7 +38,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 funcId = actualFuncId;
             }
 
-            result.Append(new ArcFunctionCallInstruction(funcId, (uint)totalArgs, funcCall.SpecializedGenericTypes).Encode(source));
+            result.Append(new ArcFunctionCallInstruction(funcId, (uint)funcCall.Arguments.Count(), funcCall.SpecializedGenericTypes).Encode(source));
 
             return result;
         }
@@ -59,18 +58,17 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
         
-        public static ArcPartialGenerationResult Generate(ArcGenerationSource source, ArcFunctionCall funcCall, ArcScopeTreeGroupFunctionNode funcNode, bool isSelfFunction, ArcScopeTreeGroupNode? searchUnderGroup = null)
+        public static ArcPartialGenerationResult GenerateMemberCall(ArcGenerationSource source, ArcFunctionCall funcCall,
+            ArcScopeTreeGroupFunctionNode funcNode, ArcScopeTreeFunctionNodeBase caller)
         {
             var result = new ArcPartialGenerationResult();
 
             foreach (var arg in funcCall.Arguments)
             {
-                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression, funcNode));
+                result.Append(ArcExpressionEvaluationGenerator.GenerateEvaluationCommand(source, arg.Expression, caller));
             }
 
-            var totalArgs = funcCall.Arguments.Count() + (isSelfFunction ? 1 : 0);
-
-            result.Append(new ArcFunctionCallInstruction(funcNode.Id, (uint)totalArgs, funcCall.SpecializedGenericTypes).Encode(source));
+            result.Append(new ArcFunctionCallInstruction(funcNode.Id, (uint)funcNode.Parameters.Count(), funcCall.SpecializedGenericTypes).Encode(source));
 
             return result;
         }

@@ -32,8 +32,9 @@ namespace Arc.Compiler.PackageGenerator.Models.Scope
 
         public ArcPartialGenerationResult GenerationResult { get; set; }
 
-        public bool IsSelfFunction =>
-            Parameters.Any() && Parameters.ElementAt(0).DataType.SyntaxTree.SelfContext != null;
+        public ArcParameterDescriptor? Receiver => Parameters.FirstOrDefault(p => p.IsReceiver);
+
+        public IEnumerable<ArcParameterDescriptor> ExplicitParameters => Parameters.Where(p => !p.IsReceiver);
 
         public virtual IEnumerable<byte> Encode(ArcScopeTree tree) =>
             [

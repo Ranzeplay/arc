@@ -77,7 +77,7 @@ public static class ArcCallChainGenerator
         }
         
         ctx.AddImplicitRegister(output);
-        var arguments = new List<ArcImplicitRegister> { output };
+        var arguments = new List<ArcImplicitRegister>();
         foreach (var parameter in syntax.Parameters)
         {
             var argument = ArcExpressionEvaluationGenerator.Generate(ref ctx, parameter);
@@ -91,19 +91,16 @@ public static class ArcCallChainGenerator
         
         var constructors = group.LifecycleFunctions.Where(f =>
             f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction).ToList();
-        var matches = constructors.Where(f => f.Parameters.Count() == arguments.Count &&
-            f.Parameters.Zip(arguments).All(pair =>
-                pair.First.DataType.Type.TypeId == pair.Second.Instance.Type.ResolvedType.TypeId &&
-                pair.First.DataType.Dimension == pair.Second.Instance.Dimension)).ToList();
+        var matches = constructors.Where(f => ArcFunctionCallGenerator.Matches(f, output, arguments)).ToList();
         
         // A group with no declared constructors has implicit default construction.
-        if (matches.Count != 1 && !(constructors.Count == 0 && arguments.Count == 1))
+        if (matches.Count != 1 && !(constructors.Count == 0 && arguments.Count == 0))
         {
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 matches.Count > 1 ? "Ambiguous constructor" : "No matching constructor", ctx.UnitName, syntax.Context);
         }
         
-        if (matches.Count == 1 && (!matches[0].IsSelfFunction ||
+        if (matches.Count == 1 && (matches[0].Receiver is null ||
             matches[0].ReturnValueType.Type.TypeId != 0 || matches[0].ReturnValueType.Dimension != 0))
         {
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
@@ -116,6 +113,7 @@ public static class ArcCallChainGenerator
         if (matches.Count == 1)
         {
             result.Instructions.Add(new ArcControlFlowPrepareCallInstruction(matches.First().Id));
+            result.Instructions.Add(new ArcControlFlowBindArgInstruction { Src = output.Id });
             result.Instructions.AddRange(arguments.Select(a => new ArcControlFlowBindArgInstruction { Src = a.Id }));
             result.Instructions.Add(ArcControlFlowInvokeInstruction.Normal);
         }
@@ -130,6 +128,15 @@ public static class ArcCallChainGenerator
     {
         switch (syntax.Type)
         {
+            case ArcCallChainTermType.Self:
+            {
+                if (ctx.Receiver is null)
+                    return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+                        "self is only available in an instance method", ctx.UnitName, syntax);
+                var result = new ArcGinkgoInstructionGenerationResult();
+                result.SetOutput(ctx.Receiver);
+                return result;
+            }
             case ArcCallChainTermType.Identifier:
             {
                 var ident = syntax.Identifier!;
@@ -164,13 +171,16 @@ public static class ArcCallChainGenerator
     private static ArcGinkgoInstructionGenerationResult GenerateNextTerm(
         ref ArcFunctionGenerationContext ctx,
         ArcCallChainTerm syntax,
-        ArcImplicitRegister baseObj)
+        ArcImplicitRegister? baseObj)
     {
         if (baseObj is null)
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Call chain receiver does not produce a value", ctx.UnitName, syntax);
         switch (syntax.Type)
         {
+            case ArcCallChainTermType.Self:
+                return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+                    "self must be the first term of a call chain", ctx.UnitName, syntax);
             case ArcCallChainTermType.Identifier:
             {
                 var ident = syntax.Identifier!;
@@ -226,7 +236,7 @@ public static class ArcCallChainGenerator
             case ArcCallChainTermType.FunctionCall:
             {
                 var fc = syntax.FunctionCall!;
-                return ArcFunctionCallGenerator.GenerateSelfCall(ref ctx, fc, baseObj);
+                return ArcFunctionCallGenerator.GenerateMemberCall(ref ctx, fc, baseObj);
             }
             default:
                 throw new ArgumentOutOfRangeException();

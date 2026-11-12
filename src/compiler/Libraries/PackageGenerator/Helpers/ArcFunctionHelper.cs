@@ -14,8 +14,15 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             {
                 if (funcCall.Identifier.Namespace != null && funcCall.Identifier.Namespace.Any())
                 {
-                    var funcDeclarator = source.GlobalScopeTree
-                        .GetNode<ArcScopeTreeFunctionNodeBase>(funcCall.Identifier.NameArray);
+                    var current = source.GlobalScopeTree.Root;
+                    var path = funcCall.Identifier.NameArray.ToArray();
+                    foreach (var part in path.SkipLast(1))
+                    {
+                        current = current?.GetSpecificChild(n => n.Name == part &&
+                            n is ArcScopeTreeNamespaceNode or ArcScopeTreeGroupNode);
+                    }
+                    var funcDeclarator = current?.GetSpecificChild<ArcScopeTreeFunctionNodeBase>(
+                        n => n.Name == path[^1] && n.Parameters.Count() == funcCall.Arguments.Count());
 
                     if (funcDeclarator == null)
                     {

@@ -121,6 +121,19 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             ArcDataDeclarationDescriptor termTypeDecl;
             switch (firstTerm.Type)
             {
+                case ArcCallChainTermType.Self:
+                {
+                    if (baseFn.Receiver is null)
+                    {
+                        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0,
+                            "self is only available in an instance method", source.Name, firstTerm.Context));
+                        return (result, null);
+                    }
+                    termTypeDecl = baseFn.Receiver.DataType;
+                    result.Append(new ArcLoadDataToStackInstruction(
+                        new(ArcDataSourceType.DataSlot, 0, false)).Encode(source));
+                    break;
+                }
                 case ArcCallChainTermType.Identifier:
                 {
                     var identifier = firstTerm.Identifier!;
@@ -134,7 +147,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 case ArcCallChainTermType.FunctionCall:
                 {
                     var call = firstTerm.FunctionCall!;
-                    result.Append(ArcFunctionCallGenerator.Generate(source, call, false, true, baseFn));
+                    result.Append(ArcFunctionCallGenerator.Generate(source, call, true, baseFn));
 
                     var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
                     if (logs.Any())
@@ -193,7 +206,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var dataTypeGroup = dataTypeNode.ComplexTypeGroup!;
             var constructorFunction = dataTypeGroup.LifecycleFunctions
                 .Where(f => f.SyntaxTree.LifecycleStage == ArcGroupLifecycleStageType.Construction)
-                .First(c => c.Parameters.Count() == constructor.Parameters.Count() + 1);
+                .First(c => c.Receiver is not null &&
+                            c.ExplicitParameters.Count() == constructor.Parameters.Count());
             
             // Constructor function will be called automatically
             result.Append(new ArcNewObjectInstruction(dataTypeNode, constructor.SpecializedGenericTypes, constructorFunction).Encode(source));
@@ -256,7 +270,7 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
                         fnId = fn.Id;
                         lastTermTypeDecl = fn.ReturnValueType;
-                        result.Append(ArcFunctionCallGenerator.Generate(source, term.FunctionCall!, fn, true, group));
+                        result.Append(ArcFunctionCallGenerator.GenerateMemberCall(source, term.FunctionCall!, fn, baseFn));
                         break;
                     case ArcCallChainTermType.Identifier:
                     {

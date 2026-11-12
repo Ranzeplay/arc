@@ -33,6 +33,7 @@ public static class ArcGinkgoScopeAdapter
                 function.Parameters = oldFunction.Parameters.Select(parameter => new ArcParameterDescriptor
                 {
                     RawFullName = parameter.RawFullName,
+                    IsReceiver = parameter.IsReceiver,
                     DataType = CopyDeclaration(parameter.DataType, parameter.DataType.SyntaxTree)
                 }).ToArray();
                 function.ReturnValueType = oldFunction.ReturnValueType;

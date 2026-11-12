@@ -18,16 +18,19 @@ public static class ArcAssignmentGenerator
     {
         var terms = syntax.CallChain.Terms.ToList();
         if (syntax.CallChain.ConstructorCall is not null || terms.Count == 0 ||
-            terms.Any(t => t.Type != ArcCallChainTermType.Identifier || t.Indices.Any()))
+            terms[0].Type is not (ArcCallChainTermType.Identifier or ArcCallChainTermType.Self) ||
+            terms.Skip(1).Any(t => t.Type != ArcCallChainTermType.Identifier) || terms.Any(t => t.Indices.Any()))
         {
             return Error(ctx, "Invalid assignment target", syntax);
         }
         
         var result = new ArcGinkgoInstructionGenerationResult();
-        var assignmentTarget = ctx.GetImplicitRegister(terms.First().Identifier!.Name);
+        var assignmentTarget = terms[0].Type == ArcCallChainTermType.Self
+            ? ctx.Receiver : ctx.GetImplicitRegister(terms[0].Identifier!.Name);
         if (assignmentTarget is null)
         {
-            return Error(ctx, "Unknown assignment target", terms.First());
+            return Error(ctx, terms[0].Type == ArcCallChainTermType.Self
+                ? "self is only available in an instance method" : "Unknown assignment target", terms.First());
         }
         
         // Early detection and report

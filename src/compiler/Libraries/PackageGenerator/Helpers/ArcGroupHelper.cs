@@ -30,9 +30,9 @@ public static class ArcGroupHelper
     {
         // Search from current group first
         var fn = group.Functions
-            .FirstOrDefault(f => f.IsSelfFunction &&
+            .FirstOrDefault(f => f.Receiver is not null &&
                                  f.Name == call.Identifier.Name &&
-                                 f.Parameters.Count() == call.Arguments.Count() + 1);
+                                 f.ExplicitParameters.Count() == call.Arguments.Count());
         if (fn != null)
         {
             return fn;
@@ -45,8 +45,8 @@ public static class ArcGroupHelper
             .Select(l => source.GlobalScopeTree.FlattenedNodes.First(n => n.Id == l.ProxyTypeId))
             .OfType<ArcScopeTreeGroupNode>()
             .SelectMany(n => n.Functions)
-            .FirstOrDefault(f => f.IsSelfFunction &&
+            .FirstOrDefault(f => f.Receiver is not null &&
                                  f.Name == call.Identifier.Name &&
-                                 f.Parameters.Count() == call.Arguments.Count() + 1);
+                                 f.ExplicitParameters.Count() == call.Arguments.Count());
     }
 }

@@ -10,6 +10,95 @@ namespace Arc.Compiler.Tests.PackageGeneration;
 
 public class GinkgoGeneration
 {
+    [Test]
+    public void MemberAndExplicitReceiverCallsHaveIdenticalLowering()
+    {
+        var (units, logs) = GenerateSource("""
+            namespace Test {
+                public group Item {
+                    public field var count: int;
+                    public func update(var self: Item, const value: int): Item {
+                        self.count = value;
+                        return self;
+                    }
+                }
+                public func member(): none {
+                    var item: Item = new Item();
+                    call item.update(42).update(item.count);
+                }
+                public func qualified(): none {
+                    var item: Item = new Item();
+                    call [Test::Item].update(item, 42).update(item.count);
+                }
+            }
+            """);
+        Assert.That(logs.Where(l => l.Level >= LogLevel.Error), Is.Empty);
+        var functions = units.Single().ScopeTree.GetNodes<ArcScopeTreeFunctionNodeBase>();
+        Assert.That(functions.Single(f => f.Name == "qualified").GenerationResult.GeneratedData,
+            Is.EqualTo(functions.Single(f => f.Name == "member").GenerationResult.GeneratedData));
+        var method = functions.Single(f => f.Name == "update");
+        Assert.Multiple(() =>
+        {
+            Assert.That(method.Receiver, Is.SameAs(method.Parameters.First()));
+            Assert.That(method.ExplicitParameters.Single().RawFullName, Is.EqualTo("value"));
+        });
+    }
+
+    [TestCase("call item.update(42);", true)]
+    [TestCase("call [Test::Item].update(item, 42);", true)]
+    [TestCase("call [Test::Item].update(item, true);", false)]
+    [TestCase("call [Test::Item].update(42, 42);", false)]
+    [TestCase("call [Test::Item].update(42);", false)]
+    [TestCase("call item.staticFunction();", false)]
+    [TestCase("call [Test::Item].staticFunction(item);", true)]
+    public void ReceiverAndExplicitArgumentsAreMatchedSeparately(string call, bool valid)
+    {
+        var (_, logs) = GenerateSource($$"""
+            namespace Test {
+                public group Item {
+                    public func update(var self: Item, const value: int): none {}
+                    public func staticFunction(const value: Item): none {}
+                }
+                public func main(): none { var item: Item = new Item(); {{call}} }
+            }
+            """);
+        Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.EqualTo(!valid));
+    }
+
+    [TestCase("return self;", "self is only available")]
+    [TestCase("self.count = 1;", "self is only available")]
+    public void ReceiverlessFunctionsCannotUseSelf(string body, string diagnostic)
+    {
+        var (_, logs) = Generate(body);
+        Assert.That(logs.Any(l => l.Level == LogLevel.Error && l.FormattedMessage.Contains(diagnostic)), Is.True);
+    }
+
+    [TestCase("public func invalid(var self: int): none {}")]
+    [TestCase("public group Item { public func invalid(var self: int): none {} }")]
+    [TestCase("public group Item { public func invalid(var self: Item[]): none {} }")]
+    public void InvalidReceiverDeclarationsProduceDiagnostics(string declaration)
+    {
+        var (_, logs) = GenerateSource($"namespace Test {{ {declaration} }}");
+        Assert.That(logs.Any(l => l.Level == LogLevel.Error && l.FormattedMessage.Contains("enclosing group type")), Is.True);
+    }
+
+    [Test]
+    public void ReceiverCallsCanUseSelfInNestedArguments()
+    {
+        var (_, logs) = GenerateSource("""
+            namespace Test {
+                public group Item {
+                    public field var count: int;
+                    public func identity(var self: Item, const value: int): int { return value; }
+                    public func update(var self: Item): none {
+                        self.count = self.identity([Test::Item].identity(self, self.count));
+                    }
+                }
+            }
+            """);
+        Assert.That(logs.Where(l => l.Level >= LogLevel.Error), Is.Empty);
+    }
+
     private static (IReadOnlyList<ArcGinkgoUnitGenerationContext> Units,
         IReadOnlyList<Arc.Compiler.PackageGenerator.Models.Logging.ArcCompilationLogBase> Logs) Generate(string body)
         => GenerateSource($"namespace Test {{ public func main(): none {{ {body} }} }}");

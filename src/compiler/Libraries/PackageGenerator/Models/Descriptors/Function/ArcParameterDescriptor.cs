@@ -5,5 +5,7 @@
         public ArcDataDeclarationDescriptor DataType { get; set; }
 
         public string RawFullName { get; set; }
+
+        public bool IsReceiver { get; set; }
     }
 }

@@ -12,6 +12,24 @@ namespace Arc.Compiler.Tests.PackageGeneration
     {
         private readonly ILogger _logger = LoggerFactory.Create(_ => { }).CreateLogger<Groups>();
 
+        [TestCase("call item.update(42);")]
+        [TestCase("call [Test::Item].update(item, 42);")]
+        public void InstanceCallsSupportBothReceiverForms(string call)
+        {
+            var syntax = new ArcCompilationUnit(AntlrAdapter.ParseCompilationUnit($$"""
+                namespace Test {
+                    public group Item {
+                        public field var count: int;
+                        public func update(var self: Item, const value: int): none { self.count = value; }
+                    }
+                    public func main(): none { var item: Item; {{call}} }
+                }
+                """, _logger), _logger, "receiver-test");
+            var context = ArcCombinedUnitGenerator.GenerateUnits([syntax],
+                ArcPackageDescriptor.Default(ArcPackageType.Library));
+            Assert.That(context.DumpFullByteStream(), Is.Not.Empty);
+        }
+
         [Test]
         public void TestAssignment()
         {
