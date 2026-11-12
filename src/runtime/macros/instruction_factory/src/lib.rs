@@ -185,7 +185,7 @@ pub fn generate_instruction_enum(input: TokenStream) -> TokenStream {
 
         impl #enum_name {
             pub fn decode(stream: &[u8], offset: usize, package: &Package) -> Option<(#enum_name, usize)> {
-                let op_code = stream[0];
+                let op_code = *stream.first()?;
 
                 match &op_code {
                     #(#to_decode_sub_arms,)*

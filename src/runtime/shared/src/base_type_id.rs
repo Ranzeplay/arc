@@ -10,4 +10,4 @@ lazy_static! {
     pub static ref BOOLEAN_TYPE_ID: usize = 6;
     pub static ref BYTE_TYPE_ID: usize = 7;
     pub static ref FUNCTION_TYPE_ID: usize = 8;
-};
+}
