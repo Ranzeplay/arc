@@ -93,8 +93,9 @@ This supports both Markdown and React components.
 
 Tag Arc code fences with `arc`. The docs use `antlr-ng` and `antlr4ng` to generate
 the lexer and parser from `../src/grammar/ArcSourceCodeLexer.g4` and
-`../src/grammar/ArcSourceCodeParser.g4`. Generation runs automatically before
-`pnpm dev`, `pnpm build`, and `pnpm test`; no Java installation is required.
+`../src/grammar/ArcSourceCodeParser.g4`. Generation is an explicit first step in
+`pnpm dev`, `pnpm build`, and `pnpm test`, independent of lifecycle-hook settings;
+no Java installation is required.
 After changing either grammar while the dev server is running, restart it to
 regenerate the parser. Generated files in `plugins/generated/` are not committed.
 

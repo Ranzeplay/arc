@@ -4,10 +4,8 @@
   "private": true,
   "scripts": {
     "generate:grammar": "node scripts/generate-arc-grammar.mjs",
-    "predev": "pnpm generate:grammar",
-    "dev": "next dev --turbopack",
-    "prebuild": "pnpm generate:grammar",
-    "build": "next build --turbopack",
+    "dev": "pnpm generate:grammar && next dev --turbopack",
+    "build": "pnpm generate:grammar && next build --turbopack",
     "test": "pnpm generate:grammar && node --test tests/*.test.mjs",
     "start": "next start",
     "lint": "biome check",
