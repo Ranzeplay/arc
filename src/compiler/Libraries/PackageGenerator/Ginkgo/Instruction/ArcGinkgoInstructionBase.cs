@@ -176,20 +176,10 @@ public abstract class ArcGinkgoInstructionBase : ArcPrimitiveInstructionBase
                 writer.Write(i.Dest);
                 writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
                 break;
-            case ArcDataLoadConstantInstruction i:
+            case ArcDataLoadInstruction i:
                 writer.Write(i.TableIndex);
                 writer.Write(i.Dest);
                 writer.Write(Flags(i.LoadAsReference, i.UsageHint));
-                break;
-            case ArcDataLoadImmediateIntegerInstruction i:
-                writer.Write(i.Value);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.UsageHint));
-                break;
-            case ArcDataLoadImmediateFloatInstruction i:
-                writer.Write(i.Value);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.UsageHint));
                 break;
             case ArcDataInitObjectInstruction i:
                 writer.Write(i.TypeId);

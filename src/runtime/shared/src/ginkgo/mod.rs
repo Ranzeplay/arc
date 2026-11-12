@@ -1,17 +1,18 @@
 use serde::Deserialize;
 use std::collections::BTreeMap;
+use strum_macros::FromRepr;
 
 mod opcode;
 pub use opcode::Opcode;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u8)]
 pub enum PackageType {
     Library = 0,
     Executable = 1,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u8)]
 pub enum SymbolKind {
     Namespace = 0x01,
@@ -25,14 +26,14 @@ pub enum SymbolKind {
     GenericTypeParameter = 0x0a,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u8)]
 pub enum DataTypeCategory {
     Internal = 0,
     Complex = 1,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u8)]
 pub enum LifecycleKind {
     Constructor = 1,
@@ -41,7 +42,7 @@ pub enum LifecycleKind {
     ShallowCopy = 4,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, strum_macros::FromRepr)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u32)]
 pub enum BuiltinType {
     None = 0,
@@ -134,8 +135,6 @@ pub enum Operand {
     Register(u16),
     Symbol(u32),
     Constant(u32),
-    Integer(i64),
-    Float(f64),
     Address(i64),
     Dimension(u16),
 }

@@ -9,49 +9,23 @@ generator does not resolve operator overloads.
 # Load from Constant Pool
 
 ```
-ld_const idx, dest, flags
+ld idx, dest, flags
 ```
 
 Performs $dest = const_pool[idx]$ where $dest$ is an implicit variable.
 
-Operation follows the data type of $dest$,
-use an overloaded operator if one exists.
-
-## Flags
-
-- `ld_const_ref`: Load reference from constant pool instead of value.
-- `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
-
-# Load Immediate Integer
-
-```
-ld_int value, dest, flags
-```
-
-Performs $dest = value$ where $dest$ is an implicit variable.
-
-Value will be casted to the data type of $dest$ if necessary.
+All literals, including integers and decimals, use typed entries in the current
+function's constant pool. Integer payloads are signed 64-bit values; decimal
+payloads are IEEE 754 binary64 values. No numeric value is embedded in the
+instruction itself.
 
 Operation follows the data type of $dest$,
 use an overloaded operator if one exists.
 
 ## Flags
 
+- `load_ref`: Load reference from constant pool instead of value.
 - `usage_hint`: $dest$ is loaded immediately after definition, can be used for optimization.
-
-# Load Floating-point Constant
-
-```
-ld_float value, dest, flags
-```
-
-Performs $dest = value$ where $dest$ is an implicit variable.
-
-`value` is an IEEE 754 binary64 immediate. Decimal source literals use the
-typed constant pool with binary64 payloads. Flag bit 0 is `usage_hint`.
-
-Operation follows the data type of $dest$,
-use an overloaded operator if one exists.
 
 # Copy
 

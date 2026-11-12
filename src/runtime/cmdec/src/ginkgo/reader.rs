@@ -34,9 +34,6 @@ impl<'a> Reader<'a> {
     pub fn i64(&mut self) -> Result<i64, String> {
         Ok(self.u64()? as i64)
     }
-    pub fn f64(&mut self) -> Result<f64, String> {
-        Ok(f64::from_bits(self.u64()?))
-    }
     pub fn bool(&mut self) -> Result<bool, String> {
         match self.u8()? {
             0 => Ok(false),

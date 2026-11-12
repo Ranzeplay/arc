@@ -119,16 +119,8 @@ public static class ArcExpressionEvaluationGenerator
                 AllowNone = typeName == "none" }, ArcImplicitRegisterType.LocalData);
         if (output is null) return ArcGinkgoInstructionGenerationResult.WithLogs(logs);
         ctx.AddImplicitRegister(output);
-        ArcGinkgoInstructionBase instruction;
-        if (value?.Type == ArcInstantValue.ValueType.Integer)
-            instruction = new ArcDataLoadImmediateIntegerInstruction
-                { Value = value.IntegerValue!.Value, Dest = output.Id };
-        else
-        {
-            // Keep decimal, bool, and none values in the typed constant pool.
-            var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value?.GetRawValue() ?? Array.Empty<byte>());
-            instruction = new ArcDataLoadConstantInstruction { TableIndex = index, Dest = output.Id };
-        }
+        var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value?.GetRawValue() ?? Array.Empty<byte>());
+        var instruction = new ArcDataLoadInstruction { TableIndex = index, Dest = output.Id };
         
         return new ArcGinkgoInstructionGenerationResult
             { Instructions = [instruction], OutImplicitRegister = output };

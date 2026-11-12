@@ -18,14 +18,14 @@ when its value is zero.
 | Dimension (`dim`) | Unsigned 16-bit |
 | Function, type or field symbol ID | Unsigned 32-bit |
 | Constant pool index | Unsigned 32-bit |
-| `ld_int` immediate | Signed 64-bit |
-| `ld_float` immediate | IEEE 754 binary64 |
 | Jump target | Signed 64-bit function-local byte address |
 | Flags | Unsigned 8-bit |
 
 Symbol operands are IDs, not positions in the serialized symbol table. Constant
 indices address the unit pool selected by the function's `ConstantPool` metadata.
-Decimal source literals use typed constants with IEEE 754 binary64 payloads.
+All literals use typed constants: integers have signed 64-bit payloads and
+decimals have IEEE 754 binary64 payloads. The current draft uses a single `ld` opcode
+(`0x1C`); the former immediate-load opcodes `0x1D` and `0x1E` are unassigned.
 
 The [package metadata](/ginkgo/descriptors/pkg) also uses unsigned 32-bit
 entrypoint function IDs, table counts, and ID-list lengths.
@@ -47,8 +47,8 @@ Last-use and destination-usage flags are optimization hints. `usage_hint` and
 | `arg` | `last_use` | — | — | — | — |
 | `invoke` | `is_virt` | — | — | — | — |
 | `retv`, `retn` | `expect_return_value` (ERV) | — | — | — | — |
-| `ld_const` | `ld_const_ref` | `usage_hint` | — | — | — |
-| `ld_int`, `ld_float`, `init_obj` | `usage_hint` | — | — | — | — |
+| `ld` | `load_ref` | `usage_hint` | — | — | — |
+| `init_obj` | `usage_hint` | — | — | — | — |
 | `ld_field`, `st_field` | `last_use_src` | `usage_hint` | — | — | — |
 
 All comparison models expose bit 3. The compiler only sets `cmp_ref` for equality
@@ -70,10 +70,10 @@ Lengths include the opcode and all operands, in bytes.
 | `arg`, `retv`, `invoke` | 4 |
 | `pcall` | 5 |
 | `inv`, `bitnot`, `lognot`, `copy`, `clone`, `ref` | 6 |
-| Binary arithmetic, shifts, binary logical, all comparisons, `ld_const` | 8 |
+| Binary arithmetic, shifts, binary logical, all comparisons, `ld` | 8 |
 | `jmp` | 9 |
 | `init_obj`, `ld_field`, `st_field` | 10 |
-| `cjp`, `ld_int`, `ld_float` | 12 |
+| `cjp` | 12 |
 
 ## Jump relocation
 

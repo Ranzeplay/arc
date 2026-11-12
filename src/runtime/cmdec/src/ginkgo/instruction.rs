@@ -29,9 +29,7 @@ pub(super) fn decode(reader: &mut Reader<'_>) -> Result<Instruction, String> {
         ConditionalJump => vec![Register(reader.u16()?), Address(reader.i64()?)],
         PrepareFunctionCall => vec![Symbol(reader.u32()?)],
         Argument | Invoke | ReturnWithValue => vec![Register(reader.u16()?)],
-        LoadConstant => vec![Constant(reader.u32()?), Register(reader.u16()?)],
-        LoadImmediateInteger => vec![Integer(reader.i64()?), Register(reader.u16()?)],
-        LoadFloatingPointConstant => vec![Float(reader.f64()?), Register(reader.u16()?)],
+        Load => vec![Constant(reader.u32()?), Register(reader.u16()?)],
         InitializeObject => vec![
             Symbol(reader.u32()?),
             Register(reader.u16()?),

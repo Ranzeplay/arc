@@ -42,9 +42,7 @@ public class GinkgoEncoding
             ArcControlFlowInvokeInstruction.Normal,
             new ArcControlFlowReturnWithValueInstruction(),
             new ArcControlFlowReturnInstruction(),
-            new ArcDataLoadConstantInstruction(),
-            new ArcDataLoadImmediateIntegerInstruction(),
-            new ArcDataLoadImmediateFloatInstruction(),
+            new ArcDataLoadInstruction(),
             new ArcDataCopyInstruction(),
             new ArcDataCloneInstruction(),
             new ArcDataLoadReferenceInstruction(),
@@ -56,13 +54,13 @@ public class GinkgoEncoding
             new ArcDataLoadFieldInstruction(),
             new ArcDataStoreFieldInstruction(),
         ];
-        int[] widths = [1, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 1, 9, 12, 5, 4, 4, 4, 2, 8, 12, 12, 6, 6, 6, 10, 8, 8, 8, 6, 10, 10];
+        int[] widths = [1, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 1, 9, 12, 5, 4, 4, 4, 2, 8, 6, 6, 6, 10, 8, 8, 8, 6, 10, 10];
         for (var opcode = 0; opcode < instructions.Length; opcode++)
         {
             var bytes = instructions[opcode].Encode().GeneratedData;
             Assert.Multiple(() =>
             {
-                Assert.That(bytes[0], Is.EqualTo(opcode), instructions[opcode].GetType().Name);
+                Assert.That(bytes[0], Is.EqualTo(opcode <= 0x1c ? opcode : opcode + 2), instructions[opcode].GetType().Name);
                 Assert.That(bytes.Count, Is.EqualTo(widths[opcode]), instructions[opcode].GetType().Name);
             });
         }
@@ -92,15 +90,14 @@ public class GinkgoEncoding
     }
 
     [Test]
-    public void ImmediateAndFieldOperandsKeepTheirFullWidth()
+    public void ConstantIndexAndFieldOperandsKeepTheirFullWidth()
     {
-        Assert.That(new ArcDataLoadImmediateIntegerInstruction { Value = -2, Dest = 0x1234 }.Encode().GeneratedData,
-            Is.EqualTo(new byte[] { 0x1d, 0xfe, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x34, 0x12, 0 }));
+        Assert.That(new ArcDataLoadInstruction
+            { TableIndex = 0x12345678, Dest = 0xabcd, LoadAsReference = true, UsageHint = true }.Encode().GeneratedData,
+            Is.EqualTo(new byte[] { 0x1c, 0x78, 0x56, 0x34, 0x12, 0xcd, 0xab, 3 }));
         Assert.That(new ArcDataStoreFieldInstruction
             { Src = 1, Dest = 2, FieldId = 0x12345678, LastUseSrc = true }.Encode().GeneratedData,
             Is.EqualTo(new byte[] { 0x28, 1, 0, 2, 0, 0x78, 0x56, 0x34, 0x12, 1 }));
-        Assert.That(new ArcDataLoadImmediateFloatInstruction { Value = 1.5, Dest = 2 }.Encode().GeneratedData,
-            Is.EqualTo(new byte[] { 0x1e, 0, 0, 0, 0, 0, 0, 0xf8, 0x3f, 2, 0, 0 }));
     }
 
     [Test]

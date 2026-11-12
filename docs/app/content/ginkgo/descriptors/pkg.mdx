@@ -6,12 +6,10 @@ title: 'Package descriptor'
 
 `Circle --ginkgo` produces one self-contained binary package. No JSON manifest
 or source-information file is required to interpret its execution metadata.
-Version 2 replaces the draft version 1 JSON representation; it is not byte
-compatible with that draft or with the legacy instruction set. The existing
-Rust executor does not yet execute Ginkgo packages.
-
-This draft uses 32-bit collection counts and entrypoint IDs. Regenerate packages
-produced by the earlier version 2 draft with 64-bit counts and entrypoint IDs.
+This format is still under development and may change without a version bump.
+All literals are loaded through the typed constant pool. Version 2 replaces the
+draft version 1 JSON representation. The existing Rust executor does not yet
+execute Ginkgo packages.
 
 The section order follows the original package layout: magic and descriptor,
 symbol table, constant table, then instructions. Integers are little-endian,
@@ -76,7 +74,7 @@ unused deferred standard-library bodies are not emitted.
 Pools retain compilation-unit order. Each pool starts with a `u32` constant
 count. Its records follow the original constant descriptor structure with
 32-bit IDs: local index (`u32`), type symbol ID (`u32`), is-array (`bool`, currently
-false), payload byte length (`u64`), and payload bytes. `ld_const` uses its
+false), payload byte length (`u64`), and payload bytes. `ld` uses its
 function's pool index and a local constant index; pool and constant indices
 start at zero. Unit names are not stored.
 
@@ -90,6 +88,8 @@ start at zero. Unit names are not stored.
 
 Decimal source values are converted to doubles when the package is encoded.
 Strings use byte lengths, including non-ASCII text.
+All literals, including integers, are interned by type and value within each
+compilation unit. Functions in that unit share its pool.
 
 ## Optional debugging information
 

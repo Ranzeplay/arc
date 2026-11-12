@@ -29,7 +29,8 @@ public class GinkgoArtifact
         Assert.That(function.Registers, Is.EqualTo(2));
         Assert.That(function.Length, Is.Positive);
         var bytes = package.Code;
-        Assert.That(bytes[0], Is.EqualTo(0x1d)); // load_i
+        Assert.That(bytes[0], Is.EqualTo(0x1c)); // ld
+        Assert.That(BitConverter.ToInt64(package.Pools.Single().Single()), Is.EqualTo(42));
         Assert.That(bytes[^2], Is.EqualTo(0x1b)); // retn
         Assert.That(bytes[^1], Is.Zero); // expect_return_value is false
         Assert.That(function.Offset + function.Length, Is.EqualTo(bytes.Length));
@@ -123,6 +124,42 @@ public class GinkgoArtifact
         Assert.That(reader.ReadDouble(), Is.EqualTo((double)1.234567890123456789m));
         Assert.That(package.Pools[1].Single(), Is.EqualTo(new byte[] { 1 }));
         Assert.That(Encoding.UTF8.GetString(artifact.GeneratedData), Does.Not.Contain("unit-0"));
+    }
+
+    [Test]
+    public void NumericLiteralsUseTypedUnitPoolsAndShareRepeatedValuesAcrossFunctions()
+    {
+        var artifact = Generate(ArcPackageType.Library,
+            """
+            namespace First {
+                public func first(): none {
+                    var integer: int = 1;
+                    var same: int = 1;
+                    var number: decimal = 1.0;
+                    var flag: bool = true;
+                    var large: int = 9223372036854775807;
+                }
+                public func again(): none { var integer: int = 1; }
+            }
+            """,
+            "namespace Second { public func second(): none { var integer: int = 2; } }");
+        Assert.That(artifact.DiscardResult, Is.False);
+        var package = ReadPackage(artifact.GeneratedData);
+        Assert.That(package.Pools, Has.Count.EqualTo(2));
+        Assert.That(package.Pools[0], Has.Count.EqualTo(4));
+        Assert.That(BitConverter.ToInt64(package.Pools[0][0]), Is.EqualTo(1));
+        Assert.That(BitConverter.ToDouble(package.Pools[0][1]), Is.EqualTo(1.0));
+        Assert.That(package.Pools[0][2], Is.EqualTo(new byte[] { 1 }));
+        Assert.That(BitConverter.ToInt64(package.Pools[0][3]), Is.EqualTo(long.MaxValue));
+        Assert.That(BitConverter.ToInt64(package.Pools[1].Single()), Is.EqualTo(2));
+        foreach (var function in package.Functions)
+        {
+            var bytes = package.Code.AsSpan(checked((int)function.Offset), checked((int)function.Length));
+            Assert.That(bytes[0], Is.EqualTo(0x1c)); // ld
+            Assert.That(BitConverter.ToUInt32(bytes[1..5]), Is.Zero); // Local pool index.
+            var name = artifact.SourceInformation.SymbolMapping[function.Id];
+            Assert.That(function.Pool, Is.EqualTo(name.Contains("second") ? 1u : 0u));
+        }
     }
 
     [Test]

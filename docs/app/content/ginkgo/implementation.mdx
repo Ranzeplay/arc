@@ -26,7 +26,7 @@ produce diagnostics. All supplied user function bodies are checked.
 
 The output is a [self-contained binary artifact](/ginkgo/descriptors/pkg), using
 the original order: descriptor, symbol table, constant table, then instructions.
-Version 2 replaces the draft JSON manifest with packed binary records. The
+The current draft loads all literals from typed constant pools through a single `ld`. The
 runtime cmdec can decode it; the Rust executor cannot execute it. Encoding an instruction does not imply
 runtime support or source-language lowering for every use of that instruction.
 
@@ -38,11 +38,12 @@ The runtime CLI detects Ginkgo's magic header with the existing `decode` command
 cargo run --manifest-path src/runtime/Cargo.toml -p arc_cli -- decode build.ginkgo.arc --descriptor --symbols --constants --instructions
 ```
 
-All 41 instructions are displayed with typed operands, flag bits, byte offsets,
+All 39 instructions are displayed with typed operands, flag bits, byte offsets,
 and raw bytes. Function headers identify the register count and constant pool;
 jump targets are function-local byte addresses. Symbols and constants retain
 their numeric IDs, and each constant pool is displayed separately. Version 2
-uses the current 32-bit IDs and counts; older draft layouts must be regenerated.
+uses 32-bit IDs and counts. The format is still under development and may change
+without a version bump.
 Malformed or unsupported Ginkgo packages produce a nonzero exit code.
 
 Pass `--source-info <path>` (or `-m <path>`) to add signatures and function source
@@ -54,8 +55,9 @@ unsupported and `execute` reports that explicitly.
 
 ## Implemented generation
 
-All 41 documented opcodes, `0x00` through `0x28`, have instruction models and
-binary encoders. Function assembly resolves jumps and validates instruction
+All 39 documented opcodes have instruction models and binary encoders. They span
+`0x00` through `0x28`, with `0x1D` and `0x1E` unassigned after load unification.
+Function assembly resolves jumps and validates instruction
 boundaries. Source lowering currently covers:
 
 - Literals, typed constant pools, local reads, explicit and inferred declarations.

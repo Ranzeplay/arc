@@ -44,8 +44,6 @@ pub(crate) fn print(package: &Package, opt: &CmdecOptions, source: Option<&Sourc
                     Operand::Register(id) => format!("r{}", id),
                     Operand::Symbol(id) => symbol_name(*id, source),
                     Operand::Constant(id) => format!("const[{}]", id),
-                    Operand::Integer(value) => value.to_string(),
-                    Operand::Float(value) => format!("{:?}", value),
                     Operand::Address(value) => format!("local {:#x}", value),
                     Operand::Dimension(value) => format!("dim {}", value),
                 })
@@ -107,8 +105,8 @@ fn flag_names(opcode: Opcode, flags: u8) -> Vec<&'static str> {
         Argument => &["last_use"],
         Invoke => &["is_virt"],
         ReturnWithValue | ReturnWithoutValue => &["expect_return_value"],
-        LoadConstant => &["ld_const_ref", "usage_hint"],
-        LoadImmediateInteger | LoadFloatingPointConstant | InitializeObject => &["usage_hint"],
+        Load => &["load_ref", "usage_hint"],
+        InitializeObject => &["usage_hint"],
         Copy | Clone | LoadReference | LoadField | StoreField => &["last_use_src", "usage_hint"],
         NoOperation | Label | UnconditionalJump | PrepareFunctionCall => &[],
     };

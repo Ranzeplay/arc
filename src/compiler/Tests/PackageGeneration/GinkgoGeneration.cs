@@ -99,10 +99,10 @@ public class GinkgoGeneration
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
         var function = units.Single().ScopeTree.GetNodes<ArcScopeTreeFunctionNodeBase>().Single(f => f.Name == "main");
         var bytes = function.GenerationResult.GeneratedData.ToArray();
-        Assert.That(bytes.Length, Is.EqualTo(29)); // ld_int, copy, pcall, invoke, retn
-        Assert.That(bytes[23], Is.EqualTo(0x19));
-        Assert.That(BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(24)),
-            Is.EqualTo(BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(15))));
+        Assert.That(bytes.Length, Is.EqualTo(25)); // ld, copy, pcall, invoke, retn
+        Assert.That(bytes[19], Is.EqualTo(0x19));
+        Assert.That(BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(20)),
+            Is.EqualTo(BinaryPrimitives.ReadUInt16LittleEndian(bytes.AsSpan(11))));
     }
 
     [Test]
@@ -243,8 +243,8 @@ public class GinkgoGeneration
         Assert.That(logs.Any(l => l.Level >= LogLevel.Error), Is.False);
         var function = units.Single().ScopeTree.GetNodes<ArcScopeTreeFunctionNodeBase>().Single(f => f.Name == "main");
         var bytes = function.GenerationResult.GeneratedData.ToArray();
-        var guardOffset = field ? 26 : 18;
-        var endOffset = field ? 57 : 39;
+        var guardOffset = field ? 26 : 14;
+        var endOffset = field ? 57 : 35;
         Assert.That(bytes[guardOffset], Is.EqualTo(0x16));
         Assert.That(bytes[guardOffset + 11], Is.EqualTo(4)); // condition_not_none
         Assert.That(BinaryPrimitives.ReadInt64LittleEndian(bytes.AsSpan(guardOffset + 3)), Is.EqualTo(endOffset));

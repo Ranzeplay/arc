@@ -63,12 +63,16 @@ fn package(
 #[test]
 fn all_opcodes_have_the_compiler_lengths() {
     let lengths = [
-        1, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 1, 9, 12, 5, 4, 4, 4, 2, 8, 12,
-        12, 6, 6, 6, 10, 8, 8, 8, 6, 10, 10,
+        1, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 6, 8, 8, 8, 8, 8, 8, 1, 9, 12, 5, 4, 4, 4, 2, 8, 6,
+        6, 6, 10, 8, 8, 8, 6, 10, 10,
     ];
     let mut code = Vec::new();
     for (opcode, length) in lengths.into_iter().enumerate() {
-        code.push(opcode as u8);
+        code.push(if opcode <= 0x1c {
+            opcode as u8
+        } else {
+            opcode as u8 + 2
+        });
         code.extend(vec![0; length - 1]);
     }
     let bytes = package(
@@ -77,7 +81,7 @@ fn all_opcodes_have_the_compiler_lengths() {
         &code,
     );
     let decoded = decode(&bytes).unwrap();
-    assert_eq!(decoded.instructions.len(), 41);
+    assert_eq!(decoded.instructions.len(), 39);
     let mut offset = 0;
     for (i, length) in decoded.instructions.iter().zip(lengths) {
         assert_eq!(i.offset, offset);
@@ -119,16 +123,6 @@ fn operands_keep_full_width_signedness_and_flags() {
             0x1c,
             vec![Operand::Constant(0x12345678), Operand::Register(256)],
             vec![0x78, 0x56, 0x34, 0x12, 0, 1],
-        ),
-        (
-            0x1d,
-            vec![Operand::Integer(-123), Operand::Register(256)],
-            [(-123i64).to_le_bytes().as_slice(), &[0, 1]].concat(),
-        ),
-        (
-            0x1e,
-            vec![Operand::Float(-1.25), Operand::Register(256)],
-            [(-1.25f64).to_le_bytes().as_slice(), &[0, 1]].concat(),
         ),
         (
             0x22,
@@ -236,6 +230,44 @@ fn decodes_all_symbol_kinds_and_per_function_constant_pools() {
 }
 
 #[test]
+fn load_uses_typed_numeric_constants_in_each_function_pool() {
+    let code = [0x1c, 0, 0, 0, 0, 0, 1, 3, 0x1b, 0];
+    let symbols = [(10, 2, function(0, 10, 0)), (11, 2, function(10, 10, 1))];
+    let pools = vec![
+        vec![(0, 2, i64::MIN.to_le_bytes().to_vec())],
+        vec![(0, 3, (-1.25f64).to_le_bytes().to_vec())],
+    ];
+    let decoded = decode(&package(&symbols, &pools, &code.repeat(2))).unwrap();
+    for instruction in decoded
+        .instructions
+        .iter()
+        .filter(|i| i.opcode == Opcode::Load)
+    {
+        assert_eq!(
+            instruction.operands,
+            [Operand::Constant(0), Operand::Register(256)]
+        );
+        assert_eq!(instruction.flags, Some(3));
+    }
+    assert_eq!(
+        decoded.constant_pools[0][&0].type_id,
+        BuiltinType::Integer as u32
+    );
+    assert_eq!(
+        decoded.constant_pools[0][&0].raw_value,
+        i64::MIN.to_le_bytes()
+    );
+    assert_eq!(
+        decoded.constant_pools[1][&0].type_id,
+        BuiltinType::Decimal as u32
+    );
+    assert_eq!(
+        decoded.constant_pools[1][&0].raw_value,
+        (-1.25f64).to_le_bytes()
+    );
+}
+
+#[test]
 fn rejects_corrupt_packages_without_panicking() {
     let bytes = package(
         &[(10, 2, function(0, 2, 0))],
@@ -245,9 +277,18 @@ fn rejects_corrupt_packages_without_panicking() {
     for end in 0..bytes.len() {
         assert!(decode(&bytes[..end]).is_err(), "prefix {}", end);
     }
-    let mut invalid = bytes.clone();
-    invalid[8] = 1;
-    assert!(decode(&invalid).unwrap_err().contains("version"));
+    for version in [1, 3] {
+        let mut invalid = bytes.clone();
+        invalid[8] = version;
+        assert!(decode(&invalid).unwrap_err().contains("version"));
+    }
+    for opcode in [0x1d, 0x1e] {
+        assert!(
+            decode(&package(&[], &[], &[opcode]))
+                .unwrap_err()
+                .contains("opcode")
+        );
+    }
     let invalid = package(&[(1, 0xff, vec![])], &[], &[]);
     assert!(decode(&invalid).unwrap_err().contains("symbol kind"));
     assert!(
@@ -314,7 +355,9 @@ fn enum_values_follow_the_ginkgo_wire_format() {
     assert_eq!(Opcode::from_repr(0x28), Some(Opcode::StoreField));
     assert_eq!(Opcode::from_repr(0x29), None);
     assert_eq!(Opcode::from_repr(0xff), None);
-    assert_eq!(Opcode::LoadConstant.mnemonic(), "ld_const");
+    assert_eq!(Opcode::Load.mnemonic(), "ld");
+    assert_eq!(Opcode::from_repr(0x1d), None);
+    assert_eq!(Opcode::from_repr(0x1e), None);
     assert_eq!(Opcode::LogicalNot.mnemonic(), "lognot");
     assert_eq!(BuiltinType::from_repr(2), Some(BuiltinType::Integer));
     assert_eq!(BuiltinType::from_repr(8), Some(BuiltinType::Function));

@@ -1,6 +1,6 @@
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
-public class ArcDataLoadConstantInstruction : ArcDataInstructionBase
+public class ArcDataLoadInstruction : ArcDataInstructionBase
 {
     public override byte[] Opcode => [0x1c];
     
