@@ -89,6 +89,19 @@ This supports both Markdown and React components.
 2. Add the page to the relevant `meta.json` file for navigation
 3. The page will automatically be included in the site navigation
 
+### Arc Code Highlighting
+
+Tag Arc code fences with `arc`. The docs use `antlr-ng` and `antlr4ng` to generate
+the lexer and parser from `../src/grammar/ArcSourceCodeLexer.g4` and
+`../src/grammar/ArcSourceCodeParser.g4`. Generation runs automatically before
+`pnpm dev`, `pnpm build`, and `pnpm test`; no Java installation is required.
+After changing either grammar while the dev server is running, restart it to
+regenerate the parser. Generated files in `plugins/generated/` are not committed.
+
+Whole programs and snippets are supported. Incomplete or legacy syntax retains
+lexer-based highlighting when parser context is unavailable. Other code-fence
+languages continue to use Shiki.
+
 ### Mathematical Expressions
 
 The site supports LaTeX mathematical expressions using KaTeX:

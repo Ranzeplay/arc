@@ -2,6 +2,24 @@
 @plugin "@tailwindcss/typography";
 @custom-variant dark (&:where(.dark, .dark *));
 
+.arc-highlight { color: #393a34; background-color: #fff; }
+.arc-token-keyword, .arc-token-operator { color: #ab5959; }
+.arc-token-type, .arc-token-namespace { color: #2e8f82; }
+.arc-token-function, .arc-token-annotation { color: #59873a; }
+.arc-token-number, .arc-token-constant { color: #a65e2b; }
+.arc-token-string { color: #b56959; }
+.arc-token-comment { color: #758575; font-style: italic; }
+.arc-token-property { color: #998418; }
+
+.dark .arc-highlight { color: #dbd7ca; background-color: #121212; }
+.dark .arc-token-keyword, .dark .arc-token-operator { color: #cb7676; }
+.dark .arc-token-type, .dark .arc-token-namespace { color: #5da994; }
+.dark .arc-token-function, .dark .arc-token-annotation { color: #80a665; }
+.dark .arc-token-number, .dark .arc-token-constant { color: #c99076; }
+.dark .arc-token-string { color: #c98a7d; }
+.dark .arc-token-comment { color: #9a9a8a; }
+.dark .arc-token-property { color: #b8a965; }
+
 @layer base {
     body {
         @apply bg-neutral-50 text-neutral-900 dark:bg-neutral-950 dark:text-neutral-100 transition-colors;

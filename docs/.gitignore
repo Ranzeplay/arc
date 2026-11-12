@@ -19,6 +19,7 @@
 
 # production
 /build
+/plugins/generated/
 
 # misc
 .DS_Store

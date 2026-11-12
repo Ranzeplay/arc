@@ -1,4 +1,5 @@
 import cp from 'node:child_process';
+import path from 'node:path';
 import createMDX from '@next/mdx';
 import type { NextConfig } from 'next';
 
@@ -22,6 +23,7 @@ const withMDX = createMDX({
       'remark-math'
     ],
     rehypePlugins: [
+      path.resolve('./plugins/rehype-arc.mjs'),
       [
         '@shikijs/rehype',
         {

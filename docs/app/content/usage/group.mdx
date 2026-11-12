@@ -6,7 +6,7 @@ A group is a way to combine many data and multiple functions.
 
 ## Syntax
 
-```
+```arc
 <accessibility> group <name>
 {
     <members>
@@ -15,7 +15,7 @@ A group is a way to combine many data and multiple functions.
 
 ## Example
 
-```
+```arc
 public group Bar
 {
       @Getter
@@ -37,7 +37,7 @@ public group Bar
 
 The syntax of defining a field is similar to declaring data in a function.
 
-```
+```arc
 <accessibility> field <mutability> <name>: <memory storage> <type>;
 ```
 
@@ -61,7 +61,26 @@ The syntax of defining a function is the same as defining an individual function
 
 ### Method
 
-The syntax of defining a function is similar to defining an individual function, however, its first parameter should be a reference of current `Group` type and be a reference.
+An instance method declares `self` as its first parameter, with the enclosing
+group's scalar type. A group function without `self` does not require an instance.
+
+`self` is a receiver expression, not an ordinary local identifier. It is only
+available inside an instance method and cannot be shadowed by a local variable.
+
+Both of these calls invoke the same concrete method (inside `namespace Example`):
+
+```arc
+call item.update(42);
+call [Example::Item].update(item, 42);
+```
+
+The qualified form supplies the receiver explicitly as its first argument. The
+compiler checks the receiver separately from the method's remaining parameters;
+both forms use the same argument-zero calling convention. Qualification does not
+provide interface or virtual dispatch, which is not currently implemented.
+
+In Ginkgo, constructors initialize the allocated `self` and return `none`. The
+`new` expression produces the allocated object, not the constructor's return value.
 
 ## Annotations
 
