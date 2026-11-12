@@ -28,7 +28,7 @@ public static class ArcExpressionEvaluationGenerator
         if (result.DiscardResult) return result;
         if (result.OutImplicitRegister is null)
         {
-            result.Append(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+            result.AppendInstructions(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Expression does not produce a Ginkgo value", ctx.UnitName, syntax));
             return result;
         }
@@ -55,7 +55,7 @@ public static class ArcExpressionEvaluationGenerator
         if (target.Instance.Type.ActualTypeId != source.Instance.Type.ActualTypeId ||
             target.Instance.Dimension != source.Instance.Dimension)
         {
-            result.Append(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+            result.AppendInstructions(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Initializer type does not match declaration", ctx.UnitName, syntax));
             return result;
         }
@@ -122,8 +122,9 @@ public static class ArcExpressionEvaluationGenerator
         var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value?.GetRawValue() ?? Array.Empty<byte>());
         var instruction = new ArcDataLoadInstruction { TableIndex = index, Dest = output.Id };
         
-        return new ArcGinkgoInstructionGenerationResult
-            { Instructions = [instruction], OutImplicitRegister = output };
+        var result = new ArcGinkgoInstructionGenerationResult { Instructions = [instruction] };
+        result.SetOutput(output);
+        return result;
     }
 
     private static ArcGinkgoInstructionGenerationResult GenerateOperation(
@@ -161,7 +162,7 @@ public static class ArcExpressionEvaluationGenerator
         var result = new ArcGinkgoInstructionGenerationResult();
         var lhs = syntax.SubExpressions.ElementAt(0);
         var lhsResult = Generate(ref ctx, lhs);
-        result.Append(lhsResult);
+        result.AppendInstructions(lhsResult);
         if (result.DiscardResult || lhsResult.OutImplicitRegister is null)
         {
             return result;
@@ -170,7 +171,7 @@ public static class ArcExpressionEvaluationGenerator
         
         var rhs = syntax.SubExpressions.ElementAt(1);
         var rhsResult = Generate(ref ctx, rhs);
-        result.Append(rhsResult);
+        result.AppendInstructions(rhsResult);
         if (result.DiscardResult || rhsResult.OutImplicitRegister is null)
         {
             return result;
@@ -210,7 +211,7 @@ public static class ArcExpressionEvaluationGenerator
             outObj.Instance = new ArcDataTypeInstance { Type = boolean, Mutability = ArcMutability.Constant };
         }
         ctx.AddImplicitRegister(outObj);
-        result.OutImplicitRegister = outObj;
+        result.SetOutput(outObj);
 
         switch (syntax.Operator)
         {
@@ -395,7 +396,7 @@ public static class ArcExpressionEvaluationGenerator
         
         var src = syntax.SubExpressions.ElementAt(0);
         var srcResult = Generate(ref ctx, src);
-        result.Append(srcResult);
+        result.AppendInstructions(srcResult);
         if (result.DiscardResult || srcResult.OutImplicitRegister is null) return result;
         if (syntax.Operator == ArcOperator.LogicalNot &&
             (srcResult.OutImplicitRegister.Instance.Type.ShortName != "bool" ||
@@ -414,7 +415,7 @@ public static class ArcExpressionEvaluationGenerator
         }
         
         ctx.AddImplicitRegister(outObj);
-        result.OutImplicitRegister = outObj;
+        result.SetOutput(outObj);
         
         switch (syntax.Operator)
         {

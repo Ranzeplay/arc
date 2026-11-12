@@ -160,4 +160,6 @@ public abstract class ArcScopeTreeNodeBase
         return obj is ArcScopeTreeNodeBase baseNode &&
                Id == baseNode.Id;
     }
+
+    public override int GetHashCode() => Id.GetHashCode();
 }

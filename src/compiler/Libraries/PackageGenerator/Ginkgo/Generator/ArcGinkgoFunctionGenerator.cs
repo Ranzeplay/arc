@@ -74,14 +74,14 @@ public static class ArcGinkgoFunctionGenerator
             ctx.AddImplicitRegister(register);
         }
 
-        result.Append(ArcFunctionBodyGenerator.Generate(ref ctx, body));
+        result.AppendInstructions(ArcFunctionBodyGenerator.Generate(ref ctx, body));
         if (function.ReturnValueType.Type.TypeId == 0 && function.ReturnValueType.Dimension == 0)
         {
             result.Instructions.Add(new ArcControlFlowReturnInstruction());
         }
         else if (!Returns(body))
         {
-            result.Append(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+            result.AppendInstructions(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Value-returning function may fall through without a return", unit.UnitName));
         }
         

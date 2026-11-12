@@ -27,7 +27,7 @@ public static class ArcFunctionBodyGenerator
         {
             foreach (var step in body.ExecutionSteps)
             {
-                result.Append(GenerateStep(ref ctx, step, loops));
+                result.AppendInstructions(GenerateStep(ref ctx, step, loops));
                 if (result.DiscardResult) break;
                 if (step is ArcStatementReturn or ArcStatementBreak or ArcStatementContinue) break;
             }
@@ -61,7 +61,7 @@ public static class ArcFunctionBodyGenerator
                 else
                 {
                     var value = ArcExpressionEvaluationGenerator.Generate(ref ctx, statement.Expression);
-                    result.Append(value);
+                    result.AppendInstructions(value);
                     if (result.DiscardResult || value.OutImplicitRegister is null) return result;
                     var expected = ctx.CurrentNode.ReturnValueType;
                     if (expected.Type.TypeId != value.OutImplicitRegister.Instance.Type.ResolvedType.TypeId ||
@@ -84,14 +84,14 @@ public static class ArcFunctionBodyGenerator
                 foreach (var branch in conditional.ConditionalBlocks)
                 {
                     var next = ArcRelocationLabel.Create();
-                    result.Append(Condition(ref ctx, branch.Expression, next));
+                    result.AppendInstructions(Condition(ref ctx, branch.Expression, next));
                     if (result.DiscardResult) return result;
-                    result.Append(GenerateBody(ref ctx, branch.Body, loops));
+                    result.AppendInstructions(GenerateBody(ref ctx, branch.Body, loops));
                     result.Instructions.Add(Jump(end));
                     result.Instructions.Add(new ArcControlFlowLabelInstruction { Label = next });
                 }
                 if (conditional.ElseBody is not null)
-                    result.Append(GenerateBody(ref ctx, conditional.ElseBody, loops));
+                    result.AppendInstructions(GenerateBody(ref ctx, conditional.ElseBody, loops));
                 result.Instructions.Add(new ArcControlFlowLabelInstruction { Label = end });
                 return result;
             case ArcBlockConditionalLoop loop:
@@ -117,16 +117,16 @@ public static class ArcFunctionBodyGenerator
         ctx.EnterScope();
         try
         {
-            if (initializer is not null) result.Append(ArcLocalDataDeclarationGenerator.Generate(ref ctx, initializer));
+            if (initializer is not null) result.AppendInstructions(ArcLocalDataDeclarationGenerator.Generate(ref ctx, initializer));
             if (result.DiscardResult) return result;
             result.Instructions.Add(new ArcControlFlowLabelInstruction { Label = start });
-            if (condition is not null) result.Append(Condition(ref ctx, condition, end));
+            if (condition is not null) result.AppendInstructions(Condition(ref ctx, condition, end));
             if (result.DiscardResult) return result;
             loops.Push((end, iterator is null ? start : next));
-            try { result.Append(GenerateBody(ref ctx, body, loops)); }
+            try { result.AppendInstructions(GenerateBody(ref ctx, body, loops)); }
             finally { loops.Pop(); }
             result.Instructions.Add(new ArcControlFlowLabelInstruction { Label = next });
-            if (iterator is not null) result.Append(ArcAssignmentGenerator.Generate(ref ctx, iterator));
+            if (iterator is not null) result.AppendInstructions(ArcAssignmentGenerator.Generate(ref ctx, iterator));
             result.Instructions.Add(Jump(start));
             result.Instructions.Add(new ArcControlFlowLabelInstruction { Label = end });
         }
@@ -146,7 +146,7 @@ public static class ArcFunctionBodyGenerator
             Condition = result.OutImplicitRegister.Id, ConditionFalse = true,
             Target = ArcRelocationTarget.ForLabel(otherwise)
         });
-        result.OutImplicitRegister = null;
+        result.SetOutput(null);
         return result;
     }
 

@@ -2,7 +2,6 @@ using System.Text;
 using Arc.Compiler.PackageGenerator.Encoders;
 using Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 using Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
-using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
@@ -20,8 +19,10 @@ internal static class ArcGinkgoPackageEncoder
         WriteDescriptor();
 
         // Keep the legacy order: descriptor, counted symbol table, counted constants, code.
-        var encodedSymbols = symbols.Where(n => n is IArcEncodableScopeTreeNode or ArcScopeTreeNamespaceNode ||
-            n is ArcScopeTreeGroupNode || n is ArcScopeTreeFunctionNodeBase && functionPools.ContainsKey(n.Id)).ToList();
+        var encodedSymbols = symbols.Where(n => n is ArcScopeTreeNamespaceNode or ArcScopeTreeGroupFieldNode
+            or ArcScopeTreeDataTypeNode or ArcScopeTreeGroupNode or ArcScopeTreeAnnotationNode
+            or ArcScopeTreeEnumNode or ArcScopeTreeEnumMemberNode or ArcScopeTreeGenericTypeNode ||
+            n is ArcScopeTreeFunctionNodeBase && functionPools.ContainsKey(n.Id)).ToList();
         writer.Write(checked((uint)encodedSymbols.Count));
         foreach (var symbol in encodedSymbols)
         {

@@ -42,7 +42,7 @@ public static class ArcLocalDataDeclarationGenerator
         }
         
         ctx.AddImplicitRegister(localObj);
-        result.OutImplicitRegister = localObj;
+        result.SetOutput(localObj);
         result.Instructions.Add(new Instruction.ArcDataInitObjectInstruction
         {
             TypeId = checked((uint)localObj.Instance.Type.ActualTypeId),

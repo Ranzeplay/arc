@@ -43,7 +43,7 @@ public static class ArcFunctionCallGenerator
         foreach (var argument in syntax.Arguments)
         {
             var value = ArcExpressionEvaluationGenerator.Generate(ref ctx, argument.Expression);
-            result.Append(value);
+            result.AppendInstructions(value);
             if (value.DiscardResult || value.OutImplicitRegister is null) return result;
             arguments.Add(value.OutImplicitRegister);
         }
@@ -53,7 +53,7 @@ public static class ArcFunctionCallGenerator
                 pair.First.DataType.Dimension == pair.Second.Instance.Dimension)).ToList();
         if (matches.Count != 1)
         {
-            result.Append(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+            result.AppendInstructions(ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 matches.Count == 0 ? $"No matching function {syntax.Identifier}" : $"Ambiguous function {syntax.Identifier}",
                 ctx.UnitName, syntax.Identifier));
             return result;
@@ -74,8 +74,7 @@ public static class ArcFunctionCallGenerator
         var invoke = ArcControlFlowInvokeInstruction.Normal;
         invoke.Dest = output?.Id ?? 0;
         result.Instructions.Add(invoke);
-        result.OutImplicitRegister = output;
-        result.OutputInvoke = output is null ? null : invoke;
+        result.SetOutput(output, invoke);
         return result;
     }
 }

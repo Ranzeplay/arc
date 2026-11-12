@@ -41,6 +41,11 @@ public static class ArcGinkgoScopeAdapter
             }
             if (source is Legacy.ArcScopeTreeAnnotationNode oldAnnotation && target is ArcScopeTreeAnnotationNode annotation)
                 annotation.TargetGroup = (ArcScopeTreeGroupNode)mapped[oldAnnotation.TargetGroup];
+        }
+
+        // Resolve annotation identities before using them as dictionary keys.
+        foreach (var (source, target) in mapped)
+        {
             if (source is Legacy.ArcScopeTreeGroupNode oldGroup && target is ArcScopeTreeGroupNode targetGroup)
                 foreach (var (key, arguments) in oldGroup.Annotations)
                     targetGroup.Annotations.Add((ArcScopeTreeAnnotationNode)mapped[key], arguments);

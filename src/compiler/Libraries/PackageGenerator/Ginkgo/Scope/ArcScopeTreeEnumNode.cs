@@ -1,11 +1,9 @@
-using Arc.Compiler.PackageGenerator.Interfaces;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Models.Blocks;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 
-public class ArcScopeTreeEnumNode : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+public class ArcScopeTreeEnumNode : ArcScopeTreeNodeBase
 {
     public override string Name => SyntaxTree.Name.Name;
     
@@ -18,15 +16,4 @@ public class ArcScopeTreeEnumNode : ArcScopeTreeNodeBase, IArcEncodableScopeTree
     public Dictionary<Models.Scope.ArcScopeTreeAnnotationNode, IEnumerable<ArcExpression>> Annotations { get; set; } = [];
     
     public IEnumerable<ArcScopeTreeEnumMemberNode> Members => Children.OfType<ArcScopeTreeEnumMemberNode>();
-    
-    public virtual IEnumerable<byte> Encode(Models.Scope.ArcScopeTree tree) =>
-    [
-        (byte)ArcSymbolType.Enum,
-
-        ..BitConverter.GetBytes(Annotations.LongCount()),
-        ..Annotations.SelectMany(a => BitConverter.GetBytes(a.Key.Id)),
-
-        ..BitConverter.GetBytes(Members.LongCount()),
-        ..Members.SelectMany(m => BitConverter.GetBytes(m.Id))
-    ];
 }

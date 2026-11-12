@@ -35,25 +35,17 @@ public static class ArcCallChainGenerator
         {
             return firstTerm;
         }
-        result.Append(firstTerm);
-
-        var prevTermOutReg = firstTerm.OutImplicitRegister;
-        var outputInvoke = firstTerm.OutputInvoke;
+        result.AppendValue(firstTerm);
         foreach (var term in syntax.Terms.Skip(syntax.ConstructorCall is null ? 1 : 0))
         {
-            var termResult = GenerateNextTerm(ref ctx, term, prevTermOutReg);
-            result.Append(termResult);
+            var termResult = GenerateNextTerm(ref ctx, term, result.OutImplicitRegister);
+            result.AppendValue(termResult);
             if(termResult.DiscardResult)
             {
                 return result;
             }
-            
-            prevTermOutReg = termResult.OutImplicitRegister;
-            outputInvoke = termResult.OutputInvoke;
         }
         
-        result.OutImplicitRegister = prevTermOutReg;
-        result.OutputInvoke = outputInvoke;
         return result;
     }
 
@@ -89,7 +81,7 @@ public static class ArcCallChainGenerator
         foreach (var parameter in syntax.Parameters)
         {
             var argument = ArcExpressionEvaluationGenerator.Generate(ref ctx, parameter);
-            result.Append(argument);
+            result.AppendInstructions(argument);
             if (result.DiscardResult || argument.OutImplicitRegister is null)
             {
                 return result;
@@ -128,7 +120,7 @@ public static class ArcCallChainGenerator
             result.Instructions.Add(ArcControlFlowInvokeInstruction.Normal);
         }
         
-        result.OutImplicitRegister = output;
+        result.SetOutput(output);
         return result;
     }
 
@@ -148,10 +140,9 @@ public static class ArcCallChainGenerator
                     var localObj = ctx.GetImplicitRegister(name);
                     if (localObj is not null)
                     {
-                        return new ArcGinkgoInstructionGenerationResult
-                        {
-                            OutImplicitRegister = localObj,
-                        };
+                        var result = new ArcGinkgoInstructionGenerationResult();
+                        result.SetOutput(localObj);
+                        return result;
                     }
                 }
 
@@ -226,9 +217,9 @@ public static class ArcCallChainGenerator
 
                 var result = new ArcGinkgoInstructionGenerationResult
                 {
-                    OutImplicitRegister = outObj,
                     Instructions = [loadField]
                 };
+                result.SetOutput(outObj);
                 
                 return result;
             }

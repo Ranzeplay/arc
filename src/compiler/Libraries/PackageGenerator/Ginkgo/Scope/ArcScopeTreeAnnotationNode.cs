@@ -1,9 +1,6 @@
-﻿using Arc.Compiler.PackageGenerator.Interfaces;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
+﻿namespace Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 
-namespace Arc.Compiler.PackageGenerator.Ginkgo.Scope;
-
-public class ArcScopeTreeAnnotationNode : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+public class ArcScopeTreeAnnotationNode : ArcScopeTreeNodeBase
 {
     public override string Name => TargetGroup.ShortName;
 
@@ -12,10 +9,4 @@ public class ArcScopeTreeAnnotationNode : ArcScopeTreeNodeBase, IArcEncodableSco
     public required ArcScopeTreeGroupNode TargetGroup { get; set; }
 
     public override string SignatureAddend => "A" + TargetGroup.ShortName;
-
-    public IEnumerable<byte> Encode(Models.Scope.ArcScopeTree tree) =>
-    [
-        (byte)ArcSymbolType.Annotation,
-        ..BitConverter.GetBytes(TargetGroup.Id)
-    ];
 }

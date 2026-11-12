@@ -102,7 +102,7 @@ public static class ArcAssignmentGenerator
 
         // Evaluate the RHS only when the conditional assignment needs a value.
         var value = ArcExpressionEvaluationGenerator.Generate(ref ctx, syntax.Expression);
-        result.Append(value);
+        result.AppendValue(value);
         
         if (result.DiscardResult || value.OutImplicitRegister is null)
         {
@@ -120,8 +120,6 @@ public static class ArcAssignmentGenerator
                 { Src = value.OutImplicitRegister.Id, Dest = assignmentTarget.Id, FieldId = fieldId.Value });
         else
         {
-            result.OutImplicitRegister = value.OutImplicitRegister;
-            result.OutputInvoke = value.OutputInvoke;
             result.StoreOutput(assignmentTarget);
         }
 

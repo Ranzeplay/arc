@@ -20,31 +20,43 @@ public class ArcGinkgoInstructionGenerationResult
     
     public bool DiscardResult => Logs.Any(l => l.Level is LogLevel.Error or LogLevel.Critical);
     
-    public ArcImplicitRegister? OutImplicitRegister { get; set; }
+    public ArcImplicitRegister? OutImplicitRegister { get; private set; }
 
     // Set only when this invocation produces OutImplicitRegister; void lifecycle calls do not.
-    public ArcControlFlowInvokeInstruction? OutputInvoke { get; set; }
+    private ArcControlFlowInvokeInstruction? outputInvoke;
+
+    public void SetOutput(ArcImplicitRegister? register, ArcControlFlowInvokeInstruction? invoke = null)
+    {
+        OutImplicitRegister = register;
+        outputInvoke = register is null ? null : invoke;
+    }
 
     public void StoreOutput(ArcImplicitRegister target)
     {
         var source = OutImplicitRegister ?? throw new InvalidOperationException("No output register to store");
         // Only redirect the final producer. Earlier calls may feed arguments or field receivers.
-        if (OutputInvoke is { } invoke && ReferenceEquals(Instructions.LastOrDefault(), invoke) && invoke.Dest == source.Id)
+        if (outputInvoke is { } invoke && ReferenceEquals(Instructions.LastOrDefault(), invoke) && invoke.Dest == source.Id)
             invoke.Dest = target.Id;
         else if (source.Id != target.Id)
         {
             Instructions.Add(new ArcDataCopyInstruction { Src = source.Id, Dest = target.Id });
-            OutputInvoke = null;
+            outputInvoke = null;
         }
         OutImplicitRegister = target;
     }
 
-    public void Append(ArcGinkgoInstructionGenerationResult res)
+    public void AppendInstructions(ArcGinkgoInstructionGenerationResult res)
     {
         Instructions.AddRange(res.Instructions);
         RelocationTargets.AddRange(res.RelocationTargets);
         RelocationLabels.AddRange(res.RelocationLabels);
         Logs.AddRange(res.Logs);
+    }
+
+    public void AppendValue(ArcGinkgoInstructionGenerationResult res)
+    {
+        AppendInstructions(res);
+        SetOutput(res.OutImplicitRegister, res.outputInvoke);
     }
 
     public static ArcGinkgoInstructionGenerationResult WithLog(LogLevel level, uint code, string message, string sourceFile, IArcTraceable<ParserRuleContext> locatable)

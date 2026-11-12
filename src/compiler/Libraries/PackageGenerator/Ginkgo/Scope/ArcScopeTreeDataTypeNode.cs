@@ -2,11 +2,10 @@
 using Arc.Compiler.PackageGenerator.Interfaces;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 
-public class ArcScopeTreeDataTypeNode(ArcDataTypeType typeType, ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode, IArcDataTypeProxy
+public class ArcScopeTreeDataTypeNode(ArcDataTypeType typeType, ArcTypeBase dataType, string shortName) : ArcScopeTreeNodeBase, IArcDataTypeProxy
 {
     public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.DataType;
 
@@ -33,13 +32,6 @@ public class ArcScopeTreeDataTypeNode(ArcDataTypeType typeType, ArcTypeBase data
     public ulong ActualTypeId => Id;
 
     public ArcTypeBase ResolvedType => DataType;
-
-    public IEnumerable<byte> Encode(Models.Scope.ArcScopeTree tree) =>
-    [
-        (byte)ArcSymbolType.DataType,
-        (byte)(IsInternal ? 0x00 : 0x01),
-        ..(!IsInternal ? BitConverter.GetBytes(ComplexTypeGroup?.Id ?? 0xffffffff) : [])
-    ];
 
     public static ArcScopeTreeDataTypeNode Placeholder() => new(ArcDataTypeType.Primitive, ArcBaseType.Placeholder(), "INVALID");
 }

@@ -1,13 +1,10 @@
-﻿using Arc.Compiler.PackageGenerator.Generators;
-using Arc.Compiler.PackageGenerator.Interfaces;
-using Arc.Compiler.PackageGenerator.Models.Descriptors;
-using Arc.Compiler.PackageGenerator.Models.Relocation;
+﻿using Arc.Compiler.PackageGenerator.Models.Descriptors;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Scope;
 
-public class ArcScopeTreeGroupFieldNode : ArcScopeTreeNodeBase, IArcEncodableScopeTreeNode
+public class ArcScopeTreeGroupFieldNode : ArcScopeTreeNodeBase
 {
     public override ArcScopeTreeNodeType NodeType => ArcScopeTreeNodeType.GroupField;
 
@@ -22,10 +19,4 @@ public class ArcScopeTreeGroupFieldNode : ArcScopeTreeNodeBase, IArcEncodableSco
     public override string SignatureAddend => "D" + IdentifierName;
 
     public override string Name => IdentifierName;
-
-    public IEnumerable<byte> Encode(Models.Scope.ArcScopeTree tree) =>
-    [
-        (byte)ArcSymbolType.GroupField,
-        ..DataType.Encode(tree.GetNodes<Models.Scope.ArcScopeTreeDataTypeNode>())
-    ];
 }
