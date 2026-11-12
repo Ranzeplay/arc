@@ -1,3 +1,4 @@
+use crate::instructions::data_declaration::construct_data;
 use arc_shared::base_type_id::STRING_TYPE_ID;
 use arc_shared::models::descriptors::symbol::Symbol;
 use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
@@ -6,7 +7,6 @@ use arc_shared::models::execution::data::{DataSlot, DataValue, DataValueType};
 use std::cell::RefCell;
 use std::ops::Deref;
 use std::rc::Rc;
-use crate::instructions::data_declaration::construct_data;
 
 pub fn prepare_and_get_function_info(
     function_id: usize,
@@ -31,17 +31,11 @@ pub fn prepare_and_get_function_info(
             let st_symbol = exec_context_ref.global_stack.pop().unwrap();
             let st_symbol = st_symbol.borrow();
             fn_id = match &st_symbol.value {
-                DataValueType::Symbol(s) => {
-                    s.id
-                },
-                _ => panic!("Invalid data type for function symbol")
+                DataValueType::Symbol(s) => s.id,
+                _ => panic!("Invalid data type for function symbol"),
             }
         }
-        let current_fn_symbol_opt = exec_context_ref
-            .package
-            .symbol_table
-            .symbols
-            .get(&fn_id);
+        let current_fn_symbol_opt = exec_context_ref.package.symbol_table.symbols.get(&fn_id);
         let current_fn = current_fn_symbol_opt.unwrap();
 
         // Create the function context
@@ -64,7 +58,11 @@ pub fn prepare_and_get_function_info(
     }
 
     if let Some(_) = parent_fn_opt {
-        put_fn_args(Rc::clone(&exec_context), &mut function_context, is_constructor_of_type);
+        put_fn_args(
+            Rc::clone(&exec_context),
+            &mut function_context,
+            is_constructor_of_type,
+        );
     } else {
         put_cmdline_fn_args(Rc::clone(&exec_context), &mut function_context);
     }
@@ -77,7 +75,7 @@ pub fn prepare_and_get_function_info(
 
             match &symbol_data.value {
                 DataValueType::Symbol(s) => s.id,
-                _ => panic!("Invalid data type for function symbol")
+                _ => panic!("Invalid data type for function symbol"),
             }
         };
     }
@@ -90,9 +88,12 @@ fn put_fn_args(
     function_context: &mut FunctionExecutionContext,
     is_constructor_of_type: Option<usize>,
 ) {
-
     let current_function_arg_count = function_context.function.parameter_descriptors.len();
-    let begin_index = if is_constructor_of_type.is_none() { 0 } else { 1 };
+    let begin_index = if is_constructor_of_type.is_none() {
+        0
+    } else {
+        1
+    };
     for i in begin_index..current_function_arg_count {
         let data = exec_context.borrow_mut().global_stack.pop().unwrap();
         let slot_id = current_function_arg_count - i - 1;
@@ -103,7 +104,7 @@ fn put_fn_args(
             value: Rc::new(RefCell::new(DataValue {
                 data_type: target_arg.deref().clone(),
                 value: data.borrow().value.clone(),
-            }))
+            })),
         };
         function_context
             .local_data
@@ -113,10 +114,12 @@ fn put_fn_args(
     if let Some(type_id) = is_constructor_of_type {
         let exec_context_ref = exec_context.borrow();
         let obj = construct_data(type_id, &exec_context_ref.package);
-        function_context.local_data.push(Rc::new(RefCell::new(DataSlot {
-            slot_id: 0,
-            value: obj,
-        })));
+        function_context
+            .local_data
+            .push(Rc::new(RefCell::new(DataSlot {
+                slot_id: 0,
+                value: obj,
+            })));
     }
 
     function_context.local_data.reverse();

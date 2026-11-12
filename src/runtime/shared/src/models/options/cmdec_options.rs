@@ -7,5 +7,5 @@ pub struct CmdecOptions {
     pub print_constants: bool,
     pub print_raw_bytes: bool,
     pub print_package_descriptor: bool,
-    pub verbose: bool
+    pub verbose: bool,
 }

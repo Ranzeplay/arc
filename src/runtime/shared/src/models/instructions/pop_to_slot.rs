@@ -1,7 +1,7 @@
-use std::fmt::Debug;
-use arc_instruction_factory::arc_instruction;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
+use arc_instruction_factory::arc_instruction;
+use std::fmt::Debug;
 
 #[derive(PartialEq, Copy, Clone)]
 pub struct PopToSlotInstruction {
@@ -16,15 +16,14 @@ impl Debug for PopToSlotInstruction {
 
 #[arc_instruction(0x06, "PopS")]
 impl DecodableInstruction<PopToSlotInstruction> for PopToSlotInstruction {
-    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(PopToSlotInstruction, usize)> {
+    fn decode(
+        stream: &[u8],
+        _offset: usize,
+        _package: &Package,
+    ) -> Option<(PopToSlotInstruction, usize)> {
         let slot_id = usize::from_le_bytes(stream[1..9].try_into().unwrap());
         let length = 9;
 
-        Some((
-            PopToSlotInstruction {
-                slot_id,
-            },
-            length,
-        ))
+        Some((PopToSlotInstruction { slot_id }, length))
     }
 }

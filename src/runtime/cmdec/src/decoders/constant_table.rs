@@ -36,30 +36,26 @@ fn decode_constant(stream: &[u8]) -> (ConstantDescriptor, usize) {
     let decoded_value = get_data_value(type_id, &raw_value);
     pos += len;
 
-    (ConstantDescriptor{
-        id,
-        type_id,
-        is_array,
-        raw_value,
-        decoded_value,
-    }, pos)
+    (
+        ConstantDescriptor {
+            id,
+            type_id,
+            is_array,
+            raw_value,
+            decoded_value,
+        },
+        pos,
+    )
 }
 
 fn get_data_value(type_id: usize, data: &Vec<u8>) -> DataValueType {
     match type_id {
         0 => DataValueType::None,
         1 => DataValueType::Any,
-        2 => DataValueType::Integer(i64::from_le_bytes(
-            data[0..8].try_into().unwrap(),
-        )),
-        3 => DataValueType::Decimal(f64::from_le_bytes(
-            data[0..8].try_into().unwrap(),
-        )),
+        2 => DataValueType::Integer(i64::from_le_bytes(data[0..8].try_into().unwrap())),
+        3 => DataValueType::Decimal(f64::from_le_bytes(data[0..8].try_into().unwrap())),
         4 => DataValueType::Char(
-            char::from_u32(u32::from_le_bytes(
-                data[0..4].try_into().unwrap(),
-            ))
-                .unwrap(),
+            char::from_u32(u32::from_le_bytes(data[0..4].try_into().unwrap())).unwrap(),
         ),
         5 => DataValueType::String(StringEncoding::from_u8(&data).value),
         6 => DataValueType::Bool(data[0] == 0x01),

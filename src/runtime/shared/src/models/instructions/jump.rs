@@ -1,7 +1,7 @@
-use std::fmt::Debug;
-use arc_instruction_factory::arc_instruction;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
+use arc_instruction_factory::arc_instruction;
+use std::fmt::Debug;
 
 #[derive(PartialEq, Copy, Clone)]
 pub struct JumpInstruction {
@@ -16,15 +16,14 @@ impl Debug for JumpInstruction {
 
 #[arc_instruction(0x21, "Jmp")]
 impl DecodableInstruction<JumpInstruction> for JumpInstruction {
-    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(JumpInstruction, usize)> {
+    fn decode(
+        stream: &[u8],
+        _offset: usize,
+        _package: &Package,
+    ) -> Option<(JumpInstruction, usize)> {
         let jump_offset = i64::from_le_bytes(stream[1..9].try_into().unwrap());
         let length = 9;
 
-        Some((
-            JumpInstruction {
-                jump_offset,
-            },
-            length,
-        ))
+        Some((JumpInstruction { jump_offset }, length))
     }
 }

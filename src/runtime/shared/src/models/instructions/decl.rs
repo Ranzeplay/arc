@@ -1,8 +1,8 @@
-use std::fmt::Debug;
-use arc_instruction_factory::arc_instruction;
 use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
+use arc_instruction_factory::arc_instruction;
+use std::fmt::Debug;
 
 #[derive(PartialEq, Clone)]
 pub struct DeclInstruction {
@@ -15,17 +15,17 @@ impl Debug for DeclInstruction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let is_array = if self.dimension > 0 { 'A' } else { 'S' };
 
-        write!(
-            f,
-            "{} 0x{:016X}",
-            is_array, self.data_type_id
-        )
+        write!(f, "{} 0x{:016X}", is_array, self.data_type_id)
     }
 }
 
 #[arc_instruction(0x01, "Decl")]
 impl DecodableInstruction<DeclInstruction> for DeclInstruction {
-    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(DeclInstruction, usize)> {
+    fn decode(
+        stream: &[u8],
+        _offset: usize,
+        _package: &Package,
+    ) -> Option<(DeclInstruction, usize)> {
         let mut pos = 1;
 
         let dimension = u32::from_le_bytes(stream[pos..pos + 4].try_into().unwrap());
@@ -34,7 +34,8 @@ impl DecodableInstruction<DeclInstruction> for DeclInstruction {
         let data_type_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
 
-        let (generic_type_ids, generic_types_len) = SizedArrayEncoding::with_usize_data(stream[pos..].try_into().unwrap());
+        let (generic_type_ids, generic_types_len) =
+            SizedArrayEncoding::with_usize_data(stream[pos..].try_into().unwrap());
         pos += generic_types_len;
 
         Some((

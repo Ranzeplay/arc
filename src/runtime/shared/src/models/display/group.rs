@@ -1,10 +1,10 @@
+use crate::models::descriptors::symbol::GroupSymbol;
 use std::fmt::Debug;
 use std::rc::Rc;
-use crate::models::descriptors::symbol::GroupSymbol;
 
 pub struct GroupDetailViewModel {
     pub id: usize,
-    pub group: Rc<GroupSymbol>
+    pub group: Rc<GroupSymbol>,
 }
 
 impl Debug for GroupDetailViewModel {
@@ -45,15 +45,12 @@ impl Debug for GroupDetailViewModel {
 
 impl GroupDetailViewModel {
     pub fn new(id: usize, group: Rc<GroupSymbol>) -> GroupDetailViewModel {
-        GroupDetailViewModel {
-            id,
-            group
-        }
+        GroupDetailViewModel { id, group }
     }
 }
 
 pub struct GroupListViewModel {
-    pub groups: Vec<GroupDetailViewModel>
+    pub groups: Vec<GroupDetailViewModel>,
 }
 
 impl Debug for GroupListViewModel {

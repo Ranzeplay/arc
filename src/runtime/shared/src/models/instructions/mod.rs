@@ -1,10 +1,10 @@
-pub mod decl;
 pub mod conditional_jump;
-pub mod jump;
+pub mod decl;
 pub mod func_call;
+pub mod jump;
+pub mod new_obj;
 pub mod pop_to_slot;
 pub mod return_from_block;
-pub mod stack_data_operation;
 pub mod return_function;
-pub mod new_obj;
 pub mod single_instructions;
+pub mod stack_data_operation;

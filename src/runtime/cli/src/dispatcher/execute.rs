@@ -1,6 +1,6 @@
-use std::rc::Rc;
 use arc_executor::launch;
 use arc_shared::models::options::launch_options::LaunchOptions;
+use std::rc::Rc;
 
 pub fn execute(opt: LaunchOptions) -> i32 {
     let opt = Rc::new(opt);

@@ -1,8 +1,10 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-use crate::base_type_id::{BOOLEAN_TYPE_ID, BYTE_TYPE_ID, CHAR_TYPE_ID, DECIMAL_TYPE_ID, INTEGER_TYPE_ID, STRING_TYPE_ID};
+use crate::base_type_id::{
+    BOOLEAN_TYPE_ID, BYTE_TYPE_ID, CHAR_TYPE_ID, DECIMAL_TYPE_ID, INTEGER_TYPE_ID, STRING_TYPE_ID,
+};
 use crate::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use crate::models::execution::data::{DataValue, DataValueType};
+use std::cell::RefCell;
+use std::rc::Rc;
 
 impl TryInto<i64> for DataValue {
     type Error = String;
@@ -91,7 +93,7 @@ impl From<String> for DataValue {
 
         let value = DataValueType::String(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }
 
@@ -105,7 +107,7 @@ impl From<i64> for DataValue {
 
         let value = DataValueType::Integer(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }
 
@@ -119,7 +121,7 @@ impl From<f64> for DataValue {
 
         let value = DataValueType::Decimal(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }
 
@@ -133,7 +135,7 @@ impl From<bool> for DataValue {
 
         let value = DataValueType::Bool(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }
 
@@ -147,7 +149,7 @@ impl From<char> for DataValue {
 
         let value = DataValueType::Char(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }
 
@@ -161,6 +163,6 @@ impl From<u8> for DataValue {
 
         let value = DataValueType::Byte(value);
 
-        DataValue{ data_type, value }
+        DataValue { data_type, value }
     }
 }

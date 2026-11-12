@@ -1,6 +1,6 @@
 use crate::models::encodings::data_type_enc::DataTypeEncoding;
 
-pub struct SizedArrayEncoding{}
+pub struct SizedArrayEncoding {}
 
 impl SizedArrayEncoding {
     pub fn with_usize_data(data: &[u8]) -> (Vec<usize>, usize) {

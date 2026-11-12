@@ -1,4 +1,8 @@
-use arc_shared::models::descriptors::symbol::{AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol, GroupLifecycleFunctionSymbol, GroupLifecycleFunctionType, GroupSymbol, NamespaceSymbol, Symbol, SymbolDescriptor, SymbolTable};
+use arc_shared::models::descriptors::symbol::{
+    AnnotationSymbol, ComplexTypeSymbol, DataTypeSymbol, FunctionSymbol, GroupFieldSymbol,
+    GroupLifecycleFunctionSymbol, GroupLifecycleFunctionType, GroupSymbol, NamespaceSymbol, Symbol,
+    SymbolDescriptor, SymbolTable,
+};
 use arc_shared::models::encodings::data_type_enc::DataTypeEncoding;
 use arc_shared::models::encodings::sized_array_enc::SizedArrayEncoding;
 use std::collections::HashMap;
@@ -15,10 +19,13 @@ pub fn decode_symbol_table(stream: &[u8]) -> (SymbolTable, usize) {
         pos += 8;
 
         let (symbol, len) = decode_symbol(&stream[pos..]);
-        result.insert(symbol_id, SymbolDescriptor {
-            id: symbol_id,
-            value: symbol,
-        });
+        result.insert(
+            symbol_id,
+            SymbolDescriptor {
+                id: symbol_id,
+                value: symbol,
+            },
+        );
         pos += len;
     }
 
@@ -66,7 +73,8 @@ pub fn decode_function_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotations, annotation_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += annotation_len;
 
-    let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    let (generic_type_ids, generic_type_ids_len) =
+        SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += generic_type_ids_len;
 
     let data_count = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
@@ -98,16 +106,16 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     for _ in 0..lifecycle_fn_size {
         let type_id = u8::from_le_bytes(stream[pos..pos + 1].try_into().unwrap());
         pos += 1;
-        
+
         let fn_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
-        
+
         lifecycle_functions.push(GroupLifecycleFunctionSymbol {
             fn_id,
             fn_type: GroupLifecycleFunctionType::from(type_id),
         })
     }
-    
+
     let (function_ids, function_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += function_ids_len;
 
@@ -117,10 +125,12 @@ pub fn decode_group_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotation_ids, annotation_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += annotation_ids_len;
 
-    let (generic_type_ids, generic_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    let (generic_type_ids, generic_type_ids_len) =
+        SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += generic_type_ids_len;
 
-    let (derivation_type_ids, derivation_type_ids_len) = SizedArrayEncoding::with_usize_data(&stream[pos..]);
+    let (derivation_type_ids, derivation_type_ids_len) =
+        SizedArrayEncoding::with_usize_data(&stream[pos..]);
     pos += derivation_type_ids_len;
 
     let result = Symbol::Group(Rc::new(GroupSymbol {
@@ -154,19 +164,14 @@ pub fn decode_data_type_descriptor(stream: &[u8]) -> (Symbol, usize) {
     pos += 1;
 
     if is_base_type {
-        (
-            Symbol::DataType(Rc::new(DataTypeSymbol::BaseType)),
-            pos,
-        )
+        (Symbol::DataType(Rc::new(DataTypeSymbol::BaseType)), pos)
     } else {
         let group_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
         (
-            Symbol::DataType(Rc::new(DataTypeSymbol::ComplexType(
-                ComplexTypeSymbol {
-                    group_id,
-                },
-            ))),
+            Symbol::DataType(Rc::new(DataTypeSymbol::ComplexType(ComplexTypeSymbol {
+                group_id,
+            }))),
             pos,
         )
     }
@@ -191,10 +196,12 @@ pub fn decode_enum_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotations, annotations_len) = SizedArrayEncoding::with_usize_data(&stream);
     let (members, members_len) = SizedArrayEncoding::with_usize_data(&stream[annotations_len..]);
     (
-        Symbol::Enum(Rc::new(arc_shared::models::descriptors::symbol::EnumSymbol {
-            annotation_ids: annotations,
-            member_ids: members,
-        })),
+        Symbol::Enum(Rc::new(
+            arc_shared::models::descriptors::symbol::EnumSymbol {
+                annotation_ids: annotations,
+                member_ids: members,
+            },
+        )),
         annotations_len + members_len,
     )
 }
@@ -202,9 +209,11 @@ pub fn decode_enum_descriptor(stream: &[u8]) -> (Symbol, usize) {
 pub fn decode_enum_member_descriptor(stream: &[u8]) -> (Symbol, usize) {
     let (annotations, annotations_len) = SizedArrayEncoding::with_usize_data(&stream);
     (
-        Symbol::EnumMember(Rc::new(arc_shared::models::descriptors::symbol::EnumMemberSymbol {
-            annotation_ids: annotations,
-        })),
+        Symbol::EnumMember(Rc::new(
+            arc_shared::models::descriptors::symbol::EnumMemberSymbol {
+                annotation_ids: annotations,
+            },
+        )),
         annotations_len,
     )
 }

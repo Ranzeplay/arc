@@ -1,11 +1,11 @@
 use crate::models::descriptors::symbol::{FunctionSymbol, Symbol};
 use crate::models::execution::data::{DataSlot, DataValue};
 use crate::models::instruction::Instruction;
+use crate::models::instruction_type::InstructionType;
 use crate::models::package::Package;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::rc::Rc;
-use crate::models::instruction_type::InstructionType;
 
 pub struct ExecutionContext {
     pub package: Rc<Package>,
@@ -110,7 +110,8 @@ pub fn get_jump_destination_instruction_index(
         let target_instruction = instructions
             .iter()
             .filter(|&i| {
-                i.offset > current_instruction.offset && matches!(i.instruction_type, InstructionType::Lbl(_))
+                i.offset > current_instruction.offset
+                    && matches!(i.instruction_type, InstructionType::Lbl(_))
             })
             .nth(jump_offset as usize - 1)
             .unwrap();
@@ -123,7 +124,8 @@ pub fn get_jump_destination_instruction_index(
         let target_instruction = instructions
             .iter()
             .filter(|&i| {
-                i.offset < current_instruction.offset && matches!(i.instruction_type, InstructionType::Lbl(_))
+                i.offset < current_instruction.offset
+                    && matches!(i.instruction_type, InstructionType::Lbl(_))
             })
             .nth_back(jump_offset.abs() as usize - 1)
             .unwrap();

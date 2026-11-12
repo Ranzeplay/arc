@@ -1,4 +1,3 @@
-use log::{debug, error, info};
 use crate::decoders::constant_table::decode_constant_table;
 use crate::decoders::instruction::decode_instructions;
 use crate::decoders::package_descriptor::decode_package_descriptor;
@@ -7,6 +6,7 @@ use arc_shared::models::descriptors::symbol::Symbol;
 use arc_shared::models::display::group::{GroupDetailViewModel, GroupListViewModel};
 use arc_shared::models::options::cmdec_options::CmdecOptions;
 use arc_shared::models::package::Package;
+use log::{debug, error, info};
 
 mod decoders;
 pub mod ginkgo;
@@ -63,7 +63,9 @@ impl Cmdec {
             match &symbol.value {
                 Symbol::Group(group) => {
                     let g = group.clone();
-                    group_detail_list.groups.push(GroupDetailViewModel::new(symbol.id, g));
+                    group_detail_list
+                        .groups
+                        .push(GroupDetailViewModel::new(symbol.id, g));
                 }
                 _ => {}
             }

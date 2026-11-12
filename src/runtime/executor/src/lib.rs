@@ -5,20 +5,24 @@ mod math;
 mod stdlib;
 
 use crate::func_exec::prepare_and_get_function_info;
+use crate::instructions::data_declaration::declare_data;
 use crate::instructions::return_function::wrap_return_value_if_needed;
+use crate::instructions::stack_operations::{
+    load_stack, pop_to_slot, replace_stack_top, save_stack,
+};
+use crate::math::{math_bitwise_not, math_logical_and, math_logical_not, math_logical_or};
 use crate::stdlib::execute_stdlib_function;
-use log::{debug, error, trace, warn};
 use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use arc_shared::models::execution::context::{ExecutionContext, FunctionExecutionContext};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
-use arc_shared::models::execution::result::{FunctionExecutionFault, FunctionExecutionResult, StackTraceLocation};
+use arc_shared::models::execution::result::{
+    FunctionExecutionFault, FunctionExecutionResult, StackTraceLocation,
+};
 use arc_shared::models::instruction::InstructionType;
+use arc_shared::models::options::launch_options::LaunchOptions;
+use log::{debug, error, trace, warn};
 use std::cell::RefCell;
 use std::rc::Rc;
-use arc_shared::models::options::launch_options::LaunchOptions;
-use crate::instructions::data_declaration::declare_data;
-use crate::instructions::stack_operations::{load_stack, pop_to_slot, replace_stack_top, save_stack};
-use crate::math::{math_bitwise_not, math_logical_and, math_logical_not, math_logical_or};
 
 macro_rules! push_bool_to_stack {
     ($stack:expr, $result:expr) => {
@@ -26,7 +30,7 @@ macro_rules! push_bool_to_stack {
             data_type: DataTypeEncoding {
                 type_id: 0x6,
                 dimension: 0,
-                mutability: Mutability::Immutable
+                mutability: Mutability::Immutable,
             },
             value: DataValueType::Bool($result),
         })));
@@ -62,7 +66,7 @@ pub fn execute(opt: Rc<LaunchOptions>) -> FunctionExecutionResult {
         None,
         Rc::new(RefCell::new(context)),
         None,
-        1
+        1,
     )
 }
 
@@ -83,7 +87,13 @@ pub fn execute_function(
         return FunctionExecutionResult::Success(None);
     }
 
-    let function_context = prepare_and_get_function_info(function_id, parent_fn_opt, Rc::clone(&exec_context), is_constructor_of_type, param_count);
+    let function_context = prepare_and_get_function_info(
+        function_id,
+        parent_fn_opt,
+        Rc::clone(&exec_context),
+        is_constructor_of_type,
+        param_count,
+    );
     let function_id = {
         let function_context_ref = function_context.borrow();
         function_context_ref.id
@@ -112,7 +122,11 @@ fn instruction_loop(
     'finalize: loop {
         let instruction = {
             let exec_context_ref = exec_context.borrow();
-            let result = exec_context_ref.package.instructions.get(instruction_index).unwrap();
+            let result = exec_context_ref
+                .package
+                .instructions
+                .get(instruction_index)
+                .unwrap();
 
             Rc::clone(&result)
         };
@@ -280,10 +294,19 @@ fn instruction_loop(
                 break 'finalize;
             }
             InstructionType::FCall(call) => {
-                let fn_result = execute_function(call.function_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), None, call.param_count as usize);
+                let fn_result = execute_function(
+                    call.function_id,
+                    Some(Rc::clone(&function_context)),
+                    Rc::clone(&exec_context),
+                    None,
+                    call.param_count as usize,
+                );
                 match fn_result {
                     FunctionExecutionResult::Invalid => {
-                        error!("Invalid function(0x{:016X}) execution result", call.function_id);
+                        error!(
+                            "Invalid function(0x{:016X}) execution result",
+                            call.function_id
+                        );
                         return FunctionExecutionResult::Invalid;
                     }
                     FunctionExecutionResult::Success(data_opt) => {
@@ -294,21 +317,36 @@ fn instruction_loop(
                     FunctionExecutionResult::Failure(exception) => {
                         {
                             let mut exception_ref = exception.borrow_mut();
-                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
+                            exception_ref
+                                .stack_trace
+                                .push(StackTraceLocation::new(instruction_index, function_id));
                         }
 
                         return FunctionExecutionResult::Failure(exception);
                     }
                 }
             }
-            InstructionType::LdStk(lsi) => load_stack(&exec_context, Rc::clone(&function_context), lsi),
-            InstructionType::SvStk(ssi) => save_stack(&exec_context, Rc::clone(&function_context), ssi),
+            InstructionType::LdStk(lsi) => {
+                load_stack(&exec_context, Rc::clone(&function_context), lsi)
+            }
+            InstructionType::SvStk(ssi) => {
+                save_stack(&exec_context, Rc::clone(&function_context), ssi)
+            }
             InstructionType::RpStk(_) => replace_stack_top(&exec_context),
             InstructionType::NewObj(no) => {
-                let ctor_result = execute_function(no.ctor_fn_id, Some(Rc::clone(&function_context)), Rc::clone(&exec_context), Some(no.type_id), 0);
+                let ctor_result = execute_function(
+                    no.ctor_fn_id,
+                    Some(Rc::clone(&function_context)),
+                    Rc::clone(&exec_context),
+                    Some(no.type_id),
+                    0,
+                );
                 match ctor_result {
                     FunctionExecutionResult::Invalid => {
-                        error!("Invalid constructor function(0x{:016X}) execution result", no.ctor_fn_id);
+                        error!(
+                            "Invalid constructor function(0x{:016X}) execution result",
+                            no.ctor_fn_id
+                        );
                         return FunctionExecutionResult::Invalid;
                     }
                     FunctionExecutionResult::Success(data_opt) => {
@@ -319,7 +357,9 @@ fn instruction_loop(
                     FunctionExecutionResult::Failure(exception) => {
                         {
                             let mut exception_ref = exception.borrow_mut();
-                            exception_ref.stack_trace.push(StackTraceLocation::new(instruction_index, function_id));
+                            exception_ref
+                                .stack_trace
+                                .push(StackTraceLocation::new(instruction_index, function_id));
                         }
 
                         return FunctionExecutionResult::Failure(exception);
@@ -334,16 +374,21 @@ fn instruction_loop(
     {
         match &result {
             FunctionExecutionResult::Invalid => {}
-            FunctionExecutionResult::Success(s) => {
-                match s {
-                    None => trace!("Exiting function 0x{:016X} with no value", function_id),
-                    Some(v) => trace!("Exiting function 0x{:016X} with value: {:?}", function_id, v.borrow().value),
-                }
-            }
-            FunctionExecutionResult::Failure(f) => trace!("Exiting function 0x{:016X} with failure: {:?}", function_id, f.borrow())
+            FunctionExecutionResult::Success(s) => match s {
+                None => trace!("Exiting function 0x{:016X} with no value", function_id),
+                Some(v) => trace!(
+                    "Exiting function 0x{:016X} with value: {:?}",
+                    function_id,
+                    v.borrow().value
+                ),
+            },
+            FunctionExecutionResult::Failure(f) => trace!(
+                "Exiting function 0x{:016X} with failure: {:?}",
+                function_id,
+                f.borrow()
+            ),
         }
     }
-
 
     result
 }

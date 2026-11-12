@@ -1,7 +1,7 @@
 #[allow(unused)]
-use crate::traits::instruction::DecodableInstruction;
-#[allow(unused)]
 use crate::models::package::Package;
+#[allow(unused)]
+use crate::traits::instruction::DecodableInstruction;
 use arc_instruction_factory::arc_instruction;
 use arc_instruction_factory::arc_single_instruction;
 

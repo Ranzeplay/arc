@@ -1,9 +1,9 @@
-use arc_shared::models::instruction::{Instruction, InstructionType};
-use arc_shared::models::package::Package;
-use std::rc::Rc;
-use log::{error, info, warn};
 use arc_shared::models::descriptors::symbol::Symbol::Function;
+use arc_shared::models::instruction::{Instruction, InstructionType};
 use arc_shared::models::options::cmdec_options::CmdecOptions;
+use arc_shared::models::package::Package;
+use log::{error, info, warn};
+use std::rc::Rc;
 
 pub fn decode_instructions(
     stream: &[u8],
@@ -33,10 +33,15 @@ pub fn decode_instructions(
         };
 
         if opt.print_instructions {
-            if let Some(symbol) = package.symbol_table.symbols.values().find(|s| match &s.value {
-                Function(f) => f.entry_pos == instruction.offset,
-                _ => false,
-            }) {
+            if let Some(symbol) = package
+                .symbol_table
+                .symbols
+                .values()
+                .find(|s| match &s.value {
+                    Function(f) => f.entry_pos == instruction.offset,
+                    _ => false,
+                })
+            {
                 let func = match &symbol.value {
                     Function(f) => f,
                     _ => unreachable!(),

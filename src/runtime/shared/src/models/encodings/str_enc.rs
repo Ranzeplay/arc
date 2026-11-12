@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct StringEncoding {
     pub value: String,
-    pub total_size: usize
+    pub total_size: usize,
 }
 
 impl StringEncoding {
@@ -13,7 +13,7 @@ impl StringEncoding {
 
         StringEncoding {
             value: String::from_utf8(bucket).unwrap(),
-            total_size: 8 + size
+            total_size: 8 + size,
         }
     }
 }

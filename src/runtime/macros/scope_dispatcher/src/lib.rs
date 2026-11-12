@@ -1,7 +1,7 @@
 use proc_macro::TokenStream;
-use std::collections::HashMap;
 use quote::quote;
-use syn::{parse_macro_input, ImplItem, ItemImpl, LitStr};
+use std::collections::HashMap;
+use syn::{ImplItem, ItemImpl, LitStr, parse_macro_input};
 
 #[proc_macro_attribute]
 pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream {
@@ -13,7 +13,7 @@ pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream
     let impl_type = &input.self_ty;
 
     // Get functions with arc_function_id attribute
-    let mut function_mappings =HashMap::new();
+    let mut function_mappings = HashMap::new();
 
     for item in &mut input.items {
         if let ImplItem::Fn(method) = item {
@@ -29,7 +29,8 @@ pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream
         }
     }
 
-    let dispatches = function_mappings.iter()
+    let dispatches = function_mappings
+        .iter()
         .map(|(id, name)| {
             quote! { #id => Self::#name(args) }
         })
@@ -52,7 +53,7 @@ pub fn arc_scope_dispatcher(attr: TokenStream, item: TokenStream) -> TokenStream
                 }
             }
         }
-        
+
         #input
     };
 

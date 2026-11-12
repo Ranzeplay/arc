@@ -1,13 +1,13 @@
 use crate::command_line_options::Args;
 use crate::dispatcher::cmdec::{call_cmdec_decoder, decode};
 use crate::dispatcher::execute::execute;
-use clap::Parser;
-use log::{debug, error, info};
-use std::process::exit;
-use std::rc::Rc;
-use mimalloc::MiMalloc;
 use arc_shared::models::options::cmdec_options::CmdecOptions;
 use arc_shared::models::options::launch_options::LaunchOptions;
+use clap::Parser;
+use log::{debug, error, info};
+use mimalloc::MiMalloc;
+use std::process::exit;
+use std::rc::Rc;
 
 mod command_line_options;
 mod dispatcher;

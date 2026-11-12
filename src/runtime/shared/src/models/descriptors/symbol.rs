@@ -1,5 +1,5 @@
-use std::collections::HashMap;
 use crate::models::encodings::data_type_enc::DataTypeEncoding;
+use std::collections::HashMap;
 use std::fmt::Debug;
 use std::rc::Rc;
 
@@ -34,7 +34,7 @@ impl Debug for DataTypeSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match &self {
             DataTypeSymbol::ComplexType(dt) => writeln!(f, "[DT] Ref 0x{:016X}", dt.group_id),
-            DataTypeSymbol::BaseType => writeln!(f, "[DT]")
+            DataTypeSymbol::BaseType => writeln!(f, "[DT]"),
         }
     }
 }
@@ -47,12 +47,19 @@ pub struct FunctionSymbol {
     pub annotation_ids: Vec<usize>,
     pub parameter_descriptors: Vec<Rc<DataTypeEncoding>>,
     pub generic_type_ids: Vec<usize>,
-    pub data_count: usize
+    pub data_count: usize,
 }
 
 impl Debug for FunctionSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[FN] at {}(+{}) A:{} D:{}", self.entry_pos, self.block_length, self.annotation_ids.len(), self.data_count)
+        writeln!(
+            f,
+            "[FN] at {}(+{}) A:{} D:{}",
+            self.entry_pos,
+            self.block_length,
+            self.annotation_ids.len(),
+            self.data_count
+        )
     }
 }
 
@@ -69,10 +76,12 @@ pub struct GroupSymbol {
 
 impl Debug for GroupSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[GP] {}/{}/{}",
-                 self.field_ids.len(),
-                 self.function_ids.len(),
-                 self.sub_group_ids.len()
+        writeln!(
+            f,
+            "[GP] {}/{}/{}",
+            self.field_ids.len(),
+            self.function_ids.len(),
+            self.sub_group_ids.len()
         )
     }
 }
@@ -82,7 +91,7 @@ pub enum GroupLifecycleFunctionType {
     Constructor,
     Destructor,
     ShallowCopy,
-    DeepCopy
+    DeepCopy,
 }
 
 #[derive(Clone)]
@@ -98,13 +107,13 @@ impl From<u8> for GroupLifecycleFunctionType {
             0x02 => GroupLifecycleFunctionType::Destructor,
             0x03 => GroupLifecycleFunctionType::ShallowCopy,
             0x04 => GroupLifecycleFunctionType::DeepCopy,
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
 
 pub struct GroupFieldSymbol {
-    pub value_descriptor: DataTypeEncoding
+    pub value_descriptor: DataTypeEncoding,
 }
 
 impl Debug for GroupFieldSymbol {
@@ -113,8 +122,7 @@ impl Debug for GroupFieldSymbol {
     }
 }
 
-pub struct NamespaceSymbol {
-}
+pub struct NamespaceSymbol {}
 
 impl Debug for NamespaceSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -139,7 +147,12 @@ pub struct EnumSymbol {
 
 impl Debug for EnumSymbol {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "[EN] {}/{}", self.annotation_ids.len(), self.member_ids.len())
+        writeln!(
+            f,
+            "[EN] {}/{}",
+            self.annotation_ids.len(),
+            self.member_ids.len()
+        )
     }
 }
 

@@ -137,13 +137,15 @@ fn get_all_fields(group_id: usize, package: &Package) -> HashMap<usize, Rc<Group
 
     let super_group_fields = super_types
         .iter()
-        .map(|t| match &package.symbol_table.symbols.get(t).unwrap().value {
-            Symbol::DataType(dt) => match dt.as_ref() {
-                DataTypeSymbol::ComplexType(ct) => ct.group_id,
-                _ => panic!("Super type is not a complex type"),
+        .map(
+            |t| match &package.symbol_table.symbols.get(t).unwrap().value {
+                Symbol::DataType(dt) => match dt.as_ref() {
+                    DataTypeSymbol::ComplexType(ct) => ct.group_id,
+                    _ => panic!("Super type is not a complex type"),
+                },
+                _ => panic!("Super type is not a data type"),
             },
-            _ => panic!("Super type is not a data type"),
-        })
+        )
         .flat_map(|id| get_all_fields(id, &package))
         .collect::<HashMap<_, _>>();
 

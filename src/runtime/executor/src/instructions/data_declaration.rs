@@ -6,7 +6,11 @@ use arc_shared::models::package::Package;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, decl: &DeclInstruction, package: &Package) {
+pub fn declare_data(
+    function_context: &Rc<RefCell<FunctionExecutionContext>>,
+    decl: &DeclInstruction,
+    package: &Package,
+) {
     let mut fn_context_ref = function_context.borrow_mut();
     let slot_id = fn_context_ref.local_data.len();
 
@@ -16,13 +20,15 @@ pub fn declare_data(function_context: &Rc<RefCell<FunctionExecutionContext>>, de
         mutability: Mutability::Immutable,
     };
 
-    fn_context_ref.local_data.push(Rc::new(RefCell::new(DataSlot {
-        slot_id,
-        value: Rc::new(RefCell::new(DataValue {
-            data_type: encoding.clone(),
-            value: DataValueType::init(Rc::new(encoding), package),
-        })),
-    })));
+    fn_context_ref
+        .local_data
+        .push(Rc::new(RefCell::new(DataSlot {
+            slot_id,
+            value: Rc::new(RefCell::new(DataValue {
+                data_type: encoding.clone(),
+                value: DataValueType::init(Rc::new(encoding), package),
+            })),
+        })));
 }
 
 pub fn construct_data(type_id: usize, package: &Package) -> Rc<RefCell<DataValue>> {

@@ -1,8 +1,8 @@
-use std::fmt::Debug;
-use arc_instruction_factory::arc_instruction;
 use crate::models::encodings::sized_array_enc::SizedArrayEncoding;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
+use arc_instruction_factory::arc_instruction;
+use std::fmt::Debug;
 
 #[derive(PartialEq, Clone)]
 pub struct FunctionCallInstruction {
@@ -19,14 +19,19 @@ impl Debug for FunctionCallInstruction {
 
 #[arc_instruction(0x36, "FCall")]
 impl DecodableInstruction<FunctionCallInstruction> for FunctionCallInstruction {
-    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(FunctionCallInstruction, usize)> {
+    fn decode(
+        stream: &[u8],
+        _offset: usize,
+        _package: &Package,
+    ) -> Option<(FunctionCallInstruction, usize)> {
         let mut pos = 1;
         let function_id = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
         pos += 8;
         let param_count = u32::from_le_bytes(stream[pos..pos + 4].try_into().unwrap());
         pos += 4;
 
-        let (generic_type_ids, generic_types_len) = SizedArrayEncoding::with_usize_data(&stream[13..]);
+        let (generic_type_ids, generic_types_len) =
+            SizedArrayEncoding::with_usize_data(&stream[13..]);
         pos += generic_types_len;
 
         Some((

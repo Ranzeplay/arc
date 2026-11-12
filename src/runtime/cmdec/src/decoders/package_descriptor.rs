@@ -10,7 +10,7 @@ pub fn decode_package_descriptor(stream: &[u8]) -> (PackageDescriptor, usize) {
     match stream[0] {
         0x00 => result.package_type = PackageType::Library,
         0x01 => result.package_type = PackageType::Executable,
-        _ => unreachable!()
+        _ => unreachable!(),
     }
     pos += 1;
 
@@ -32,19 +32,23 @@ pub fn decode_package_descriptor(stream: &[u8]) -> (PackageDescriptor, usize) {
     pos += 8;
 
     // Decode root function table entry pos
-    result.root_function_table_entry_position = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    result.root_function_table_entry_position =
+        usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
     // Decode root constant table entry pos
-    result.root_constant_table_entry_position = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    result.root_constant_table_entry_position =
+        usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
     // Decode root group table entry pos
-    result.root_group_table_entry_position = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    result.root_group_table_entry_position =
+        usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
     // Decode region table entry pos
-    result.region_table_entry_position = usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
+    result.region_table_entry_position =
+        usize::from_le_bytes(stream[pos..pos + 8].try_into().unwrap());
     pos += 8;
 
     (result, pos)

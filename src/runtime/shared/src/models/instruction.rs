@@ -1,6 +1,6 @@
+pub use crate::models::instruction_type::InstructionType;
 use pad::PadStr;
 use std::fmt::{Debug, Formatter};
-pub use crate::models::instruction_type::InstructionType;
 
 pub struct Instruction {
     pub instruction_type: InstructionType,

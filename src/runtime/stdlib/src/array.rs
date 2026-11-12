@@ -1,13 +1,11 @@
+use arc_manual_function_id::arc_function_id;
+use arc_scope_dispatcher::arc_scope_dispatcher;
 use arc_shared::base_type_id::{INTEGER_TYPE_ID, NONE_TYPE_ID};
-use arc_shared::models::encodings::data_type_enc::{
-    DataTypeEncoding, Mutability,
-};
+use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
 use arc_shared::models::execution::data::{DataValue, DataValueType};
 use arc_shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
-use arc_manual_function_id::arc_function_id;
-use arc_scope_dispatcher::arc_scope_dispatcher;
 
 pub struct ArcStdArray {}
 
@@ -44,9 +42,7 @@ impl ArcStdArray {
         match &mut array.value {
             DataValueType::Array(arr) => match &value.borrow().value {
                 DataValueType::Integer(_) => {
-                    let integer_value = {
-                        Rc::new(RefCell::new(value.borrow().clone()))
-                    };
+                    let integer_value = { Rc::new(RefCell::new(value.borrow().clone())) };
 
                     arr.push(integer_value);
                 }

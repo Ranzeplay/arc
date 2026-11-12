@@ -1,7 +1,7 @@
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
-use std::fmt::{Debug, Formatter};
 use arc_instruction_factory::arc_instruction;
+use std::fmt::{Debug, Formatter};
 
 #[derive(PartialEq, Copy, Clone)]
 pub enum DataSourceType {

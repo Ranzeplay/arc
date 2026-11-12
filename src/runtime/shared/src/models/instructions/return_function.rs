@@ -1,7 +1,7 @@
-use std::fmt::Debug;
-use arc_instruction_factory::arc_instruction;
 use crate::models::package::Package;
 use crate::traits::instruction::DecodableInstruction;
+use arc_instruction_factory::arc_instruction;
+use std::fmt::Debug;
 
 #[derive(PartialEq, Copy, Clone)]
 pub struct ReturnFunctionInstruction {
@@ -17,16 +17,15 @@ impl Debug for ReturnFunctionInstruction {
 
 #[arc_instruction(0x1a, "Ret")]
 impl DecodableInstruction<ReturnFunctionInstruction> for ReturnFunctionInstruction {
-    fn decode(stream: &[u8], _offset: usize, _package: &Package) -> Option<(ReturnFunctionInstruction, usize)> {
+    fn decode(
+        stream: &[u8],
+        _offset: usize,
+        _package: &Package,
+    ) -> Option<(ReturnFunctionInstruction, usize)> {
         let with_value = stream[1] == 0x01;
 
         let length = 1 + 1;
 
-        Some((
-            ReturnFunctionInstruction {
-                with_value,
-            },
-            length,
-        ))
+        Some((ReturnFunctionInstruction { with_value }, length))
     }
 }

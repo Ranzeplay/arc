@@ -1,10 +1,10 @@
-pub mod instruction;
 pub mod descriptors;
-pub mod encodings;
-pub mod package;
-pub mod instructions;
 pub mod display;
+pub mod encodings;
 pub mod execution;
-pub mod source_info;
-pub mod options;
+pub mod instruction;
 pub mod instruction_type;
+pub mod instructions;
+pub mod options;
+pub mod package;
+pub mod source_info;

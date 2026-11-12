@@ -1,6 +1,6 @@
 use lazy_static::lazy_static;
 
-lazy_static!(
+lazy_static! {
     pub static ref NONE_TYPE_ID: usize = 0;
     pub static ref ANY_TYPE_ID: usize = 1;
     pub static ref INTEGER_TYPE_ID: usize = 2;
@@ -10,4 +10,4 @@ lazy_static!(
     pub static ref BOOLEAN_TYPE_ID: usize = 6;
     pub static ref BYTE_TYPE_ID: usize = 7;
     pub static ref FUNCTION_TYPE_ID: usize = 8;
-);
+};

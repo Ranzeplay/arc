@@ -3,10 +3,10 @@ use proc_macro::TokenStream;
 use quote::{format_ident, quote};
 use std::collections::HashMap;
 use std::sync::Mutex;
-use syn::parse::{Parse, ParseStream};
 use syn::Error;
 use syn::Result;
-use syn::{parse_macro_input, Expr, ExprLit, ItemImpl, Lit, Token, Type};
+use syn::parse::{Parse, ParseStream};
+use syn::{Expr, ExprLit, ItemImpl, Lit, Token, Type, parse_macro_input};
 
 // Static storage for collected instructions
 lazy_static! {
@@ -33,30 +33,38 @@ impl Parse for ArcInstructionArgs {
         // return Err(Error::new_spanned(&op_code_expr, format!("Parsing op_code_expr: {}", op_code_expr.to_token_stream())));
 
         let op_code = match op_code_expr {
-            Expr::Lit(ExprLit { lit: Lit::Int(lit_int), .. }) => {
-                lit_int.base10_parse::<u8>()?
-            }
+            Expr::Lit(ExprLit {
+                lit: Lit::Int(lit_int),
+                ..
+            }) => lit_int.base10_parse::<u8>()?,
             // Handle cast expressions like 0x05u8
-            Expr::Cast(cast_expr) => {
-                match &*cast_expr.expr {
-                    Expr::Lit(ExprLit { lit: Lit::Int(lit_int), .. }) => {
-                        lit_int.base10_parse::<u8>()?
-                    }
-                    _ => return Err(Error::new_spanned(cast_expr, "Expected integer literal in cast expression")),
+            Expr::Cast(cast_expr) => match &*cast_expr.expr {
+                Expr::Lit(ExprLit {
+                    lit: Lit::Int(lit_int),
+                    ..
+                }) => lit_int.base10_parse::<u8>()?,
+                _ => {
+                    return Err(Error::new_spanned(
+                        cast_expr,
+                        "Expected integer literal in cast expression",
+                    ));
                 }
-            }
+            },
             Expr::Array(a) => {
                 return Err(Error::new_spanned(a, "Array not supported for op_code"));
             }
             Expr::Assign(a) => {
-                return Err(Error::new_spanned(a, "Assignment not supported for op_code"));
+                return Err(Error::new_spanned(
+                    a,
+                    "Assignment not supported for op_code",
+                ));
             }
             Expr::Macro(m) => {
                 return Err(Error::new_spanned(m, "Macro not supported for op_code"));
             }
             Expr::Verbatim(v) => {
                 return Err(Error::new_spanned(v, "Verbatim not supported for op_code"));
-            },
+            }
             _ => return Err(Error::new_spanned(op_code_expr, "Unmatched")),
         };
 
@@ -66,10 +74,16 @@ impl Parse for ArcInstructionArgs {
         // Parse second argument (name)
         let name_expr: Expr = input.parse()?;
         let name = match name_expr {
-            Expr::Lit(ExprLit { lit: Lit::Str(lit_str), .. }) => {
-                lit_str.value()
+            Expr::Lit(ExprLit {
+                lit: Lit::Str(lit_str),
+                ..
+            }) => lit_str.value(),
+            _ => {
+                return Err(Error::new_spanned(
+                    name_expr,
+                    "Expected string literal for name",
+                ));
             }
-            _ => return Err(Error::new_spanned(name_expr, "Expected string literal for name")),
         };
 
         Ok(ArcInstructionArgs { op_code, name })
@@ -88,9 +102,7 @@ pub fn arc_instruction(args: TokenStream, input: TokenStream) -> TokenStream {
 
     // Extract the type from the impl block
     let type_name = match &*impl_block.self_ty {
-        Type::Path(type_path) => {
-            quote! { #type_path }.to_string()
-        }
+        Type::Path(type_path) => quote! { #type_path }.to_string(),
         _ => panic!("Unsupported type in impl block"),
     };
 
