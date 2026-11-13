@@ -196,6 +196,14 @@ fn validate_functions(package: &Package, code_length: usize) -> Result<(), Strin
             .filter(|i| i.offset >= function.code_offset && i.offset < end)
         {
             for operand in &i.operands {
+                if let Operand::Constant(index) = operand {
+                    if !package.constant_pools[function.constant_pool as usize].contains_key(index) {
+                        return Err(format!(
+                            "Invalid constant index {} in pool {} for function {} at {}",
+                            index, function.constant_pool, id, i.offset
+                        ));
+                    }
+                }
                 if let Operand::Address(target) = operand {
                     let target = usize::try_from(*target)
                         .ok()

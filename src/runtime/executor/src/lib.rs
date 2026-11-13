@@ -20,7 +20,7 @@ use arc_shared::models::execution::result::{
 };
 use arc_shared::models::instruction::InstructionType;
 use arc_shared::models::options::launch_options::LaunchOptions;
-use log::{debug, error, trace, warn};
+use log::{debug, error, trace};
 use std::cell::RefCell;
 use std::rc::Rc;
 

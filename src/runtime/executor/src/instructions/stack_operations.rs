@@ -133,7 +133,7 @@ pub fn save_stack(
 
             slot_ref.value = Rc::new(RefCell::new(stack_top_data.borrow().clone()));
 
-            { trace!("    Data: {:?}", stack_top_data.borrow().value) }
+            trace!("    Data: {:?}", stack_top_data.borrow().value) 
         }
         DataSourceType::Field => {
             let field_id = ssi.location_id;

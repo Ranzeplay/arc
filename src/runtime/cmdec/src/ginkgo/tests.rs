@@ -77,7 +77,7 @@ fn all_opcodes_have_the_compiler_lengths() {
     }
     let bytes = package(
         &[(100, 2, function(0, code.len() as i64, 0))],
-        &[vec![]],
+        &[vec![(0, 2, 0i64.to_le_bytes().to_vec())]],
         &code,
     );
     let decoded = decode(&bytes).unwrap();
@@ -171,7 +171,7 @@ fn operands_keep_full_width_signedness_and_flags() {
 }
 
 #[test]
-fn decodes_all_symbol_kinds_and_per_function_constant_pools() {
+fn decodes_all_symbol_kinds_and_unit_constant_pools() {
     let mut group = Vec::new();
     group.extend(1u32.to_le_bytes());
     group.extend(12u32.to_le_bytes());
@@ -265,6 +265,15 @@ fn load_uses_typed_numeric_constants_in_each_function_pool() {
         decoded.constant_pools[1][&0].raw_value,
         (-1.25f64).to_le_bytes()
     );
+}
+
+#[test]
+fn load_index_must_exist_in_the_functions_unit_pool() {
+    let code = [0x1c, 0, 0, 0, 0, 0, 0, 0];
+    let symbols = [(10, 2, function(0, 8, 0)), (11, 2, function(8, 8, 1))];
+    let pools = vec![vec![(0, 2, 1i64.to_le_bytes().to_vec())], vec![]];
+    let error = decode(&package(&symbols, &pools, &code.repeat(2))).unwrap_err();
+    assert!(error.contains("Invalid constant index 0 in pool 1 for function 11"), "{error}");
 }
 
 #[test]
