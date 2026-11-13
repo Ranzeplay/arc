@@ -4,22 +4,28 @@ title: 'Symbol table'
 
 # Overview
 
-The binary symbol kinds below describe the proposed runtime table. Circle's
-current [draft artifact](/ginkgo/descriptors/pkg) instead serializes JSON symbols
-with a string `Kind`; it does not emit this binary table.
+The binary symbol kinds below match Circle's current [version 2
+artifact](/ginkgo/descriptors/pkg). Runtime execution remains unsupported.
 
-A symbol table is an array containing symbols in the package.
-Each symbol contains a type and corresponding payload.
+The symbol table starts with a `u32` record count. Each record contains a `u32`
+symbol ID, a `u8` kind, and the corresponding payload, with no padding. Symbol
+IDs are not positions in the table. See [Payload](/ginkgo/symbol/payload) for
+record layouts.
 
 # Symbol types
 
-| Id     | Name          | Remark |
-| ------ | ------------- | ------ |
-| `0x01` | Namespace     |        |
-| `0x02` | Function      |        |
-| `0x03` | Group         |        |
-| `0x04` | GroupField    |        |
-| `0x05` | GroupFunction |        |
-| `0x06` | DataType      |        |
-| `0x07` | Annotation    |        |
-| `0x08` | Constant      |        | 
+| Kind   | Name                 | Remark |
+| ------ | -------------------- | ------ |
+| `0x01` | Namespace            | Empty payload. |
+| `0x02` | Function             | Includes group and lifecycle functions. |
+| `0x03` | GroupField           | Field declaration. |
+| `0x04` | DataType             | Internal or user-defined type. |
+| `0x06` | Group                | Member IDs and lifecycle entries. |
+| `0x07` | Annotation           | Target group ID. |
+| `0x08` | Enum                 | Annotation and member IDs. |
+| `0x09` | EnumMember           | Annotation IDs. |
+| `0x0A` | GenericTypeParameter | Constraint type ID. |
+
+`0x05` is the legacy constant symbol tag and is not emitted in this symbol
+table. Constants are stored separately in counted, compilation-unit-local pools.
+Group functions use kind `0x02`, not a separate group-function kind.

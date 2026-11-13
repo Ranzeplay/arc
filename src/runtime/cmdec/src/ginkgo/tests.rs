@@ -89,6 +89,8 @@ fn all_opcodes_have_the_compiler_lengths() {
     assert_eq!(decoded.instructions.len(), 39);
     let mut offset = 0;
     for (i, length) in decoded.instructions.iter().zip(lengths) {
+        // Every wire layout must also convert to its specialized instruction.
+        arc_shared::ginkgo::instructions::TypedInstruction::try_from(i).unwrap();
         assert_eq!(i.offset, offset);
         assert_eq!(i.opcode as u8, i.raw[0]);
         assert_eq!(i.raw.len(), length);

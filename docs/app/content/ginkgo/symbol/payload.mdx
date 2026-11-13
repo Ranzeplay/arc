@@ -2,7 +2,11 @@
 title: 'Payload'
 ---
 
+The [package descriptor](/ginkgo/descriptors/pkg#symbol-table) defines the binary
+payload for each [symbol kind](/ginkgo/symbol/table) in Circle's current version 2
+artifact, including declaration fields and counted ID lists. Names, signatures,
+and source paths are not stored in execution records; they are available through
+the optional debugging-only JSON sidecar.
+
 The [existing symbol reference](/reference/symbol) describes legacy symbol
-payloads. It is background for the proposed Ginkgo runtime format, not a decoder
-specification for the current compiler artifact. Its JSON symbol and declaration
-fields are documented in the [package descriptor](/ginkgo/descriptors/pkg).
+payloads. It is background material, not a decoder specification for Ginkgo.

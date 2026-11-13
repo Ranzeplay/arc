@@ -56,6 +56,38 @@ their existing meanings for legacy packages. Use the global `--verbose` flag
 with `--raw` to see the debug-level raw package dump. Ginkgo execution remains
 unsupported and `execute` reports that explicitly.
 
+### Typed Rust instructions
+
+`arc_shared::ginkgo::Instruction` retains the decoder's opcode, operand list,
+flag byte, offset, and raw bytes for inspection. Runtime consumers can convert
+it to one of the 39 instruction-specific structs in
+`arc_shared::ginkgo::instructions` instead of extracting operands or flag bits:
+
+```rust
+use arc_shared::ginkgo::instructions::{LoadInstruction, TypedInstruction};
+
+// `raw` is a decoded &Instruction with opcode Load.
+let load = LoadInstruction::try_from(raw)?;
+let entry = load.constant_index;
+let destination = load.dest;
+let as_reference = load.load_ref;
+
+// When the opcode is not known in advance:
+match TypedInstruction::try_from(raw)? {
+    TypedInstruction::Load(load) => { /* use load.dest, load.usage_hint, etc. */ }
+    _ => { /* other instruction variants */ }
+}
+```
+
+Both borrowed and owned `Instruction` values support `TryFrom` / `TryInto`.
+Each specialized struct exposes an `OPCODE` constant, named operands, and
+boolean flags. Conversion returns `InstructionConversionError` for an opcode
+mismatch, incorrect operand count or kind, missing or unexpected flag bytes,
+or reserved flag bits. It does not resolve symbols, constants, or jump targets,
+or validate semantic flag combinations. The raw decoder remains permissive
+about reserved flag bits for inspection. Offset and raw-byte metadata remain
+on the original instruction rather than being copied into the typed struct.
+
 ## Implemented generation
 
 All 39 documented opcodes have instruction models and binary encoders. They span

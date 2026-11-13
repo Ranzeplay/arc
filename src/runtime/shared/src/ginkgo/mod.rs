@@ -4,6 +4,7 @@ use strum_macros::FromRepr;
 
 mod opcode;
 pub use opcode::Opcode;
+pub mod instructions;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
 #[repr(u8)]
