@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Encoders;
 internal static class ArcGinkgoPackageEncoder
 {
     public static byte[] Encode(ArcPackageDescriptor descriptor, List<ArcScopeTreeNodeBase> symbols,
-        Dictionary<uint, uint> functionUnits, IReadOnlyList<ArcGinkgoUnitGenerationContext> contexts, byte[] code)
+        Dictionary<uint, uint> functionUnits, IReadOnlyList<ArcGinkgoUnitGenerationContext> contexts, byte[] code, bool compress = false)
     {
         using var output = new MemoryStream();
         using var writer = new BinaryWriter(output, Encoding.UTF8, leaveOpen: true);
@@ -117,7 +117,25 @@ internal static class ArcGinkgoPackageEncoder
             }
         }
         writer.Write(code);
-        return output.ToArray();
+        var payload = output.ToArray().AsSpan(12);
+        if (payload.Length > 256 * 1024 * 1024)
+            throw new InvalidDataException("Ginkgo uncompressed payload exceeds 256 MiB limit");
+        byte[] stored;
+        if (compress)
+        {
+            using var compressor = new ZstdSharp.Compressor(3);
+            stored = compressor.Wrap(payload).ToArray();
+        }
+        else stored = payload.ToArray();
+        using var envelope = new MemoryStream();
+        using var header = new BinaryWriter(envelope);
+        header.Write("GINKGO\0\0"u8);
+        header.Write(2u);
+        header.Write((byte)(compress ? 1 : 0));
+        header.Write((ulong)payload.Length);
+        header.Write((ulong)stored.Length);
+        header.Write(stored);
+        return envelope.ToArray();
 
         void WriteIds(IEnumerable<uint> ids) => writer.Write(ArcArrayEncoder.SerializeArray(ids).ToArray());
 

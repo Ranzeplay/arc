@@ -6,3 +6,4 @@ edition = "2024"
 [dependencies]
 arc_shared = { workspace = true }
 log = { workspace = true }
+zstd = "0.13"

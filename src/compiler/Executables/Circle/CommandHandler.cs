@@ -17,7 +17,7 @@ namespace Arc.Compiler.Circle
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         };
 
-        public static int HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun, bool ginkgo = false)
+        public static int HandleCommand(string[] inputs, string output, ArcPackageType packageType, bool noStd, LogLevel logLevel, string? sourceInfoPath, bool dryRun, bool ginkgo = false, bool compress = false)
         {
             using var loggerFactory = LoggerFactory.Create(builder =>
             {
@@ -60,7 +60,7 @@ namespace Arc.Compiler.Circle
 
             try
             {
-                return GeneratePackage(compilationUnits, output, packageType, noStd, sourceInfoPath, dryRun, ginkgo, logger);
+                return GeneratePackage(compilationUnits, output, packageType, noStd, sourceInfoPath, dryRun, ginkgo, compress, logger);
             }
             catch (ArcSyntaxException exception)
             {
@@ -72,13 +72,13 @@ namespace Arc.Compiler.Circle
         }
 
         private static int GeneratePackage(List<ArcCompilationUnit> compilationUnits, string output,
-            ArcPackageType packageType, bool noStd, string? sourceInfoPath, bool dryRun, bool ginkgo, ILogger logger)
+            ArcPackageType packageType, bool noStd, string? sourceInfoPath, bool dryRun, bool ginkgo, bool compress, ILogger logger)
         {
             logger.LogInformation("Encoding instructions");
             if (ginkgo)
             {
                 var artifact = ArcGinkgoArtifactGenerator.Generate(compilationUnits,
-                    ArcPackageDescriptor.Default(packageType), !noStd, logger);
+                    ArcPackageDescriptor.Default(packageType), !noStd, logger, compress);
                 foreach (var log in artifact.Logs)
                     logger.Log(log.Level, "{}", log.FormattedMessage);
                 if (artifact.DiscardResult)

@@ -9,6 +9,29 @@ namespace Arc.Compiler.Tests.PackageGeneration;
 
 public class GinkgoArtifact
 {
+    [Test]
+    public void CompressedArtifactContainsTheOriginalPayload()
+    {
+        using var factory = LoggerFactory.Create(_ => { });
+        var logger = factory.CreateLogger<GinkgoArtifact>();
+        var unit = new ArcCompilationUnit(AntlrAdapter.ParseCompilationUnit(
+            "namespace Test { public func main(): none { var value: int = 42; } }", logger), logger, "test");
+        var plain = ArcGinkgoArtifactGenerator.Generate([unit], ArcPackageDescriptor.Default(ArcPackageType.Library), false);
+        var compressed = ArcGinkgoArtifactGenerator.Generate([unit], ArcPackageDescriptor.Default(ArcPackageType.Library), false, compress: true);
+        Assert.That(compressed.DiscardResult, Is.False);
+        using var reader = new BinaryReader(new MemoryStream(compressed.GeneratedData));
+        Assert.That(reader.ReadBytes(8), Is.EqualTo("GINKGO\0\0"u8.ToArray()));
+        Assert.That(reader.ReadUInt32(), Is.EqualTo(2));
+        Assert.That(reader.ReadByte(), Is.EqualTo(1));
+        var length = reader.ReadUInt64();
+        var compressedLength = reader.ReadUInt64();
+        using var decompressor = new ZstdSharp.Decompressor();
+        var payload = decompressor.Unwrap(reader.ReadBytes(checked((int)compressedLength))).ToArray();
+        Assert.That(length, Is.EqualTo((ulong)payload.Length));
+        Assert.That(payload, Is.EqualTo(plain.GeneratedData[29..]));
+        Assert.That(reader.BaseStream.Position, Is.EqualTo(reader.BaseStream.Length));
+    }
+
     private static ArcGinkgoArtifact Generate(ArcPackageType type, params string[] sources)
     {
         using var factory = LoggerFactory.Create(_ => { });
@@ -201,6 +224,10 @@ public class GinkgoArtifact
         using var reader = new BinaryReader(new MemoryStream(data));
         Assert.That(reader.ReadBytes(8), Is.EqualTo("GINKGO\0\0"u8.ToArray()));
         Assert.That(reader.ReadUInt32(), Is.EqualTo(2));
+        Assert.That(reader.ReadByte(), Is.Zero);
+        var payloadLength = reader.ReadUInt64();
+        Assert.That(reader.ReadUInt64(), Is.EqualTo(payloadLength));
+        Assert.That(payloadLength, Is.EqualTo((ulong)(reader.BaseStream.Length - reader.BaseStream.Position)));
         reader.ReadByte(); // Package type.
         reader.ReadBytes(checked((int)reader.ReadUInt64())); // UTF-8 package name.
         reader.ReadUInt64(); // Package version.

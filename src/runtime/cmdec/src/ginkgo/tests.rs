@@ -57,7 +57,12 @@ fn package(
         }
     }
     bytes.extend(code);
-    bytes
+    let payload = &bytes[12..];
+    let mut envelope = b"GINKGO\0\0\x02\0\0\0\0".to_vec();
+    envelope.extend((payload.len() as u64).to_le_bytes());
+    envelope.extend((payload.len() as u64).to_le_bytes());
+    envelope.extend(payload);
+    envelope
 }
 
 #[test]
@@ -286,7 +291,7 @@ fn rejects_corrupt_packages_without_panicking() {
     for end in 0..bytes.len() {
         assert!(decode(&bytes[..end]).is_err(), "prefix {}", end);
     }
-    for version in [1, 3] {
+    for version in [1, 4] {
         let mut invalid = bytes.clone();
         invalid[8] = version;
         assert!(decode(&invalid).unwrap_err().contains("version"));
@@ -322,6 +327,36 @@ fn rejects_corrupt_packages_without_panicking() {
         .is_err()
     );
     assert!(decode(&package(&[(1, 1, vec![]), (1, 1, vec![])], &[], &[])).is_err());
+}
+
+#[test]
+fn compressed_envelope_validates_lengths_and_frame() {
+    let original = package(&[], &[], &[]);
+    let payload = &original[29..];
+    let compressed = zstd::bulk::compress(payload, 3).unwrap();
+    let mut envelope = b"GINKGO\0\0\x02\0\0\0\x01".to_vec();
+    envelope.extend((payload.len() as u64).to_le_bytes());
+    envelope.extend((compressed.len() as u64).to_le_bytes());
+    envelope.extend(&compressed);
+    assert!(decode(&envelope).is_ok());
+    for end in 0..envelope.len() {
+        assert!(decode(&envelope[..end]).is_err());
+    }
+    let mut invalid = envelope.clone();
+    invalid[12] = 2;
+    assert!(decode(&invalid).is_err());
+    let mut invalid = envelope.clone();
+    invalid[13..21].copy_from_slice(&(256u64 * 1024 * 1024 + 1).to_le_bytes());
+    assert!(decode(&invalid).is_err());
+    let mut invalid = envelope.clone();
+    invalid[13..21].copy_from_slice(&((payload.len() + 1) as u64).to_le_bytes());
+    assert!(decode(&invalid).is_err());
+    let mut invalid = envelope.clone();
+    invalid.push(0);
+    assert!(decode(&invalid).is_err());
+    let mut invalid = envelope.clone();
+    *invalid.last_mut().unwrap() ^= 0xff;
+    assert!(decode(&invalid).is_err());
 }
 
 #[test]
@@ -373,12 +408,12 @@ fn enum_values_follow_the_ginkgo_wire_format() {
     assert_eq!(BuiltinType::from_repr(9), None);
 
     let mut bytes = package(&[], &[], &[]);
-    bytes[12] = 1;
+    bytes[29] = 1;
     assert_eq!(
         decode(&bytes).unwrap().descriptor.package_type,
         PackageType::Executable
     );
-    bytes[12] = 2;
+    bytes[29] = 2;
     assert!(decode(&bytes).unwrap_err().contains("package type"));
 
     assert!(

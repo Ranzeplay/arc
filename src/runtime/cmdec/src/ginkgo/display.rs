@@ -4,7 +4,7 @@ use log::info;
 
 pub(crate) fn print(package: &Package, opt: &CmdecOptions, source: Option<&SourceInfo>) {
     if opt.print_package_descriptor {
-        info!("Ginkgo format version 2\n{:#?}", package.descriptor);
+        info!("Ginkgo package\n{:#?}", package.descriptor);
     }
     if opt.print_symbols {
         info!("=== Symbols");

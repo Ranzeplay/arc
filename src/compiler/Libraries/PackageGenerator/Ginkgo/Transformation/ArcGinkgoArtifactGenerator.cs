@@ -11,7 +11,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
 public static class ArcGinkgoArtifactGenerator
 {
     public static ArcGinkgoArtifact Generate(IEnumerable<ArcCompilationUnit> units,
-        ArcPackageDescriptor descriptor, bool withStd = true, ILogger? logger = null)
+        ArcPackageDescriptor descriptor, bool withStd = true, ILogger? logger = null, bool compress = false)
     {
         var result = new ArcGinkgoArtifact();
         var inputs = units.ToList();
@@ -62,8 +62,15 @@ public static class ArcGinkgoArtifactGenerator
         foreach (var symbol in symbols)
             result.SourceInformation.SymbolMapping.Add(symbol.Id, symbol.Signature);
 
-        result.GeneratedData = ArcGinkgoPackageEncoder.Encode(descriptor, symbols,
-            functions.ToDictionary(f => f.Function.Id, f => checked((uint)f.UnitIndex)), contexts, code.ToArray());
+        try
+        {
+            result.GeneratedData = ArcGinkgoPackageEncoder.Encode(descriptor, symbols,
+                functions.ToDictionary(f => f.Function.Id, f => checked((uint)f.UnitIndex)), contexts, code.ToArray(), compress);
+        }
+        catch (InvalidDataException exception)
+        {
+            Error(exception.Message, ref result);
+        }
         return result;
     }
 

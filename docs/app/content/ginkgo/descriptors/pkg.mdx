@@ -11,6 +11,13 @@ All literals are loaded through the typed constant pool. Version 2 replaces the
 draft version 1 JSON representation. The existing Rust executor does not yet
 execute Ginkgo packages.
 
+The version 2 header specifies whether the payload is uncompressed (method 0,
+the default) or a single Zstandard frame (method 1, selected with `--compress`).
+The payload contains the descriptor, symbols, constants and instructions.
+Function offsets remain relative to the decompressed instruction section. The
+decoder limits the uncompressed payload and Zstandard window to 256 MiB and
+rejects trailing data.
+
 The section order follows the original package layout: magic and descriptor,
 symbol table, constant table, then instructions. Integers are little-endian,
 booleans occupy one byte, and symbol IDs and collection counts are `u32`.
@@ -21,6 +28,9 @@ counts remain `i64`. Records are packed without padding. Strings are UTF-8.
 | --- | --- |
 | Magic | Eight bytes: ASCII `GINKGO` followed by two zero bytes |
 | Format version | `u32`, currently 2 |
+| Compression method | `u8`: 0 uncompressed, 1 Zstandard |
+| Payload lengths | `u64` uncompressed length, then `u64` stored length |
+| Payload | Uncompressed bytes or one Zstandard frame containing the sections below |
 | Package descriptor | Fields below; entrypoint ID is `u32` |
 | Symbol table | `u32` count followed by symbol records |
 | Constant pools | `u32` pool count followed by each counted constant table |

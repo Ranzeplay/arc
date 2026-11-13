@@ -46,7 +46,12 @@ fn package() -> Vec<u8> {
     bytes.push(1);
     bytes.extend(1u32.to_le_bytes()); // One empty constant pool.
     bytes.extend(0u32.to_le_bytes());
-    bytes
+    let payload = &bytes[12..];
+    let mut envelope = b"GINKGO\0\0\x02\0\0\0\0".to_vec();
+    envelope.extend((payload.len() as u64).to_le_bytes());
+    envelope.extend((payload.len() as u64).to_le_bytes());
+    envelope.extend(payload);
+    envelope
 }
 
 fn stderr(output: &Output) -> String {
@@ -65,7 +70,7 @@ fn auto_detects_ginkgo_and_respects_display_options() {
     assert!(output.status.success(), "{}", stderr(&output));
     let text = stderr(&output);
     for expected in [
-        "Ginkgo format version 2",
+        "Ginkgo package",
         "#42: Namespace",
         "=== Constant pool 0",
         "=== Instructions",

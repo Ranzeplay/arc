@@ -48,6 +48,10 @@ namespace Arc.Compiler.Circle
                 Description = "Use Ginkgo generation rules and emit a self-contained binary package",
                 DefaultValueFactory = _ => false,
             };
+            var compressOption = new Option<bool>("--compress")
+            {
+                Description = "Compress the Ginkgo package with Zstandard",
+            };
 
             var command = new RootCommand("The compiler CLI for the Arc programming language.")
             {
@@ -58,6 +62,7 @@ namespace Arc.Compiler.Circle
                 withSourceInfoOption,
                 dryRun,
                 ginkgoOption,
+                compressOption,
                 logLevelOption,
             };
             command.TreatUnmatchedTokensAsErrors = true;
@@ -68,6 +73,8 @@ namespace Arc.Compiler.Circle
                 {
                     context.AddError("No input file path provided");
                 }
+                if (context.GetValue(compressOption) && !context.GetValue(ginkgoOption))
+                    context.AddError("--compress requires --ginkgo");
             });
 
             command.SetAction(pr =>
@@ -75,7 +82,7 @@ namespace Arc.Compiler.Circle
                 return CommandHandler.HandleCommand(pr.GetValue(inputArgument) ?? [], pr.GetValue(outputOption) ?? "",
                     pr.GetValue(packageTypeOption),
                     pr.GetValue(noStdOption),
-                    pr.GetValue(logLevelOption), pr.GetValue(withSourceInfoOption), pr.GetValue(dryRun), pr.GetValue(ginkgoOption));
+                    pr.GetValue(logLevelOption), pr.GetValue(withSourceInfoOption), pr.GetValue(dryRun), pr.GetValue(ginkgoOption), pr.GetValue(compressOption));
             });
             return command;
         }

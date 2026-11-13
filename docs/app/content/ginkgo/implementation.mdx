@@ -8,6 +8,9 @@ Circle uses Ginkgo instructions and generation rules when `--ginkgo` is supplied
 Circle input.script.arc --ginkgo --package-type Library --no-std --output build.ginkgo.arc
 ```
 
+Add `--compress` to emit a Zstandard-compressed Ginkgo package. Without it,
+Circle emits the uncompressed format. Compression applies only to Ginkgo.
+
 Without this flag, Circle uses the legacy generator and package format. Under
 Ginkgo, unsupported constructs produce diagnostics rather than falling back to
 legacy instructions. Standard-library loading is enabled unless `--no-std` is

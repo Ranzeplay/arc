@@ -14,7 +14,7 @@ pub fn is_ginkgo(stream: &[u8]) -> bool {
     stream.starts_with(b"GINKGO\0\0")
 }
 
-/// Decode Circle's version 2 package without interpreting Ginkgo as legacy bytecode.
+/// Decode a Ginkgo package without interpreting it as legacy bytecode.
 pub fn decode(stream: &[u8]) -> Result<Package, String> {
     let mut reader = Reader {
         bytes: stream,
@@ -27,6 +27,49 @@ pub fn decode(stream: &[u8]) -> Result<Package, String> {
     if version != 2 {
         return Err(format!("Unsupported Ginkgo format version: {}", version));
     }
+    const MAX_PAYLOAD: usize = 256 * 1024 * 1024;
+    let method = reader.u8()?;
+    if method > 1 {
+        return Err(format!("Unsupported Ginkgo compression method: {}", method));
+    }
+    let uncompressed_len = reader.length()?;
+    let compressed_len = reader.length()?;
+    if uncompressed_len > MAX_PAYLOAD {
+        return Err("Ginkgo uncompressed payload exceeds limit".into());
+    }
+    let stored = reader.take(compressed_len)?;
+    if reader.pos != stream.len() {
+        return Err("Trailing bytes after Ginkgo compressed payload".into());
+    }
+    if method == 0 {
+        if stored.len() != uncompressed_len {
+            return Err("Ginkgo uncompressed payload length mismatch".into());
+        }
+        return decode_payload(stored);
+    }
+    let frame_len = zstd::zstd_safe::find_frame_compressed_size(stored)
+        .map_err(|e| format!("Invalid Ginkgo zstd frame: {:?}", e))?;
+    if frame_len != stored.len() {
+        return Err("Ginkgo payload must contain exactly one zstd frame".into());
+    }
+    let mut decoder = zstd::bulk::Decompressor::new().map_err(|e| e.to_string())?;
+    decoder
+        .set_parameter(zstd::zstd_safe::DParameter::WindowLogMax(28))
+        .map_err(|e| e.to_string())?;
+    let payload = decoder
+        .decompress(stored, uncompressed_len)
+        .map_err(|e| format!("Failed to decompress Ginkgo payload: {}", e))?;
+    if payload.len() != uncompressed_len {
+        return Err("Ginkgo uncompressed payload length mismatch".into());
+    }
+    decode_payload(&payload)
+}
+
+fn decode_payload(stream: &[u8]) -> Result<Package, String> {
+    let mut reader = Reader {
+        bytes: stream,
+        pos: 0,
+    };
     let value = reader.u8()?;
     let package_type =
         PackageType::from_repr(value).ok_or_else(|| format!("Unknown package type: {}", value))?;
@@ -197,7 +240,8 @@ fn validate_functions(package: &Package, code_length: usize) -> Result<(), Strin
         {
             for operand in &i.operands {
                 if let Operand::Constant(index) = operand {
-                    if !package.constant_pools[function.constant_pool as usize].contains_key(index) {
+                    if !package.constant_pools[function.constant_pool as usize].contains_key(index)
+                    {
                         return Err(format!(
                             "Invalid constant index {} in pool {} for function {} at {}",
                             index, function.constant_pool, id, i.offset
