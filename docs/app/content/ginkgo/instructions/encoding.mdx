@@ -17,12 +17,13 @@ when its value is zero.
 | Register (`src`, `dest`, `condition`, `amount`, arguments, return value) | Unsigned 16-bit |
 | Dimension (`dim`) | Unsigned 16-bit |
 | Function, type or field symbol ID | Unsigned 32-bit |
-| Constant pool index | Unsigned 32-bit |
+| Constant entry index (`ld`) | Unsigned 32-bit |
 | Jump target | Signed 64-bit function-local byte address |
 | Flags | Unsigned 8-bit |
 
 Symbol operands are IDs, not positions in the serialized symbol table. Constant
 indices address the unit pool selected by the function's `ConstantPool` metadata.
+They are local to that pool and cannot select another pool.
 All literals use typed constants: integers have signed 64-bit payloads and
 decimals have IEEE 754 binary64 payloads. The current draft uses a single `ld` opcode
 (`0x1C`); the former immediate-load opcodes `0x1D` and `0x1E` are unassigned.

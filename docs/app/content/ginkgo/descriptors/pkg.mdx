@@ -78,6 +78,17 @@ false), payload byte length (`u64`), and payload bytes. `ld` uses its
 function's pool index and a local constant index; pool and constant indices
 start at zero. Unit names are not stored.
 
+The compilation unit owns the pool, not an individual function. All generated
+functions in a unit select the same pool; the function record stores that unit's
+pool index so a runtime can find it without a separate unit table. An `ld`
+operand is an entry index within that selected pool, not a package-wide ID or
+a pool selector. Different pools can both contain entry 0 with different values.
+`ld` cannot select another unit's pool. When a call enters a function from
+another unit, that function's metadata selects its own unit's pool.
+This organization allows literals to be shared within a unit, but does not
+deduplicate them across units. The package does not otherwise encode unit
+identity or establish an independent compilation or linking contract.
+
 | Value | Payload |
 | --- | --- |
 | Integer | Signed `i64` |
