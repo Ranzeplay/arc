@@ -10,7 +10,7 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo.Encoders;
 internal static class ArcGinkgoPackageEncoder
 {
     public static byte[] Encode(ArcPackageDescriptor descriptor, List<ArcScopeTreeNodeBase> symbols,
-        Dictionary<uint, uint> functionPools, IReadOnlyList<ArcGinkgoUnitGenerationContext> contexts, byte[] code)
+        Dictionary<uint, uint> functionUnits, IReadOnlyList<ArcGinkgoUnitGenerationContext> contexts, byte[] code)
     {
         using var output = new MemoryStream();
         using var writer = new BinaryWriter(output, Encoding.UTF8, leaveOpen: true);
@@ -22,7 +22,7 @@ internal static class ArcGinkgoPackageEncoder
         var encodedSymbols = symbols.Where(n => n is ArcScopeTreeNamespaceNode or ArcScopeTreeGroupFieldNode
             or ArcScopeTreeDataTypeNode or ArcScopeTreeGroupNode or ArcScopeTreeAnnotationNode
             or ArcScopeTreeEnumNode or ArcScopeTreeEnumMemberNode or ArcScopeTreeGenericTypeNode ||
-            n is ArcScopeTreeFunctionNodeBase && functionPools.ContainsKey(n.Id)).ToList();
+            n is ArcScopeTreeFunctionNodeBase && functionUnits.ContainsKey(n.Id)).ToList();
         writer.Write(checked((uint)encodedSymbols.Count));
         foreach (var symbol in encodedSymbols)
         {
@@ -39,7 +39,7 @@ internal static class ArcGinkgoPackageEncoder
                     WriteIds(function.Annotations.Keys.Select(a => AnnotationId(a.Signature)));
                     WriteIds(function.GenericTypes.Select(g => g.Id));
                     writer.Write(function.DataCount);
-                    writer.Write(functionPools[function.Id]);
+                    writer.Write(functionUnits[function.Id]);
                     break;
                 case ArcScopeTreeGroupFieldNode field:
                     writer.Write((byte)ArcSymbolType.GroupField);
@@ -53,14 +53,14 @@ internal static class ArcGinkgoPackageEncoder
                 case ArcScopeTreeGroupNode group:
                     writer.Write((byte)ArcSymbolType.Group);
                     WriteIds(group.Fields.Select(f => f.Id));
-                    var lifecycleFunctions = group.LifecycleFunctions.Where(f => functionPools.ContainsKey(f.Id)).ToList();
+                    var lifecycleFunctions = group.LifecycleFunctions.Where(f => functionUnits.ContainsKey(f.Id)).ToList();
                     writer.Write(checked((uint)lifecycleFunctions.Count));
                     foreach (var function in lifecycleFunctions)
                     {
                         writer.Write((byte)function.SyntaxTree.LifecycleStage);
                         writer.Write(function.Id);
                     }
-                    WriteIds(group.Functions.Where(f => functionPools.ContainsKey(f.Id)).Select(f => f.Id));
+                    WriteIds(group.Functions.Where(f => functionUnits.ContainsKey(f.Id)).Select(f => f.Id));
                     WriteIds(group.Groups.Select(g => g.Id));
                     WriteIds(group.Annotations.Keys.Select(a => a.Id));
                     WriteIds(group.GenericTypes.Select(g => g.Id));

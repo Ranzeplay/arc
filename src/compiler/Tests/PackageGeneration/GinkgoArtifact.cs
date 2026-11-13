@@ -54,7 +54,7 @@ public class GinkgoArtifact
     }
 
     [Test]
-    public void FunctionsKeepTheirOwnUnitConstantPool()
+    public void FunctionsSelectTheirCompilationUnitConstantPool()
     {
         var artifact = Generate(ArcPackageType.Library,
             "namespace First { public group FirstValue {} public func first(const value: FirstValue): none { } }",
@@ -152,6 +152,8 @@ public class GinkgoArtifact
         Assert.That(package.Pools[0][2], Is.EqualTo(new byte[] { 1 }));
         Assert.That(BitConverter.ToInt64(package.Pools[0][3]), Is.EqualTo(long.MaxValue));
         Assert.That(BitConverter.ToInt64(package.Pools[1].Single()), Is.EqualTo(2));
+        Assert.That(package.Functions.Count(f => f.Pool == 0), Is.EqualTo(2));
+        Assert.That(package.Functions.Count(f => f.Pool == 1), Is.EqualTo(1));
         foreach (var function in package.Functions)
         {
             var bytes = package.Code.AsSpan(checked((int)function.Offset), checked((int)function.Length));

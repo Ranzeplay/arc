@@ -29,10 +29,10 @@ public static class ArcGinkgoArtifactGenerator
 
         var symbols = contexts.SelectMany(context => context.ScopeTree.FlattenedNodes)
             .GroupBy(node => node.Id).Select(group => group.First()).OrderBy(n => n.Id).ToList();
-        var functions = contexts.SelectMany((unit, pool) => unit.ScopeTree
+        var functions = contexts.SelectMany((unit, unitIndex) => unit.ScopeTree
             .GetNodes<ArcScopeTreeFunctionNodeBase>()
             .Where(f => f.GenerationResult is not null)
-            .Select(f => (Function: f, Unit: unit, Pool: pool)))
+            .Select(f => (Function: f, Unit: unit, UnitIndex: unitIndex)))
             .GroupBy(f => f.Function.Id).Select(g => g.First()).OrderBy(f => f.Function.Id).ToList();
         var entrypoints = functions.Where(f => f.Function.Annotations.Keys.Any(a =>
             a.Id == 0xb11 || a.Signature is "NArc+NStd+NCompilation+AEntrypoint" or
@@ -63,7 +63,7 @@ public static class ArcGinkgoArtifactGenerator
             result.SourceInformation.SymbolMapping.Add(symbol.Id, symbol.Signature);
 
         result.GeneratedData = ArcGinkgoPackageEncoder.Encode(descriptor, symbols,
-            functions.ToDictionary(f => f.Function.Id, f => checked((uint)f.Pool)), contexts, code.ToArray());
+            functions.ToDictionary(f => f.Function.Id, f => checked((uint)f.UnitIndex)), contexts, code.ToArray());
         return result;
     }
 
