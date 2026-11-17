@@ -1,9 +1,19 @@
 ﻿using Arc.Compiler.PackageGenerator.Models.Scope;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
+using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 
 namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
 {
     class ArcPostScopeTreeGenerationProcessor
     {
+        private static long GetInteger(ArcExpression expression) =>
+            expression.Terms.First().Value is ArcDataValue data &&
+            data is ArcInstantValue instant &&
+            instant is ArcInstantIntegerValue integer
+                ? integer.Value
+                : throw new InvalidOperationException("Annotation requires an integer literal");
+
         private static readonly string _dataTypeRemovalSignature = "NArc+NStd+NCompilation+ANoType";
         private static readonly string _symbolIdSignature = "NArc+NStd+NCompilation+ASymbolId";
         private static readonly string _withAnnotationIdSignature = "NArc+NStd+NCompilation+AWithAnnotationId";
@@ -40,14 +50,9 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                 .ToList()
                 .ForEach(n =>
                 {
-                    var newId = n.Annotations
+                    var newId = GetInteger(n.Annotations
                         .First(n => n.Key.Signature == _symbolIdSignature)
-                        .Value.First()
-                        .Terms.First()
-                        .DataValue!
-                        .InstantValue!
-                        .IntegerValue!
-                        .Value;
+                        .Value.First());
                     n.Id = (ulong)newId;
                 });
 
@@ -57,14 +62,9 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                 .ToList()
                 .ForEach(n =>
                 {
-                    var newId = n.Annotations
+                    var newId = GetInteger(n.Annotations
                         .First(n => n.Key.Signature == _symbolIdSignature)
-                        .Value.First()
-                        .Terms.First()
-                        .DataValue!
-                        .InstantValue!
-                        .IntegerValue!
-                        .Value;
+                        .Value.First());
                     n.Id = (ulong)newId;
                 });
         }
@@ -77,14 +77,9 @@ namespace Arc.Compiler.PackageGenerator.AnnotationProcessors
                 .ToList()
                 .ForEach(n =>
                 {
-                    var newId = n.TargetGroup.Annotations
+                    var newId = GetInteger(n.TargetGroup.Annotations
                         .First(n => n.Key.Signature == _withAnnotationIdSignature)
-                        .Value.First()
-                        .Terms.First()
-                        .DataValue!
-                        .InstantValue!
-                        .IntegerValue!
-                        .Value;
+                        .Value.First());
                     n.Id = (ulong)newId;
                 });
         }

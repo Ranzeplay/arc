@@ -1,39 +1,14 @@
-﻿using Antlr4.Runtime;
+using Antlr4.Runtime;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
+namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression;
+
+public union ArcExpressionTermValue(ArcDataValue, ArcOperator);
+
+public class ArcExpressionTerm(ArcExpressionTermValue value)
 {
-    public class ArcExpressionTerm
-    {
-        public enum ExpressionTermType
-        {
-            DataValue,
-            Operator,
-        }
+    public ArcExpressionTermValue Value { get; } = value;
 
-        public ExpressionTermType Type { get; set; }
-
-        public ArcDataValue? DataValue { get; set; }
-
-        public ArcOperator? Operator { get; set; }
-
-        public bool IsOperator => Type == ExpressionTermType.Operator;
-
-        public ArcExpressionTerm(ArcDataValue value)
-        {
-            Type = ExpressionTermType.DataValue;
-            DataValue = value;
-            Context = null!;
-        }
-
-        public ArcExpressionTerm(ArcOperator op)
-        {
-            Type = ExpressionTermType.Operator;
-            Operator = op;
-            Context = null!;
-        }
-
-        public ParserRuleContext Context { get; set; }
-    }
+    public ParserRuleContext Context { get; set; } = null!;
 }

@@ -13,13 +13,13 @@ namespace Arc.Compiler.PackageGenerator.Helpers
     {
         public static IArcDataTypeProxy? GetDataType(ArcGenerationSource source, ArcDataType dataType)
         {
-            if (dataType.DataType == ArcDataType.DataMemberType.Primitive)
+            if (dataType.Value is ArcPrimitiveDataType primitive)
             {
                 var candidateTypes = source.DirectlyAccessibleTypes
                     .OfType<ArcScopeTreeDataTypeNode>()
                     .Where(x => x.DataType is ArcBaseType);
 
-                return dataType.PrimitiveType switch
+                return primitive switch
                 {
                     ArcPrimitiveDataType.Integer => candidateTypes.First(x =>
                         x.DataType.TypeId == ArcPersistentData.IntType.TypeId),
@@ -45,7 +45,9 @@ namespace Arc.Compiler.PackageGenerator.Helpers
             }
             else
             {
-                return GetComplexType(source, dataType.ComplexType!.Identifier);
+                return dataType.Value is ArcComplexDataType complex
+                    ? GetComplexType(source, complex.Identifier)
+                    : throw new InvalidOperationException("Uninitialized data type");
             }
         }
 

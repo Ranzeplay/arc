@@ -1,3 +1,4 @@
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Builtin;
 using Arc.Compiler.PackageGenerator.Models.Descriptors;
@@ -74,12 +75,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             }
             
             var firstTerm = callChain.Terms.First();
-            if (firstTerm.Type != ArcCallChainTermType.Identifier)
+            if (firstTerm.Value is not ArcFlexibleIdentifier firstIdentifier)
             {
                 return null;
             }
             
-            var enumTypeNode = ArcDataTypeHelper.GetComplexType(source, firstTerm.Identifier!) as ArcScopeTreeDataTypeNode;
+            var enumTypeNode = ArcDataTypeHelper.GetComplexType(source, firstIdentifier) as ArcScopeTreeDataTypeNode;
             if (enumTypeNode == null)
             {
                 return null;
@@ -93,12 +94,12 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var enumType = enumTypeNode.EnumType!;
             
             var secondTerm = callChain.Terms.Last();
-            if (secondTerm is not { Type: ArcCallChainTermType.Identifier })
+            if (secondTerm.Value is not ArcFlexibleIdentifier secondIdentifier)
             {
                 return null;
             }
             
-            var enumMember = enumType.Members.FirstOrDefault(m => m.Name.Equals(secondTerm.Identifier!.Name));
+            var enumMember = enumType.Members.FirstOrDefault(m => m.Name.Equals(secondIdentifier.Name));
             if (enumMember == null)
             {
                 return null;
@@ -119,9 +120,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var result = new ArcPartialGenerationResult();
             ArcDataDeclarationDescriptor termTypeDecl;
-            switch (firstTerm.Type)
+            switch (firstTerm.Value)
             {
-                case ArcCallChainTermType.Self:
+                case ArcSelfReference:
                 {
                     if (baseFn.Receiver is null)
                     {
@@ -134,9 +135,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                         new(ArcDataSourceType.DataSlot, 0, false)).Encode(source));
                     break;
                 }
-                case ArcCallChainTermType.Identifier:
+                case ArcFlexibleIdentifier identifier:
                 {
-                    var identifier = firstTerm.Identifier!;
                     var slot = source.LocalDataSlots.First(s => s.DeclarationDescriptor.SyntaxTree.Identifier.Name == identifier.Name);
                     termTypeDecl = slot.DeclarationDescriptor;
                     var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.DataSlot, slot.SlotId, false);
@@ -144,9 +144,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                     break;
                 }
-                case ArcCallChainTermType.FunctionCall:
+                case ArcFunctionCall call:
                 {
-                    var call = firstTerm.FunctionCall!;
                     result.Append(ArcFunctionCallGenerator.Generate(source, call, true, baseFn));
 
                     var (targetFuncId, logs) = ArcFunctionHelper.GetFunctionId(source, call);
@@ -239,19 +238,19 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                     .GetSpecificChild<ArcScopeTreeDataTypeNode>(g => g.ComplexTypeGroup?.Id == dataType.GroupId, true)?
                     .ComplexTypeGroup!;
 
-                switch (term.Type)
+                switch (term.Value)
                 {
-                    case ArcCallChainTermType.FunctionCall:
+                    case ArcFunctionCall call:
                         // Handle the function call of this term
-                        var fn = ArcGroupHelper.ResolveSelfFunction(group, term.FunctionCall!, source);
+                        var fn = ArcGroupHelper.ResolveSelfFunction(group, call, source);
                         if (fn == null)
                         {
                             // No function found, then consider if there exist a field such that it holds a lambda expression, i.e. with `func` data type
                             
-                            var nameIdent = term.FunctionCall!.Identifier;
+                            var nameIdent = call.Identifier;
                             if(nameIdent.Namespace == null)
                             {
-                                var field = ArcGroupHelper.ResolveField(group, term.FunctionCall!.Identifier.Name, source);
+                                var field = ArcGroupHelper.ResolveField(group, call.Identifier.Name, source);
                                 if (field != null && field.DataType.Type.TypeId == ArcPersistentData.FunctionType.TypeId)
                                 {
                                     // Load the field to stack top
@@ -259,25 +258,25 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                                     result.Append(new ArcLoadDataToStackInstruction(fieldLocator).Encode(source));
 
                                     // Now generate lambda call
-                                    result.Append(ArcFunctionCallGenerator.GenerateLambdaCall(source, term.FunctionCall!, baseFn));
+                                    result.Append(ArcFunctionCallGenerator.GenerateLambdaCall(source, call, baseFn));
                                     break;
                                 }
                             }
                             
-                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{term.FunctionCall!.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Function '{call.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
                             return (result, null);
                         }
 
                         fnId = fn.Id;
                         lastTermTypeDecl = fn.ReturnValueType;
-                        result.Append(ArcFunctionCallGenerator.GenerateMemberCall(source, term.FunctionCall!, fn, baseFn));
+                        result.Append(ArcFunctionCallGenerator.GenerateMemberCall(source, call, fn, baseFn));
                         break;
-                    case ArcCallChainTermType.Identifier:
+                    case ArcFlexibleIdentifier identifier:
                     {
-                        var field = ArcGroupHelper.ResolveField(group, term.Identifier!.Name, source);
+                        var field = ArcGroupHelper.ResolveField(group, identifier.Name, source);
                         if (field == null)
                         {
-                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Field '{term.Identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
+                            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"Field '{identifier.Name}' not found in group '{group.Name}' and its base groups", source.Name, term.Context));
                             return (result, null);
                         }
                         var fieldLocator = new ArcStackDataOperationDescriptor(ArcDataSourceType.Field, field.Id, true);

@@ -7,23 +7,24 @@ using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
 {
+    public sealed record ArcSelfReference;
+    public union ArcCallChainTermValue(ArcFlexibleIdentifier, ArcFunctionCall, ArcSelfReference);
+
     public class ArcCallChainTerm: IArcTraceable<ArcSourceCodeParser.Arc_call_chain_termContext>
     {
         public ArcCallChainTerm(ArcSourceCodeParser.Arc_call_chain_termContext context)
         {
             if (context.arc_flexible_identifier() != null)
             {
-                Type = ArcCallChainTermType.Identifier;
-                Identifier = new ArcFlexibleIdentifier(context.arc_flexible_identifier());
+                Value = new ArcFlexibleIdentifier(context.arc_flexible_identifier());
             }
             else if (context.arc_function_call_base() != null)
             {
-                Type = ArcCallChainTermType.FunctionCall;
-                FunctionCall = new ArcFunctionCall(context.arc_function_call_base());
+                Value = new ArcFunctionCall(context.arc_function_call_base());
             }
             else if (context.arc_self_wrapper() != null)
             {
-                Type = ArcCallChainTermType.Self;
+                Value = new ArcSelfReference();
             }
             else
             {
@@ -37,11 +38,7 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain
             Context = context;
         }
 
-        public ArcCallChainTermType Type { get; set; }
-
-        public ArcFlexibleIdentifier? Identifier { get; set; }
-
-        public ArcFunctionCall? FunctionCall { get; set; }
+        public ArcCallChainTermValue Value { get; }
 
         public IEnumerable<ArcExpression> Indices { get; set; }
 

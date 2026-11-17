@@ -1,280 +1,88 @@
-﻿using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
+using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 
-namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression
+namespace Arc.Compiler.SyntaxAnalyzer.Models.Expression;
+
+public sealed record ArcValueExpression(ArcDataValue Value);
+public sealed record ArcUnaryExpression(ArcOperator Operator, ArcExpression Operand);
+public sealed record ArcBinaryExpression(ArcOperator Operator, ArcExpression Left, ArcExpression Right);
+public sealed record ArcWrappedExpression(ArcExpression Expression);
+public union ArcExpressionShape(ArcValueExpression, ArcUnaryExpression, ArcBinaryExpression, ArcWrappedExpression);
+
+public class ArcExpression : IArcTraceable<ArcSourceCodeParser.Arc_expressionContext>
 {
-    public class ArcExpression : IArcTraceable<ArcSourceCodeParser.Arc_expressionContext>
+    public ArcExpressionShape Shape { get; }
+
+    public IEnumerable<ArcExpressionTerm> Terms { get; }
+
+    public ArcSourceCodeParser.Arc_expressionContext Context { get; }
+
+    public ArcExpression(ArcSourceCodeParser.Arc_expressionContext context)
     {
-        public IEnumerable<ArcExpressionTerm> Terms { get; set; }
-        
-        public List<ArcExpression> SubExpressions { get; set; }
-        
-        public ArcOperator? Operator { get; set; }
-        
-        public bool IsWrapped { get; set; }
-        
-        public ArcDataValue? DataValue { get; set; }
-
-        public ArcExpression(ArcSourceCodeParser.Arc_expressionContext context)
+        Context = context;
+        if (context.LOGICAL_NOT() is not null || context.BITWISE_NOT() is not null)
         {
-            var terms = new List<ArcExpressionTerm>();
-
-            SubExpressions = context.arc_expression()
-                .Select(expr => new ArcExpression(expr))
-                .ToList();
-            IsWrapped = false;
-
-            // These grammar alternatives have no direct arc_expression child for unary operands.
-            if (context.LOGICAL_NOT() != null || context.BITWISE_NOT() != null)
-            {
-                var operand = context.arc_wrapped_expression() is not null
-                    ? new ArcExpression(context.arc_wrapped_expression().arc_expression())
-                    : new ArcExpression(ArcDataValue.FromTokens(context.arc_data_value()), context);
-                Operator = context.LOGICAL_NOT() != null ? ArcOperator.LogicalNot : ArcOperator.BitwiseNot;
-                SubExpressions = [operand];
-                Terms = [.. operand.Terms, new ArcExpressionTerm(Operator.Value) { Context = context }];
-                Context = context;
-                return;
-            }
-            ArcOperator? additionalBinary = context.MODULO() != null ? ArcOperator.Modulus :
-                context.BITWISE_LSHIFT() != null ? ArcOperator.ShiftLeft :
-                context.BITWISE_RSHIFT() != null ? ArcOperator.ShiftRight :
-                context.COMP_REF_EQ() != null ? ArcOperator.ReferenceEquals :
-                context.COMP_REF_NEQ() != null ? ArcOperator.ReferenceNotEquals : null;
-            if (additionalBinary.HasValue)
-            {
-                Operator = additionalBinary.Value;
-                Terms = [.. SubExpressions[0].Terms, .. SubExpressions[1].Terms,
-                    new ArcExpressionTerm(Operator.Value) { Context = context }];
-                Context = context;
-                return;
-            }
-
-            if (context.MULTIPLY() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.Multiply;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.DIVIDE() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.Divide;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.PLUS() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.Plus;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.MINUS() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.Minus;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.BITWISE_AND() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.BitwiseAnd;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.BITWISE_OR() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.BitwiseOr;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.BITWISE_XOR() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.BitwiseXor;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.BITWISE_NOT() != null)
-            {
-                var exprAfter = SubExpressions.ElementAt(0);
-                const ArcOperator op = ArcOperator.BitwiseNot;
-                Operator = op;
-
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.LOGICAL_AND() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                var op = ArcOperator.LogicalAnd;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.LOGICAL_OR() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.LogicalOr;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.LOGICAL_NOT() != null)
-            {
-                var exprAfter = SubExpressions.ElementAt(0);
-                const ArcOperator op = ArcOperator.LogicalNot;
-                Operator = op;
-
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_LT() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.LessThan;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_GT() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.GreaterThan;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_LTE() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.LessThanOrEqual;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_GTE() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.GreaterThanOrEqual;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_OBJ_EQ() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.ObjectEquals;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.COMP_OBJ_NEQ() != null)
-            {
-                var exprBefore = SubExpressions.ElementAt(0);
-                var exprAfter = SubExpressions.ElementAt(1);
-                const ArcOperator op = ArcOperator.ObjectNotEquals;
-                Operator = op;
-
-                terms.AddRange(exprBefore.Terms);
-                terms.AddRange(exprAfter.Terms);
-                terms.Add(new ArcExpressionTerm(op) { Context = context });
-            }
-            else if (context.arc_wrapped_expression() != null)
-            {
-                terms.AddRange(new ArcExpression(
-                    context.arc_wrapped_expression().arc_expression())
-                        .Terms
-                        .Select(t => { t.Context = context; return t; })
-                );
-
-                SubExpressions = [new ArcExpression(context.arc_wrapped_expression().arc_expression())];
-                IsWrapped = true;
-            }
-            else if (context.arc_data_value() != null)
-            {
-                var dv = ArcDataValue.FromTokens(context.arc_data_value());
-                
-                terms.Add(new ArcExpressionTerm(dv)
-                {
-                    Context = context.arc_data_value()
-                });
-
-                DataValue = dv;
-            }
-            else
-            {
-                throw new NotImplementedException();
-            }
-
-
-            Terms = terms;
-            Context = context;
+            var operand = context.arc_wrapped_expression() is { } wrapped
+                ? new ArcExpression(wrapped.arc_expression())
+                : new ArcExpression(ArcDataValue.FromTokens(context.arc_data_value()), context);
+            var op = context.LOGICAL_NOT() is not null ? ArcOperator.LogicalNot : ArcOperator.BitwiseNot;
+            Shape = new ArcUnaryExpression(op, operand);
+            Terms = [.. operand.Terms, new ArcExpressionTerm(op) { Context = context }];
+            return;
         }
 
-        public ArcSourceCodeParser.Arc_expressionContext Context { get; }
-
-        private ArcExpression(ArcDataValue value, ArcSourceCodeParser.Arc_expressionContext context)
+        ArcOperator? binary = context.MULTIPLY() is not null ? ArcOperator.Multiply :
+            context.DIVIDE() is not null ? ArcOperator.Divide :
+            context.PLUS() is not null ? ArcOperator.Plus :
+            context.MINUS() is not null ? ArcOperator.Minus :
+            context.MODULO() is not null ? ArcOperator.Modulus :
+            context.BITWISE_AND() is not null ? ArcOperator.BitwiseAnd :
+            context.BITWISE_OR() is not null ? ArcOperator.BitwiseOr :
+            context.BITWISE_XOR() is not null ? ArcOperator.BitwiseXor :
+            context.BITWISE_LSHIFT() is not null ? ArcOperator.ShiftLeft :
+            context.BITWISE_RSHIFT() is not null ? ArcOperator.ShiftRight :
+            context.LOGICAL_AND() is not null ? ArcOperator.LogicalAnd :
+            context.LOGICAL_OR() is not null ? ArcOperator.LogicalOr :
+            context.COMP_LT() is not null ? ArcOperator.LessThan :
+            context.COMP_GT() is not null ? ArcOperator.GreaterThan :
+            context.COMP_LTE() is not null ? ArcOperator.LessThanOrEqual :
+            context.COMP_GTE() is not null ? ArcOperator.GreaterThanOrEqual :
+            context.COMP_OBJ_EQ() is not null ? ArcOperator.ObjectEquals :
+            context.COMP_OBJ_NEQ() is not null ? ArcOperator.ObjectNotEquals :
+            context.COMP_REF_EQ() is not null ? ArcOperator.ReferenceEquals :
+            context.COMP_REF_NEQ() is not null ? ArcOperator.ReferenceNotEquals : null;
+        if (binary is { } binaryOperator)
         {
-            DataValue = value;
-            SubExpressions = [];
-            Terms = [new ArcExpressionTerm(value) { Context = context }];
-            Context = context;
+            var operands = context.arc_expression();
+            var left = new ArcExpression(operands[0]);
+            var right = new ArcExpression(operands[1]);
+            Shape = new ArcBinaryExpression(binaryOperator, left, right);
+            Terms = [.. left.Terms, .. right.Terms, new ArcExpressionTerm(binaryOperator) { Context = context }];
         }
+        else if (context.arc_wrapped_expression() is { } wrapped)
+        {
+            var expression = new ArcExpression(wrapped.arc_expression());
+            Shape = new ArcWrappedExpression(expression);
+            Terms = expression.Terms.Select(term => { term.Context = context; return term; }).ToList();
+        }
+        else if (context.arc_data_value() is { } data)
+        {
+            var value = ArcDataValue.FromTokens(data);
+            Shape = new ArcValueExpression(value);
+            Terms = [new ArcExpressionTerm(value) { Context = data }];
+        }
+        else
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    private ArcExpression(ArcDataValue value, ArcSourceCodeParser.Arc_expressionContext context)
+    {
+        Context = context;
+        Shape = new ArcValueExpression(value);
+        Terms = [new ArcExpressionTerm(value) { Context = context }];
     }
 }

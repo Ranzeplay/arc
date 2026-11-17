@@ -1,3 +1,4 @@
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 ﻿using Arc.Compiler.PackageGenerator.Helpers;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Intermediate;
@@ -19,15 +20,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             var result = new ArcPartialGenerationResult();
 
             var firstTerm = assign.CallChain.Terms.First();
-            if (firstTerm.Type == ArcCallChainTermType.Self && baseFn.Receiver is null)
+            if (firstTerm.Value is ArcSelfReference && baseFn.Receiver is null)
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0,
                     "self is only available in an instance method", source.Name, firstTerm.Context));
                 return result;
             }
 
-            if (assign.CallChain.Terms.LastOrDefault()?.Type != ArcCallChainTermType.Identifier &&
-                !(assign.CallChain.Terms.Count() == 1 && firstTerm.Type == ArcCallChainTermType.Self))
+            if (assign.CallChain.Terms.LastOrDefault()?.Value is not ArcFlexibleIdentifier &&
+                !(assign.CallChain.Terms.Count() == 1 && firstTerm.Value is ArcSelfReference))
             {
                 result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, "Invalid assignment target", source.Name, assign.CallChain.Context));
                 return result;
@@ -51,9 +52,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             // Handle the first element of the call chain since it is from a data slot
             var firstTerm = lhs.Terms.First();
             var initialSlot = source.LocalDataSlots
-                .First(s => firstTerm.Type == ArcCallChainTermType.Self
+                .First(s => firstTerm.Value is ArcSelfReference
                     ? ReferenceEquals(s.DeclarationDescriptor, baseFn.Receiver!.DataType)
-                    : s.Name == firstTerm.Identifier!.Name);
+                    : firstTerm.Value is ArcFlexibleIdentifier identifier && s.Name == identifier.Name);
 
             bool isDirectAssignment = lhs.Terms.Count() == 1 && !lhs.Terms.First().Indices.Any();
             return isDirectAssignment ?
@@ -75,9 +76,9 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
         {
             var firstTerm = callChain.Terms.First();
             var initialSlot = source.LocalDataSlots
-                .First(s => firstTerm.Type == ArcCallChainTermType.Self
+                .First(s => firstTerm.Value is ArcSelfReference
                     ? ReferenceEquals(s.DeclarationDescriptor, baseFn.Receiver!.DataType)
-                    : s.Name == firstTerm.Identifier!.Name);
+                    : firstTerm.Value is ArcFlexibleIdentifier identifier && s.Name == identifier.Name);
             var currentDataType = ArcDataTypeHelper.GetDataType(source, initialSlot.DeclarationDescriptor.SyntaxTree.DataType);
 
             var result = new ArcPartialGenerationResult();
@@ -105,7 +106,8 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
                 if (currentDataType.ResolvedType is ArcComplexType)
                 {
                     var groupType = ArcDataTypeHelper.GetDataTypeNode(source, currentDataType.ResolvedType)!.ComplexTypeGroup!;
-                    var field = ArcGroupHelper.ResolveField(groupType, term.Identifier!.Name, source);
+                    var field = term.Value is ArcFlexibleIdentifier identifier
+                        ? ArcGroupHelper.ResolveField(groupType, identifier.Name, source) : null;
 
                     if (field == null)
                     {

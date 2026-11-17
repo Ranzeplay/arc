@@ -6,6 +6,7 @@ using Arc.Compiler.PackageGenerator.Models.Relocation;
 using Arc.Compiler.SyntaxAnalyzer.Interfaces;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 using Arc.Compiler.SyntaxAnalyzer.Models.Statements;
 using Microsoft.Extensions.Logging;
 
@@ -18,18 +19,22 @@ public static class ArcAssignmentGenerator
     {
         var terms = syntax.CallChain.Terms.ToList();
         if (syntax.CallChain.ConstructorCall is not null || terms.Count == 0 ||
-            terms[0].Type is not (ArcCallChainTermType.Identifier or ArcCallChainTermType.Self) ||
-            terms.Skip(1).Any(t => t.Type != ArcCallChainTermType.Identifier) || terms.Any(t => t.Indices.Any()))
+            terms[0].Value is not (ArcFlexibleIdentifier or ArcSelfReference) ||
+            terms.Skip(1).Any(t => t.Value is not ArcFlexibleIdentifier) || terms.Any(t => t.Indices.Any()))
         {
             return Error(ctx, "Invalid assignment target", syntax);
         }
         
         var result = new ArcGinkgoInstructionGenerationResult();
-        var assignmentTarget = terms[0].Type == ArcCallChainTermType.Self
-            ? ctx.Receiver : ctx.GetImplicitRegister(terms[0].Identifier!.Name);
+        var assignmentTarget = terms[0].Value switch
+        {
+            ArcSelfReference => ctx.Receiver,
+            ArcFlexibleIdentifier identifier => ctx.GetImplicitRegister(identifier.Name),
+            _ => throw new InvalidOperationException("Invalid assignment target"),
+        };
         if (assignmentTarget is null)
         {
-            return Error(ctx, terms[0].Type == ArcCallChainTermType.Self
+            return Error(ctx, terms[0].Value is ArcSelfReference
                 ? "self is only available in an instance method" : "Unknown assignment target", terms.First());
         }
         
@@ -44,7 +49,8 @@ public static class ArcAssignmentGenerator
         for (var i = 1; i < terms.Count - 1; i++)
         {
             var type = ArcDataTypeHelper.GetDataTypeNode(ctx, assignmentTarget.Instance.Type.ResolvedType);
-            var field = type?.ComplexTypeGroup?.Fields.FirstOrDefault(f => f.IdentifierName == terms[i].Identifier!.Name);
+            var field = type?.ComplexTypeGroup?.Fields.FirstOrDefault(f =>
+                terms[i].Value is ArcFlexibleIdentifier identifier && f.IdentifierName == identifier.Name);
             if (field is null)
             {
                 return Error(ctx, "Unknown field in assignment target", syntax.Expression);
@@ -62,7 +68,8 @@ public static class ArcAssignmentGenerator
         if (terms.Count > 1)
         {
             var type = ArcDataTypeHelper.GetDataTypeNode(ctx, assignmentTarget.Instance.Type.ResolvedType);
-            var field = type?.ComplexTypeGroup?.Fields.FirstOrDefault(f => f.IdentifierName == terms[^1].Identifier!.Name);
+            var field = type?.ComplexTypeGroup?.Fields.FirstOrDefault(f =>
+                terms[^1].Value is ArcFlexibleIdentifier identifier && f.IdentifierName == identifier.Name);
             if (field is null)
             {
                 return Error(ctx, "Unknown field in assignment target", syntax.Expression);

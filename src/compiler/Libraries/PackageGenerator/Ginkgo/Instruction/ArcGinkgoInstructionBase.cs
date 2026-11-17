@@ -1,11 +1,11 @@
+using System.Buffers.Binary;
 using Arc.Compiler.PackageGenerator.Base;
-using System.IO;
 using Arc.Compiler.PackageGenerator.Models.Generation;
 using Arc.Compiler.PackageGenerator.Models.Relocation;
 
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
-public abstract class ArcGinkgoInstructionBase : ArcPrimitiveInstructionBase
+public closed class ArcGinkgoInstructionBase : ArcPrimitiveInstructionBase
 {
     protected static byte Flags(params bool[] flags)
     {
@@ -15,238 +15,108 @@ public abstract class ArcGinkgoInstructionBase : ArcPrimitiveInstructionBase
         return value;
     }
 
+    private static byte[] LittleEndian(ushort value)
+    {
+        var bytes = new byte[sizeof(ushort)];
+        BinaryPrimitives.WriteUInt16LittleEndian(bytes, value);
+        return bytes;
+    }
+
+    private static byte[] LittleEndian(uint value)
+    {
+        var bytes = new byte[sizeof(uint)];
+        BinaryPrimitives.WriteUInt32LittleEndian(bytes, value);
+        return bytes;
+    }
+
     public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         => Encode();
 
     public ArcPartialGenerationResult Encode()
     {
-        using var stream = new MemoryStream();
-        using var writer = new BinaryWriter(stream);
         var result = new ArcPartialGenerationResult();
-        writer.Write(Opcode);
-        switch (this)
+        byte[] operands = this switch
         {
-            case ArcArithmeticAddInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticSubtractInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticMultiplyInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticDivideInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticModuloInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticBitwiseAndInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticBitwiseOrInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticBitwiseXorInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcLogicalAndInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcLogicalOrInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcLogicalXorInstruction i:
-                writer.Write(i.SrcA);
-                writer.Write(i.SrcB);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext));
-                break;
-            case ArcArithmeticInverseInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcArithmeticBitwiseNotInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcLogicalNotInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcDataCopyInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcDataCloneInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcDataLoadReferenceInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.UseDestNext));
-                break;
-            case ArcArithmeticLeftShiftInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Amount);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext));
-                break;
-            case ArcArithmeticRightShiftInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Amount);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext));
-                break;
-            case ArcArithmeticRightLogicalShiftInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Amount);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext));
-                break;
-            case ArcComparisonEqualInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcComparisonNotEqualInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcComparisonLessThanInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcComparisonLessThanOrEqualInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcComparisonGreaterThanInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcComparisonGreaterThanOrEqualInstruction i:
-                writer.Write(i.SrcL);
-                writer.Write(i.SrcR);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference));
-                break;
-            case ArcDataLoadInstruction i:
-                writer.Write(i.TableIndex);
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.LoadAsReference, i.UsageHint));
-                break;
-            case ArcDataInitObjectInstruction i:
-                writer.Write(i.TypeId);
-                writer.Write(i.Dest);
-                writer.Write(i.Dimension);
-                writer.Write(Flags(i.UsageHint));
-                break;
-            case ArcDataLoadFieldInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(i.FieldId);
-                writer.Write(Flags(i.LastUseSrc, i.UsageHint));
-                break;
-            case ArcDataStoreFieldInstruction i:
-                writer.Write(i.Src);
-                writer.Write(i.Dest);
-                writer.Write(i.FieldId);
-                writer.Write(Flags(i.LastUseSrc, i.UsageHint));
-                break;
-            case ArcControlFlowBindArgInstruction i:
-                writer.Write(i.Src);
-                writer.Write(Flags(i.LastUseSrc));
-                break;
-            case ArcControlFlowPrepareCallInstruction i:
-                writer.Write(i.FunctionSymbolId);
-                break;
-            case ArcControlFlowReturnWithValueInstruction i:
-                writer.Write(i.Src);
-                writer.Write(Flags(i.ExpectReturnValue));
-                break;
-            case ArcControlFlowReturnInstruction i:
-                writer.Write(Flags(i.ExpectReturnValue));
-                break;
-            case ArcControlFlowInvokeInstruction i:
-                writer.Write(i.Dest);
-                writer.Write(Flags(i.IsVirtual));
-                break;
-            case ArcControlFlowUnconditionalJumpInstruction i:
-                WriteTarget(i.Target);
-                break;
-            case ArcControlFlowConditionalJumpInstruction i:
-                writer.Write(i.Condition);
-                WriteTarget(i.Target);
-                writer.Write(Flags(i.ConditionTrue, i.ConditionFalse, i.ConditionNotNone,
-                    i.ConditionNone, i.LastUseCondition));
-                break;
-            case ArcNoOperationInstruction:
-                break;
-            case ArcControlFlowLabelInstruction i:
-                if (i.Label is not null)
-                    result.RelocationLabels.Add(new ArcRelocationLabel
-                    {
-                        Layer = i.Label.Layer, Type = i.Label.Type, Name = i.Label.Name, Location = 0
-                    });
-                break;
-            default:
-                throw new NotSupportedException($"No Ginkgo encoder for {GetType().Name}");
-        }
-        result.GeneratedData.AddRange(stream.ToArray());
+            ArcArithmeticAddInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticSubtractInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticMultiplyInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticDivideInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticModuloInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticBitwiseAndInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticBitwiseOrInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticBitwiseXorInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcLogicalAndInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcLogicalOrInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcLogicalXorInstruction i => [.. LittleEndian(i.SrcA), .. LittleEndian(i.SrcB), .. LittleEndian(i.Dest), Flags(i.LastUseSrcA, i.LastUseSrcB, i.UseDestNext)],
+            ArcArithmeticInverseInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcArithmeticBitwiseNotInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcLogicalNotInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcDataCopyInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcDataCloneInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcDataLoadReferenceInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.UseDestNext)],
+            ArcArithmeticLeftShiftInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Amount), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext)],
+            ArcArithmeticRightShiftInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Amount), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext)],
+            ArcArithmeticRightLogicalShiftInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Amount), .. LittleEndian(i.Dest), Flags(i.LastUseSrc, i.LastUseAmount, i.UseDestNext)],
+            ArcComparisonEqualInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcComparisonNotEqualInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcComparisonLessThanInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcComparisonLessThanOrEqualInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcComparisonGreaterThanInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcComparisonGreaterThanOrEqualInstruction i => [
+                .. LittleEndian(i.SrcL),
+                .. LittleEndian(i.SrcR),
+                .. LittleEndian(i.Dest), Flags(i.LastUseSrcL, i.LastUseSrcR, i.UseDestNext, i.CompareReference)],
+            ArcDataLoadInstruction i => [.. LittleEndian(i.TableIndex), .. LittleEndian(i.Dest), Flags(i.LoadAsReference, i.UsageHint)],
+            ArcDataInitObjectInstruction i => [.. LittleEndian(i.TypeId), .. LittleEndian(i.Dest), .. LittleEndian(i.Dimension), Flags(i.UsageHint)],
+            ArcDataLoadFieldInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), .. LittleEndian(i.FieldId), Flags(i.LastUseSrc, i.UsageHint)],
+            ArcDataStoreFieldInstruction i => [.. LittleEndian(i.Src), .. LittleEndian(i.Dest), .. LittleEndian(i.FieldId), Flags(i.LastUseSrc, i.UsageHint)],
+            ArcControlFlowBindArgInstruction i => [.. LittleEndian(i.Src), Flags(i.LastUseSrc)],
+            ArcControlFlowPrepareCallInstruction i => [.. LittleEndian(i.FunctionSymbolId)],
+            ArcControlFlowReturnWithValueInstruction i => [.. LittleEndian(i.Src), Flags(i.ExpectReturnValue)],
+            ArcControlFlowReturnInstruction i => [Flags(i.ExpectReturnValue)],
+            ArcControlFlowInvokeInstruction i => [.. LittleEndian(i.Dest), Flags(i.IsVirtual)],
+            ArcControlFlowUnconditionalJumpInstruction i => [.. EncodeTarget(i.Target, 0)],
+            ArcControlFlowConditionalJumpInstruction i => [
+                .. LittleEndian(i.Condition),
+                .. EncodeTarget(i.Target, sizeof(ushort)), Flags(i.ConditionTrue, i.ConditionFalse, i.ConditionNotNone, i.ConditionNone, i.LastUseCondition)],
+            ArcNoOperationInstruction => [],
+            ArcControlFlowLabelInstruction i => EncodeLabel(i),
+        };
+        result.GeneratedData.AddRange(Opcode);
+        result.GeneratedData.AddRange(operands);
         return result;
 
-        void WriteTarget(ArcRelocationTarget target)
+        byte[] EncodeLabel(ArcControlFlowLabelInstruction instruction)
+        {
+            if (instruction.Label is { } label)
+                result.RelocationLabels.Add(new ArcRelocationLabel
+                {
+                    Layer = label.Layer, Type = label.Type, Name = label.Name, Location = 0
+                });
+            return [];
+        }
+
+        byte[] EncodeTarget(ArcRelocationTarget target, int operandOffset)
         {
             var copy = new ArcRelocationTarget
             {
                 TargetType = target.TargetType, Layer = target.Layer,
-                Parameter = target.Parameter, Location = stream.Position
+                Parameter = target.Parameter, Location = Opcode.Length + operandOffset
             };
             switch (target.TargetType)
             {
@@ -257,7 +127,7 @@ public abstract class ArcGinkgoInstructionBase : ArcPrimitiveInstructionBase
                 default: throw new ArgumentOutOfRangeException(nameof(target));
             }
             result.RelocationTargets.Add(copy);
-            writer.Write(0L);
+            return new byte[sizeof(long)];
         }
     }
 }

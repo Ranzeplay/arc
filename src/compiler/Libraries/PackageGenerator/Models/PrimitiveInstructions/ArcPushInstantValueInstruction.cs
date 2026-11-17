@@ -15,14 +15,14 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
 
         public override ArcPartialGenerationResult Encode(ArcGenerationSource source)
         {
-            switch (Value.Type)
+            switch (Value)
             {
-                case ArcInstantValue.ValueType.Integer:
+                case ArcInstantIntegerValue value:
                     {
                         var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "int"]);
                         return new ArcPartialGenerationResult
                         {
-                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(Value.IntegerValue!.Value)],
+                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(value.Value)],
                             RelocationTargets = [
                                 new()
                                 {
@@ -34,12 +34,12 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                             ]
                         };
                     }
-                case ArcInstantValue.ValueType.Decimal:
+                case ArcInstantDecimalValue value:
                     {
                         var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "decimal"]);
                         return new ArcPartialGenerationResult
                         {
-                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(decimal.ToDouble(Value.DecimalValue!.Value))],
+                            GeneratedData = [.. Opcode, .. BitConverter.GetBytes((long)0), .. BitConverter.GetBytes(decimal.ToDouble(value.Value))],
                             RelocationTargets = [
                                 new()
                                 {
@@ -51,15 +51,15 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                             ]
                         };
                     }
-                case ArcInstantValue.ValueType.String:
+                case ArcInstantStringValue value:
                     {
                         var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "str"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode
                             .Concat(BitConverter.GetBytes((long)0))
-                            .Concat(BitConverter.GetBytes(Value.StringValue!.Value.Length))
-                            .Concat(Encoding.UTF8.GetBytes(Value.StringValue!.Value)).ToList(),
+                            .Concat(BitConverter.GetBytes(value.Value.Length))
+                            .Concat(Encoding.UTF8.GetBytes(value.Value)).ToList(),
                             RelocationTargets = [
                                 new()
                                 {
@@ -71,14 +71,14 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                             ]
                         };
                     }
-                case ArcInstantValue.ValueType.Boolean:
+                case ArcBooleanValue value:
                     {
                         var typeSymbol = source.GlobalScopeTree.GetNode<ArcScopeTreeDataTypeNode>(["Arc", "Base", "bool"]);
                         return new ArcPartialGenerationResult
                         {
                             GeneratedData = Opcode
                             .Concat(BitConverter.GetBytes((long)0))
-                            .Concat(BitConverter.GetBytes(Value.BooleanValue!.Value)).ToList(),
+                            .Concat(BitConverter.GetBytes(value.Value)).ToList(),
                             RelocationTargets = [
                                 new()
                                 {
@@ -90,8 +90,10 @@ namespace Arc.Compiler.PackageGenerator.Models.PrimitiveInstructions
                             ]
                         };
                     }
-                default:
-                    throw new NotImplementedException();
+                case ArcNoneValue or ArcAnyValue:
+                    throw new NotSupportedException("The stack backend cannot push none or any literals directly");
+                case null:
+                    throw new InvalidOperationException("Uninitialized instant value");
             }
         }
     }

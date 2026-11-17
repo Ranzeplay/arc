@@ -7,15 +7,14 @@ namespace Arc.Compiler.PackageGenerator.Encoders
     {
         public static IArcConstantEncoder GetEncoderFromInstantValue(ArcInstantValue value)
         {
-            return value.Type switch
+            return value switch
             {
-                ArcInstantValue.ValueType.Integer => new ArcIntegerEncoder(),
-                ArcInstantValue.ValueType.Decimal => new ArcDecimalEncoder(),
-                ArcInstantValue.ValueType.String => new ArcStringEncoder(),
-                ArcInstantValue.ValueType.Boolean => new ArcBooleanEncoder(),
-                ArcInstantValue.ValueType.Any => new ArcEmptyEncoder(),
-                ArcInstantValue.ValueType.None => new ArcEmptyEncoder(),
-                _ => throw new NotImplementedException(),
+                ArcInstantIntegerValue => new ArcIntegerEncoder(),
+                ArcInstantDecimalValue => new ArcDecimalEncoder(),
+                ArcInstantStringValue => new ArcStringEncoder(),
+                ArcBooleanValue => new ArcBooleanEncoder(),
+                ArcAnyValue or ArcNoneValue => new ArcEmptyEncoder(),
+                null => throw new InvalidOperationException("Uninitialized instant value"),
             };
         }
     }

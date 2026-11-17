@@ -14,16 +14,18 @@ namespace Arc.Compiler.PackageGenerator.Ginkgo
     {
         public static IArcDataTypeProxy? GetDataType<T>(IArcGinkgoGenerationContext<T> source, ArcDataType dataType) where T : ArcScopeTreeNodeBase
         {
-            if (dataType.DataType != ArcDataType.DataMemberType.Primitive)
+            if (dataType.Value is not ArcPrimitiveDataType primitive)
             {
-                return GetComplexType(source, dataType.ComplexType!.Identifier);
+                return dataType.Value is ArcComplexDataType complex
+                    ? GetComplexType(source, complex.Identifier)
+                    : throw new InvalidOperationException("Uninitialized data type");
             }
             
             var candidateTypes = source.DirectlyAccessibleNodes
                 .OfType<ArcScopeTreeDataTypeNode>()
                 .Where(x => x.DataType is ArcBaseType);
 
-            return dataType.PrimitiveType switch
+            return primitive switch
             {
                 ArcPrimitiveDataType.Integer => candidateTypes.FirstOrDefault(x =>
                     x.DataType.TypeId == ArcPersistentData.IntType.TypeId),

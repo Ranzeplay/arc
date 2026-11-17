@@ -1,3 +1,4 @@
+using Arc.Compiler.SyntaxAnalyzer.Models.Identifier;
 using System.Diagnostics;
 using Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 using Arc.Compiler.PackageGenerator.Ginkgo.Metadata.Data;
@@ -126,9 +127,9 @@ public static class ArcCallChainGenerator
         ref ArcFunctionGenerationContext ctx,
         ArcCallChainTerm syntax)
     {
-        switch (syntax.Type)
+        switch (syntax.Value)
         {
-            case ArcCallChainTermType.Self:
+            case ArcSelfReference:
             {
                 if (ctx.Receiver is null)
                     return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
@@ -137,9 +138,8 @@ public static class ArcCallChainGenerator
                 result.SetOutput(ctx.Receiver);
                 return result;
             }
-            case ArcCallChainTermType.Identifier:
+            case ArcFlexibleIdentifier ident:
             {
-                var ident = syntax.Identifier!;
                 if (ident.Namespace is null)
                 {
                     // Check if it is a variable
@@ -157,9 +157,8 @@ public static class ArcCallChainGenerator
                 err.Logs.Add(new ArcSourceLocatableLog(LogLevel.Error, 0, $"No matching variable candidate found for \"{ident}\"", ctx.UnitName, ident));
                 return err;
             }
-            case ArcCallChainTermType.FunctionCall:
+            case ArcFunctionCall fc:
             {
-                var fc = syntax.FunctionCall!;
                 var fcRes = ArcFunctionCallGenerator.Generate(ref ctx, fc);
                 return fcRes;
             }
@@ -176,14 +175,13 @@ public static class ArcCallChainGenerator
         if (baseObj is null)
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Call chain receiver does not produce a value", ctx.UnitName, syntax);
-        switch (syntax.Type)
+        switch (syntax.Value)
         {
-            case ArcCallChainTermType.Self:
+            case ArcSelfReference:
                 return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                     "self must be the first term of a call chain", ctx.UnitName, syntax);
-            case ArcCallChainTermType.Identifier:
+            case ArcFlexibleIdentifier ident:
             {
-                var ident = syntax.Identifier!;
                 var typeNode = ArcDataTypeHelper.GetDataTypeNode(ctx, baseObj.Instance.Type.ResolvedType);
                 if (typeNode is null || typeNode.ComplexTypeGroup is null)
                     return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
@@ -233,9 +231,8 @@ public static class ArcCallChainGenerator
                 
                 return result;
             }
-            case ArcCallChainTermType.FunctionCall:
+            case ArcFunctionCall fc:
             {
-                var fc = syntax.FunctionCall!;
                 return ArcFunctionCallGenerator.GenerateMemberCall(ref ctx, fc, baseObj);
             }
             default:

@@ -7,6 +7,8 @@ using Arc.Compiler.PackageGenerator.Models.Scope;
 using Arc.Compiler.SyntaxAnalyzer.Generated.ANTLR;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
+using Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 using Arc.Compiler.SyntaxAnalyzer.Models.Function;
 using Microsoft.Extensions.Logging;
@@ -21,13 +23,15 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
 
             foreach (var term in expr.Terms)
             {
-                if (term.IsOperator)
+                if (term.Value is ArcOperator op)
                 {
-                    result.Append(GenerateOperator(source, term.Operator!.Value, term));
+                    result.Append(GenerateOperator(source, op, term));
                 }
                 else
                 {
-                    var logs = GenerateDataValue(ref source, ref result, term, baseFn);
+                    var logs = term.Value is ArcDataValue value
+                        ? GenerateDataValue(ref source, ref result, value, term, baseFn)
+                        : throw new InvalidOperationException("Uninitialized expression term");
                     result.Logs.AddRange(logs);
                 }
             }
@@ -35,27 +39,26 @@ namespace Arc.Compiler.PackageGenerator.Generators.Instructions
             return result;
         }
 
-        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcExpressionTerm term, ArcScopeTreeFunctionNodeBase baseFn)
+        private static IEnumerable<ArcCompilationLogBase> GenerateDataValue(ref ArcGenerationSource source, ref ArcPartialGenerationResult result, ArcDataValue value, ArcExpressionTerm term, ArcScopeTreeFunctionNodeBase baseFn)
         {
-            switch (term.DataValue?.Type)
+            switch (value)
             {
-                case ArcDataValue.ValueType.InstantValue:
+                case ArcInstantValue instant:
                 {
-                    var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(term.DataValue.InstantValue!, ref source, ref result);
+                    var dataLocation = ArcConstantHelper.GetConstantIdOrCreateConstant(instant, ref source, ref result);
                     var locator = new ArcStackDataOperationDescriptor(ArcDataSourceType.ConstantTable, dataLocation, false);
 
                     result.Append(new ArcLoadDataToStackInstruction(locator).Encode(source));
                     break;
                 }
-                case ArcDataValue.ValueType.CallChain:
+                case ArcCallChain chain:
                 {
-                    result.Append(ArcCallChainGenerator.Generate(source, term.DataValue.CallChain!, baseFn));
+                    result.Append(ArcCallChainGenerator.Generate(source, chain, baseFn));
                     break;
                 }
-                case ArcDataValue.ValueType.Lambda:
+                case ArcLambdaExpression lambda:
                 {
                     // Create a new lambda node under the current function
-                    var lambda = term.DataValue.Lambda!;
                     
                     var (node, logs) = ArcFunctionGenerator.GenerateDescriptor<ArcScopeTreeLambdaNode>(source, lambda.Declarator);
                     result.Logs.AddRange(logs);

@@ -4,6 +4,7 @@ using Arc.Compiler.PackageGenerator.Ginkgo.Metadata.Data;
 using Arc.Compiler.PackageGenerator.Ginkgo.Transformation;
 using Arc.Compiler.PackageGenerator.Models.Logging;
 using Arc.Compiler.SyntaxAnalyzer.Models.Components;
+using Arc.Compiler.SyntaxAnalyzer.Models.Components.CallChain;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data;
 using Arc.Compiler.SyntaxAnalyzer.Models.Expression;
 using Arc.Compiler.SyntaxAnalyzer.Models.Data.DataType;
@@ -39,7 +40,7 @@ public static class ArcExpressionEvaluationGenerator
         }
         
         var source = result.OutImplicitRegister;
-        var (target, logs) = topLevelTarget.DataType.PrimitiveType == ArcPrimitiveDataType.Infer
+        var (target, logs) = topLevelTarget.DataType.Value is ArcPrimitiveDataType.Infer
             ? (new ArcImplicitRegister(ctx.NextImplicitRegisterId, topLevelTarget.Identifier.Name,
                 new ArcDataTypeInstance { Type = source.Instance.Type, Dimension = source.Instance.Dimension,
                     AllowNone = source.Instance.AllowNone, Mutability = topLevelTarget.Mutability },
@@ -70,41 +71,35 @@ public static class ArcExpressionEvaluationGenerator
         ArcExpression syntax,
         ArcDataDeclarator? topLevelTarget = null)
     {
-        if (syntax.DataValue is not null)
+        return syntax.Shape switch
         {
-            return GenerateDataValue(ref ctx, syntax.DataValue, topLevelTarget);
-        }
-
-        if (syntax.Operator is not null)
-        {
-            return GenerateOperation(ref ctx, syntax, topLevelTarget);
-        }
-
-        if (syntax.IsWrapped)
-        {
-            return Generate(ref ctx, syntax.SubExpressions.ElementAt(0), topLevelTarget);
-        }
-
-        throw new UnreachableException();
+            ArcValueExpression value => GenerateDataValue(ref ctx, value.Value, topLevelTarget),
+            ArcUnaryExpression unary => GenerateUnaryOperation(ref ctx, syntax, unary, topLevelTarget),
+            ArcBinaryExpression binary => GenerateBinaryOperation(ref ctx, syntax, binary, topLevelTarget),
+            ArcWrappedExpression wrapped => Generate(ref ctx, wrapped.Expression, topLevelTarget),
+            null => throw new InvalidOperationException("Uninitialized expression shape"),
+        };
     }
 
     private static ArcGinkgoInstructionGenerationResult GenerateDataValue(
         ref ArcFunctionGenerationContext ctx,
         ArcDataValue syntax,
         ArcDataDeclarator? topLevelTarget = null)
+        => syntax switch
+        {
+            ArcCallChain chain => ArcCallChainGenerator.Generate(ref ctx, chain),
+            ArcInstantValue instant => GenerateLiteral(ref ctx, instant),
+            ArcEmptyDataValue => GenerateLiteral(ref ctx, new ArcNoneValue()),
+            ArcDataType or ArcEnumAccessor or ArcLambdaExpression =>
+                ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
+                    $"Ginkgo cannot generate data value {syntax} yet", ctx.UnitName),
+            null => throw new InvalidOperationException("Uninitialized data value"),
+        };
+
+    private static ArcGinkgoInstructionGenerationResult GenerateLiteral(
+        ref ArcFunctionGenerationContext ctx, ArcInstantValue value)
     {
-        if (syntax.CallChain is not null)
-        {
-            return ArcCallChainGenerator.Generate(ref ctx, syntax.CallChain);
-        }
-        
-        var value = syntax.InstantValue;
-        var typeName = value?.TypeName ?? (syntax.Type == ArcDataValue.ValueType.None ? "none" : null);
-        if (typeName is null)
-        {
-            return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
-                $"Ginkgo cannot generate data value {syntax.Type} yet", ctx.UnitName);
-        }
+        var typeName = value.TypeName;
         
         var type = ctx.GlobalContext.ScopeTree.GetNodes<ArcScopeTreeDataTypeNode>()
             .FirstOrDefault(t => t.ShortName == typeName);
@@ -119,7 +114,7 @@ public static class ArcExpressionEvaluationGenerator
                 AllowNone = typeName == "none" }, ArcImplicitRegisterType.LocalData);
         if (output is null) return ArcGinkgoInstructionGenerationResult.WithLogs(logs);
         ctx.AddImplicitRegister(output);
-        var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value?.GetRawValue() ?? Array.Empty<byte>());
+        var index = ctx.GlobalContext.InternConstant(type.ActualTypeId, value.GetRawValue());
         var instruction = new ArcDataLoadInstruction { TableIndex = index, Dest = output.Id };
         
         var result = new ArcGinkgoInstructionGenerationResult { Instructions = [instruction] };
@@ -127,40 +122,14 @@ public static class ArcExpressionEvaluationGenerator
         return result;
     }
 
-    private static ArcGinkgoInstructionGenerationResult GenerateOperation(
-        ref ArcFunctionGenerationContext ctx,
-        ArcExpression syntax,
-        ArcDataDeclarator? topLevelTarget = null)
-    {
-        var result = new ArcGinkgoInstructionGenerationResult();
-
-        if (syntax.Operator is null)
-        {
-            result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Critical, 0, "Unreachable compiler branch in operation expression", ctx.UnitName, syntax.Context));
-            return result;
-        }
-
-        if (syntax.Operator.Value.IsBinary())
-        {
-            return GenerateBinaryOperation(ref ctx, syntax, topLevelTarget);
-        }
-
-        if (syntax.Operator.Value.IsUnary())
-        {
-            return GenerateUnaryOperation(ref ctx, syntax, topLevelTarget);
-        }
-        
-        result.Logs.Add(new ArcSourceLocatableLog(LogLevel.Critical, 0, "Unreachable compiler branch in operation expression", ctx.UnitName, syntax.Context));
-        return result;
-    }
-
     private static ArcGinkgoInstructionGenerationResult GenerateBinaryOperation(
         ref ArcFunctionGenerationContext ctx,
         ArcExpression syntax,
+        ArcBinaryExpression operation,
         ArcDataDeclarator? topLevelTarget = null)
     {
         var result = new ArcGinkgoInstructionGenerationResult();
-        var lhs = syntax.SubExpressions.ElementAt(0);
+        var lhs = operation.Left;
         var lhsResult = Generate(ref ctx, lhs);
         result.AppendInstructions(lhsResult);
         if (result.DiscardResult || lhsResult.OutImplicitRegister is null)
@@ -169,7 +138,7 @@ public static class ArcExpressionEvaluationGenerator
         }
         
         
-        var rhs = syntax.SubExpressions.ElementAt(1);
+        var rhs = operation.Right;
         var rhsResult = Generate(ref ctx, rhs);
         result.AppendInstructions(rhsResult);
         if (result.DiscardResult || rhsResult.OutImplicitRegister is null)
@@ -184,7 +153,7 @@ public static class ArcExpressionEvaluationGenerator
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
                 "Binary operands must have matching types", ctx.UnitName, syntax);
         }
-        if ((syntax.Operator is ArcOperator.LogicalAnd or ArcOperator.LogicalOr) &&
+        if ((operation.Operator is ArcOperator.LogicalAnd or ArcOperator.LogicalOr) &&
             (leftType.Type.ShortName != "bool" || leftType.Dimension != 0))
         {
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
@@ -201,7 +170,7 @@ public static class ArcExpressionEvaluationGenerator
             return result;
         }
 
-        if (syntax.Operator?.IsComparison() ?? syntax.Operator is
+        if (operation.Operator.IsComparison() || operation.Operator is
                 ArcOperator.LogicalAnd or ArcOperator.LogicalOr)
         {
             var boolean = ctx.GlobalContext.ScopeTree.GetNodes<ArcScopeTreeDataTypeNode>()
@@ -213,7 +182,7 @@ public static class ArcExpressionEvaluationGenerator
         ctx.AddImplicitRegister(outObj);
         result.SetOutput(outObj);
 
-        switch (syntax.Operator)
+        switch (operation.Operator)
         {
             case ArcOperator.Plus:
                 result.Instructions.Add(new ArcArithmeticAddInstruction
@@ -390,15 +359,16 @@ public static class ArcExpressionEvaluationGenerator
     private static ArcGinkgoInstructionGenerationResult GenerateUnaryOperation(
         ref ArcFunctionGenerationContext ctx,
         ArcExpression syntax,
+        ArcUnaryExpression operation,
         ArcDataDeclarator? topLevelTarget = null)
     {
         var result = new ArcGinkgoInstructionGenerationResult();
         
-        var src = syntax.SubExpressions.ElementAt(0);
+        var src = operation.Operand;
         var srcResult = Generate(ref ctx, src);
         result.AppendInstructions(srcResult);
         if (result.DiscardResult || srcResult.OutImplicitRegister is null) return result;
-        if (syntax.Operator == ArcOperator.LogicalNot &&
+        if (operation.Operator == ArcOperator.LogicalNot &&
             (srcResult.OutImplicitRegister.Instance.Type.ShortName != "bool" ||
              srcResult.OutImplicitRegister.Instance.Dimension != 0))
             return ArcGinkgoInstructionGenerationResult.WithLog(LogLevel.Error, 0,
@@ -417,7 +387,7 @@ public static class ArcExpressionEvaluationGenerator
         ctx.AddImplicitRegister(outObj);
         result.SetOutput(outObj);
         
-        switch (syntax.Operator)
+        switch (operation.Operator)
         {
             case ArcOperator.BitwiseNot:
                 result.Instructions.Add(new ArcArithmeticBitwiseNotInstruction

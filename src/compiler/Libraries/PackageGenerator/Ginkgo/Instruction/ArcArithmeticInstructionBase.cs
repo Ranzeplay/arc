@@ -1,5 +1,5 @@
 namespace Arc.Compiler.PackageGenerator.Ginkgo.Instruction;
 
-public abstract class ArcArithmeticInstructionBase : ArcGinkgoInstructionBase
+public closed class ArcArithmeticInstructionBase : ArcGinkgoInstructionBase
 {
 }

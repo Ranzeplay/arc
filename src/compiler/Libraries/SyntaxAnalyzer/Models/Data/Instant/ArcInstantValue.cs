@@ -4,56 +4,10 @@ using System.Text;
 
 namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
 {
-    public class ArcInstantValue
+    public sealed record ArcAnyValue;
+
+    public union ArcInstantValue(ArcInstantStringValue, ArcInstantIntegerValue, ArcInstantDecimalValue, ArcBooleanValue, ArcNoneValue, ArcAnyValue)
     {
-        public enum ValueType
-        {
-            String,
-            Integer,
-            Decimal,
-            Boolean,
-            None,
-            Any
-        }
-
-        public ValueType Type { get; set; }
-
-        public ArcBooleanValue? BooleanValue { get; set; }
-
-        public ArcInstantStringValue? StringValue { get; set; }
-
-        public ArcInstantIntegerValue? IntegerValue { get; set; }
-
-        public ArcInstantDecimalValue? DecimalValue { get; set; }
-
-        public ArcInstantValue(ArcInstantStringValue stringValue)
-        {
-            Type = ValueType.String;
-            StringValue = stringValue;
-        }
-
-        public ArcInstantValue(ArcInstantIntegerValue integerValue)
-        {
-            Type = ValueType.Integer;
-            IntegerValue = integerValue;
-        }
-
-        public ArcInstantValue(ArcInstantDecimalValue decimalValue)
-        {
-            Type = ValueType.Decimal;
-            DecimalValue = decimalValue;
-        }
-
-        public ArcInstantValue(ArcBooleanValue booleanValue)
-        {
-            Type = ValueType.Boolean;
-            BooleanValue = booleanValue;
-        }
-
-        private ArcInstantValue()
-        {
-        }
-
         public static ArcInstantValue FromTokens(ArcSourceCodeParser.Arc_instant_valueContext context)
         {
             if (context.NUMBER() != null)
@@ -82,17 +36,11 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             }
             else if (context.KW_ANY() != null)
             {
-                return new ArcInstantValue
-                {
-                    Type = ValueType.Any
-                };
+                return new ArcAnyValue();
             }
             else if (context.KW_NONE() != null)
             {
-                return new ArcInstantValue
-                {
-                    Type = ValueType.None
-                };
+                return new ArcNoneValue();
             }
             else
             {
@@ -100,28 +48,28 @@ namespace Arc.Compiler.SyntaxAnalyzer.Models.Data.Instant
             }
         }
 
-        public string TypeName => Type switch
+        public string TypeName => this switch
         {
-            ValueType.String => "string",
-            ValueType.Integer => "int",
-            ValueType.Decimal => "decimal",
-            ValueType.Boolean => "bool",
-            ValueType.None => "none",
-            ValueType.Any => "any",
-            _ => throw new NotImplementedException(),
+            ArcInstantStringValue => "string",
+            ArcInstantIntegerValue => "int",
+            ArcInstantDecimalValue => "decimal",
+            ArcBooleanValue => "bool",
+            ArcNoneValue => "none",
+            ArcAnyValue => "any",
+            null => throw new InvalidOperationException("Uninitialized instant value"),
         };
 
         public object GetRawValue()
         {
-            return Type switch
+            return this switch
             {
-                ValueType.String => StringValue!.Value,
-                ValueType.Integer => IntegerValue!.Value,
-                ValueType.Decimal => DecimalValue!.Value,
-                ValueType.Boolean => BooleanValue!.Value,
-                ValueType.None => Array.Empty<byte>(),
-                ValueType.Any => Array.Empty<byte>(),
-                _ => throw new InvalidCastException(),
+                ArcInstantStringValue value => value.Value,
+                ArcInstantIntegerValue value => value.Value,
+                ArcInstantDecimalValue value => value.Value,
+                ArcBooleanValue value => value.Value,
+                ArcNoneValue => Array.Empty<byte>(),
+                ArcAnyValue => Array.Empty<byte>(),
+                null => throw new InvalidOperationException("Uninitialized instant value"),
             };
         }
 
