@@ -1,8 +1,16 @@
 import cp from 'node:child_process';
+import path from 'node:path';
 import createMDX from '@next/mdx';
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
+  experimental: {
+    // Cached module IDs can retain a previously inferred workspace root.
+    turbopackFileSystemCacheForDev: false,
+  },
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
   env: {
     NEXT_PUBLIC_COMMIT_HASH: cp.execSync('git rev-parse --short HEAD').toString().trim(),

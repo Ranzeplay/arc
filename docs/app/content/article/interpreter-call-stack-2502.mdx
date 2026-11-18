@@ -1,0 +1,259 @@
+---
+title: 'Reducing interpreter overhead with native call frames'
+---
+
+> **LLM authorship notice:** This article was written by a large language model
+> (LLM) using the repository history and supplied profiling artifacts. Its
+> explanations are analysis, not independently reproduced benchmark results.
+
+# Background
+
+An interpreter should spend its time executing the program, not maintaining
+structures that duplicate work already done by the host language.
+In February 2025, Arc's runtime kept an explicit collection of function contexts
+even though interpreted calls already used recursive Rust function calls.
+Each context also owned a separate operand stack.
+
+[Commit 684da45](https://github.com/Ranzeplay/arc/commit/684da451bba53a1540adf1fd229f15a6b0fd5284),
+dated February 11, 2025, removed that collection and introduced a shared operand
+stack. Its message reports a 16.6% performance improvement when calculating the
+first 32 elements of the Fibonacci sequence.
+
+The important idea is not simply that "the stack is faster than the heap."
+The change eliminates redundant frame bookkeeping and lets many function calls
+reuse the same operand storage. It does not move every execution object onto
+Rust's native stack.
+
+# Before and after
+
+## Two different stacks
+
+There were two distinct structures in the old interpreter:
+
+- The call-frame collection tracked active functions and their contexts.
+- Each function's operand stack held temporary values used by instructions.
+
+The former was a `VecDeque`, not a `Vec`. In simplified form, the data model was:
+
+```rust
+struct ExecutionContext {
+    package: Package,
+    stack_frames: VecDeque<Rc<RefCell<FunctionExecutionContext>>>,
+}
+
+struct FunctionExecutionContext {
+    function: Rc<FunctionSymbol>,
+    local_data: Vec<DataSlot>,
+    local_stack: Vec<Rc<RefCell<DataValue>>>,
+}
+```
+
+Function preparation found the caller through `stack_frames.back()`, created a
+callee context, and pushed it into the collection. On return, `end_function`
+popped that context. Meanwhile, `execute_function` was already recursively
+calling itself through the function-call instruction handler.
+
+The native Rust call stack therefore already remembered which invocation to
+resume. The explicit collection maintained another representation of active
+function contexts alongside it.
+
+## Invocation-local contexts and shared operands
+
+The new data model removed `stack_frames` and `local_stack`:
+
+```rust
+struct ExecutionContext {
+    package: Package,
+    global_stack: Vec<Rc<RefCell<DataValue>>>,
+}
+
+struct FunctionExecutionContext {
+    function: Rc<FunctionSymbol>,
+    local_data: Vec<DataSlot>,
+}
+```
+
+Each `execute_function` invocation now holds its context handle locally. The
+caller context is passed explicitly as an optional argument, rather than
+recovered from a shared collection. Arguments are popped from `global_stack`
+into the callee's local slots; a returned value is pushed back onto that same
+stack by the call handler.
+
+![Original before-and-after diagram of execution contexts and operand storage](/articles/interpreter-call-stack-2502/context-layout.webp)
+
+The supplied diagram illustrates the ownership change. Its stacked "Local stack"
+regions on the right are conceptual: the implementation uses one flat `Vec`,
+without explicit per-function operand-stack segments.
+
+The diagram's "Not in containers anymore" refers to the removed frame
+collection. Contexts still use `Rc<RefCell<FunctionExecutionContext>>`, so their
+contents remain heap-allocated. Local variables and instruction lists also
+retain their own vector storage.
+
+# Why this is effective
+
+## Remove duplicated call bookkeeping
+
+The interpreter no longer needs to push and pop a context handle in a
+`VecDeque`, look up the current frame through that collection, or borrow the
+execution context just to maintain that frame list.
+
+Rust's call and return mechanism already preserves the interpreter's local
+state and return location. Keeping the context handle in that invocation makes
+its lifetime follow the execution it belongs to, without a second frame
+registry. This removes work on every call and return, although the old deque
+did not necessarily allocate on every push: it could reuse its capacity.
+
+## Reuse operand capacity across calls
+
+Previously, each function started with `local_stack: vec![]`. Pushing temporary
+values could allocate and grow a fresh buffer, and returning dropped that
+buffer. A later invocation could repeat the same allocation cycle.
+
+The shared `global_stack` is created with capacity for 100 values. Popping values
+does not shrink a `Vec`'s capacity, so later calls can reuse its buffer. Once
+capacity is sufficient, ordinary pushes and pops do not allocate the vector's
+backing storage. Growth can still occur when the live operand count exceeds
+that capacity.
+
+This matters especially for recursive Fibonacci: the number of function calls
+grows much faster than the maximum recursion depth. Separate operand vectors
+can incur allocation work repeatedly across the call tree; a shared vector
+retains capacity as earlier calls finish. It reduces buffer churn without
+changing the algorithm's complexity or removing allocations for individual
+`Rc`-wrapped values.
+
+## Reserve local storage and avoid an instruction-list clone
+
+The commit also creates local slots with `Vec::with_capacity(20)`, avoiding
+incremental growth for functions that fit within that capacity. This still
+allocates a local buffer for each invocation, and may reserve unused space for
+small functions.
+
+In `execute_function`, the instruction list changes from cloning
+`func_info.instruction_slice` to borrowing it. This avoids an extra vector
+allocation and a reference-count increment for every instruction in that
+clone. Function preparation still collects an instruction vector, and the
+instruction loop still constructs temporary vectors, so those costs are not
+eliminated entirely.
+
+The commit also uses the explicit `Rc::clone(&value)` spelling. This makes
+shared ownership clear, but is not inherently faster than `value.clone()` when
+both resolve to the same `Rc` implementation. Actual removal of unnecessary
+clones is what reduces reference-count work.
+
+# Profiling evidence
+
+## Allocation is a meaningful target
+
+The supplied terminal profile highlights vector construction, constant loading,
+and allocator functions:
+
+![Terminal profile highlighting vector construction, constant loading, malloc and cfree](/articles/interpreter-call-stack-2502/allocation-profile.webp)
+
+Visible entries include two `Vec::from_iter` rows at 11.57% and 6.81%, constant
+loading at 7.45%, `malloc` at 8.91%, and `cfree` at 4.62%. These figures show
+that memory-management and interpreter-support work deserve attention alongside
+arithmetic. They are not counts of allocations, and rows at different levels
+of a call tree must not be added as independent costs.
+
+Another supplied view exposes allocation paths through `Box::new` and
+`Rc::new`, as well as time in instruction selection and constant decoding:
+
+![Profile showing remaining allocation, instruction-selection and constant-decoding costs](/articles/interpreter-call-stack-2502/remaining-costs.webp)
+
+This is consistent with the allocations that remain in the source. The
+screenshot is not labeled with a revision, so it is supporting evidence of
+the kinds of costs involved, not a quantified before/after comparison.
+
+## Read the flamegraphs as profiles, not timings
+
+The supplied flamegraphs are available here:
+
+- [Before: interactive flamegraph](/articles/interpreter-call-stack-2502/before-flamegraph.svg)
+- [After: interactive flamegraph](/articles/interpreter-call-stack-2502/after-flamegraph.svg)
+
+Frame width represents the share of the recorded sample weight attributed to
+that call path; height represents stack depth, not elapsed time. A function can
+appear at several depths and under several callers. In a recursive workload,
+adding all appearances can count the same sampled stack more than once.
+
+Both graphs contain recursive `execute_function` and `execute_function_call`
+paths. This agrees with the source: native recursion existed before the
+optimization. The change removed the additional context collection, not
+recursion itself.
+
+The exports label their total weights as 5,963,891,514 "samples" before and
+6,006,017,892 after. Without the recording configuration, these numbers cannot
+be interpreted as literal sampling-event counts or converted into execution
+times. Each graph is normalized independently, so comparing widths does not
+establish an absolute speedup.
+
+## What the reported improvement establishes
+
+The 16.6% figure comes from the commit message, not a timing calculation from
+these images. The supplied artifacts include raw `perf.data` recordings, but
+no benchmark command, machine configuration, timing series, or exact revision
+identifiers tying the captures to the commit and its parent.
+
+The evidence supports the mechanism: allocation and collection work are
+visible costs, and the patch removes some of that work. It does not isolate
+how much of the reported improvement comes from frame removal, operand-buffer
+reuse, instruction-list borrowing, or the other edits. Nor does the phrase
+"performance improvement" specify whether 16.6% means less elapsed time or
+more throughput.
+
+To measure those contributions separately, compare the parent and commit with
+the same release build, input, hardware, and profiler settings; check identical
+results; then repeat timing runs and test each optimization independently.
+Record both call-heavy and shallow workloads, including cases that exceed the
+reserved capacities.
+
+# Tradeoffs
+
+Native recursion is a good fit for a synchronous interpreter, but it couples
+guest call depth to the host thread's stack limit. Deep guest recursion can
+overflow that stack. Suspension, resumable execution, and guest stack
+inspection also need additional machinery when frames are not explicitly
+represented in a central collection.
+
+A shared operand stack requires a clear calling convention. A callee must
+consume its arguments and temporaries without disturbing values still needed
+by its caller. Useful regression cases include nested calls with pending
+caller operands, multiple arguments, void returns, and recursive returns.
+If recoverable errors or exceptions are introduced, saving an operand-stack
+base and restoring it during unwinding can prevent leftover callee values
+from leaking into the caller. The February patch does not introduce such
+per-call boundaries.
+
+The shared vector also retains its high-water capacity until the execution
+context is dropped. That trades repeated allocations for retained memory.
+For generators, coroutines, explicit depth limits, or richer debugging, an
+explicit frame stack may be worth its bookkeeping cost.
+
+# Conclusion
+
+The February optimization is effective because it removes redundant machinery
+and reuses storage across many calls. Rust already supplied the call/return
+structure; the interpreter did not need another collection solely to track
+the same active contexts. Sharing operand capacity and avoiding an extra
+instruction-vector clone address allocation-heavy paths visible in the
+profiles.
+
+The result is a leaner interpreter, not an allocation-free one. The reported
+Fibonacci improvement applies to the combined commit and workload; the
+profiles explain why the direction is plausible without proving a separate
+speedup for every individual change.
+
+# Sources
+
+- [Optimization commit and full diff](https://github.com/Ranzeplay/arc/commit/684da451bba53a1540adf1fd229f15a6b0fd5284).
+- [Context model at the optimization revision](https://github.com/Ranzeplay/arc/blob/684da451bba53a1540adf1fd229f15a6b0fd5284/src/runtime/shared/src/models/execution/context.rs).
+- [Function preparation at the optimization revision](https://github.com/Ranzeplay/arc/blob/684da451bba53a1540adf1fd229f15a6b0fd5284/src/runtime/executor/src/func_exec.rs).
+- Supplied artifacts: `image.png` (terminal profile), `image-2.png` (layout
+  diagram), `image-3.png` (expanded terminal call path), `image-4.png` (allocation
+  call tree), and the `before` and `after` flamegraphs and raw recordings.
+  The diagram, two complementary profile views, and both SVG exports are
+  preserved with this article. Raster images are published as lossless WebP;
+  the interactive flamegraphs retain their SVG format. All five visual assets
+  are managed with Git LFS. The raw recordings are not published here.
