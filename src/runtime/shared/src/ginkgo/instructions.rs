@@ -19,9 +19,41 @@
 //! assert!(load.load_ref);
 //! # Ok::<(), arc_shared::ginkgo::instructions::InstructionConversionError>(())
 //! ```
+//!
+//! Dispatch like the legacy executor, with named operands available in each arm:
+//!
+//! ```
+//! use arc_shared::ginkgo::{Instruction, Opcode, Operand};
+//! use arc_shared::ginkgo::instructions::InstructionType;
+//!
+//! let instruction = Instruction {
+//!     offset: 0, opcode: Opcode::Load,
+//!     operands: vec![Operand::Constant(7), Operand::Register(2)],
+//!     flags: Some(1), raw: vec![],
+//! };
+//! match instruction.instruction_type()? {
+//!     InstructionType::Load(load) => assert_eq!(load.dest, 2),
+//!     InstructionType::Add(add) => { let _ = (add.src_a, add.src_b, add.dest); }
+//!     _ => {}
+//! }
+//! # Ok::<(), arc_shared::ginkgo::instructions::InstructionConversionError>(())
+//! ```
 
 use super::{Instruction, Opcode, Operand};
 use std::fmt;
+
+impl Instruction {
+    /// Extract the checked, matchable instruction type without consuming metadata.
+    ///
+    /// Unlike the legacy instruction's field, this is fallible because the raw
+    /// operand list and flags are public and may not match the opcode's layout.
+    pub fn instruction_type(&self) -> Result<InstructionType, InstructionConversionError> {
+        InstructionType::try_from(self)
+    }
+}
+
+/// Compatibility name for the typed instruction enum.
+pub type TypedInstruction = InstructionType;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct InstructionConversionError {
@@ -90,11 +122,11 @@ macro_rules! instructions {
         )*
 
         #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-        pub enum TypedInstruction {
+        pub enum InstructionType {
             $($opcode($name),)*
         }
 
-        impl TryFrom<&Instruction> for TypedInstruction {
+        impl TryFrom<&Instruction> for InstructionType {
             type Error = InstructionConversionError;
 
             fn try_from(instruction: &Instruction) -> Result<Self, Self::Error> {
@@ -104,7 +136,7 @@ macro_rules! instructions {
             }
         }
 
-        impl TryFrom<Instruction> for TypedInstruction {
+        impl TryFrom<Instruction> for InstructionType {
             type Error = InstructionConversionError;
 
             fn try_from(instruction: Instruction) -> Result<Self, Self::Error> {
@@ -302,6 +334,31 @@ mod tests {
                 std::array::from_fn(|i| i == bit)
             );
         }
+    }
+
+    #[test]
+    fn instruction_type_supports_executor_style_pattern_matching() {
+        let instruction = raw(
+            Opcode::Load,
+            vec![Operand::Constant(7), Operand::Register(2)],
+            Some(1),
+        );
+        match instruction.instruction_type().unwrap() {
+            InstructionType::Load(load) => {
+                assert_eq!((load.constant_index, load.dest), (7, 2));
+                assert!(load.load_ref);
+                assert!(!load.usage_hint);
+            }
+            other => panic!("Expected Load, got {other:?}"),
+        }
+        // Extraction leaves the original instruction and its metadata usable.
+        assert_eq!(instruction.offset, 123);
+        let compatible: TypedInstruction = (&instruction).try_into().unwrap();
+        assert!(matches!(compatible, TypedInstruction::Load(_)));
+        assert_eq!(compatible, instruction.instruction_type().unwrap());
+
+        let invalid = raw(Opcode::Load, vec![], Some(0));
+        assert!(invalid.instruction_type().is_err());
     }
 
     #[test]

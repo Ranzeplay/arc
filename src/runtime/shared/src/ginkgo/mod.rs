@@ -4,6 +4,8 @@ use strum_macros::FromRepr;
 
 mod opcode;
 pub use opcode::Opcode;
+use crate::models::execution::data::DataValue;
+
 pub mod instructions;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, FromRepr)]
@@ -129,6 +131,12 @@ pub struct Constant {
     pub type_id: u32,
     pub is_array: bool,
     pub raw_value: Vec<u8>,
+}
+
+impl Into<DataValue> for Constant {
+    fn into(self) -> DataValue {
+        unimplemented!()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
