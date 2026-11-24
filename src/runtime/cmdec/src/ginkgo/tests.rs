@@ -280,7 +280,10 @@ fn load_index_must_exist_in_the_functions_unit_pool() {
     let symbols = [(10, 2, function(0, 8, 0)), (11, 2, function(8, 8, 1))];
     let pools = vec![vec![(0, 2, 1i64.to_le_bytes().to_vec())], vec![]];
     let error = decode(&package(&symbols, &pools, &code.repeat(2))).unwrap_err();
-    assert!(error.contains("Invalid constant index 0 in pool 1 for function 11"), "{error}");
+    assert!(
+        error.contains("Invalid constant index 0 in pool 1 for function 11"),
+        "{error}"
+    );
 }
 
 #[test]

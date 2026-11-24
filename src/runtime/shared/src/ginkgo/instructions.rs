@@ -392,11 +392,9 @@ mod tests {
         assert!(
             NoOperationInstruction::try_from(raw(Opcode::NoOperation, vec![], Some(0))).is_err()
         );
-        assert!(ReturnWithoutValueInstruction::try_from(raw(
-            Opcode::ReturnWithoutValue,
-            vec![],
-            None
-        ))
-        .is_err());
+        assert!(
+            ReturnWithoutValueInstruction::try_from(raw(Opcode::ReturnWithoutValue, vec![], None))
+                .is_err()
+        );
     }
 }

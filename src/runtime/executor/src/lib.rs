@@ -1,9 +1,9 @@
 mod data;
 mod func_exec;
+pub mod ginkgo;
 mod instructions;
 mod math;
 mod stdlib;
-pub mod ginkgo;
 
 use crate::func_exec::prepare_and_get_function_info;
 use crate::instructions::data_declaration::declare_data;

@@ -7,7 +7,7 @@ use arc_shared::models::execution::result::FunctionExecutionResult;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub struct ArcStdArray {}
+pub struct ArcStdArray;
 
 #[arc_scope_dispatcher("Arc::Std::Array")]
 impl ArcStdArray {

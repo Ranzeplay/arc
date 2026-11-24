@@ -1,3 +1,3 @@
-pub mod array;
+mod array;
 mod console;
 pub mod function_dispatcher;

@@ -6,7 +6,7 @@ use arc_shared::receive_func_args;
 use std::cell::RefCell;
 use std::rc::Rc;
 
-pub struct ArcStdConsole {}
+pub struct ArcStdConsole;
 
 #[arc_scope_dispatcher("Arc::Std::Console")]
 impl ArcStdConsole {

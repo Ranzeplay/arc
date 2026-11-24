@@ -3,8 +3,8 @@ use std::collections::BTreeMap;
 use strum_macros::FromRepr;
 
 mod opcode;
-pub use opcode::Opcode;
 use crate::models::execution::data::DataValue;
+pub use opcode::Opcode;
 
 pub mod instructions;
 
