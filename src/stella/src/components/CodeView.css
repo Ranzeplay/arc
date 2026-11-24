@@ -1,0 +1,76 @@
+.code-view {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  outline: none;
+  background: var(--background);
+  color: var(--foreground);
+  font: 12px / 20px "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  scrollbar-gutter: stable;
+}
+
+.code-view > div {
+  min-width: 0;
+  min-height: 100%;
+}
+
+.code-view pre {
+  margin: 0;
+  padding: 10px 13px;
+  background: transparent !important;
+  color: inherit;
+  font: inherit;
+  tab-size: 2;
+  counter-reset: code-line;
+}
+
+.code-view.wrap pre {
+  min-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.code-view.nowrap pre {
+  width: max-content;
+  min-width: 100%;
+  white-space: pre;
+}
+
+.code-view .line {
+  display: inline;
+  counter-increment: code-line;
+}
+
+.code-view .line::before {
+  display: inline-block;
+  width: 2.5em;
+  margin-right: 1em;
+  color: var(--text-faint);
+  text-align: right;
+  user-select: none;
+  content: counter(code-line);
+}
+
+.code-view.wrap .line {
+  display: block;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.code-view .diff-line-added {
+  background: color-mix(in srgb, #36a269 18%, transparent);
+}
+
+.code-view .diff-line-removed {
+  background: color-mix(in srgb, #db5868 18%, transparent);
+}
+
+.code-loading {
+  margin: 0;
+  padding: 10px 13px;
+  font: inherit;
+  white-space: pre-wrap;
+}
