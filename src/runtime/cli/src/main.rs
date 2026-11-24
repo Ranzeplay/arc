@@ -47,6 +47,36 @@ fn main() {
             }
             command_line_options::Subcommands::Execute(execute_command) => {
                 debug!("Executing package");
+                let bytes = match std::fs::read(&execute_command.path) {
+                    Ok(bytes) => bytes,
+                    Err(err) => {
+                        error!("Failed to read {}: {}", execute_command.path.display(), err);
+                        exit(1);
+                    }
+                };
+                if arc_cmdec::ginkgo::is_ginkgo(&bytes) {
+                    let package = match arc_cmdec::ginkgo::decode(&bytes) {
+                        Ok(package) => package,
+                        Err(err) => {
+                            error!("Failed to decode Ginkgo package: {}", err);
+                            exit(1);
+                        }
+                    };
+                    let mut exit_code = 0;
+                    for _ in 0..execute_command.repeat {
+                        match arc_executor::ginkgo::pipeline::entry(&package) {
+                            Ok(code) => exit_code = code as i32,
+                            Err(err) => {
+                                error!("Ginkgo execution failed: {}", err);
+                                exit(1);
+                            }
+                        }
+                        if exit_code != 0 {
+                            break;
+                        }
+                    }
+                    exit(exit_code);
+                }
                 let opt = CmdecOptions {
                     path: execute_command.path,
                     print_constants: false,
@@ -68,7 +98,7 @@ fn main() {
                     repeat: execute_command.repeat,
                     args: execute_command.args,
                 };
-                execute(opt);
+                exit(execute(opt));
             }
         },
         None => {}

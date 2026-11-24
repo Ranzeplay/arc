@@ -33,7 +33,7 @@ pub fn entry(package: &Package) -> Result<u8, String> {
         desc.entrypoint_function_id,
         &mut BTreeMap::new(),
     );
-    Ok(result.map_or_else(|_| 0, |_| 0xff))
+    result.map(|_| 0)
 }
 
 struct FuncCallPrepProps {

@@ -53,8 +53,8 @@ Pass `--source-info <path>` (or `-m <path>`) to add signatures and function sour
 paths from Circle's optional JSON sidecar. It is not needed for decoding.
 `--descriptor`, `--symbols`, `--constants`, `--instructions`, and `--raw` retain
 their existing meanings for legacy packages. Use the global `--verbose` flag
-with `--raw` to see the debug-level raw package dump. Ginkgo execution remains
-unsupported and `execute` reports that explicitly.
+with `--raw` to see the debug-level raw package dump. `execute` runs executable
+packages through the Ginkgo instruction pipeline. Library packages cannot be executed.
 
 ### Typed Rust instructions
 

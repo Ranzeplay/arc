@@ -101,7 +101,7 @@ fn reads_optional_source_information_and_reports_invalid_metadata() {
 }
 
 #[test]
-fn reports_invalid_packages_and_unsupported_execution_without_panicking() {
+fn reports_invalid_packages_and_rejects_library_execution_without_panicking() {
     for bytes in [
         vec![],
         b"GINKGO\0\0".to_vec(),
@@ -113,5 +113,5 @@ fn reports_invalid_packages_and_unsupported_execution_without_panicking() {
     }
     let output = Fixture::new(&package()).run("execute", &[]);
     assert!(!output.status.success());
-    assert!(stderr(&output).contains("Ginkgo execution is not supported"));
+    assert!(stderr(&output).contains("Library packages cannot be executed"));
 }

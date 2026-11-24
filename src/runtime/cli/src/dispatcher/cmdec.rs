@@ -48,7 +48,7 @@ pub fn call_cmdec_decoder(opt: CmdecOptions) -> Option<Package> {
         }
     };
     if arc_cmdec::ginkgo::is_ginkgo(&stream) {
-        error!("Ginkgo execution is not supported; use the decode command to inspect this package");
+        error!("Ginkgo package must be executed with the Ginkgo executor");
         return None;
     }
     Cmdec::decode(&stream, opt)
