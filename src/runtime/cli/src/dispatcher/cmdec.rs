@@ -1,7 +1,5 @@
-use arc_cmdec::Cmdec;
-use arc_shared::ginkgo::SourceInfo;
+use super::instruction_set::DecodedPackage;
 use arc_shared::models::options::cmdec_options::CmdecOptions;
-use arc_shared::models::package::Package;
 use log::error;
 use std::path::Path;
 
@@ -13,43 +11,12 @@ pub fn decode(opt: CmdecOptions, source_path: Option<&Path>) -> bool {
             return false;
         }
     };
-    if arc_cmdec::ginkgo::is_ginkgo(&stream) {
-        let source_info = match source_path.map(read_source_info).transpose() {
-            Ok(info) => info,
-            Err(err) => {
-                error!("Failed to read Ginkgo source information: {}", err);
-                return false;
-            }
-        };
-        Cmdec::decode_ginkgo(&stream, &opt, source_info.as_ref()).is_some()
-    } else {
-        Cmdec::decode(&stream, opt).is_some()
-    }
-}
 
-fn read_source_info(path: &Path) -> Result<SourceInfo, String> {
-    let bytes = std::fs::read(path).map_err(|e| e.to_string())?;
-    let info: SourceInfo = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
-    if info.instruction_set != "arc-ginkgo" {
-        return Err(format!(
-            "Unexpected instruction set: {}",
-            info.instruction_set
-        ));
-    }
-    Ok(info)
-}
-
-pub fn call_cmdec_decoder(opt: CmdecOptions) -> Option<Package> {
-    let stream = match std::fs::read(&opt.path) {
-        Ok(stream) => stream,
+    match DecodedPackage::decode(&stream, &opt, source_path) {
+        Ok(_) => true,
         Err(err) => {
-            error!("Failed to read {}: {}", opt.path.display(), err);
-            return None;
+            error!("{}", err);
+            false
         }
-    };
-    if arc_cmdec::ginkgo::is_ginkgo(&stream) {
-        error!("Ginkgo package must be executed with the Ginkgo executor");
-        return None;
     }
-    Cmdec::decode(&stream, opt)
 }

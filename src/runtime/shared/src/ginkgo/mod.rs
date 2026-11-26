@@ -133,12 +133,6 @@ pub struct Constant {
     pub raw_value: Vec<u8>,
 }
 
-impl Into<DataValue> for Constant {
-    fn into(self) -> DataValue {
-        unimplemented!()
-    }
-}
-
 #[derive(Debug, Clone, PartialEq)]
 pub enum Operand {
     Register(u16),

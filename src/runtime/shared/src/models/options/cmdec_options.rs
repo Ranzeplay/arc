@@ -1,5 +1,6 @@
 use std::path::PathBuf;
 
+#[derive(Clone)]
 pub struct CmdecOptions {
     pub path: PathBuf,
     pub print_instructions: bool,

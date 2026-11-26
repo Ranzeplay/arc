@@ -1,13 +1,11 @@
 use crate::command_line_options::Args;
-use crate::dispatcher::cmdec::{call_cmdec_decoder, decode};
-use crate::dispatcher::execute::execute;
+use crate::dispatcher::cmdec::decode;
+use crate::dispatcher::instruction_set::DecodedPackage;
 use arc_shared::models::options::cmdec_options::CmdecOptions;
-use arc_shared::models::options::launch_options::LaunchOptions;
 use clap::Parser;
 use log::{debug, error, info};
 use mimalloc::MiMalloc;
 use std::process::exit;
-use std::rc::Rc;
 
 mod command_line_options;
 mod dispatcher;
@@ -54,29 +52,6 @@ fn main() {
                         exit(1);
                     }
                 };
-                if arc_cmdec::ginkgo::is_ginkgo(&bytes) {
-                    let package = match arc_cmdec::ginkgo::decode(&bytes) {
-                        Ok(package) => package,
-                        Err(err) => {
-                            error!("Failed to decode Ginkgo package: {}", err);
-                            exit(1);
-                        }
-                    };
-                    let mut exit_code = 0;
-                    for _ in 0..execute_command.repeat {
-                        match arc_executor::ginkgo::pipeline::entry(&package) {
-                            Ok(code) => exit_code = code as i32,
-                            Err(err) => {
-                                error!("Ginkgo execution failed: {}", err);
-                                exit(1);
-                            }
-                        }
-                        if exit_code != 0 {
-                            break;
-                        }
-                    }
-                    exit(exit_code);
-                }
                 let opt = CmdecOptions {
                     path: execute_command.path,
                     print_constants: false,
@@ -86,19 +61,20 @@ fn main() {
                     print_package_descriptor: false,
                     verbose: args.verbose,
                 };
-                let package = call_cmdec_decoder(opt);
-                if package.is_none() {
-                    error!("Failed to decode package");
-                    exit(1);
-                }
-
-                let opt = LaunchOptions {
-                    package: Rc::new(package.unwrap()),
-                    verbose: args.verbose,
-                    repeat: execute_command.repeat,
-                    args: execute_command.args,
+                let package = match DecodedPackage::decode(&bytes, &opt, None) {
+                    Ok(package) => package,
+                    Err(err) => {
+                        error!("{}", err);
+                        exit(1);
+                    }
                 };
-                exit(execute(opt));
+                match package.execute(execute_command.repeat, execute_command.args, args.verbose) {
+                    Ok(code) => exit(code),
+                    Err(err) => {
+                        error!("{}", err);
+                        exit(1);
+                    }
+                }
             }
         },
         None => {}

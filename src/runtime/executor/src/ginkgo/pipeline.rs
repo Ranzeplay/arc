@@ -1,10 +1,10 @@
 use arc_shared::ginkgo::instructions::InstructionType;
 use arc_shared::ginkgo::{BuiltinType, Function, Package, PackageType, Symbol};
 use arc_shared::models::encodings::data_type_enc::{DataTypeEncoding, Mutability};
-use arc_shared::models::execution::data::{DataValue, DataValueType};
+use arc_shared::models::execution::data::{ComplexDataValue, DataValue, DataValueType};
 use log::error;
 use std::cell::RefCell;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
 use std::rc::Rc;
 
 pub fn entry(package: &Package) -> Result<u8, String> {
@@ -753,7 +753,20 @@ pub fn exec_func(
                     .get(&x.constant_index)
                     .expect("Constant not found");
 
-                iregs.insert(x.dest, Rc::new(RefCell::new(constant.clone().into())));
+                let dt = DataTypeEncoding {
+                    type_id: constant.type_id as usize,
+                    dimension: if constant.is_array { 1 } else { 0 },
+                    mutability: Mutability::Mutable,
+                };
+
+                let value = decode_constant_value(constant.type_id, &constant.raw_value)?;
+                iregs.insert(
+                    x.dest,
+                    Rc::new(RefCell::new(DataValue {
+                        data_type: dt,
+                        value,
+                    })),
+                );
             }
             InstructionType::Copy(x) => {
                 let src_value = iregs.get(&x.src).expect("No register found").clone();
@@ -771,7 +784,26 @@ pub fn exec_func(
                 let src_value = iregs.get(&ldr.src).expect("No register found").clone();
                 iregs.insert(ldr.dest, src_value);
             }
-            InstructionType::InitializeObject(init_obj) => {}
+            InstructionType::InitializeObject(x) => {
+                let dt = DataTypeEncoding {
+                    type_id: x.type_id as usize,
+                    dimension: x.dimension as u32,
+                    mutability: Mutability::Immutable,
+                };
+
+                let obj = DataValueType::Complex(ComplexDataValue {
+                    data_type: Rc::new(dt),
+                    values: HashMap::new(),
+                });
+
+                iregs.insert(
+                    x.dest,
+                    Rc::new(RefCell::new(DataValue {
+                        data_type: dt,
+                        value: obj,
+                    })),
+                );
+            }
             InstructionType::LogicalAnd(x) => {
                 let a = get_ireg_value!(x.src_a);
                 let b = get_ireg_value!(x.src_b);
@@ -854,7 +886,7 @@ pub fn exec_func(
                     panic!("Unexpected instruction type in load field");
                 };
 
-                let mut cell = complex
+                let cell = complex
                     .values
                     .get(&(x.field_id as usize))
                     .expect("Field not found")
@@ -880,5 +912,98 @@ pub fn exec_func(
         }
 
         current_instruction_index += 1;
+    }
+}
+
+fn decode_constant_value(type_id: u32, raw_value: &[u8]) -> Result<DataValueType, String> {
+    let invalid_length = || {
+        format!(
+            "Invalid byte length {} for Ginkgo constant type {}",
+            raw_value.len(),
+            type_id
+        )
+    };
+
+    match BuiltinType::from_repr(type_id) {
+        Some(BuiltinType::None) if raw_value.is_empty() => Ok(DataValueType::None),
+        Some(BuiltinType::Any) if raw_value.is_empty() => Ok(DataValueType::Any),
+        Some(BuiltinType::Integer) if raw_value.len() == 8 => Ok(DataValueType::Integer(
+            i64::from_le_bytes(raw_value.try_into().map_err(|_| invalid_length())?),
+        )),
+        Some(BuiltinType::Decimal) if raw_value.len() == 8 => Ok(DataValueType::Decimal(
+            f64::from_le_bytes(raw_value.try_into().map_err(|_| invalid_length())?),
+        )),
+        Some(BuiltinType::Char) if raw_value.len() == 4 => {
+            let scalar = u32::from_le_bytes(raw_value.try_into().map_err(|_| invalid_length())?);
+            char::from_u32(scalar)
+                .map(DataValueType::Char)
+                .ok_or_else(|| format!("Invalid Unicode scalar in Ginkgo char constant: {scalar}"))
+        }
+        Some(BuiltinType::String) => String::from_utf8(raw_value.to_vec())
+            .map(DataValueType::String)
+            .map_err(|_| "Invalid UTF-8 in Ginkgo string constant".to_string()),
+        Some(BuiltinType::Boolean) if raw_value.len() == 1 && raw_value[0] <= 1 => {
+            Ok(DataValueType::Bool(raw_value[0] == 1))
+        }
+        Some(BuiltinType::Byte) if raw_value.len() == 1 => Ok(DataValueType::Byte(raw_value[0])),
+        Some(BuiltinType::Function) => Err("Function constants are not supported".to_string()),
+        Some(BuiltinType::None | BuiltinType::Any) => Err(invalid_length()),
+        Some(BuiltinType::Integer | BuiltinType::Decimal | BuiltinType::Char) => {
+            Err(invalid_length())
+        }
+        Some(BuiltinType::Boolean) => Err(invalid_length()),
+        Some(BuiltinType::Byte) => Err(invalid_length()),
+        None => Err(format!("Unknown Ginkgo constant type {}", type_id)),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::decode_constant_value;
+    use arc_shared::ginkgo::BuiltinType;
+    use arc_shared::models::execution::data::DataValueType;
+
+    #[test]
+    fn decodes_ginkgo_primitive_constants() {
+        assert!(matches!(
+            decode_constant_value(BuiltinType::None as u32, &[]).unwrap(),
+            DataValueType::None
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Any as u32, &[]).unwrap(),
+            DataValueType::Any
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Integer as u32, &(-42_i64).to_le_bytes()).unwrap(),
+            DataValueType::Integer(-42)
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Decimal as u32, &1.25_f64.to_le_bytes()).unwrap(),
+            DataValueType::Decimal(value) if value == 1.25
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Char as u32, &('你' as u32).to_le_bytes()).unwrap(),
+            DataValueType::Char('你')
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::String as u32, "你好".as_bytes()).unwrap(),
+            DataValueType::String(value) if value == "你好"
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Boolean as u32, &[1]).unwrap(),
+            DataValueType::Bool(true)
+        ));
+        assert!(matches!(
+            decode_constant_value(BuiltinType::Byte as u32, &[255]).unwrap(),
+            DataValueType::Byte(255)
+        ));
+    }
+
+    #[test]
+    fn rejects_malformed_primitive_constants() {
+        assert!(decode_constant_value(BuiltinType::Integer as u32, &[1]).is_err());
+        assert!(decode_constant_value(BuiltinType::Boolean as u32, &[2]).is_err());
+        assert!(decode_constant_value(BuiltinType::String as u32, &[0xff]).is_err());
+        assert!(decode_constant_value(BuiltinType::Char as u32, &u32::MAX.to_le_bytes()).is_err());
     }
 }
